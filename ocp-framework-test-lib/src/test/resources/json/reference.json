@@ -1,0 +1,16 @@
+{
+  "assuranceLevel": 2,
+  "birthDate": "1978-05-20",
+  "firstName": "JANE",
+  "gender": "FEMALE",
+  "lastName": "DOE",
+  "middleName": "M",
+  "prefix": "Ms",
+  "suffix": "S",
+  "blankKey": "",
+  "attributes": {
+  	"attribute1":"attributeValue1",
+  	"attribute2":"attributeValue2",
+  	"intattribute":10
+  }
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<included>
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook" />
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+	<springProperty scope="context" name="app_name" source="spring.application.name" />
+	<springProperty scope="context" name="app_profile" source="spring.profiles.active" />
+	<springProperty scope="context" name="app_version" source="info.build.version" />
+
+	<appender name="OCP_FRAMEWORK_CONSOLE_LOG_ENCODER" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+
+				<timestamp>
+					<timeZone>UTC</timeZone>
+				</timestamp>
+				<context /> <!--Outputs entries from logback's context -->
+				<pattern>
+					<pattern>
+						{
+						"logType": "%mdc{logType:-applogs}",
+						"severity": "%level",
+						"class": "%logger{40}",
+						"pid": "${PID:-}"
+						}
+					</pattern>
+				</pattern>
+				<threadName />
+				<mdc /> <!-- MDC variables on the Thread will be written as JSON fields -->
+				<message />
+				<logstashMarkers /> <!-- Useful so we can add extra information for specific log lines as Markers -->
+				<arguments /> <!--or through StructuredArguments -->
+				<stackTrace>
+					<!-- limit the size of stack traces, show root cause first -->
+					<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+						<maxDepthPerThrowable>30</maxDepthPerThrowable>
+						<maxLength>2048</maxLength>
+						<shortenedClassNameLength>40</shortenedClassNameLength>
+						<rootCauseFirst>true</rootCauseFirst>
+					</throwableConverter>
+				</stackTrace>
+			</providers>
+		</encoder>
+	</appender>
+	
+	<!--
+	  Async appenders can drastically speed up logging as well as your application's response time but with some potential drawbacks. 
+	  Read more at. 
+	  https://logback.qos.ch/manual/appenders.html#AsyncAppender
+	  http://blog.takipi.com/how-to-instantly-improve-your-java-logging-with-7-logback-tweaks/
+	  
+	  Always be sure to test different configurations for yourself. Every application has different requirements.
+	-->
+	<appender name="OCP_FRAMEWORK_ASYNC_CONSOLE_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>262144</queueSize> <!--default is 256 -->
+		<discardingThreshold>0</discardingThreshold> <!--events are not discarded -->
+		<appender-ref ref="OCP_FRAMEWORK_CONSOLE_LOG_ENCODER" />
+	</appender>
+
+</included>

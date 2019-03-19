@@ -1,0 +1,5 @@
+@Library('reference') _
+
+mavenPipeline {
+
+}
