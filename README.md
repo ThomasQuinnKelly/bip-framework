@@ -38,24 +38,14 @@ To run spring boot and spring cloud enabled services on the BIP Platform, it mus
 To make these libraries available locally for the service projects to compile and build, there are 2 options.
 
 **OPTION 1**
-1. Clone the repository `git clone https://github.com/department-of-veterans-affairs/ocp-framework.git`
-1. Navigate to the folder `ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
+1. Clone the repository `git clone https://github.com/department-of-veterans-affairs/bip-ocp-framework.git`
+1. Navigate to the folder `bip-ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
 
 **OPTION 2**
 
 **This is a temporary solution until Nexus repository is made available by DevOps.**
 
-A `repositories` section has been added in the reactor pom.xml of this repository. To verify library versions, see the [mvn-repo](https://github.com/department-of-veterans-affairs/ocp-framework/branches) feature branch of ocp-framework.pom.xml
-
-Add the below section in the reactor (root) pom.xml of your service project. See example: https://github.com/department-of-veterans-affairs/ocp-reference-spring-boot/blob/master/pom.xml
-
-	<distributionManagement>
-	    <repository>
-	        <id>github</id>
-	        <name>GitHub Repository</name>
-	        <url>https://raw.github.com/department-of-veterans-affairs/ocp-framework/mvn-repo</url>
-	    </repository>
-	</distributionManagement>
+A `repositories` section has been added in the reactor pom.xml of your service project. See example: https://github.com/department-of-veterans-affairs/ocp-reference-spring-boot/blob/master/pom.xml
 
 You MUST also update your local ~/.m2/settings.xml as shown below.. Replace values between {{Text}} with your information
 
