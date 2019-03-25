@@ -4,17 +4,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
+import java.util.LinkedList;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import gov.va.ocp.framework.exception.OcpRuntimeException;
+import gov.va.ocp.framework.messages.ServiceMessage;
 import gov.va.ocp.framework.service.DomainResponse;
 import gov.va.ocp.framework.service.aspect.validators.TestRequestValidator;
 
@@ -23,6 +31,9 @@ public class ServiceValidationAspectTest {
 
 	@Mock
 	private ProceedingJoinPoint proceedingJoinPoint;
+
+	@Mock
+	gov.va.ocp.framework.validation.Validator<DomainResponse> validator;
 
 	@Mock
 	private MethodSignature signature;
@@ -143,6 +154,54 @@ public class ServiceValidationAspectTest {
 			assertTrue(e instanceof OcpRuntimeException);
 		}
 
+	}
+
+	@Test
+	public final void testValidateResponse() {
+		try {
+			ReflectionTestUtils.invokeMethod(aspect, "validateResponse", new DomainResponse(),
+					new LinkedList<ServiceMessage>(),
+					this.getClass().getMethod("testMethod", String.class), new Object[] {});
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			fail("unable to find method named testMethod");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			fail("unable to invoke method named testMethod");
+		} catch (OcpRuntimeException e) {
+			assertTrue(e.getMessage().startsWith("No validator available for object of type "));
+		}
+	}
+
+	@Ignore // TODO
+	@Test
+	public final void testInvokeValidate() {
+		DomainResponse domainResponse = new DomainResponse();
+		LinkedList<ServiceMessage> messages = new LinkedList<ServiceMessage>();
+		Method testMethod = null;
+		try {
+			testMethod = this.getClass().getMethod("testMethod", String.class);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			fail("unable to find method named testMethod");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			fail("unable to invoke method named testMethod");
+		}
+		Object[] objectsParamArray = new Object[] {};
+		try {
+			ReflectionTestUtils.invokeMethod(aspect, "invokeValidate", validator, domainResponse, messages, testMethod,
+					objectsParamArray);
+
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			fail("unable to invoke method named invokeValidate");
+		}
+		verify(validator, times(1)).initValidate(domainResponse, messages, objectsParamArray);
+	}
+
+	public void testMethod(final String testParam) {
+		// do nothing
 	}
 
 }

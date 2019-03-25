@@ -237,7 +237,7 @@ public class BaseStepDef {
 	 * 
 	 * @param scenario
 	 */
-	public void postProcess(final Scenario scenario) {
+	public void postProcess(final Scenario scenario) { 
 		String strResponseFile = null;
 		try {
 			strResponseFile = "target/TestResults/Response/" + scenario.getName() + ".Response";

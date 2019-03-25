@@ -5,23 +5,34 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import gov.va.ocp.framework.test.util.JsonUtil;
-
 public class JsonUtilTest {
 
 	String json;
-	
+
 	@Before
 	public void setup() throws IOException {
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 		File file = new File(classLoader.getResource("json/reference.json").getFile());
-		json = new String(Files.readAllBytes(file.toPath()));		
+		json = new String(Files.readAllBytes(file.toPath()));
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void utilityClassTest() throws NoSuchMethodException, IllegalAccessException, InstantiationException {
+		final Constructor<JsonUtil> constructor = JsonUtil.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		try {
+			constructor.newInstance();
+		} catch (InvocationTargetException e) {
+			throw (UnsupportedOperationException) e.getTargetException();
+		}
 	}
 
 	@Test
@@ -29,6 +40,7 @@ public class JsonUtilTest {
 		String firstName = JsonUtil.getString(json, "firstName");
 		assertThat(firstName, equalTo("JANE"));
 	}
+
 	@Test
 	public void test_readInt_Success() throws IOException {
 		int assuranceLevel = JsonUtil.getInt(json, "assuranceLevel");
@@ -64,8 +76,5 @@ public class JsonUtilTest {
 		assertThat(attributeValue, equalTo("attributeValue1"));
 		assertThat(intattributeValue, equalTo(10));
 	}
-	
-	
-	
 
 }

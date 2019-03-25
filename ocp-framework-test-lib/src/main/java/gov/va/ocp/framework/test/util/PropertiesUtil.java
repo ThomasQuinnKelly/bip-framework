@@ -27,7 +27,7 @@ public class PropertiesUtil {
 	 * Do not instantiate.
 	 */
 	private PropertiesUtil() {
-		throw new IllegalArgumentException("PropertiesUtil is a static class. Do not instantiate it.");
+		throw new UnsupportedOperationException("PropertiesUtil is a static class. Do not instantiate it.");
 	}
 
 	/**
@@ -73,10 +73,6 @@ public class PropertiesUtil {
 	 * @param properties
 	 */
 	private static void substitutePlaceholders(final Properties properties) {
-		if (properties == null || properties.isEmpty()) {
-			return;
-		}
-
 		final Map<String, String> valuesMap = new HashMap<>();
 		final Map<String, String> templateMap = new HashMap<>();
 		for (final Object key : properties.keySet()) {

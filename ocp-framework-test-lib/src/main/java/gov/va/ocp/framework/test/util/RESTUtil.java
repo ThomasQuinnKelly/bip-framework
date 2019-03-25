@@ -190,13 +190,12 @@ public class RESTUtil {
 			String submitPayload = FileUtils.readFileToString(filePathSubmitPayload, "UTF-8");
 			response = requestSpecification.contentType("multipart/form-data").urlEncodingEnabled(false)
 					.headers(mapReqHeader).when().multiPart("file", filePath)
-					.multiPart(SUBMIT_PAYLOAD, submitPayload, "application/json").post(serviceURL);
+					.multiPart(SUBMIT_PAYLOAD, submitPayload, "application/json").post(serviceURL);			
 		} catch (final Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
-
+			return null;
 		}
 		return response.asString();
-
 	}
 
 	public String postResponseWithMultipart(final String serviceURL, final String fileName,
@@ -214,6 +213,7 @@ public class RESTUtil {
 					.multiPart(SUBMIT_PAYLOAD, SUBMIT_PAYLOAD, submitPayload, "application/json").post(serviceURL);
 		} catch (final Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
+			return null;
 		}
 		return response.asString();
 

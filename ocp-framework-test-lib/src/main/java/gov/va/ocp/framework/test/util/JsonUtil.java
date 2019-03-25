@@ -13,7 +13,7 @@ import io.restassured.path.json.JsonPath;
 public class JsonUtil {
 
 	private JsonUtil() {
-		throw new IllegalStateException("Utility class");
+		throw new UnsupportedOperationException("Utility class");
 	}
 
 	public static final String getString(final String json, final String path) {

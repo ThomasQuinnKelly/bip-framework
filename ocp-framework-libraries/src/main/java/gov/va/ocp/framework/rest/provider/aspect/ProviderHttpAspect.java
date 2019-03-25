@@ -99,11 +99,8 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 		try {
 			if (responseToConsumer == null) {
 				providerResponse = new ProviderResponse();
-			} else if (responseToConsumer instanceof ProviderResponse) {
+			} else {
 				providerResponse = responseToConsumer;
-			}
-			if (providerResponse == null) {
-				providerResponse = new ProviderResponse();
 			}
 
 			Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
