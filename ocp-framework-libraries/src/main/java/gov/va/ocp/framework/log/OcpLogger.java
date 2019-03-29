@@ -46,7 +46,7 @@ public class OcpLogger extends OcpBaseLogger {
 	/**
 	 * Get the actual bound implementation of the logger (currently the logback logger).
 	 *
-	 * @return
+	 * @return the logger bound impl
 	 */
 	public ch.qos.logback.classic.Logger getLoggerBoundImpl() {
 		return (ch.qos.logback.classic.Logger) super.getLoggerInterfaceImpl();
@@ -120,7 +120,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param banner the banner
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void debug(OcpBanner banner, String format, Object... args) {
 		super.sendlog(Level.DEBUG,
@@ -134,7 +134,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * accompanying message.
 	 * Note that logging banners is time consuming, so should be used sparingly.
 	 *
-	 * @param bannerText the short text to be converted to ASCII art
+	 * @param banner the banner
 	 * @param msg the message accompanying the exception
 	 * @param t the exception (throwable) to log
 	 */
@@ -167,7 +167,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * This form avoids superfluous object creation when the logger
 	 * is disabled for the INFO level.
 	 *
-	 * @param bannerthe banner
+	 * @param banner the banner
 	 * @param format the format string
 	 * @param arg the argument
 	 */
@@ -212,7 +212,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param banner the banner
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void info(OcpBanner banner, String format, Object... args) {
 		super.sendlog(Level.INFO,
@@ -284,7 +284,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param banner the banner
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void warn(OcpBanner banner, String format, Object... args) {
 		super.sendlog(Level.WARN,
@@ -396,7 +396,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param banner the banner
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void error(OcpBanner banner, String format, Object... args) {
 		super.sendlog(Level.ERROR,
@@ -492,7 +492,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param level the org.slf4j.event.Level
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void log(Level level, String format, Object... args) {
 		super.sendlog(level,
@@ -582,7 +582,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * @param level the org.slf4j.event.Level
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void log(Level level, org.slf4j.Marker marker, String format, Object... args) {
 		super.sendlog(level,
@@ -634,7 +634,7 @@ public class OcpLogger extends OcpBaseLogger {
 	}
 
 	/**
-	 * Is the logger instance enabled for the TRACE level?
+	 * Is the logger instance enabled for the TRACE level?.
 	 *
 	 * @return True if this Logger is enabled for the TRACE level,
 	 *         false otherwise.
@@ -705,7 +705,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * {@link #trace(String, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
 	 *
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 * @since 1.4
 	 */
 	public void trace(String format, Object... args) {
@@ -799,7 +799,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param argArray an array of arguments
+	 * @param args the args
 	 * @since 1.4
 	 */
 	public void trace(org.slf4j.Marker marker, String format, Object... args) {
@@ -826,7 +826,7 @@ public class OcpLogger extends OcpBaseLogger {
 	}
 
 	/**
-	 * Is the logger instance enabled for the DEBUG level?
+	 * Is the logger instance enabled for the DEBUG level?.
 	 *
 	 * @return True if this Logger is enabled for the DEBUG level,
 	 *         false otherwise.
@@ -894,7 +894,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * arguments exist solely in order to avoid this hidden cost.
 	 *
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void debug(String format, Object... args) {
 		super.sendlog(Level.DEBUG,
@@ -981,7 +981,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void debug(org.slf4j.Marker marker, String format, Object... args) {
 		super.sendlog(Level.DEBUG,
@@ -1006,7 +1006,7 @@ public class OcpLogger extends OcpBaseLogger {
 	}
 
 	/**
-	 * Is the logger instance enabled for the INFO level?
+	 * Is the logger instance enabled for the INFO level?.
 	 *
 	 * @return True if this Logger is enabled for the INFO level,
 	 *         false otherwise.
@@ -1074,7 +1074,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * arguments exist solely in order to avoid this hidden cost.
 	 *
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void info(String format, Object... args) {
 		super.sendlog(Level.INFO,
@@ -1160,7 +1160,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void info(org.slf4j.Marker marker, String format, Object... args) {
 		super.sendlog(Level.INFO,
@@ -1185,7 +1185,7 @@ public class OcpLogger extends OcpBaseLogger {
 	}
 
 	/**
-	 * Is the logger instance enabled for the WARN level?
+	 * Is the logger instance enabled for the WARN level?.
 	 *
 	 * @return True if this Logger is enabled for the WARN level,
 	 *         false otherwise.
@@ -1235,7 +1235,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * arguments exist solely in order to avoid this hidden cost.
 	 *
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args a list of 3 or more arguments
 	 */
 	public void warn(String format, Object... args) {
 		super.sendlog(Level.WARN,
@@ -1340,7 +1340,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args a list of 3 or more arguments
 	 */
 	public void warn(org.slf4j.Marker marker, String format, Object... args) {
 		super.sendlog(Level.WARN,
@@ -1365,7 +1365,7 @@ public class OcpLogger extends OcpBaseLogger {
 	}
 
 	/**
-	 * Is the logger instance enabled for the ERROR level?
+	 * Is the logger instance enabled for the ERROR level?.
 	 *
 	 * @return True if this Logger is enabled for the ERROR level,
 	 *         false otherwise.
@@ -1433,7 +1433,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 * arguments exist solely in order to avoid this hidden cost.
 	 *
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args a list of 3 or more arguments
 	 */
 	public void error(String format, Object... args) {
 		super.sendlog(Level.ERROR,
@@ -1520,7 +1520,7 @@ public class OcpLogger extends OcpBaseLogger {
 	 *
 	 * @param marker the marker data specific to this log statement
 	 * @param format the format string
-	 * @param arguments a list of 3 or more arguments
+	 * @param args the args
 	 */
 	public void error(org.slf4j.Marker marker, String format, Object... args) {
 		super.sendlog(Level.ERROR,

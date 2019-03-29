@@ -9,12 +9,10 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.event.Level;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 
 import gov.va.ocp.framework.exception.OcpRuntimeException;
-import gov.va.ocp.framework.log.OcpBanner;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
 import gov.va.ocp.framework.messages.MessageSeverity;
@@ -65,7 +63,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 	 */
 	@SuppressWarnings("unchecked")
 	@Around("publicStandardServiceMethod() && serviceImpl()")
-	public Object aroundAdvice(final ProceedingJoinPoint joinPoint) {
+	public Object aroundAdvice(final ProceedingJoinPoint joinPoint) throws Throwable {
 
 		DomainResponse domainResponse = null;
 
@@ -103,6 +101,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 			// if there were no errors, proceed with the actual method
 			if ((domainResponse == null) || (domainResponse.getMessages() == null) || domainResponse.getMessages().isEmpty()) {
+
 				domainResponse = (DomainResponse) joinPoint.proceed();
 
 				// only call post-proceed() validation if there are no errors on the response
@@ -110,23 +109,33 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 					validateResponse(domainResponse, domainResponse.getMessages(), method, joinPoint.getArgs());
 				}
 			}
-
-		} catch (final Throwable throwable) {
-			if (OcpRuntimeException.class.isAssignableFrom(throwable.getClass())) {
-				throw (OcpRuntimeException) throwable;
-			} else {
-				LOGGER.error(new OcpBanner("Aspect Error", Level.ERROR),
-						this.getClass().getSimpleName() + " encountered " + throwable.getClass().getName()
-						+ ": " + throwable.getMessage(),
-						throwable);
-				throw new OcpRuntimeException("", "", MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable);
-			}
 		} finally {
 			LOGGER.debug(this.getClass().getSimpleName() + " after method was called.");
 		}
 
 		return domainResponse;
 
+	}
+
+	/**
+	 * Use ONLY for exceptions raised due to:
+	 * <ul>
+	 * <li>issues with acquiring the validator class for the originating service impl
+	 * <li>issues instantiating the validator class
+	 * </ul>
+	 *
+	 * @param validatorClass
+	 * @param e
+	 * @param object
+	 * @throws OcpRuntimeException
+	 */
+	private void handleValidatorInstantiationExceptions(final Class<?> validatorClass, final Exception e, final Object object) {
+		// Validator programming issue - throw exception
+		String msg = "Could not find or instantiate class '" + (validatorClass != null ? validatorClass.getName()
+				: "to validate given object of type " + object.getClass().getName()
+				+ "'. Ensure that it has a no-arg constructor, and implements " + Validator.class.getName());
+		LOGGER.error(msg, e);
+		throw new OcpRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 
 	/**
@@ -148,23 +157,34 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 		Class<?> validatorClass = this.resolveValidatorClass(object);
 
 		if (validatorClass == null) {
-			throw new OcpRuntimeException("", "No validator available for object of type " + object.getClass().getName(),
-					MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR);
+			handleValidatorInstantiationExceptions(validatorClass,
+					new NullPointerException("No validator available for object of type " + object.getClass().getName()), object);
 		}
+
 		// invoke the validator
 		try {
-			Validator<?> validator = (Validator<?>) validatorClass.newInstance();
-			validator.setCallingMethod(callingMethod);
-			validator.initValidate(object, messages);
+			invokeValidator(object, messages, callingMethod, validatorClass);
 
-		} catch (InstantiationException | IllegalAccessException e) {
-			// Validator programming issue - throw exception
-			String msg = "Could not find or instantiate class '" + validatorClass.getName()
-			+ "'. Ensure that it has a no-arg constructor, and implements " + Validator.class.getName();
-			LOGGER.error(msg, e);
-			throw new OcpRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
+		} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
+			handleValidatorInstantiationExceptions(validatorClass, e, object);
 		}
 	}
+
+	private void invokeValidator(final Object object, final List<ServiceMessage> messages, final Method callingMethod,
+			final Class<?> validatorClass) throws InstantiationException, IllegalAccessException {
+		Validator<?> validator = (Validator<?>) validatorClass.newInstance();
+		validator.setCallingMethod(callingMethod);
+		validator.initValidate(object, messages);
+	}
+
+	// private void handleExceptions(final Class<?> validatorClass, final Exception e, final Object object) {
+	// // Validator programming issue - throw exception
+	// String msg = "Could not find or instantiate class '" + (validatorClass != null ? validatorClass.getName()
+	// : "to validate given object of type " + object.getClass().getName()
+	// + "'. Ensure that it has a no-arg constructor, and implements " + Validator.class.getName());
+	// LOGGER.error(msg, e);
+	// throw new OcpRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
+	// }
 
 	/**
 	 * Locate the {@link Validator} for the object, and if it exists,
@@ -186,28 +206,18 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 		Class<?> validatorClass = this.resolveValidatorClass(object);
 
+		if (validatorClass == null) {
+			handleValidatorInstantiationExceptions(validatorClass,
+					new NullPointerException("No validator available for object of type " + object.getClass().getName()), object);
+		}
+
 		// invoke the validator
 		try {
-			if (validatorClass == null) {
-				throw new OcpRuntimeException("", "No validator available for object of type " + object.getClass().getName(),
-						MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			invokeValidate(object, messages, callingMethod, validatorClass, requestObjects);
+			invokeValidator(object, messages, callingMethod, validatorClass);
 
-		} catch (InstantiationException | IllegalAccessException e) {
-			// Validator programming issue - throw exception
-			String msg = "Could not find or instantiate class '" + validatorClass.getName()
-			+ "'. Ensure that it has a no-arg constructor, and implements " + Validator.class.getName();
-			LOGGER.error(msg, e);
-			throw new OcpRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
+		} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
+			handleValidatorInstantiationExceptions(validatorClass, e, object);
 		}
-	}
-
-	private void invokeValidate(final DomainResponse object, final List<ServiceMessage> messages, final Method callingMethod,
-			final Class<?> validatorClass, final Object... requestObjects) throws InstantiationException, IllegalAccessException {
-		Validator<?> validator = (Validator<?>) validatorClass.newInstance();
-		validator.setCallingMethod(callingMethod);
-		validator.initValidate(object, messages, requestObjects);
 	}
 
 	/**
@@ -230,10 +240,11 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 			validatorClass = Class.forName(qualifiedValidatorName);
 		} catch (ClassNotFoundException e) {
 			// no validator, return without error
-			LOGGER.debug("Could not find validator class " + qualifiedValidatorName
-					+ " - skipping validation for object " + ReflectionToStringBuilder.toString(object));
+			LOGGER.error("Could not find validator class " + qualifiedValidatorName
+					+ " - skipping validation for object " + ReflectionToStringBuilder.toString(object), e);
 		}
 
 		return validatorClass;
 	}
 }
+

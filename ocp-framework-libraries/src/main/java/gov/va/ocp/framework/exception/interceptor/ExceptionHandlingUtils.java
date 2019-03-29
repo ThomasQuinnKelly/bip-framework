@@ -67,14 +67,15 @@ public final class ExceptionHandlingUtils {
 		} else {
 			// make a new OcpRuntimeException from the non-OCP throwable
 			resolvedRuntimeException =
-					new OcpRuntimeException("", throwable.getMessage(), MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable);
+					new OcpRuntimeException("", throwable.getMessage(), MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR,
+							throwable);
 		}
 
 		return resolvedRuntimeException;
 	}
 
 	static OcpRuntimeException convertFromOcpExceptionExtender(final Throwable throwable) {
-		OcpRuntimeException resolvedRuntimeException;
+		OcpRuntimeException resolvedRuntimeException = null;
 		try {
 			// cast "Throwable throwable" variable to the OCP exception interface
 			OcpExceptionExtender ocp = (OcpExceptionExtender) throwable;
@@ -116,18 +117,18 @@ public final class ExceptionHandlingUtils {
 			final Throwable throwable) {
 		final OcpLogger errorLogger =
 				OcpLoggerFactory.getLogger(method.getDeclaringClass().getName() + LOG_EXCEPTION_DOT + method.getName()
-				+ LOG_EXCEPTION_UNDERSCORE + throwable.getClass().getName());
+						+ LOG_EXCEPTION_UNDERSCORE + throwable.getClass().getName());
 		final String errorMessage =
 				throwable.getClass().getName() + " thrown by " + method.getDeclaringClass().getName()
-				+ LOG_EXCEPTION_DOT + method.getName();
+						+ LOG_EXCEPTION_DOT + method.getName();
 		if (errorLogger.isWarnEnabled()) {
 			errorLogger.warn(catcher + LOC_EXCEPTION_PREFIX + errorMessage + LOG_EXCEPTION_MID + Arrays.toString(args)
-			+ LOG_EXCEPTION_POSTFIX, throwable);
+					+ LOG_EXCEPTION_POSTFIX, throwable);
 		} else {
 			// if we disable warn logging (all the details and including stack trace) we only show minimal
 			// evidence of the error in the logs
 			errorLogger.error(catcher + LOC_EXCEPTION_PREFIX + errorMessage + LOG_EXCEPTION_MID + Arrays.toString(args)
-			+ LOG_EXCEPTION_POSTFIX);
+					+ LOG_EXCEPTION_POSTFIX);
 		}
 	}
 

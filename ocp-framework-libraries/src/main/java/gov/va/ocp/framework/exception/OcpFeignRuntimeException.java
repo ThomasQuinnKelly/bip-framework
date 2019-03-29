@@ -9,7 +9,7 @@ import gov.va.ocp.framework.messages.MessageSeverity;
  * of handling and need to raise but for some reason cannot raise
  * java's RuntimeException or allow the original exception to simply propagate.
  *
- * @author
+ * @author akulkarni
  */
 public class OcpFeignRuntimeException extends OcpRuntimeException {
 	private static final long serialVersionUID = 2598842813684506356L;

@@ -2,7 +2,6 @@ package gov.va.ocp.framework.rest.provider.aspect;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,9 +22,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import gov.va.ocp.framework.audit.AuditEventData;
-import gov.va.ocp.framework.audit.AuditEvents;
-import gov.va.ocp.framework.audit.RequestAuditData;
 import gov.va.ocp.framework.audit.AuditLogSerializer;
+import gov.va.ocp.framework.audit.RequestAuditData;
 import gov.va.ocp.framework.audit.ResponseAuditData;
 import gov.va.ocp.framework.constants.AnnotationConstants;
 import gov.va.ocp.framework.log.OcpBanner;
@@ -108,20 +106,6 @@ public class BaseHttpProviderAspect {
 	@Pointcut("auditableAnnotation() && execution(* *(..))")
 	protected static final void auditableExecution() {
 		// Do nothing.
-	}
-
-	/**
-	 * Convenience method to get the default audit event data from a method.
-	 *
-	 * @param method the method
-	 * @return the auditable instance
-	 */
-	public static AuditEventData getDefaultAuditableInstance(final Method method) {
-		if (method != null) {
-			return new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
-		} else {
-			return new AuditEventData(AuditEvents.REQUEST_RESPONSE, "", "");
-		}
 	}
 
 	/**
@@ -236,9 +220,9 @@ public class BaseHttpProviderAspect {
 	/**
 	 * Read the first 1024 bytes and convert that into a string.
 	 *
-	 * @param in
-	 * @return
-	 * @throws IOException
+	 * @param in the input stream
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	protected static String convertBytesToString(final InputStream in) throws IOException {
 		int offset = 0;

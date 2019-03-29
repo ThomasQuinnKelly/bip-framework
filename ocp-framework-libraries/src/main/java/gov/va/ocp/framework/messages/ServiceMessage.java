@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * other sorts of information during method calls between components/layers. This is serializable and can be used in SOAP or REST
  * calls.
  *
- * @author jshrader
+ * @author akulkarni
  */
 public class ServiceMessage extends AbstractMessage {
 
@@ -149,7 +149,7 @@ public class ServiceMessage extends AbstractMessage {
 	/**
 	 * Sets the HttpStatus.
 	 *
-	 * @param key the new HttpStatus
+	 * @param httpStatus the new http status
 	 */
 	public void setHttpStatus(final HttpStatus httpStatus) {
 		this.httpStatus = httpStatus;

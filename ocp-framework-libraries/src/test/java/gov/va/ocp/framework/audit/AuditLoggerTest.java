@@ -31,9 +31,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.ocp.framework.audit.AuditEventData;
-import gov.va.ocp.framework.audit.AuditEvents;
-import gov.va.ocp.framework.audit.AuditLogger;
 import gov.va.ocp.framework.log.OcpBaseLogger;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
@@ -170,7 +167,7 @@ public class AuditLoggerTest {
 	public void auditDebug() throws NoSuchMethodException, SecurityException {
 		// given
 		Method method = AuditLoggerTest.class.getMethod("auditDebug", (Class<?>[]) null);
-		AuditLogger.debug(new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.debug(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
 				"Audit DEBUG Activity Detail");
 
 		// Now verify our logging interactions
@@ -187,7 +184,7 @@ public class AuditLoggerTest {
 	public void auditInfo() throws NoSuchMethodException, SecurityException {
 		// given
 		Method method = AuditLoggerTest.class.getMethod("auditInfo", (Class<?>[]) null);
-		AuditLogger.info(new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.info(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
 				"Audit INFO Activity Detail");
 
 		// Now verify our logging interactions
@@ -205,7 +202,7 @@ public class AuditLoggerTest {
 	public void auditWarn() throws NoSuchMethodException, SecurityException {
 		// given
 		Method method = AuditLoggerTest.class.getMethod("auditWarn", (Class<?>[]) null);
-		AuditLogger.warn(new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.warn(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
 				"Audit WARN Activity Detail");
 
 		// Now verify our logging interactions
@@ -224,7 +221,7 @@ public class AuditLoggerTest {
 	public void auditError() throws NoSuchMethodException, SecurityException {
 		// given and when
 		Method method = AuditLoggerTest.class.getMethod("auditError", (Class<?>[]) null);
-		AuditLogger.error(new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.error(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
 				"Audit ERROR Activity Detail", new Exception());
 
 		// Now verify our logging interactions
@@ -248,7 +245,7 @@ public class AuditLoggerTest {
 				personTraits.getPassword(), personTraits.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		Method method = AuditLoggerTest.class.getMethod("auditError", (Class<?>[]) null);
-		AuditLogger.error(new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.error(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
 				"Audit ERROR Activity Detail", new Exception());
 
 		// Now verify our logging interactions
@@ -269,7 +266,7 @@ public class AuditLoggerTest {
 
 		Method method = AuditLoggerTest.class.getMethod("largeMessage", (Class<?>[]) null);
 		AuditEventData eventData =
-				new AuditEventData(AuditEvents.REQUEST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
+				new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName());
 		AuditLogger.info(eventData, message);
 
 		String stackTrace = null;

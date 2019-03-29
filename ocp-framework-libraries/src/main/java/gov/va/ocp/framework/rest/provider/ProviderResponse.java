@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 
 import gov.va.ocp.framework.messages.MessageSeverity;
+import gov.va.ocp.framework.transfer.AbstractResponseObject;
 import gov.va.ocp.framework.transfer.ProviderTransferObjectMarker;
 
 /**
@@ -15,7 +16,7 @@ import gov.va.ocp.framework.transfer.ProviderTransferObjectMarker;
  * @see ProviderTransferObjectMarker
  *
  */
-public class ProviderResponse implements ProviderTransferObjectMarker, Serializable {
+public class ProviderResponse extends AbstractResponseObject implements ProviderTransferObjectMarker, Serializable {
 	private static final long serialVersionUID = -7175439119647120860L;
 
 	/** The messages. */
@@ -90,7 +91,8 @@ public class ProviderResponse implements ProviderTransferObjectMarker, Serializa
 	 * @param severity the severity
 	 * @return true, if successful
 	 */
-	private boolean hasMessagesOfType(final MessageSeverity severity) {
+	@Override
+	protected boolean hasMessagesOfType(final MessageSeverity severity) {
 		for (final Message message : getMessages()) {
 			if (severity.name().equals(message.getSeverity())) {
 				return true;
@@ -99,39 +101,5 @@ public class ProviderResponse implements ProviderTransferObjectMarker, Serializa
 		return false;
 	}
 
-	/**
-	 * Checks for fatals.
-	 *
-	 * @return true, if successful
-	 */
-	public final boolean hasFatals() {
-		return hasMessagesOfType(MessageSeverity.FATAL);
-	}
 
-	/**
-	 * Checks for errors.
-	 *
-	 * @return true, if successful
-	 */
-	public final boolean hasErrors() {
-		return hasMessagesOfType(MessageSeverity.ERROR);
-	}
-
-	/**
-	 * Checks for warnings.
-	 *
-	 * @return true, if successful
-	 */
-	public final boolean hasWarnings() {
-		return hasMessagesOfType(MessageSeverity.WARN);
-	}
-
-	/**
-	 * Checks for infos.
-	 *
-	 * @return true, if successful
-	 */
-	public final boolean hasInfos() {
-		return hasMessagesOfType(MessageSeverity.INFO);
-	}
 }

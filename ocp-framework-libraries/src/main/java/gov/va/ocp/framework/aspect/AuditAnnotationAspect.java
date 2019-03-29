@@ -1,4 +1,4 @@
-package gov.va.ocp.framework.rest.provider.aspect;
+package gov.va.ocp.framework.aspect;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -8,22 +8,20 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.event.Level;
 
 import gov.va.ocp.framework.audit.AuditEventData;
 import gov.va.ocp.framework.audit.Auditable;
-import gov.va.ocp.framework.constants.AnnotationConstants;
-import gov.va.ocp.framework.log.OcpBanner;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
 import gov.va.ocp.framework.messages.MessageSeverity;
+import gov.va.ocp.framework.rest.provider.aspect.BaseHttpProviderAspect;
 
 @Aspect
-public class LogAnnotatedMethodRequestResponseAspect extends BaseHttpProviderAspect {
+public class AuditAnnotationAspect extends BaseHttpProviderAspect {
 	/** The Constant LOGGER. */
-	private static final OcpLogger LOGGER = OcpLoggerFactory.getLogger(LogAnnotatedMethodRequestResponseAspect.class);
+	private static final OcpLogger LOGGER = OcpLoggerFactory.getLogger(AuditAnnotationAspect.class);
 
-	public LogAnnotatedMethodRequestResponseAspect() {
+	public AuditAnnotationAspect() {
 		super();
 	}
 
@@ -36,9 +34,11 @@ public class LogAnnotatedMethodRequestResponseAspect extends BaseHttpProviderAsp
 	 * @return the object
 	 */
 	@Around("auditableExecution()")
-	public Object logAnnotatedMethodRequestResponse(final ProceedingJoinPoint joinPoint) throws Throwable {
+	public Object auditAnnotationAspect(final ProceedingJoinPoint joinPoint) throws Throwable {
 		Object response = null;
 		List<Object> request = null;
+		Auditable auditableAnnotation = null;
+		AuditEventData auditEventData = null;
 
 		try {
 			if (joinPoint.getArgs().length > 0) {
@@ -47,9 +47,8 @@ public class LogAnnotatedMethodRequestResponseAspect extends BaseHttpProviderAsp
 
 			final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 			LOGGER.debug("Method: {}", method);
-			final Auditable auditableAnnotation = method.getAnnotation(Auditable.class);
+			auditableAnnotation = method.getAnnotation(Auditable.class);
 			LOGGER.debug("Auditable Annotation: {}", auditableAnnotation);
-			AuditEventData auditEventData;
 			if (auditableAnnotation != null) {
 				auditEventData =
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
@@ -61,18 +60,14 @@ public class LogAnnotatedMethodRequestResponseAspect extends BaseHttpProviderAsp
 
 			response = joinPoint.proceed();
 
+		} finally {
 			LOGGER.debug("Response: {}", response);
 
 			if (auditableAnnotation != null) {
-				auditEventData = new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
-						auditableAnnotation.auditClass());
 				writeResponseAudit(response, auditEventData, MessageSeverity.INFO, null);
 			}
-		} catch (Throwable e) {
-			LOGGER.error(OcpBanner.newBanner(AnnotationConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-					"Error while executing logAnnotatedMethodRequestResponse around auditableExecution", e);
 		}
+
 		return response;
 	}
-
 }

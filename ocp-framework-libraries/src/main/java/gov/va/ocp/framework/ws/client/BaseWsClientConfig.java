@@ -9,8 +9,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.xml.soap.MessageFactory;
@@ -40,17 +41,16 @@ import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 
-import gov.va.ocp.framework.constants.AnnotationConstants;
 import gov.va.ocp.framework.exception.OcpPartnerRuntimeException;
-import gov.va.ocp.framework.exception.OcpRuntimeException;
-import gov.va.ocp.framework.exception.interceptor.InterceptingExceptionTranslator;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
 import gov.va.ocp.framework.log.PerformanceLogMethodInterceptor;
 import gov.va.ocp.framework.messages.MessageSeverity;
 import gov.va.ocp.framework.security.VAServiceWss4jSecurityInterceptor;
 import gov.va.ocp.framework.validation.Defense;
-import gov.va.ocp.framework.ws.client.remote.AuditAroundRemoteServiceCallInterceptor;
+import gov.va.ocp.framework.ws.client.interceptor.AuditWsInterceptor;
+import gov.va.ocp.framework.ws.client.interceptor.AuditWsInterceptorConfig;
+import io.jsonwebtoken.lang.Collections;
 
 /**
  * Base WebService Client configuration, consolidates core/common web service configuration operations used across the applications.
@@ -71,6 +71,8 @@ public class BaseWsClientConfig {
 
 	/**
 	 * Creates the default web service template using the default audit request/response interceptors and no web service interceptors.
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -95,6 +97,8 @@ public class BaseWsClientConfig {
 	/**
 	 * Creates the default web service template using the default audit request/response interceptors and the provided web service
 	 * interceptors
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -121,6 +125,8 @@ public class BaseWsClientConfig {
 	/**
 	 * Creates the default web service template using the supplied http request/response interceptors and the provided web service
 	 * interceptors with axiom message factory
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -161,6 +167,8 @@ public class BaseWsClientConfig {
 	/**
 	 * Creates the web service template using the the default audit request/response interceptors and the provided web service
 	 * interceptors with saaj message factory.
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -189,6 +197,8 @@ public class BaseWsClientConfig {
 
 	/**
 	 * Creates the ssl web service template using the default audit request/response interceptors and no web service interceptors.
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -224,7 +234,9 @@ public class BaseWsClientConfig {
 
 	/**
 	 * Creates the ssl web service template using the default audit request/response interceptors and the provided web service
-	 * interceptors
+	 * interceptors.
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -263,6 +275,12 @@ public class BaseWsClientConfig {
 	/**
 	 * Creates the ssl web service template using the supplied http request/response interceptors and the provided web service
 	 * interceptors with axiom message factory
+	 *
+	 * {@link AuditWsInterceptor} to audit the request and response are added automatically to
+	 * the {@code wsInterceptors} array of {@link ClientInterceptor}s.
+	 * If the {@code wsInterceptors} array already has AuditWebserviceInterceptors at the beginning and the end
+	 * of the array, the array will be left untouched. Any other instances (e.g. in the middle of the array)
+	 * will be removed.
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -312,6 +330,12 @@ public class BaseWsClientConfig {
 	 * Creates the SAAJ SSL web service template using the the default audit request/response interceptors and the provided web service
 	 * interceptors with saaj message factory.
 	 *
+	 * {@link AuditWsInterceptor} to audit the request and response are added automatically to
+	 * the {@code wsInterceptors} array of {@link ClientInterceptor}s.
+	 * If the {@code wsInterceptors} array already has AuditWebserviceInterceptors at the beginning and the end
+	 * of the array, the array will be left untouched. Any other instances (e.g. in the middle of the array)
+	 * will be removed.
+	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
 	 * @param connectionTimeout the connection timeout
@@ -352,6 +376,13 @@ public class BaseWsClientConfig {
 	/**
 	 * Creates web service template using the supplied http request/response interceptors and the provided web service
 	 * interceptors and message factory - if web service clients wish to configure their own message factory.
+	 *
+	 * {@link AuditWsInterceptor} to audit the request and response are added automatically to
+	 * the {@code wsInterceptors} array of {@link ClientInterceptor}s.
+	 * If the {@code wsInterceptors} array already has AuditWebserviceInterceptors at the beginning and the end
+	 * of the array, the array will be left untouched. Any other instances (e.g. in the middle of the array)
+	 * will be removed.
+	 *
 	 *
 	 * @param endpoint the endpoint
 	 * @param readTimeout the read timeout
@@ -420,7 +451,7 @@ public class BaseWsClientConfig {
 		webServiceTemplate.setDefaultUri(endpoint);
 		webServiceTemplate.setMarshaller(marshaller);
 		webServiceTemplate.setUnmarshaller(unmarshaller);
-		webServiceTemplate.setInterceptors(wsInterceptors);
+		webServiceTemplate.setInterceptors(addAuditLoggingInterceptors(wsInterceptors));
 		return webServiceTemplate;
 	}
 
@@ -436,26 +467,30 @@ public class BaseWsClientConfig {
 	protected void addSslContext(final HttpClientBuilder httpClient,
 			final Resource keystoreResource, final String keystorePass, final Resource truststore, final String truststorePass) {
 
-		if (keystoreResource != null && truststore != null) {
+		if ((keystoreResource != null) && (truststore != null)) {
 			// Add SSL
 			try {
 				KeyStore keystore = this.keyStore(keystoreResource, keystorePass.toCharArray());
 
 				SSLContext sslContext =
 						SSLContextBuilder.create()
-								.loadKeyMaterial(keystore, keystorePass.toCharArray())
-								.loadTrustMaterial(truststore.getURL(), truststorePass.toCharArray()).build();
+						.loadKeyMaterial(keystore, keystorePass.toCharArray())
+						.loadTrustMaterial(truststore.getURL(), truststorePass.toCharArray()).build();
 				// use NoopHostnameVerifier to turn off host name verification
 				SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 				httpClient.setSSLSocketFactory(csf);
 
 			} catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | CertificateException | IOException
 					| UnrecoverableKeyException e) {
-				String msg = "Could not establish SSL context due to " + e.getClass().getSimpleName() + ": " + e.getMessage();
-				LOGGER.error(msg, e);
-				throw new OcpPartnerRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
+				handleExceptions(e);
 			}
 		}
+	}
+
+	private void handleExceptions(final Exception e) {
+		String msg = "Could not establish SSL context due to " + e.getClass().getSimpleName() + ": " + e.getMessage();
+		LOGGER.error(msg, e);
+		throw new OcpPartnerRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 
 	/**
@@ -469,7 +504,7 @@ public class BaseWsClientConfig {
 	 * @throws CertificateException the certificate exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private KeyStore keyStore(Resource keystoreResource, char[] pass)
+	private KeyStore keyStore(final Resource keystoreResource, final char[] pass)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		KeyStore keyStore = KeyStore.getInstance("JKS");
 
@@ -484,6 +519,42 @@ public class BaseWsClientConfig {
 	}
 
 	/**
+	 * Adds audit logging interceptors to the {@link ClientInterceptor} array.
+	 * <p>
+	 * If the {@code wsInterceptor} parameter is NOT null or empty, an audit interceptor
+	 * will be added to log BEFORE the other interceptors run (a "raw" log),
+	 * and second interceptor to log AFTER the other interceptors run (a "wire" log).
+	 *
+	 * @param wsInterceptors the ClientInterceptor array being added to the configuration
+	 * @return ClientInterceptor[] - the updated array of interceptors
+	 */
+	@SuppressWarnings("unchecked")
+	private ClientInterceptor[] addAuditLoggingInterceptors(final ClientInterceptor[] wsInterceptors) {
+
+		// if no other interceptors run, no need to add "After" audit log
+		boolean logAfter = (wsInterceptors != null) && (wsInterceptors.length > 0);
+		LOGGER.debug("Initial ClientInterceptors list: " + Arrays.toString(wsInterceptors));
+
+		List<ClientInterceptor> list = new ArrayList<>();
+
+		/* Add audit logging interceptors for Before and After any other interceptors run */
+		if (!logAfter) {
+			LOGGER.debug("Adding audit interceptor only for " + AuditWsInterceptorConfig.AFTER.name());
+			list.add(new AuditWsInterceptor(AuditWsInterceptorConfig.AFTER));
+		} else {
+			LOGGER.debug("Adding audit interceptor only for both " + AuditWsInterceptorConfig.BEFORE.name()
+			+ " and " + AuditWsInterceptorConfig.AFTER.name());
+			list.add(new AuditWsInterceptor(AuditWsInterceptorConfig.BEFORE));
+			list.addAll(Collections.arrayToList(wsInterceptors));
+			list.add(new AuditWsInterceptor(AuditWsInterceptorConfig.AFTER));
+		}
+
+		ClientInterceptor[] newWsInterceptors = list.toArray(new ClientInterceptor[list.size()]);
+		LOGGER.debug("Final ClientInterceptors list: " + Arrays.toString(newWsInterceptors));
+		return newWsInterceptors;
+	}
+
+	/**
 	 * Gets the bean name auto proxy creator.
 	 *
 	 * @param beanNames the bean names
@@ -495,48 +566,6 @@ public class BaseWsClientConfig {
 		creator.setBeanNames(beanNames);
 		creator.setInterceptorNames(interceptorNames);
 		return creator;
-	}
-
-	/**
-	 * Gets the intercepting exception translator.
-	 *
-	 * @param defaultExceptionClass the default exception class
-	 * @param exceptionPackagesToExclude the exception packages to exclude
-	 * @return the intercepting exception translator
-	 * @throws ClassNotFoundException the class not found exception
-	 */
-	@SuppressWarnings(AnnotationConstants.UNCHECKED)
-	public final InterceptingExceptionTranslator getInterceptingExceptionTranslator(final String defaultExceptionClass,
-			final Set<String> exceptionPackagesToExclude) {
-		// RR: second param should be made a Set
-
-		Defense.notNull(defaultExceptionClass);
-		Defense.notNull(exceptionPackagesToExclude);
-
-		final InterceptingExceptionTranslator interceptingExceptionTranslator = new InterceptingExceptionTranslator();
-
-		// set the default type of exception that should be returned when this interceptor runs
-		try {
-			interceptingExceptionTranslator
-					.setDefaultExceptionType((Class<? extends OcpRuntimeException>) Class.forName(defaultExceptionClass));
-		} catch (ClassNotFoundException e) {
-			String msg = "Could not find class for '" + defaultExceptionClass
-					+ "'. Most likely, a class that extends BaseWsClientConfig is mis-configured.";
-			throw new OcpPartnerRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
-		}
-
-		// define packages that contain "our exceptions" that we want to propagate through
-		// without again logging and/or wrapping
-		final Set<String> exclusionSet = new HashSet<>();
-		exclusionSet.add(PACKAGE_FRAMEWORK_EXCEPTION);
-		for (String exclusion : exceptionPackagesToExclude) {
-			if (StringUtils.isNotBlank(exclusion)) {
-				exclusionSet.add(exclusion);
-			}
-		}
-		interceptingExceptionTranslator.setExclusionSet(exclusionSet);
-
-		return interceptingExceptionTranslator;
 	}
 
 	/**
@@ -579,15 +608,6 @@ public class BaseWsClientConfig {
 	}
 
 	/**
-	 * Gets the AuditAroundRemoteServiceCallInterceptor interceptor.
-	 *
-	 * @return the performance interceptor
-	 */
-	public final AuditAroundRemoteServiceCallInterceptor getRemoteServiceCallInterceptor() {
-		return new AuditAroundRemoteServiceCallInterceptor();
-	}
-
-	/**
 	 * Gets the security interceptor.
 	 *
 	 * @param username the username
@@ -610,5 +630,4 @@ public class BaseWsClientConfig {
 		}
 		return interceptor;
 	}
-
 }

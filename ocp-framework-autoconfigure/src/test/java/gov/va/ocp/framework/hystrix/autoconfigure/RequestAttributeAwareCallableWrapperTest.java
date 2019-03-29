@@ -54,7 +54,7 @@ public class RequestAttributeAwareCallableWrapperTest {
 	@Test
 	public void wrapCallableTest() {
 		RequestAttributeAwareCallableWrapper requestAttributeAwareCallableWrapper = new RequestAttributeAwareCallableWrapper();
-		Callable callable = new Callable<String>() {
+		Callable<String> callable = new Callable<String>() {
 
 			@Override
 			public String call() throws Exception {

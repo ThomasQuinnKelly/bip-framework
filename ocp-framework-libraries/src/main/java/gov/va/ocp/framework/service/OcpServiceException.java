@@ -9,9 +9,9 @@ import gov.va.ocp.framework.messages.MessageSeverity;
  * Root hierarchy of exceptions which indicates there was an
  * exception/error in the Service (domain) layers.
  *
- * @see gov.va.ocp.framework.exception.impl.OcpRuntimeException
+ * @see gov.va.ocp.framework.exception.OcpRuntimeException
  *
- * @author
+ * @author aburkholder
  */
 public class OcpServiceException extends OcpRuntimeException {
 	private static final long serialVersionUID = -6590361959617339905L;

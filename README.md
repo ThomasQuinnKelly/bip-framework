@@ -39,7 +39,7 @@ To make these libraries available locally for the service projects to compile an
 
 **OPTION 1**
 
-1. Clone the OCP framework repository `git clone https://github.com/department-of-veterans-affairs/bip-ocp-framework.git`
+1. Clone the OCP framework repository `git clone https://github.com/department-of-veterans-affairs/ocp-framework.git`
 1. Navigate to the folder `bip-ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
 
 **OPTION 2**
@@ -113,6 +113,6 @@ ocp-framework-parentpom/pom.xml
 	
 Run command to deploy and upload artifacts to the repository
 	
-	mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO 
+     mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO 
          -- OR --
-    mvn clean deploy -Plocal-deploy -DrepositoryName=ocp-framework -DrepositoryOwner=department-of-veterans-affairs
+     mvn clean deploy -Plocal-deploy -DrepositoryName=ocp-framework -DrepositoryOwner=department-of-veterans-affairs

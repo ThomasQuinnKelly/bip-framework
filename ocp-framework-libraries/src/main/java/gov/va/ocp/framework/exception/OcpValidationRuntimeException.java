@@ -33,7 +33,7 @@ public class OcpValidationRuntimeException extends OcpRuntimeException {
 	}
 
 	/**
-	 * Constructs a new <b>runtime</b> Exception indicating a {@link gov.va.ocp.framework.validationValidator}
+	 * Constructs a new <b>runtime</b> Exception indicating a {@link gov.va.ocp.framework.validation.Validator}
 	 * or defense error.
 	 *
 	 * @see OcpRuntimeException#OcpRuntimeException(String, String, MessageSeverity, HttpStatus, Throwable)

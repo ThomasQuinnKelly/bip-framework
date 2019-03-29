@@ -1,7 +1,11 @@
 package gov.va.ocp.framework.util;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import gov.va.ocp.framework.exception.OcpRuntimeException;
+import gov.va.ocp.framework.exception.OcpValidationRuntimeException;
 import gov.va.ocp.framework.validation.Defense;
 
 public class DefenseTest {
@@ -23,7 +28,26 @@ public class DefenseTest {
 	}
 
 	@Test
-	public void testIsInstanceOf() {
+	public void testPrivateConstructor() {
+		Constructor<Defense> constructor = null;
+		try {
+			constructor = Defense.class.getDeclaredConstructor(null);
+		} catch (NoSuchMethodException | SecurityException e1) {
+			fail("Should NOT have thrown exception");
+		}
+		constructor.setAccessible(true);
+		try {
+			constructor.newInstance(null);
+			fail("Should have thrown exception");
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			assertNotNull(e);
+			assertTrue(InvocationTargetException.class.isAssignableFrom(e.getClass()));
+			assertTrue(IllegalAccessError.class.isAssignableFrom(e.getCause().getClass()));
+		}
+	}
+
+	@Test
+	public void testIsInstanceOfHappyPath() {
 		try {
 			Defense defenseObj = Defense.class.newInstance();
 			Defense.isInstanceOf(Defense.class, defenseObj);
@@ -46,9 +70,19 @@ public class DefenseTest {
 		}
 	}
 
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testIsInstanceOfSadPath() {
+		Defense.isInstanceOf(null, "test string object");
+	}
+
 	@Test
 	public void testStateBoolean() {
 		Defense.state(true);
+	}
+
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testStateBooleanSadPath() {
+		Defense.state(false);
 	}
 
 	@Test
@@ -56,14 +90,29 @@ public class DefenseTest {
 		Defense.isNull(null);
 	}
 
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testIsNullObjectSadPath() {
+		Defense.isNull(new Object());
+	}
+
 	@Test
 	public void testIsNullObjectString() {
 		Defense.isNull(null, "Object should be null");
 	}
 
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testIsNullObjectStringSadPath() {
+		Defense.isNull(new Object(), "Object should be null");
+	}
+
 	@Test
 	public void testNotNullObject() {
 		Defense.notNull(this);
+	}
+
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testNotNullObjectSadPath() {
+		Defense.notNull(null);
 	}
 
 	@Test
@@ -85,6 +134,11 @@ public class DefenseTest {
 		Defense.hasText("Test Message");
 	}
 
+	@Test(expected = OcpValidationRuntimeException.class)
+	public void testHasTextStringForException() {
+		Defense.hasText(null);
+	}
+
 	@Test
 	public void testHasTextStringString() {
 		Defense.hasText("Test", "Missing Text");
@@ -94,7 +148,7 @@ public class DefenseTest {
 	public void testHasTextStringStringForException() {
 		try {
 			Defense.hasText("", "Text cannot be blank");
-		} catch (OcpRuntimeException e) {
+		} catch (OcpValidationRuntimeException e) {
 			assertTrue(e.getMessage().equals("Text cannot be blank"));
 		}
 
@@ -119,7 +173,7 @@ public class DefenseTest {
 		try {
 			List<String> dummyList = new ArrayList<String>();
 			Defense.notEmpty(dummyList, "Dummy List cannot be empty");
-		} catch (OcpRuntimeException e) {
+		} catch (OcpValidationRuntimeException e) {
 			assertTrue(e.getMessage().equals("Dummy List cannot be empty"));
 		}
 	}
@@ -150,7 +204,7 @@ public class DefenseTest {
 		try {
 			Defense.isTrue(false, "Boolean condition not met");
 
-		} catch (OcpRuntimeException e) {
+		} catch (OcpValidationRuntimeException e) {
 			assertTrue(e.getMessage().equals("Boolean condition not met"));
 		}
 	}

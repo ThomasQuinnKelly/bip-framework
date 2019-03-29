@@ -11,9 +11,9 @@ public class OcpPartnerExceptionTest {
 
 	@Test
 	public void initializeOcpPartnerExceptionTest() {
-		assertNotNull(new OcpPartnerRuntimeException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST));
+		assertNotNull(new OcpPartnerException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST));
 		assertNotNull(
-				new OcpPartnerRuntimeException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
+				new OcpPartnerException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
 						new Exception()));
 	}
 

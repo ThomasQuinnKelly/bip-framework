@@ -16,9 +16,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.AnnotationCacheOperationSource;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
+import org.springframework.cache.interceptor.CacheInterceptor;
+import org.springframework.cache.interceptor.CacheOperationSource;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +32,7 @@ import org.springframework.util.CollectionUtils;
 
 import gov.va.ocp.framework.cache.autoconfigure.OcpCacheProperties.RedisExpires;
 import gov.va.ocp.framework.cache.autoconfigure.server.OcpEmbeddedRedisServer;
+import gov.va.ocp.framework.cache.interceptor.OcpCacheInterceptor;
 import gov.va.ocp.framework.log.OcpBanner;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
@@ -100,8 +104,34 @@ public class OcpCacheAutoConfiguration extends CachingConfigurerSupport {
 	@Bean
 	// @Override
 	public CacheManager cacheManager(final RedisConnectionFactory redisConnectionFactory) {
-		return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(this.redisCacheConfiguration())
-				.withInitialCacheConfigurations(this.redisCacheConfigurations()).transactionAware().build();
+		return RedisCacheManager
+				.builder(redisConnectionFactory)
+				.cacheDefaults(this.redisCacheConfiguration())
+				.withInitialCacheConfigurations(this.redisCacheConfigurations())
+				.transactionAware()
+				.build();
+	}
+
+	/**
+	 * Interface to get cache operation attribute sources. Required by {@link #cacheInterceptor()}.
+	 * 
+	 * @return CacheOperationSource - the cache operation attribute source
+	 */
+	@Bean
+	public CacheOperationSource cacheOperationSource() {
+		return new AnnotationCacheOperationSource();
+	}
+
+	/**
+	 * Custom {@link OcpCacheInterceptor} to audit {@code cache.get(Object, Object)} operations.
+	 * 
+	 * @return CacheInterceptor - the interceptor
+	 */
+	@Bean
+	public CacheInterceptor cacheInterceptor() {
+		CacheInterceptor interceptor = new OcpCacheInterceptor();
+		interceptor.setCacheOperationSources(cacheOperationSource());
+		return interceptor;
 	}
 
 	/**

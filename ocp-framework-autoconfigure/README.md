@@ -11,7 +11,7 @@ OCP Framework Autoconfigure Project is a suite of POM files that provides applic
 	
     		@Bean
     		@ConditionalOnMissingBean
-    		public AuditLogSerializer requestResponseAsyncLogging() {
+    		public AuditLogSerializer auditLogSerializer() {
        		 return new AuditLogSerializer();
     		}
 	}
@@ -49,45 +49,38 @@ OCP Framework Autoconfigure Project is a suite of POM files that provides applic
 **gov.va.ocp.framework.rest.autoconfigure**: Auto-configuration for rest template. This autoconfiguration enables RestClientTemplate creation and customization. TokenClientHttpRequestInterceptor passes the JWT token from Request to Response objects being passed through this Interceptor. OcpRestGlobalExceptionHandler is configured to handle exceptions from server to client and modify them if needed. ProviderHttpAspect helps in Audit logging of the http request and response and this is more on the Provider than client side execution. RestProviderTimerAspect deals with logging the time taken for the service execution through PerformanceLoggingAspect.
 
 	@Configuration
-public class OcpRestAutoConfiguration {
+     public class OcpRestAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ProviderHttpAspect providerHttpAspect() {
 		return new ProviderHttpAspect();
 	}
-
 	@Bean
 	@ConditionalOnMissingBean
 	public OcpRestGlobalExceptionHandler ocpRestGlobalExceptionHandler() {
 		return new OcpRestGlobalExceptionHandler();
 	}
-
 	@Bean
 	@ConditionalOnMissingBean
 	public RestProviderTimerAspect restProviderTimerAspect() {
 		return new RestProviderTimerAspect();
 	}
-
 	@Bean
 	public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
 		…	
 	}
-
 	@Bean
 	@ConditionalOnMissingBean
 	public RestClientTemplate restClientTemplate() {
 		…
 	}
-
-
 	@Bean
 	@ConditionalOnMissingBean
 	public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor() {
 		return new TokenClientHttpRequestInterceptor();
 	}
-
-}
+    }
 
 **gov.va.ocp.framework.security.autoconfigure**: Auto-configuration for security framework using JWT token.
  
@@ -107,10 +100,10 @@ to be used to Authenticate, URL's to be processed etc.
 
 - TokenResource is used to expose and end point for Token Generation for Swagger page.
 
-	@Bean
-	@ConditionalOnMissingBean
-	@ConditionalOnExpression("${ocp.security.jwt.enabled:true} && ${ocp.security.jwt.generate.enabled:true}")
-	public TokenResource tokenResource() {
+		@Bean
+		@ConditionalOnMissingBean
+		@ConditionalOnExpression("${ocp.security.jwt.enabled:true} && ${ocp.security.jwt.generate.enabled:true}")
+		public TokenResource tokenResource() {
 
 **gov.va.ocp.framework.service.autoconfigure**: Auto-configuration for service configurations for beans, exceptions and aspect. 
 

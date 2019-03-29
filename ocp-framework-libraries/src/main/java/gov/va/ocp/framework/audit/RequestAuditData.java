@@ -34,7 +34,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the http headers.
 	 *
-	 * @return
+	 * @return the headers
 	 */
 	public Map<String, String> getHeaders() {
 		return headers;
@@ -52,7 +52,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the request uri.
 	 *
-	 * @return
+	 * @return the uri
 	 */
 	public String getUri() {
 		return uri;
@@ -70,7 +70,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the http method.
 	 *
-	 * @return
+	 * @return the method
 	 */
 	public String getMethod() {
 		return method;
@@ -88,7 +88,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the request.
 	 *
-	 * @return
+	 * @return the request
 	 */
 	public List<Object> getRequest() {
 		return request;
@@ -106,7 +106,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	/**
 	 * gets the attachmentTextList.
 	 *
-	 * @return
+	 * @return the attachment text list
 	 */
 	public List<String> getAttachmentTextList() {
 		return attachmentTextList;
@@ -123,6 +123,8 @@ public class RequestAuditData implements Serializable, AuditableData {
 
 	/**
 	 * Manually formatted JSON-like string of key/value pairs.
+	 *
+	 * @return the string
 	 */
 	@Override
 	public String toString() {

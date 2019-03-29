@@ -1,7 +1,7 @@
 /**
  *
  */
-package gov.va.ocp.framework.util;
+package gov.va.ocp.framework.cache;
 
 import java.util.UUID;
 
@@ -26,6 +26,13 @@ public final class OcpCacheUtil {
 	private OcpCacheUtil() {
 	}
 
+	/**
+	 * Returns false if the {@code domainResponse} is null, has errors or fatals,
+	 * or has its {@code doNotCacheResponse} switch set to {@code true}.
+	 * 
+	 * @param domainResponse
+	 * @return boolean
+	 */
 	public static boolean checkResultConditions(DomainResponse domainResponse) {
 		return domainResponse == null || domainResponse.hasErrors() || domainResponse.hasFatals()
 				|| domainResponse.isDoNotCacheResponse();

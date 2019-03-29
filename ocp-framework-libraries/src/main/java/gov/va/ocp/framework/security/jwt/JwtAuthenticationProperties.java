@@ -103,9 +103,9 @@ public class JwtAuthenticationProperties {
 	}
 
 	/**
-	 * A wildcard URL / path that filters which URls to process
+	 * A wildcard URL / path that filters which URls to process.
 	 *
-	 * @param filterProcessUrl
+	 * @param filterProcessUrls the new filter process urls
 	 */
 	public void setFilterProcessUrls(String[] filterProcessUrls) {
 		this.filterProcessUrls = filterProcessUrls;

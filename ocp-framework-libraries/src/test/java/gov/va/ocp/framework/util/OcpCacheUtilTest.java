@@ -10,9 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import gov.va.ocp.framework.cache.OcpCacheUtil;
 import gov.va.ocp.framework.security.PersonTraits;
 import gov.va.ocp.framework.service.DomainResponse;
-import gov.va.ocp.framework.util.OcpCacheUtil;
 
 public class OcpCacheUtilTest {
 

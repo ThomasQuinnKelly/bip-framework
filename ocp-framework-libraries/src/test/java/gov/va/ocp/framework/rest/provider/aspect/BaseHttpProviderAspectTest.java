@@ -1,6 +1,5 @@
 package gov.va.ocp.framework.rest.provider.aspect;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,10 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import gov.va.ocp.framework.audit.AuditEventData;
-import gov.va.ocp.framework.audit.AuditEvents;
-import gov.va.ocp.framework.rest.provider.aspect.BaseHttpProviderAspect;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseHttpProviderAspectTest {
@@ -82,46 +77,6 @@ public class BaseHttpProviderAspectTest {
 	@Test
 	public void testAuditRestController() {
 		BaseHttpProviderAspect.restController();
-	}
-
-	/**
-	 * Test of getDefaultAuditableInstance method, of class BaseHttpProviderAspect.
-	 */
-	@Test
-	public void testGetDefaultAuditableInstance() throws Exception {
-		Method method = myMethod();
-		AuditEvents expResult = AuditEvents.REQUEST_RESPONSE;
-		AuditEventData result = BaseHttpProviderAspect.getDefaultAuditableInstance(method);
-		assertEquals(expResult, result.getEvent());
-		assertEquals("someMethod", result.getActivity());
-		assertEquals("gov.va.ocp.framework.rest.provider.aspect.BaseHttpProviderAspectTest", result.getAuditClass());
-
-	}
-
-	/**
-	 * Test of getDefaultAuditableInstance method, of class BaseHttpProviderAspect.
-	 */
-	@Test
-	public void testGetDefaultAuditableInstanceMethodNotNull() throws Exception {
-		Method method = myMethod();
-		AuditEvents expResult = AuditEvents.REQUEST_RESPONSE;
-		AuditEventData result = BaseHttpProviderAspect.getDefaultAuditableInstance(method);
-		assertEquals(expResult, result.getEvent());
-		assertEquals(method.getName(), result.getActivity());
-		assertEquals(method.getDeclaringClass().getName(), result.getAuditClass());
-	}
-
-	/**
-	 * Test of getDefaultAuditableInstance method, of class BaseHttpProviderAspect.
-	 */
-	@Test
-	public void testGetDefaultAuditableInstanceMethodNull() throws Exception {
-		Method method = null;
-		AuditEvents expResult = AuditEvents.REQUEST_RESPONSE;
-		AuditEventData result = BaseHttpProviderAspect.getDefaultAuditableInstance(method);
-		assertEquals(expResult, result.getEvent());
-		assertEquals("Unknown", result.getActivity());
-		assertEquals("Unknown", result.getAuditClass());
 	}
 
 	@Test

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
-//import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -63,7 +62,7 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 		try {
 			Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
-			auditEventData = new AuditEventData(AuditEvents.REST_REQUEST, method.getName(), method.getDeclaringClass().getName());
+			auditEventData = new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName());
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Request: {}", requestArgs);
@@ -105,7 +104,7 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 
 			Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
-			auditEventData = new AuditEventData(AuditEvents.REST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
+			auditEventData = new AuditEventData(AuditEvents.API_REST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
 
 			writeResponseAudit(providerResponse, auditEventData, MessageSeverity.INFO, null);
 

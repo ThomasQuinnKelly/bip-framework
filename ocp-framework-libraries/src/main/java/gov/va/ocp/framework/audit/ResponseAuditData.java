@@ -25,7 +25,7 @@ public class ResponseAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the http headers.
 	 *
-	 * @return
+	 * @return the headers
 	 */
 	public Map<String, String> getHeaders() {
 		return headers;
@@ -43,7 +43,7 @@ public class ResponseAuditData implements Serializable, AuditableData {
 	/**
 	 * Gets the response.
 	 *
-	 * @return
+	 * @return the response
 	 */
 	public Object getResponse() {
 		return response;

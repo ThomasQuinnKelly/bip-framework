@@ -42,14 +42,13 @@ public class PerformanceLoggingAspect {
 
 	public static final Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("PerformanceLoggingAspect executing around method:" + joinPoint.toLongString());
-		}
+		LOGGER.debug("PerformanceLoggingAspect executing around method:" + joinPoint.toLongString());
 
 		Object returnObject = null;
 		Method method = null;
 		OcpLogger methodLog = null;
 		final long startTime = System.currentTimeMillis();
+
 		try {
 			method = ((MethodSignature) joinPoint.getStaticPart().getSignature()).getMethod();
 			methodLog = OcpLoggerFactory.getLogger(method.getDeclaringClass());
@@ -61,10 +60,7 @@ public class PerformanceLoggingAspect {
 			}
 
 			returnObject = joinPoint.proceed();
-		} catch (Throwable throwable) {
-			LOGGER.error("PerformanceLoggingAspect encountered uncaught exception: " + throwable.getClass().getSimpleName() + ": "
-					+ throwable.getMessage(), throwable);
-			throw throwable;
+
 		} finally {
 			LOGGER.debug("PerformanceLoggingAspect after method was called.");
 			final long elapsedTime = System.currentTimeMillis() - startTime;
@@ -76,10 +72,7 @@ public class PerformanceLoggingAspect {
 						+ elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND
 						+ DOT + elapsedTime % NUMBER_OF_MILLIS_N_A_SECOND + SECS + CLOSE_BRACKET);
 			}
-
 		}
 		return returnObject;
-
 	}
-
 }

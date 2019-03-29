@@ -46,7 +46,7 @@ public class RestClientTemplate {
 
 	/**
 	 * Simplified method to send a request using
-	 * {@link RestTemplate#exchange(java.net.URI, HttpMethod, org.springframework.http.HttpEntity, ParameterizedTypeReference)
+	 * {@link RestTemplate#exchange(java.net.URI, HttpMethod, org.springframework.http.HttpEntity, ParameterizedTypeReference)}
 	 *
 	 * @param <T> the generic type
 	 * @param url the URL
@@ -65,7 +65,6 @@ public class RestClientTemplate {
 	 *
 	 * @param <T> the generic type
 	 * @param url the url
-	 * @param methodType the method type
 	 * @param requestEntity the request entity
 	 * @param responseType the response type
 	 * @return the response entity

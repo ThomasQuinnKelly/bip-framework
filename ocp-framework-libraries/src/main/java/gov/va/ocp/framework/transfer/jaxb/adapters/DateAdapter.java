@@ -86,7 +86,6 @@ public final class DateAdapter {
 	/**
 	 * Gets the DateFormat.
 	 *
-	 * @param none
 	 * @return the date format object
 	 */
 	public static DateFormat getDateFormat() {

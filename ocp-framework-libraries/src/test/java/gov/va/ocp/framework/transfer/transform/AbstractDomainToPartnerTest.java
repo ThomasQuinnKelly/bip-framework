@@ -11,7 +11,7 @@ public class AbstractDomainToPartnerTest {
 
 	@Test
 	public void convertTest() {
-		AbstractDomainToPartner transformer = new AbstractDomainToPartner<DomainTransferObjectMarker, PartnerTransferObjectMarker>() {
+		AbstractDomainToPartner<DomainTransferObjectMarker, PartnerTransferObjectMarker> transformer = new AbstractDomainToPartner<DomainTransferObjectMarker, PartnerTransferObjectMarker>() {
 
 			@Override
 			public PartnerTransferObjectMarker convert(final DomainTransferObjectMarker domainObject) {

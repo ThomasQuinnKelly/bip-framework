@@ -69,6 +69,13 @@ public class ProviderResponseTest {
 	}
 
 	@Test
+	public void testGetMessagesWithNullArgument() {
+		testResponse.setMessages(null);
+		assertNotNull(testResponse.getMessages());
+		assertEquals(0, testResponse.getMessages().size());
+	}
+
+	@Test
 	public void testSetMessages() {
 		testResponse.setMessages(testMessages);
 		ProviderResponse serviceResponseForEqualsTest = new ProviderResponse();

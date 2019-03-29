@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,17 +34,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gov.va.ocp.framework.audit.AuditEventData;
-import gov.va.ocp.framework.audit.AuditEvents;
-import gov.va.ocp.framework.audit.RequestAuditData;
-import gov.va.ocp.framework.audit.AuditLogSerializer;
-import gov.va.ocp.framework.audit.ResponseAuditData;
 import gov.va.ocp.framework.log.OcpLogger;
 import gov.va.ocp.framework.log.OcpLoggerFactory;
 import gov.va.ocp.framework.messages.MessageSeverity;
 
 @RunWith(SpringRunner.class)
 public class AuditLogSerializerTest {
+
+	private static final String MESSAGE_STARTSWITH = "Error occurred on ClassCast or JSON processing, calling";
 
 	@SuppressWarnings("rawtypes")
 	@Mock
@@ -59,7 +56,7 @@ public class AuditLogSerializerTest {
 	@InjectMocks
 	private AuditLogSerializer auditLogSerializer = new AuditLogSerializer();
 
-	AuditEventData auditEventData = new AuditEventData(AuditEvents.REQUEST_RESPONSE, "MethodName", "ClassName");
+	AuditEventData auditEventData = new AuditEventData(AuditEvents.API_REST_REQUEST, "MethodName", "ClassName");
 
 	AuditEventData auditServiceEventData = new AuditEventData(AuditEvents.SERVICE_AUDIT, "MethodName", "ClassName");
 
@@ -102,7 +99,8 @@ public class AuditLogSerializerTest {
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 		final String expectedRequest = String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString(
 				"{\"headers\":{\"Header1\":\"Header1Value\"},\"uri\":\"/\",\"method\":\"GET\",\"request\":[\"Request\"],\"attachmentTextList\":[\"attachment1\",\"attachment2\"]}"));
-		final String expectedResponse = String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString("{\"response\":\"Response\"}"));
+		final String expectedResponse =
+				String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString("{\"response\":\"Response\"}"));
 		assertEquals(expectedRequest, loggingEvents.get(0).getMessage());
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.INFO));
 		assertEquals(expectedResponse, loggingEvents.get(1).getMessage());
@@ -117,9 +115,9 @@ public class AuditLogSerializerTest {
 				MessageSeverity.INFO, null);
 		verify(mockAppender, times(2)).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		assertTrue(loggingEvents.get(0).getMessage().startsWith("Error occurred on JSON processing, calling"));
+		assertTrue(loggingEvents.get(0).getMessage().startsWith(MESSAGE_STARTSWITH));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
-		assertTrue((loggingEvents.get(1).getMessage() != null)
+		assertTrue(loggingEvents.get(1).getMessage() != null
 				&& loggingEvents.get(1).getMessage().startsWith("RequestAuditData{headers="));
 		assertThat(loggingEvents.get(1).getLevel(), is(ch.qos.logback.classic.Level.INFO));
 
@@ -133,9 +131,9 @@ public class AuditLogSerializerTest {
 				MessageSeverity.ERROR, new Exception());
 		verify(mockAppender, times(2)).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		assertTrue(loggingEvents.get(0).getMessage().startsWith("Error occurred on JSON processing, calling"));
+		assertTrue(loggingEvents.get(0).getMessage().startsWith(MESSAGE_STARTSWITH));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
-		assertTrue((loggingEvents.get(1).getMessage() != null)
+		assertTrue(loggingEvents.get(1).getMessage() != null
 				&& loggingEvents.get(1).getMessage().startsWith("RequestAuditData{headers="));
 		assertThat(loggingEvents.get(1).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 	}
@@ -148,9 +146,9 @@ public class AuditLogSerializerTest {
 				MessageSeverity.FATAL, new Exception());
 		verify(mockAppender, times(2)).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		assertTrue(loggingEvents.get(0).getMessage().startsWith("Error occurred on JSON processing, calling"));
+		assertTrue(loggingEvents.get(0).getMessage().startsWith(MESSAGE_STARTSWITH));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
-		assertTrue((loggingEvents.get(1).getMessage() != null)
+		assertTrue(loggingEvents.get(1).getMessage() != null
 				&& loggingEvents.get(1).getMessage().startsWith("RequestAuditData{headers="));
 		assertThat(loggingEvents.get(1).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 	}

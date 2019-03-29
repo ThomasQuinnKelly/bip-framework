@@ -42,6 +42,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import gov.va.ocp.framework.exception.OcpPartnerException;
+import gov.va.ocp.framework.exception.OcpPartnerRuntimeException;
 import gov.va.ocp.framework.exception.OcpRuntimeException;
 import gov.va.ocp.framework.messages.MessageSeverity;
 import gov.va.ocp.framework.rest.exception.OcpRestGlobalExceptionHandler;
@@ -144,6 +146,22 @@ public class OcpRestGlobalExceptionHandlerTest {
 	}
 
 	@Test
+	public void handleConstraintViolationWithNullArgumentForExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		OcpRestGlobalExceptionHandlerTest.DummyObjectToBeValidated dummyObject =
+				new OcpRestGlobalExceptionHandlerTest.DummyObjectToBeValidated();
+		dummyObject.dummyField = "";
+
+		Set<? extends ConstraintViolation<?>> constaintViolations = validator.validate(dummyObject, Default.class);
+
+		new ConstraintViolationException("test message", constaintViolations);
+		ResponseEntity<Object> response = ocpRestGlobalExceptionHandler.handleConstraintViolation(req, null);
+		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+	}
+
+	@Test
 	public void handleHttpMessageNotReadableExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
@@ -224,6 +242,38 @@ public class OcpRestGlobalExceptionHandlerTest {
 
 		ResponseEntity<Object> response = ocpRestGlobalExceptionHandler.handleAll(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+	}
+
+	@Test
+	public void failSafeHandlerTest() {
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(ocpRestGlobalExceptionHandler, "failSafeHandler");
+		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+	}
+
+	@Test
+	public void standardHandlerWithNullExceptionTest() {
+		ResponseEntity<Object> response =
+				ReflectionTestUtils.invokeMethod(ocpRestGlobalExceptionHandler, "standardHandler", null, HttpStatus.BAD_REQUEST);
+		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+	}
+
+	@Test
+	public void handleOcpPartnerRuntimeExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+		OcpPartnerRuntimeException ex =
+				new OcpPartnerRuntimeException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response =
+				ReflectionTestUtils.invokeMethod(ocpRestGlobalExceptionHandler, "handleOcpPartnerRuntimeException", req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleOcpPartnerCheckedExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+		OcpPartnerException ex = new OcpPartnerException("test key", "test message", MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response =
+				ReflectionTestUtils.invokeMethod(ocpRestGlobalExceptionHandler, "handleOcpPartnerCheckedException", req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
 	static class DummyObjectToBeValidated {

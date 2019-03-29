@@ -1,8 +1,13 @@
 package gov.va.ocp.framework.security.jwt.correlation;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +31,23 @@ public class CorrelationIdsParserTest {
 	}
 
 	@Test
+	public final void testPrivateConstructor() throws NoSuchMethodException, SecurityException {
+		// devnote: arg to getDeclaredConstructor must be a simple null
+		Constructor<CorrelationIdsParser> constructor = CorrelationIdsParser.class.getDeclaredConstructor(null);
+		constructor.setAccessible(true);
+		try {
+			// devnote: arg to newInstance must be a simple null
+			constructor.newInstance(null);
+			fail("Should have thrown exception");
+		} catch (Throwable e) {
+			assertNotNull(e);
+			e.printStackTrace();
+			assertTrue(InvocationTargetException.class.isAssignableFrom(e.getClass()));
+			assertTrue(IllegalStateException.class.isAssignableFrom(e.getCause().getClass()));
+		}
+	}
+
+	@Test
 	public final void testParseCorrelationIds() {
 		// additional test to get full coverage on happy path
 		String[] correlationIds = { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
@@ -39,6 +61,29 @@ public class CorrelationIdsParserTest {
 		assertTrue(personTraits.getPid().equals("600071516"));
 		assertTrue(personTraits.getPnid().equals("796046489"));
 		assertTrue(personTraits.getPnidType().equals("SS"));
+	}
+
+	@Test
+	public final void testParseCorrelationIds_NoList() {
+		// additional test to get full coverage on happy path
+		PersonTraits personTraits = new PersonTraits();
+		CorrelationIdsParser.parseCorrelationIds(null, personTraits);
+
+		assertNull(personTraits.getDodedipnid());
+		assertNull(personTraits.getFileNumber());
+		assertNull(personTraits.getIcn());
+		assertNull(personTraits.getPid());
+		assertNull(personTraits.getPnid());
+		assertNull(personTraits.getPnidType());
+
+		CorrelationIdsParser.parseCorrelationIds(new ArrayList<String>(), personTraits);
+
+		assertNull(personTraits.getDodedipnid());
+		assertNull(personTraits.getFileNumber());
+		assertNull(personTraits.getIcn());
+		assertNull(personTraits.getPid());
+		assertNull(personTraits.getPnid());
+		assertNull(personTraits.getPnidType());
 	}
 
 	@Test

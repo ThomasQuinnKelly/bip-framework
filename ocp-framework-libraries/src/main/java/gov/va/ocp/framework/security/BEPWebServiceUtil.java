@@ -93,8 +93,7 @@ public final class BEPWebServiceUtil {
 	 * Gets the client machine value. BEP specification - User’s workstation IP
 	 * address.
 	 *
-	 * @param defaultVal
-	 *            the default val
+	 * @param defaultValue the default value
 	 * @return the client machine
 	 */
 	public static String getClientMachine(final String defaultValue) {

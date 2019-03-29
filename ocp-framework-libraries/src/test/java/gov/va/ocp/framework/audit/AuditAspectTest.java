@@ -14,8 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import gov.va.ocp.framework.audit.AuditEvents;
-import gov.va.ocp.framework.audit.Auditable;
 import gov.va.ocp.framework.messages.MessageSeverity;
 import gov.va.ocp.framework.service.DomainRequest;
 import gov.va.ocp.framework.service.DomainResponse;
@@ -44,7 +42,7 @@ public class AuditAspectTest {
 class TestAuditableService implements AuditableService {
 
 	@Override
-	@Auditable(event = AuditEvents.REQUEST_RESPONSE, activity = "testActivity")
+	@Auditable(event = AuditEvents.API_REST_REQUEST, activity = "testActivity")
 	public DomainResponse annotatedMethod(DomainRequest request) {
 		DomainResponse response = new DomainResponse();
 		response.addMessage(MessageSeverity.INFO, "key", "value", null);

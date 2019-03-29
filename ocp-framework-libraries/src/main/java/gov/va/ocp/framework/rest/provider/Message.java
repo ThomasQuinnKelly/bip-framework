@@ -54,7 +54,7 @@ public class Message implements Serializable {
 	 * <p>
 	 * Severity <b>must</b> be a case-sensitive match for a member of the {@link MessageSeverity} enum.
 	 * <br/>
-	 * Key <b>must</b> match a key from ???? properties, as declared in {@link ????} swagger constants class.
+	 * Key <b>must</b> match a key from [TBD] properties, as declared in {@link} swagger constants class.
 	 * <br/>
 	 * HttpStatus <b>must</b> match an int value contained in the {@link HttpStatus} enum.
 	 *

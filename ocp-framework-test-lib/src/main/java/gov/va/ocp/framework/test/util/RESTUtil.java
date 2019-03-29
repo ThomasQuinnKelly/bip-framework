@@ -100,7 +100,7 @@ public class RESTUtil {
 	 * @return
 	 */
 	public String getResponse(final String serviceURL) {
-		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).when().get(serviceURL),5);
+		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).when().get(serviceURL),2);
 		return response.asString();
 	}
 
@@ -112,7 +112,7 @@ public class RESTUtil {
 	 * @return
 	 */
 	public String deleteResponse(final String serviceURL) {
-		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).when().delete(serviceURL),5);
+		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).when().delete(serviceURL),2);
 		return response.asString();
 	}
 
@@ -124,7 +124,7 @@ public class RESTUtil {
 	 * @return
 	 */
 	public String postResponse(final String serviceURL) {
-		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).body(jsonText).when().post(serviceURL), 5);
+		doWithRetry(() -> given().config(getRestAssuredConfig()).log().all().headers(mapReqHeader).urlEncodingEnabled(false).body(jsonText).when().post(serviceURL), 2);
 		return response.asString();
 	}
 
@@ -228,7 +228,7 @@ public class RESTUtil {
 	 */
 	public String putResponse(final String serviceURL) {
 		doWithRetry(() -> given().log().all().headers(mapReqHeader).urlEncodingEnabled(false).body(jsonText).when()
-				.put(serviceURL), 5);
+				.put(serviceURL), 2);
 
 		return response.asString();
 	}
@@ -298,12 +298,6 @@ public class RESTUtil {
 			if (response.getStatusCode() == 404) {
 				LOGGER.error("Rest Assured API failed with 404 ");
 				failed = true;
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					LOGGER.info("While thread was waiting to retry REST call ... " + e.getMessage(), e);
-					Thread.currentThread().interrupt();
-				}
 			}
 			retries++;
 		} while (failed && retries < attempts);

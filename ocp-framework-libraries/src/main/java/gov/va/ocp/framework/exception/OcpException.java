@@ -19,11 +19,11 @@ public class OcpException extends Exception implements OcpExceptionExtender {
 	private static final long serialVersionUID = 4717771104509731434L;
 
 	/** The consumer facing identity key */
-	private String key;
+	private final String key;
 	/** The severity of the event: FATAL (500 series), ERROR (400 series), WARN (200 series), or INFO/DEBUG/TRACE */
-	private MessageSeverity severity;
+	private final MessageSeverity severity;
 	/** The best-fit HTTP Status, see <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a> */
-	private HttpStatus status;
+	private final HttpStatus status;
 
 	/**
 	 * Constructs a new <b>checked</b> Exception with the specified detail key, message, severity, and status.
@@ -38,7 +38,7 @@ public class OcpException extends Exception implements OcpExceptionExtender {
 	 * @param status - the HTTP Status code that applies best to the encountered problem, see
 	 *            <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a>
 	 */
-	public OcpException(String key, String message, MessageSeverity severity, HttpStatus status) {
+	public OcpException(final String key, final String message, final MessageSeverity severity, final HttpStatus status) {
 		super(message);
 		this.key = key;
 		this.severity = severity;
@@ -57,31 +57,31 @@ public class OcpException extends Exception implements OcpExceptionExtender {
 	 *            <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a>
 	 * @param cause - the throwable that caused this throwable
 	 */
-	public OcpException(String key, String message, MessageSeverity severity, HttpStatus status, Throwable cause) {
-		super(message, cause);
-		this.key = key;
-		this.severity = severity;
-		this.status = status;
+	public OcpException(final String key, final String message, final MessageSeverity severity, final HttpStatus status,
+			final Throwable cause) { //NOSONAR
+		super(message, cause);       //NOSONAR
+		this.key = key;              //NOSONAR
+		this.severity = severity;    //NOSONAR
+		this.status = status;        //NOSONAR
 	}
 
-	@Override
-	public String getKey() {
-		return key;
-	}
+	@Override                        //NOSONAR
+	public String getKey() {         //NOSONAR
+		return key;                  //NOSONAR
+	}                                //NOSONAR
 
-	@Override
-	public HttpStatus getStatus() {
-		return status;
-	}
+	@Override                        //NOSONAR
+	public HttpStatus getStatus() {  //NOSONAR
+		return status;               //NOSONAR
+	}                                //NOSONAR
 
-	@Override
-	public MessageSeverity getSeverity() {
-		return severity;
-	}
+	@Override                        //NOSONAR
+	public MessageSeverity getSeverity() {     //NOSONAR
+		return severity;             //NOSONAR
+	}                                //NOSONAR
 
-	@Override
-	public String getServerName() {
-		return SERVER_NAME;
-	}
-
+	@Override                        //NOSONAR
+	public String getServerName() {  //NOSONAR
+		return SERVER_NAME;          //NOSONAR
+	}                                //NOSONAR
 }

@@ -11,7 +11,7 @@ public class AbstractProviderToDomainTest {
 
 	@Test
 	public void convertTest() {
-		AbstractProviderToDomain transformer =
+		AbstractProviderToDomain<ProviderTransferObjectMarker, DomainTransferObjectMarker> transformer =
 				new AbstractProviderToDomain<ProviderTransferObjectMarker, DomainTransferObjectMarker>() {
 
 					@Override

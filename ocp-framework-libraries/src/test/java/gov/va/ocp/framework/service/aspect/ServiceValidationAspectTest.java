@@ -4,17 +4,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.List;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,6 +24,7 @@ import gov.va.ocp.framework.exception.OcpRuntimeException;
 import gov.va.ocp.framework.messages.ServiceMessage;
 import gov.va.ocp.framework.service.DomainResponse;
 import gov.va.ocp.framework.service.aspect.validators.TestRequestValidator;
+import gov.va.ocp.framework.validation.Validator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceValidationAspectTest {
@@ -33,7 +33,7 @@ public class ServiceValidationAspectTest {
 	private ProceedingJoinPoint proceedingJoinPoint;
 
 	@Mock
-	gov.va.ocp.framework.validation.Validator<DomainResponse> validator;
+	DomainResponseValidatorForTest validator;
 
 	@Mock
 	private MethodSignature signature;
@@ -85,6 +85,8 @@ public class ServiceValidationAspectTest {
 			cce.printStackTrace();
 			fail("Could not cast Object from aroundAdvice to DomainResponse: "
 					+ cce.getClass().getSimpleName() + " - " + cce.getMessage());
+		} catch (Throwable e) {
+			fail("Something went wrong");
 		}
 
 		assertNull(returned);
@@ -103,6 +105,8 @@ public class ServiceValidationAspectTest {
 			cce.printStackTrace();
 			fail("Could not cast Object from aroundAdvice to DomainResponse: "
 					+ cce.getClass().getSimpleName() + " - " + cce.getMessage());
+		} catch (Throwable e) {
+			fail("Something went wrong");
 		}
 
 		assertNull(returned);
@@ -127,6 +131,8 @@ public class ServiceValidationAspectTest {
 			cce.printStackTrace();
 			fail("Could not cast Object from aroundAdvice to DomainResponse: "
 					+ cce.getClass().getSimpleName() + " - " + cce.getMessage());
+		} catch (Throwable e) {
+			fail("Something went wrong");
 		}
 
 		assertNotNull(returned);
@@ -143,20 +149,6 @@ public class ServiceValidationAspectTest {
 	}
 
 	@Test
-	public final void testAroundAdviceWhenExceptionIsThrown() {
-		Object[] args = new Object[1];
-		args[0] = new TestRequest();
-
-		try {
-			aspect.aroundAdvice(proceedingJoinPoint);
-			fail("Should throw an exception");
-		} catch (Exception e) {
-			assertTrue(e instanceof OcpRuntimeException);
-		}
-
-	}
-
-	@Test
 	public final void testValidateResponse() {
 		try {
 			ReflectionTestUtils.invokeMethod(aspect, "validateResponse", new DomainResponse(),
@@ -169,14 +161,26 @@ public class ServiceValidationAspectTest {
 			e.printStackTrace();
 			fail("unable to invoke method named testMethod");
 		} catch (OcpRuntimeException e) {
-			assertTrue(e.getMessage().startsWith("No validator available for object of type "));
+			assertTrue(e.getMessage().startsWith("Could not find or instantiate class "));
 		}
 	}
 
-	@Ignore // TODO
 	@Test
-	public final void testInvokeValidate() {
-		DomainResponse domainResponse = new DomainResponse();
+	public final void testInvokeValidator() {
+		try {
+			ReflectionTestUtils.invokeMethod(aspect, "invokeValidator", new DomainResponse(), new LinkedList<ServiceMessage>(),
+					this.getClass().getMethod("testMethod", String.class), DomainResponseValidatorForTest.class);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			fail("unable to find method named testMethod");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			fail("unable to invoke method named testMethod");
+		}
+	}
+
+	@Test(expected = OcpRuntimeException.class)
+	public final void testValidateRequest() {
 		LinkedList<ServiceMessage> messages = new LinkedList<ServiceMessage>();
 		Method testMethod = null;
 		try {
@@ -186,22 +190,51 @@ public class ServiceValidationAspectTest {
 			fail("unable to find method named testMethod");
 		} catch (SecurityException e) {
 			e.printStackTrace();
-			fail("unable to invoke method named testMethod");
+			fail("unable to find method named testMethod");
 		}
-		Object[] objectsParamArray = new Object[] {};
-		try {
-			ReflectionTestUtils.invokeMethod(aspect, "invokeValidate", validator, domainResponse, messages, testMethod,
-					objectsParamArray);
-
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			fail("unable to invoke method named invokeValidate");
-		}
-		verify(validator, times(1)).initValidate(domainResponse, messages, objectsParamArray);
+		ReflectionTestUtils.invokeMethod(aspect, "validateRequest", new DomainResponse(), messages, testMethod);
 	}
 
 	public void testMethod(final String testParam) {
 		// do nothing
+	}
+
+	public static class DomainResponseValidatorForTest implements Validator<DomainResponse> {
+
+		public DomainResponseValidatorForTest() {
+
+		}
+
+		@Override
+		public void initValidate(final Object toValidate, final List<ServiceMessage> messages, final Object... supplemental) {
+			// do nothing
+
+		}
+
+		@Override
+		public void validate(final DomainResponse toValidate, final List<ServiceMessage> messages) {
+			// do nothing
+
+		}
+
+		@Override
+		public Class<DomainResponse> getValidatedType() {
+			// do nothing
+			return null;
+		}
+
+		@Override
+		public void setCallingMethod(final Method callingMethod) {
+			// do nothing
+
+		}
+
+		@Override
+		public Method getCallingMethod() {
+			// do nothing
+			return null;
+		}
+
 	}
 
 }

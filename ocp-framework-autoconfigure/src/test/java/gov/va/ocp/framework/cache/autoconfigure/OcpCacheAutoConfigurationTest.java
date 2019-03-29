@@ -20,7 +20,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import gov.va.ocp.framework.cache.autoconfigure.OcpCacheAutoConfiguration;
+import gov.va.ocp.framework.audit.autoconfigure.OcpAuditAutoConfiguration;
 
 /**
  * Created by vgadda on 8/11/17.
@@ -31,13 +31,13 @@ public class OcpCacheAutoConfigurationTest {
 	private static final String SPRING_CACHE_TYPE_PROPERTY_AND_VALUE = "spring.cache.type=redis";
 
 	private AnnotationConfigApplicationContext context;
-	
+
 	@Mock
 	CacheManager cacheManager;
 
 	@Mock
 	Cache mockCache;
-	
+
 	@After
 	public void close() {
 		if (this.context != null) {
@@ -49,13 +49,13 @@ public class OcpCacheAutoConfigurationTest {
 	public void testReferenceCacheConfiguration() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 		CacheManager cacheManager = context.getBean(CacheManager.class);
 		assertNotNull(cacheManager);
 	}
-	
+
 	@Test
 	public void testReferenceCacheConfigurations() throws Exception {
 		context = new AnnotationConfigApplicationContext();
@@ -72,9 +72,10 @@ public class OcpCacheAutoConfigurationTest {
 		ocpCacheProperties.setExpires(expiresList);
 		context.register(OcpCacheAutoConfiguration.class);
 		OcpCacheAutoConfiguration ocpCacheAutoConfiguration = context.getBean(OcpCacheAutoConfiguration.class);
-		
-		Map<String, org.springframework.data.redis.cache.RedisCacheConfiguration> cacheConfigs = ocpCacheAutoConfiguration.redisCacheConfigurations();
-		
+
+		Map<String, org.springframework.data.redis.cache.RedisCacheConfiguration> cacheConfigs =
+				ocpCacheAutoConfiguration.redisCacheConfigurations();
+
 		assertNotNull(cacheConfigs);
 		assertEquals(cacheConfigs.get("testName").getTtl().getSeconds(), 1500L);
 	}
@@ -83,7 +84,7 @@ public class OcpCacheAutoConfigurationTest {
 	public void testReferenceCacheConfigurationKeyGenerator() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 		KeyGenerator keyGenerator = context.getBean(KeyGenerator.class);
@@ -95,7 +96,7 @@ public class OcpCacheAutoConfigurationTest {
 	public void testCacheGetError() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 
@@ -107,7 +108,7 @@ public class OcpCacheAutoConfigurationTest {
 	public void testCachePutError() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 
@@ -120,7 +121,7 @@ public class OcpCacheAutoConfigurationTest {
 	public void testCacheEvictError() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 
@@ -132,7 +133,7 @@ public class OcpCacheAutoConfigurationTest {
 	public void testCacheClearError() throws Exception {
 		context = new AnnotationConfigApplicationContext();
 		TestPropertyValues.of(SPRING_CACHE_TYPE_PROPERTY_AND_VALUE).applyTo(context);
-		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class);
+		context.register(RedisAutoConfiguration.class, OcpCacheAutoConfiguration.class, OcpAuditAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
 

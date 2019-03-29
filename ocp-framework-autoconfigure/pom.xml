@@ -10,7 +10,6 @@
 	</parent>
 
 	<artifactId>ocp-framework-autoconfigure</artifactId>
-	
 	<name>${project.artifactId}</name>
 	<description>AutoConfiguration for OpenShift Container Platform (OCP) Application Framework - Spring Boot and Cloud Enabled</description>
 	

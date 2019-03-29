@@ -42,10 +42,6 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	/** Supplemental objects for processing the validation */
 	private Object[] supplemental;
 
-	public AbstractStandardValidator() {
-		// TODO Auto-generated constructor stub
-	}
-
 	/**
 	 * As a convenience to the developer, performs standardized pre-validation steps before calling the implementations
 	 * {@link #validate(Object, List)} method.<br/>
@@ -67,7 +63,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void initValidate(Object toValidate, List<ServiceMessage> messages, Object... supplemental) {
+	public void initValidate(final Object toValidate, List<ServiceMessage> messages, final Object... supplemental) {
 		try {
 			this.supplemental = supplemental;
 
@@ -90,13 +86,10 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 				return;
 			}
 
-			this.toValidateClass = (Class<T>) toValidate.getClass();
-			// check class is correct
-			if (!getValidatedType().isAssignableFrom(this.toValidateClass)) {
-				String msg = callingMethodName + "Validated object '" + toValidate.getClass().getName()
-						+ "' is not of type '" + getValidatedType().getName() + "'";
-				LOGGER.debug(msg);
-				messages.add(new ServiceMessage(MessageSeverity.ERROR, "", msg, HttpStatus.BAD_REQUEST));
+			setToValidateClass(toValidate);
+			// check class is correct (if correct it will not be null)
+			if (this.toValidateClass == null) { // NOSONAR : will always be false
+				handleInvalidClass(toValidate, messages);
 				return;
 			}
 
@@ -105,12 +98,38 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 
 		} catch (Throwable t) { // NOSONAR intentionally broad catch
 			final OcpRuntimeException runtime = ExceptionHandlingUtils.resolveRuntimeException(t);
+
 			if (runtime != null) {
 				throw runtime;
-			} else { 
+			} else {
 				throw t;
 			}
 		}
+	}
+
+	/**
+	 * Get the class of the object to be validated.
+	 * <p>
+	 * If the toValidate object is not an instantiation of the class param {@code T}
+	 * (directly or as subclass), a message is logged and {@code null} is returned.
+	 *
+	 * @param toValidate - the object to be validated
+	 */
+	@SuppressWarnings("unchecked")
+	private void setToValidateClass(final Object toValidate) {
+		this.toValidateClass = null;
+		try {
+			this.toValidateClass = (Class<T>) toValidate.getClass();
+		} catch (Exception e) {
+			LOGGER.debug("Unable to set the type to be validated", e);
+		}
+	}
+
+	private void handleInvalidClass(final Object toValidate, final List<ServiceMessage> messages) {
+		String msg = callingMethodName + " Validated object '" + toValidate.getClass().getName()
+				+ "' is not of type '" + getValidatedType().getName() + "'";
+		LOGGER.debug(msg);
+		messages.add(new ServiceMessage(MessageSeverity.ERROR, "", msg, HttpStatus.BAD_REQUEST));
 	}
 
 	/**
@@ -136,16 +155,31 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	@Override
 	public abstract void validate(T toValidate, List<ServiceMessage> messages);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.va.ocp.framework.validation.Validator#getValidatedType()
+	 */
 	@Override
 	public Class<T> getValidatedType() {
 		return toValidateClass;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.va.ocp.framework.validation.Validator#setCallingMethod(java.lang.reflect.Method)
+	 */
 	@Override
 	public void setCallingMethod(Method callingMethod) {
 		this.callingMethod = callingMethod;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.va.ocp.framework.validation.Validator#getCallingMethod()
+	 */
 	@Override
 	public Method getCallingMethod() {
 		return this.callingMethod;
@@ -160,10 +194,24 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 		return callingMethodName;
 	}
 
+	/**
+	 * Returns {@code true} if any supplemental objects have been added to the validator.
+	 *
+	 * @return boolean - true if the supplmental list has anything in it
+	 */
 	protected boolean hasSupplemental() {
 		return this.supplemental != null && this.supplemental.length > 0;
 	}
 
+	/**
+	 * Returns {@code true} if any supplemental objects of type {@code clazz}
+	 * have been added to the validator.
+	 * <p>
+	 * Note that {@code clazz} must be the exact type. Subclasses will not be identified.
+	 *
+	 * @param clazz - the exact type to look for
+	 * @return boolean - {@code true} if an object of type {@code clazz} was found
+	 */
 	protected boolean hasSupplemental(Class<?> clazz) {
 		if (clazz != null && hasSupplemental()) {
 			for (Object obj : supplemental) {
@@ -175,10 +223,27 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 		return false;
 	}
 
+	/**
+	 * Get all supplemental objects, for use in the {@link #validate(Object, List)}
+	 * method.
+	 *
+	 * @return Object[] - the array of supplemental objects
+	 */
 	protected Object[] getSupplemental() {
 		return this.supplemental;
 	}
 
+	/**
+	 * Get any supplemental objects of type {@code clazz}, for use in the
+	 * {@link #validate(Object, List)} method.
+	 * <p>
+	 * The first found object of type {@code clazz} is returned.
+	 * If multiple objects of the same type exist, try getting the list with
+	 * {@link #getSupplemental()}.
+	 *
+	 * @param clazz - the type of object to get
+	 * @return Object - the supplemental object
+	 */
 	protected Object getSupplemental(Class<?> clazz) {
 		if (hasSupplemental(clazz)) {
 			for (Object obj : supplemental) {
