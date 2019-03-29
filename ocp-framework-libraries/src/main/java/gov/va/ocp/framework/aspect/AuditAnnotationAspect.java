@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -46,13 +47,15 @@ public class AuditAnnotationAspect extends BaseHttpProviderAspect {
 			}
 
 			final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-			LOGGER.debug("Method: {}", method);
+			LOGGER.debug("Audit Annotated Method: {}", method);
+			final String className = method.getDeclaringClass().getName();
+			LOGGER.debug("Audit Annotated Class: {}", className);
 			auditableAnnotation = method.getAnnotation(Auditable.class);
 			LOGGER.debug("Auditable Annotation: {}", auditableAnnotation);
 			if (auditableAnnotation != null) {
 				auditEventData =
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
-								auditableAnnotation.auditClass());
+								StringUtils.isBlank(auditableAnnotation.auditClass())? className: auditableAnnotation.auditClass());
 				LOGGER.debug("AuditEventData: {}", auditEventData.toString());
 
 				writeRequestInfoAudit(request, auditEventData);

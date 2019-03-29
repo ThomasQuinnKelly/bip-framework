@@ -15,7 +15,7 @@ import gov.va.ocp.framework.transfer.PartnerTransferObjectMarker;
  * @author aburkholder
  */
 public abstract class AbstractDomainToPartner<D extends DomainTransferObjectMarker, P extends PartnerTransferObjectMarker>
-		extends AbstractBaseTransformer<D, P> {
+implements BaseTransformer<D, P> {
 
 	/**
 	 * The contract for transforming a {@link DomainTransferObjectMarker} object from the service layer (the source)

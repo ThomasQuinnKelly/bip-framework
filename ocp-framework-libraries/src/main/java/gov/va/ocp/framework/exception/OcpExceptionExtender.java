@@ -38,9 +38,6 @@ import gov.va.ocp.framework.messages.MessageSeverity;
  */
 public interface OcpExceptionExtender {
 
-	/** Server name the exception occurred on, as stored in System propery "server.name" */
-	public static final String SERVER_NAME = System.getProperty("server.name");
-
 	/**
 	 * The consumer-facing key that can uniquely identify the nature of the exception
 	 *

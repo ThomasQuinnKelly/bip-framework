@@ -331,7 +331,7 @@ public class OcpRestGlobalExceptionHandler {
 						HttpStatus.BAD_REQUEST);
 			}
 		}
-		return new ResponseEntity<Object>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
 
 	/**

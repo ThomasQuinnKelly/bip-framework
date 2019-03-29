@@ -61,7 +61,7 @@ public enum AuditWsInterceptorConfig {
 	 *
 	 * @author aburkholder
 	 */
-	abstract class AuditWsMetadata {
+	abstract class AuditWsMetadata { // NOSONAR The methods need to be private, hence an interface cannot be used
 		/** Get a new AuditEventData instance for the data object being audited */
 		abstract AuditEventData eventData();
 

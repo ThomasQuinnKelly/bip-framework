@@ -86,21 +86,10 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 			}
 
 			// attempt to validate all inputs to the method
-			if (methodParams != null) {
-				List<ServiceMessage> messages = new ArrayList<>();
-
-				for (final Object arg : methodParams) {
-					validateRequest(arg, messages, method);
-				}
-				// add any validation error messages
-				if (!messages.isEmpty()) {
-					domainResponse = new DomainResponse();
-					domainResponse.addMessages(messages);
-				}
-			}
+			domainResponse = validateInputsToTheMethod(methodParams, method);
 
 			// if there were no errors, proceed with the actual method
-			if ((domainResponse == null) || (domainResponse.getMessages() == null) || domainResponse.getMessages().isEmpty()) {
+			if (isDomainResponseValid(domainResponse)) {
 
 				domainResponse = (DomainResponse) joinPoint.proceed();
 
@@ -115,6 +104,27 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 		return domainResponse;
 
+	}
+
+	private boolean isDomainResponseValid(final DomainResponse domainResponse) {
+		return (domainResponse == null) || (domainResponse.getMessages() == null) || domainResponse.getMessages().isEmpty();
+	}
+
+	private DomainResponse validateInputsToTheMethod(final List<Object> methodParams, final Method method) {
+		DomainResponse domainResponse = null;
+		if (methodParams != null) {
+			List<ServiceMessage> messages = new ArrayList<>();
+
+			for (final Object arg : methodParams) {
+				validateRequest(arg, messages, method);
+			}
+			// add any validation error messages
+			if (!messages.isEmpty()) {
+				domainResponse = new DomainResponse();
+				domainResponse.addMessages(messages);
+			}
+		}
+		return domainResponse;
 	}
 
 	/**
@@ -176,15 +186,6 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 		validator.setCallingMethod(callingMethod);
 		validator.initValidate(object, messages);
 	}
-
-	// private void handleExceptions(final Class<?> validatorClass, final Exception e, final Object object) {
-	// // Validator programming issue - throw exception
-	// String msg = "Could not find or instantiate class '" + (validatorClass != null ? validatorClass.getName()
-	// : "to validate given object of type " + object.getClass().getName()
-	// + "'. Ensure that it has a no-arg constructor, and implements " + Validator.class.getName());
-	// LOGGER.error(msg, e);
-	// throw new OcpRuntimeException("", msg, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e);
-	// }
 
 	/**
 	 * Locate the {@link Validator} for the object, and if it exists,

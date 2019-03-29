@@ -15,7 +15,7 @@ import gov.va.ocp.framework.transfer.ProviderTransferObjectMarker;
  * @author aburkholder
  */
 public abstract class AbstractProviderToDomain<P extends ProviderTransferObjectMarker, D extends DomainTransferObjectMarker>
-		extends AbstractBaseTransformer<P, D> {
+		implements BaseTransformer<P, D> {
 
 	/**
 	 * The contract for transforming a {@link ProviderTransferObjectMarker} provider object from the provider layer (the source)

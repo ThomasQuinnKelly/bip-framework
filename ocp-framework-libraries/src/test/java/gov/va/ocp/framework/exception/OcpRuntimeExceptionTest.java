@@ -26,7 +26,7 @@ public class OcpRuntimeExceptionTest {
 	public void getMessageTestServerNameNull() throws Exception {
 		// setup
 		// do crazy reflection to make server name null
-		Field field = OcpExceptionExtender.class.getDeclaredField("SERVER_NAME");
+		Field field = OcpExceptionConstants.class.getDeclaredField("SERVER_NAME");
 		Field modifiersField = Field.class.getDeclaredField("modifiers");
 		modifiersField.isAccessible();
 		modifiersField.setAccessible(true);
