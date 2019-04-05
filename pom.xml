@@ -2,18 +2,18 @@
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-    <artifactId>ocp-framework-reactor</artifactId>
+    <artifactId>bip-framework-reactor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-	<groupId>gov.va.ocp.framework</groupId>
+	<groupId>gov.va.bip.framework</groupId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
-    <description>Reactor POM for OpenShift Container Platform (OCP) Application Framework - Spring Boot and Cloud Enabled</description>
+    <description>Reactor POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
     <modules>
-		<module>ocp-framework-parentpom</module>
-		<module>ocp-framework-libraries</module>
-		<module>ocp-framework-test-lib</module>
-		<module>ocp-framework-autoconfigure</module>
+		<module>bip-framework-parentpom</module>
+		<module>bip-framework-libraries</module>
+		<module>bip-framework-test-lib</module>
+		<module>bip-framework-autoconfigure</module>
    </modules>
    
    <!-- TEMPORARY PLUGINS SKIP TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->

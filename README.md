@@ -4,34 +4,34 @@ To run spring boot and spring cloud enabled services on the BIP Platform, it mus
 
 ## Project Breakdown
 
-1. ocp-framework-autoconfigure: Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc
+1. bip-framework-autoconfigure: Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc
 
-1. ocp-framework-libraries: Shared libraries for the services to provide common framework and security interfaces. 
+1. bip-framework-libraries: Shared libraries for the services to provide common framework and security interfaces. 
 
-1. ocp-framework-parentpom: Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
+1. bip-framework-parentpom: Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
 
-1. ocp-framework-test-lib: Test library framework to support functional testing for the services
+1. bip-framework-test-lib: Test library framework to support functional testing for the services
 
 ## How to include and download these dependency libraries in your project
 
      <dependency>
-         <groupId>gov.va.ocp.framework</groupId>
-         <artifactId>ocp-framework-autoconfigure</artifactId>
+         <groupId>gov.va.bip.framework</groupId>
+         <artifactId>bip-framework-autoconfigure</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
        <dependency>
-         <groupId>gov.va.ocp.framework</groupId>
-         <artifactId>ocp-framework-libraries</artifactId>
+         <groupId>gov.va.bip.framework</groupId>
+         <artifactId>bip-framework-libraries</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
        <dependency>
-         <groupId>gov.va.ocp.framework</groupId>
-         <artifactId>ocp-framework-parentpom</artifactId>
+         <groupId>gov.va.bip.framework</groupId>
+         <artifactId>bip-framework-parentpom</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
        <dependency>
-         <groupId>gov.va.ocp.framework</groupId>
-         <artifactId>ocp-framework-test-lib</artifactId>
+         <groupId>gov.va.bip.framework</groupId>
+         <artifactId>bip-framework-test-lib</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
 
@@ -39,8 +39,8 @@ To make these libraries available locally for the service projects to compile an
 
 **OPTION 1**
 
-1. Clone the OCP framework repository `git clone https://github.com/department-of-veterans-affairs/ocp-framework.git`
-1. Navigate to the folder `bip-ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
+1. Clone the BIP framework repository `git clone https://github.com/department-of-veterans-affairs/bip-framework.git`
+1. Navigate to the folder `bip-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
 
 **OPTION 2**
 
@@ -63,7 +63,7 @@ Add the below section in the reactor (root) pom.xml of your service project. See
 		<repository>
 			<id>github</id>
 			<name>GitHub Repository</name>
-			<url>https://raw.github.com/department-of-veterans-affairs/ocp-framework/mvn-repo</url>
+			<url>https://raw.github.com/department-of-veterans-affairs/bip-framework/mvn-repo</url>
 		</repository>
 	</repositories>
 	
@@ -107,7 +107,7 @@ source : http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-
 	
 	Same format as mentioned in the previous section 
 
-ocp-framework-parentpom/pom.xml
+bip-framework-parentpom/pom.xml
       
        See the section under "local-deploy" profile
 	
@@ -115,4 +115,4 @@ Run command to deploy and upload artifacts to the repository
 	
      mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO 
          -- OR --
-     mvn clean deploy -Plocal-deploy -DrepositoryName=ocp-framework -DrepositoryOwner=department-of-veterans-affairs
+     mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs
