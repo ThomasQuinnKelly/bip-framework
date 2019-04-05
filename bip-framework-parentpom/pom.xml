@@ -774,7 +774,7 @@
 				<skipTests>false</skipTests>
 				<skipITs>true</skipITs>
 				<skipPerfTests>true</skipPerfTests>
-				<repositoryName>bip-framework</repositoryName>
+				<repositoryName>ocp-framework</repositoryName>
 				<repositoryOwner>department-of-veterans-affairs</repositoryOwner>
 			</properties>
 			<build>
