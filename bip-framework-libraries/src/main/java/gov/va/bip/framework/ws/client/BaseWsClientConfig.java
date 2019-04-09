@@ -490,7 +490,7 @@ public class BaseWsClientConfig {
 
 	private void handleExceptions(final Exception e) {
 		MessageKeys key = MessageKeys.BIP_SECURITY_SSL_CONTEXT_FAIL;
-		Object[] params = new Object[] { e.getClass().getSimpleName(), e.getMessage() };
+		String[] params = new String[] { e.getClass().getSimpleName(), e.getMessage() };
 		LOGGER.error(key.getMessage(params), e);
 		throw new BipPartnerRuntimeException(key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e, params);
 	}

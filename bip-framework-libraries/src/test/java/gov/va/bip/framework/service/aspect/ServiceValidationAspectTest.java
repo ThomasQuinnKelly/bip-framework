@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.bip.framework.exception.BipRuntimeException;
@@ -136,14 +135,6 @@ public class ServiceValidationAspectTest {
 
 		when(proceedingJoinPoint.getArgs()).thenReturn(args);
 		when(proceedingJoinPoint.toLongString()).thenReturn("ProceedingJoinPointLongString");
-		DomainResponse response = new DomainResponse();
-		try {
-			response.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY, new Object[] {});
-			when(proceedingJoinPoint.proceed()).thenReturn(response);
-		} catch (Throwable e1) {
-			e1.printStackTrace();
-			fail("exception not expected");
-		}
 		when(proceedingJoinPoint.getSignature()).thenReturn(signature);
 		when(signature.getName()).thenReturn("testMethodSad");
 		when(signature.getDeclaringType()).thenReturn(this.getClass());

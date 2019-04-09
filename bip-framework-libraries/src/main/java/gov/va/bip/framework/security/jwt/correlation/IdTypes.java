@@ -54,7 +54,7 @@ public enum IdTypes {
 			}
 		}
 		MessageKeys key = MessageKeys.BIP_SECURITY_TRAITS_IDTYPE_INVALID;
-		Object[] params = new Object[] { stringValue };
+		String[] params = new String[] { stringValue };
 		LOGGER.error(key.getMessage(params));
 		throw new BipRuntimeException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, params);
 	}

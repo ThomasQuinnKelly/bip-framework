@@ -132,13 +132,13 @@ public enum MessageKeys implements MessageKey {
 	;
 
 	/** The filename "name" part of the properties file to get from the classpath */
-	private static final String propertiesFile = "framework-messages";
+	private static final String PROPERTIES_FILE = "framework-messages";
 	/** The spring message source */
 	private static ReloadableResourceBundleMessageSource messageSource;
 	/* Populate the message source from the properties file */
 	static {
 		messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasename("classpath:" + propertiesFile);
+		messageSource.setBasename("classpath:" + PROPERTIES_FILE);
 		messageSource.setDefaultEncoding("UTF-8");
 	}
 
@@ -171,10 +171,10 @@ public enum MessageKeys implements MessageKey {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see gov.va.bip.framework.messages.MessageKey#getMessage(java.lang.Object[])
+	 * @see gov.va.bip.framework.messages.MessageKey#getMessage(java.lang.String[])
 	 */
 	@Override
-	public String getMessage(Object... params) {
+	public String getMessage(final String... params) {
 		return messageSource.getMessage(this.key, params, this.defaultMessage, Locale.getDefault());
 	}
 }

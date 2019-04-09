@@ -47,7 +47,7 @@ public class BipCacheInterceptor extends CacheInterceptor {
 	private static final String ACTIVITY = "cacheInvoke";
 
 	@Autowired
-	MessageSource messageSource;
+	transient MessageSource messageSource;
 
 	/** The {@link AuditLogSerializer} for async logging */
 	@Autowired

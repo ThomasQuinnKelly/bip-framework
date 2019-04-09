@@ -57,7 +57,7 @@ public final class ExceptionHandlingUtils {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static BipRuntimeException resolveRuntimeException(MessageKey messageKey, final Throwable throwable) {
+	public static BipRuntimeException resolveRuntimeException(final MessageKey messageKey, final Throwable throwable) {
 		// custom exception type to represent the error
 		BipRuntimeException resolvedRuntimeException = null;
 
@@ -82,11 +82,11 @@ public final class ExceptionHandlingUtils {
 		try {
 			// cast "Throwable throwable" variable to the BIP exception interface
 			BipExceptionExtender bip = (BipExceptionExtender) throwable;
-			Object[] objectArray = new Object[] {};
+			String [] stringArray = new String [] {};
 			// instantiate the Runtime version of the interface
 			resolvedRuntimeException = (BipRuntimeException) throwable.getClass()
-					.getConstructor(MessageKey.class, MessageSeverity.class, HttpStatus.class, Throwable.class, objectArray.getClass())
-					.newInstance(bip.getMessageKey(), bip.getSeverity(), bip.getStatus(), throwable, objectArray);
+					.getConstructor(MessageKey.class, MessageSeverity.class, HttpStatus.class, Throwable.class, stringArray.getClass())
+					.newInstance(bip.getMessageKey(), bip.getSeverity(), bip.getStatus(), throwable, stringArray);
 		} catch (ClassCastException | IllegalAccessException | IllegalArgumentException | InstantiationException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			MessageKeys key = MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES;

@@ -15,12 +15,12 @@ public class JwtAuthenticationException extends AuthenticationException implemen
 	private static final long serialVersionUID = 7005295148966720986L;
 
 	/** Class logger */
-	private static final String serverName = System.getProperty("server.name");
+	private static final String SERVER_NAME = System.getProperty("server.name");
 
 	/** The consumer facing identity key */
 	private final MessageKey key;
 	/** Any values needed to fill in params (e.g. value for {0}) in the MessageKey message */
-	private final Object[] params;
+	private final String[] params;
 	/** The severity of the event: FATAL (500 series), ERROR (400 series), WARN (200 series), or INFO/DEBUG/TRACE */
 	private final MessageSeverity severity;
 	/** The best-fit HTTP Status, see <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a> */
@@ -40,7 +40,7 @@ public class JwtAuthenticationException extends AuthenticationException implemen
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
 	public JwtAuthenticationException(final MessageKey key, final MessageSeverity severity, final HttpStatus status,
-			Object... params) {
+			final String... params) {
 		this(key, severity, status, null, params);
 	}
 
@@ -57,7 +57,7 @@ public class JwtAuthenticationException extends AuthenticationException implemen
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
 	public JwtAuthenticationException(final MessageKey key, final MessageSeverity severity, final HttpStatus status,
-			final Throwable cause, Object... params) {
+			final Throwable cause, final String... params) {
 		super((key == null ? MessageKeys.NO_KEY.toString() : key.getMessage(params)), cause);
 		this.key = (key == null ? MessageKeys.NO_KEY : key);
 		this.params = params;
@@ -76,7 +76,7 @@ public class JwtAuthenticationException extends AuthenticationException implemen
 	}
 
 	@Override
-	public Object[] getParams() {
+	public String[] getParams() {
 		return this.params;
 	}
 
@@ -92,6 +92,6 @@ public class JwtAuthenticationException extends AuthenticationException implemen
 
 	@Override
 	public String getServerName() {
-		return serverName;
+		return SERVER_NAME;
 	}
 }

@@ -116,7 +116,7 @@ public abstract class VAServiceSignatureWss4jSecurityInterceptor extends Abstrac
 
 		} catch (final WSSecurityException e) {
 			MessageKeys key = MessageKeys.BIP_SECURITY_SIGN_FAIL;
-			Object param = "SOAPMessage Document";
+			String param = "SOAPMessage Document";
 			LOGGER.error(key.getMessage(param), e);
 			throw new BipRuntimeException(key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e, param);
 		}

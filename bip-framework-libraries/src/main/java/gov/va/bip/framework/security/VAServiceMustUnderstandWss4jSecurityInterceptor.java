@@ -61,7 +61,7 @@ public class VAServiceMustUnderstandWss4jSecurityInterceptor extends Wss4jSecuri
 			}
 		} catch (final WSSecurityException e) { // NOSONAR no action to take
 			MessageKeys key = MessageKeys.BIP_SECURITY_ATTRIBUTE_FAIL;
-			Object[] params = new Object[] { "remove", MUST_UNDERSTAND_ATTR };
+			String[] params = new String[] { "remove", MUST_UNDERSTAND_ATTR };
 			LOGGER.error(key.getMessage(params), e);
 			throw new BipRuntimeException(key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e, params);
 		}

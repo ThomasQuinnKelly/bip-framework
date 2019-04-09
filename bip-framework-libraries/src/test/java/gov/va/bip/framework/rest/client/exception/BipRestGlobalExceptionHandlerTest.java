@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -39,9 +40,12 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import gov.va.bip.framework.audit.AuditLogSerializer;
 import gov.va.bip.framework.exception.BipPartnerException;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
 import gov.va.bip.framework.exception.BipRuntimeException;
@@ -95,6 +99,12 @@ public class BipRestGlobalExceptionHandlerTest {
 		objectErrors.add(oe);
 
 		when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+		AuditLogSerializer serializer = new AuditLogSerializer();
+
+		ReflectionTestUtils.setField(serializer, "dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		ReflectionTestUtils.setField(bipRestGlobalExceptionHandler, "asyncLogging", serializer);
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMethodArgumentNotValidException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));

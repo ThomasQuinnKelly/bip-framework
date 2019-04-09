@@ -25,7 +25,7 @@ public class BipFeignRuntimeException extends BipRuntimeException {
 	 * @param status - the HTTP Status code that applies best to the encountered problem, see
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
-	public BipFeignRuntimeException(MessageKey key, MessageSeverity severity, HttpStatus status, Object... params) {
+	public BipFeignRuntimeException(final MessageKey key, final MessageSeverity severity, final HttpStatus status, final String... params) {
 		super(key, severity, status, params);
 	}
 
@@ -40,7 +40,7 @@ public class BipFeignRuntimeException extends BipRuntimeException {
 	 * @param cause - the throwable that caused this throwable
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
-	public BipFeignRuntimeException(MessageKey key, MessageSeverity severity, HttpStatus status, Throwable cause, Object... params) {
+	public BipFeignRuntimeException(final MessageKey key, final MessageSeverity severity, final HttpStatus status, final Throwable cause, final String... params) {
 		super(key, severity, status, cause, params);
 	}
 }

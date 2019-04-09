@@ -59,7 +59,7 @@ public abstract class VAServiceTimeStampWss4jSecurityInterceptor extends Abstrac
 
 		} catch (final WSSecurityException e) {
 			MessageKeys key = MessageKeys.BIP_SECURITY_ATTRIBUTE_FAIL;
-			Object[] params = new Object[] { "add", "TTL timestamp" };
+			String[] params = new String[] { "add", "TTL timestamp" };
 			LOGGER.error(key.getMessage(params), e);
 			throw new BipRuntimeException(key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, e, params);
 		}

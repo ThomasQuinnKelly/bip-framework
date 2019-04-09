@@ -57,7 +57,7 @@ public class FeignCustomErrorDecoder implements ErrorDecoder {
 				JSONObject messageObject = jsonarray.getJSONObject(0);
 
 				MessageKeys key = MessageKeys.BIP_FEIGN_MESSAGE_RECEIVED;
-				Object[] params = new Object[] { messageObject.getString("key"), messageObject.getString("text") };
+				String[] params = new String[] { messageObject.getString("key"), messageObject.getString("text") };
 				return new BipFeignRuntimeException(key,
 						MessageSeverity.fromValue(messageObject.getString("severity")),
 						HttpStatus.resolve(Integer.valueOf(messageObject.getString("status"))),

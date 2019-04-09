@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
+import gov.va.bip.framework.messages.ConstraintParam;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
@@ -47,8 +48,8 @@ public class DomainResponseTest {
 	@Test
 	public void testAddMessageWithNullMessages() {
 
-		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY, 1, new String[] { "pName" },
-				new String[] { "pValue" });
+		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
+				new ConstraintParam[] { new ConstraintParam("pName", "pValue") }, MessageKeys.NO_KEY, new String[] {});
 
 		assertNotNull(mockServiceResponse.getMessages());
 		assertEquals(1, mockServiceResponse.getMessages().size());
@@ -57,8 +58,8 @@ public class DomainResponseTest {
 
 	@Test
 	public void testAddMessageWithParams() {
-		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY,
-				1, new String[] { "pName" }, new String[] { "pValue" });
+		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
+				new ConstraintParam[] { new ConstraintParam("pName", "pValue") }, MessageKeys.NO_KEY, new String[] {});
 		assertNotNull(mockServiceResponse.getMessages());
 		assertEquals(1, mockServiceResponse.getMessages().size());
 
@@ -71,7 +72,7 @@ public class DomainResponseTest {
 
 	@Test
 	public void testAddMessage() {
-		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY, new Object[] {});
+		mockServiceResponse.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY, new String[] {});
 		assertNotNull(mockServiceResponse.getMessages());
 		assertEquals(1, mockServiceResponse.getMessages().size());
 

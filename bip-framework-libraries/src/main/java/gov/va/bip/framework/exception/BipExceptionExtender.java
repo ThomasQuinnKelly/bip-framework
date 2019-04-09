@@ -58,7 +58,7 @@ public interface BipExceptionExtender {
 	 *
 	 * @return Object array
 	 */
-	public Object[] getParams();
+	public String[] getParams();
 
 	/**
 	 * The HTTP Status code that applies best to the encountered problem, see

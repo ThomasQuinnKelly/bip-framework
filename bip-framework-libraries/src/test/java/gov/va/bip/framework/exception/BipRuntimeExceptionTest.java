@@ -28,14 +28,13 @@ public class BipRuntimeExceptionTest {
 	@Test
 	public void getMessageTestServerNameNull() throws Exception {
 		BipRuntimeException bipRuntimeException =
-				new BipRuntimeException(TEST_KEY, null, null, (Object[]) null);
-
+				new BipRuntimeException(TEST_KEY, null, null, (String[]) null);
 		Assert.assertTrue(bipRuntimeException.getServerName().equals(System.getProperty("server.name")));
 	}
 
 	@Test
 	public void getMessageTestCategoryNull() throws Exception {
-		BipRuntimeException bipRuntimeException = new BipRuntimeException(TEST_KEY, null, null, (Object[]) null);
+		BipRuntimeException bipRuntimeException = new BipRuntimeException(TEST_KEY, null, null, (String[]) null);
 		Assert.assertTrue(bipRuntimeException.getMessage().equals(TEST_KEY_MESSAGE));
 	}
 

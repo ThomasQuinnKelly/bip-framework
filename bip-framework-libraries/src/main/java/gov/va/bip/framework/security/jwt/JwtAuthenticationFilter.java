@@ -79,12 +79,12 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			return getAuthenticationManager().authenticate(new JwtAuthenticationToken(token));
 		} catch (SignatureException se) {
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
-			Object[] params = new Object[] { TOKEN_TAMPERED, token, se.getClass().getSimpleName(), se.getMessage() };
+			String[] params = new String[] { TOKEN_TAMPERED, token, se.getClass().getSimpleName(), se.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, se);
 			throw new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, se, params);
 		} catch (MalformedJwtException ex) {
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
-			Object[] params = new Object[] { TOKEN_MALFORMED, token, ex.getClass().getSimpleName(), ex.getMessage() };
+			String[] params = new String[] { TOKEN_MALFORMED, token, ex.getClass().getSimpleName(), ex.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, ex);
 			throw new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, ex, params);
 		}

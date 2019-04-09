@@ -48,7 +48,7 @@ public class DomainResponse extends AbstractResponseObject implements DomainTran
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
 	public final void addMessage(final MessageSeverity severity, final HttpStatus httpStatus, final MessageKey key,
-			final Object... params) {
+			final String... params) {
 		if (serviceMessages == null) {
 			serviceMessages = new LinkedList<>();
 		}
@@ -70,7 +70,7 @@ public class DomainResponse extends AbstractResponseObject implements DomainTran
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
 	public final void addMessage(final MessageSeverity severity, final HttpStatus httpStatus, final ConstraintParam[] constraintParams,
-			final MessageKey key, final Object... params) {
+			final MessageKey key, final String... params) {
 		if (serviceMessages == null) {
 			serviceMessages = new LinkedList<>();
 		}

@@ -46,7 +46,7 @@ public class ServiceMessage extends AbstractMessage {
 
 	/** The replaceable parameters for the message key */
 	@JsonIgnore
-	private Object[] messageParams;
+	private String[] messageParams;
 
 	/** The Http status enum */
 	@JsonIgnore
@@ -65,7 +65,7 @@ public class ServiceMessage extends AbstractMessage {
 	 * @param httpStatus - the http status associated with the cause of the message
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
-	public ServiceMessage(final MessageSeverity severity, final HttpStatus httpStatus, final MessageKey key, final Object... params) {
+	public ServiceMessage(final MessageSeverity severity, final HttpStatus httpStatus, final MessageKey key, final String... params) {
 		this(severity, httpStatus, null, key, params);
 	}
 
@@ -79,7 +79,7 @@ public class ServiceMessage extends AbstractMessage {
 	 * @param params - arguments to fill in any params in the MessageKey message (e.g. value for {0})
 	 */
 	public ServiceMessage(final MessageSeverity severity, final HttpStatus httpStatus,
-			final ConstraintParam[] constraintParams, final MessageKey key, final Object... params) {
+			final ConstraintParam[] constraintParams, final MessageKey key, final String... params) {
 		super(constraintParams); // always call super() to set the timestamp
 		this.severity = severity;
 		this.httpStatus = httpStatus;

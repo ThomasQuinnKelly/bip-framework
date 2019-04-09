@@ -91,7 +91,7 @@ public class CorrelationIdsParser {
 
 		} else {
 			MessageKeys key = MessageKeys.BIP_SECURITY_TRAITS_CORRELATIONID_INVALID;
-			Object[] params = new Object[] { ELEMENT_SS_COUNT, ELEMENT_MAX_COUNT };
+			String[] params = new String[] { Integer.toString(ELEMENT_SS_COUNT), Integer.toString(ELEMENT_MAX_COUNT) };
 			LOGGER.error(key.getMessage(params));
 			throw new BipRuntimeException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, params);
 		}

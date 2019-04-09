@@ -32,7 +32,7 @@ public class TestRequestValidator extends AbstractStandardValidator<TestRequest>
 	@Override
 	public void validate(final TestRequest toValidate, final List<ServiceMessage> messages) {
 		if ((callingMethod != null) && callingMethod.getName().contains("Sad")) {
-			messages.add(new ServiceMessage(SEVERITY, STATUS, MessageKeys.NO_KEY, new Object[] {}));
+			messages.add(new ServiceMessage(SEVERITY, STATUS, MessageKeys.NO_KEY, new String[] {}));
 		}
 	}
 
@@ -42,7 +42,7 @@ public class TestRequestValidator extends AbstractStandardValidator<TestRequest>
 	}
 
 	@Override
-	public void setCallingMethod(Method callingMethod) {
+	public void setCallingMethod(final Method callingMethod) {
 		this.callingMethod = callingMethod;
 	}
 

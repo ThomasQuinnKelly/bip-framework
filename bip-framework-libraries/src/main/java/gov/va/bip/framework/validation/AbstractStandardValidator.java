@@ -72,7 +72,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 
 			this.callingMethodName = callingMethod == null ? ""
 					: callingMethod.getDeclaringClass().getSimpleName()
-							+ "." + callingMethod.getName() + ": ";
+					+ "." + callingMethod.getName() + ": ";
 
 			LOGGER.debug("Validating " + (toValidate == null ? "null" : toValidate.getClass().getSimpleName())
 					+ " for " + callingMethodName);
@@ -127,7 +127,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 
 	private void handleInvalidClass(final Object toValidate, final List<ServiceMessage> messages) {
 		MessageKeys key = MessageKeys.BIP_VALIDATOR_TYPE_MISMATCH;
-		Object[] params = new Object[] { toValidate.getClass().getName(), getValidatedType().getName() };
+		String[] params = new String[] { toValidate.getClass().getName(), getValidatedType().getName() };
 		LOGGER.debug(key.getMessage(params));
 		messages.add(new ServiceMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, key, params));
 	}
@@ -148,7 +148,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 * @see gov.va.bip.framework.validation.Validator#setCallingMethod(java.lang.reflect.Method)
 	 */
 	@Override
-	public void setCallingMethod(Method callingMethod) {
+	public void setCallingMethod(final Method callingMethod) {
 		this.callingMethod = callingMethod;
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 * @return boolean - true if the supplmental list has anything in it
 	 */
 	protected boolean hasSupplemental() {
-		return this.supplemental != null && this.supplemental.length > 0;
+		return (this.supplemental != null) && (this.supplemental.length > 0);
 	}
 
 	/**
@@ -189,8 +189,8 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 * @param clazz - the exact type to look for
 	 * @return boolean - {@code true} if an object of type {@code clazz} was found
 	 */
-	protected boolean hasSupplemental(Class<?> clazz) {
-		if (clazz != null && hasSupplemental()) {
+	protected boolean hasSupplemental(final Class<?> clazz) {
+		if ((clazz != null) && hasSupplemental()) {
 			for (Object obj : supplemental) {
 				if (clazz.equals(obj.getClass())) {
 					return true;
@@ -221,7 +221,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 * @param clazz - the type of object to get
 	 * @return Object - the supplemental object
 	 */
-	protected Object getSupplemental(Class<?> clazz) {
+	protected Object getSupplemental(final Class<?> clazz) {
 		if (hasSupplemental(clazz)) {
 			for (Object obj : supplemental) {
 				if (clazz.equals(obj.getClass())) {

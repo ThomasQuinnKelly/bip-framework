@@ -40,6 +40,8 @@ import gov.va.bip.framework.rest.provider.ProviderResponse;
 @Order(-9998)
 public class ProviderHttpAspect extends BaseHttpProviderAspect {
 
+	private static final String FINISHED_STRING = " finished.";
+	private static final String JOINPOINT_STRING = " joinpoint: ";
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(ProviderHttpAspect.class);
 	/** Identity of the before advice */
@@ -61,7 +63,7 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 	 */
 	@Before("!auditableAnnotation() && publicServiceResponseRestMethod()")
 	public void beforeAuditAdvice(final JoinPoint joinPoint) {
-		LOGGER.debug(BEFORE_ADVICE + " joinpoint: " + joinPoint.toLongString());
+		LOGGER.debug(BEFORE_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 
 		List<Object> requestArgs = null;
 		AuditEventData auditEventData = null;
@@ -80,12 +82,12 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 				LOGGER.debug("Method: {}", method);
 				LOGGER.debug("AuditEventData: {}", auditEventData.toString());
 			}
-			writeRequestInfoAudit(requestArgs, auditEventData);
+			writeRequestAuditLog(requestArgs, auditEventData);
 
 		} catch (final Throwable throwable) { // NOSONAR intentionally catching throwable
 			handleInternalException(BEFORE_ADVICE, ATTEMPTING_WRITE_REQUEST, auditEventData, throwable);
 		} finally {
-			LOGGER.debug(BEFORE_ADVICE + " finished.");
+			LOGGER.debug(BEFORE_ADVICE + FINISHED_STRING);
 		}
 	}
 
@@ -97,8 +99,8 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 	 */
 	@AfterReturning(pointcut = "!auditableAnnotation() && publicServiceResponseRestMethod()",
 			returning = "responseToConsumer")
-	public void afterreturningAuditAdvice(JoinPoint joinPoint, ProviderResponse responseToConsumer) {
-		LOGGER.debug(AFTER_ADVICE + " joinpoint: " + joinPoint.toLongString());
+	public void afterreturningAuditAdvice(final JoinPoint joinPoint, final ProviderResponse responseToConsumer) {
+		LOGGER.debug(AFTER_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 		LOGGER.debug(AFTER_ADVICE + " responseToConsumer: "
 				+ ReflectionToStringBuilder.toString(responseToConsumer, null, true, true, ProviderResponse.class));
 
@@ -121,7 +123,7 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
 			handleInternalException(AFTER_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, throwable);
 		} finally {
-			LOGGER.debug(AFTER_ADVICE + " finished.");
+			LOGGER.debug(AFTER_ADVICE + FINISHED_STRING);
 		}
 	}
 
@@ -135,25 +137,22 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 	 */
 	@AfterThrowing(pointcut = "!auditableAnnotation() && publicServiceResponseRestMethod()",
 			throwing = "throwable")
-	public ResponseEntity<ProviderResponse> afterThrowingAdvice(JoinPoint joinPoint, Throwable throwable) {
-		LOGGER.debug(AFTER_THROWING_ADVICE + " joinpoint: " + joinPoint.toLongString());
+	public ResponseEntity<ProviderResponse> afterThrowingAdvice(final JoinPoint joinPoint, final Throwable throwable) {
+		LOGGER.debug(AFTER_THROWING_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 		LOGGER.debug(AFTER_THROWING_ADVICE + " throwable: {}" + throwable);
 
 		AuditEventData auditEventData = null;
 		ResponseEntity<ProviderResponse> providerResponse = null;
 
 		try {
-			if (throwable == null) {
-				// null throwable almost certain not to happen, but check nonetheless
-				throwable = new Throwable("Unknown problem. Thrown exception was null.");
-			}
-
-			providerResponse = writeAuditError(AFTER_THROWING_ADVICE, throwable, auditEventData);
+			providerResponse = writeAuditError(AFTER_THROWING_ADVICE,
+					// null throwable almost certain not to happen, but check nonetheless
+					throwable != null ? throwable : new Throwable("Unknown problem. Thrown exception was null."), auditEventData);
 
 		} catch (Throwable t) { // NOSONAR intentionally catching throwable
 			providerResponse = handleInternalException(AFTER_THROWING_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, t);
 		} finally {
-			LOGGER.debug(AFTER_THROWING_ADVICE + " finished.");
+			LOGGER.debug(AFTER_THROWING_ADVICE + FINISHED_STRING);
 		}
 		return providerResponse;
 	}
@@ -167,8 +166,8 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 	 * @param auditEventData the audit event data object
 	 * @param throwable the exception that was thrown
 	 */
-	private ResponseEntity<ProviderResponse> handleInternalException(String adviceName, String attemptingTo,
-			AuditEventData auditEventData, Throwable throwable) {
+	private ResponseEntity<ProviderResponse> handleInternalException(final String adviceName, final String attemptingTo,
+			final AuditEventData auditEventData, final Throwable throwable) {
 		ResponseEntity<ProviderResponse> entity = null;
 		try {
 			MessageKeys key = MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED;
@@ -182,18 +181,18 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 		return entity;
 	}
 
-	private ResponseEntity<ProviderResponse> handleAnyRethrownExceptions(String adviceName, Throwable originatingThrowable,
-			Throwable e) {
+	private ResponseEntity<ProviderResponse> handleAnyRethrownExceptions(final String adviceName, final Throwable originatingThrowable,
+			final Throwable e) {
 		ResponseEntity<ProviderResponse> entity;
 		MessageKeys key = MessageKeys.BIP_AUDIT_ASPECT_ERROR_CANNOT_AUDIT;
-		String msg = key.getMessage(new Object[] { adviceName, originatingThrowable.getClass().getSimpleName() });
+		String msg = key.getMessage(new String[] { adviceName, originatingThrowable.getClass().getSimpleName() });
 		LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
 				msg, e);
 
 		ProviderResponse body = new ProviderResponse();
 		body.addMessage(MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR.name(),
 				msg, HttpStatus.INTERNAL_SERVER_ERROR);
-		entity = new ResponseEntity<ProviderResponse>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+		entity = new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
 		return entity;
 	}
 

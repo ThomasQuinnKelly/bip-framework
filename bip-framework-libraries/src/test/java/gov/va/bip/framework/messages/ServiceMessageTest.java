@@ -46,7 +46,7 @@ public class ServiceMessageTest {
 	@Test
 	public void testParamsConstructor() throws Exception {
 		ServiceMessage serviceMessage = new ServiceMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
-				new ConstraintParam[] { new ConstraintParam("param1", "para1Value") }, TEST_KEY, new Object[] {});
+				new ConstraintParam[] { new ConstraintParam("param1", "para1Value") }, TEST_KEY, new String[] {});
 		assertEquals(new Integer(1), serviceMessage.getParamCount());
 	}
 

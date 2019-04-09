@@ -58,7 +58,7 @@ public class AuditAnnotationAspect extends BaseHttpProviderAspect {
 								StringUtils.isBlank(auditableAnnotation.auditClass())? className: auditableAnnotation.auditClass());
 				LOGGER.debug("AuditEventData: {}", auditEventData.toString());
 
-				writeRequestInfoAudit(request, auditEventData);
+				writeRequestAuditLog(request, auditEventData);
 			}
 
 			response = joinPoint.proceed();

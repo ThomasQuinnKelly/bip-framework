@@ -1,5 +1,7 @@
 package gov.va.bip.framework.messages;
 
+import java.io.Serializable;
+
 /**
  * The interface for BIP message keys and their messages.
  * <p>
@@ -8,7 +10,7 @@ package gov.va.bip.framework.messages;
  *
  * @author aburkholder
  */
-public interface MessageKey {
+public interface MessageKey extends Serializable {
 
 	/**
 	 * Get the property key for this enumeration.
@@ -29,5 +31,5 @@ public interface MessageKey {
 	 *            "{2,time}" within a message), or null if none.
 	 * @return String - the resolved message, or default message
 	 */
-	public String getMessage(Object... params);
+	public String getMessage(String... params);
 }

@@ -182,7 +182,7 @@ public abstract class AbstractRemoteServiceCallMock implements RemoteServiceCall
 			resource = new ResourceSource(new ClassPathResource(MessageFormat.format(MOCK_FILENAME_TEMPLATE, key)));
 		} catch (final IOException e) {
 			MessageKeys msgkey = MessageKeys.BIP_REMOTE_MOCK_NOT_FOUND;
-			Object[] params = new Object[] { MessageFormat.format(MOCK_FILENAME_TEMPLATE, key), key };
+			String[] params = new String[] { MessageFormat.format(MOCK_FILENAME_TEMPLATE, key), key };
 			throw new BipRuntimeException(msgkey, MessageSeverity.WARN, HttpStatus.OK, e, params);
 		}
 		return resource;
