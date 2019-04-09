@@ -51,4 +51,4 @@ PropertiesUtil: Utility class for handling properties.
 
 RequestResponseLoggingInterceptor: It is an interceptor for all rest API calls to trace request and responses. This interceptor can also be used as a troubleshooting technique to trace request headers, parameter and response body.
 
-In the `bip-reference-inttest` project, `bip-framework-test-lib` is added as a dependency. This project `bip-reference-inttest` can be used as a reference for writing functional tests https://github.com/department-of-veterans-affairs/ocp-reference-spring-boot/tree/master/bip-reference-inttest
+In the `bip-reference-inttest` project, `bip-framework-test-lib` is added as a dependency. This project `bip-reference-inttest` can be used as a reference for writing functional tests https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/bip-reference-inttest
