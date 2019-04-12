@@ -24,24 +24,20 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
     }
  
     private void logRequest(HttpRequest request, byte[] body) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("===========================request begin================================================");
             LOGGER.debug("URI         : {}", request.getURI());
             LOGGER.debug("Method      : {}", request.getMethod());
             LOGGER.debug("Headers     : {}", request.getHeaders());
             LOGGER.debug("Request body: {}", new String(body, "UTF-8"));
             LOGGER.debug("==========================request end================================================");
-        }
     }
  
     private void logResponse(ClientHttpResponse response) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("============================response begin==========================================");
             LOGGER.debug("Status code  : {}", response.getStatusCode());
             LOGGER.debug("Status text  : {}", response.getStatusText());
             LOGGER.debug("Headers      : {}", response.getHeaders());
             LOGGER.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), Charset.defaultCharset()));
             LOGGER.debug("=======================response end=================================================");
-        }
     }
 }

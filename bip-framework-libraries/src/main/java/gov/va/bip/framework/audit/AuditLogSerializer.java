@@ -43,6 +43,10 @@ public class AuditLogSerializer implements Serializable {
 	@Value("${spring.jackson.date-format:yyyy-MM-dd'T'HH:mm:ss.SSSZ}")
 	private String dateFormat;
 
+	public AuditLogSerializer() {
+		super();
+	}
+
 	/**
 	 * Asynchronuously converts an object to JSON and then writes it to the audit logger.
 	 * <p>
@@ -53,7 +57,7 @@ public class AuditLogSerializer implements Serializable {
 	 * @param auditData The request and response audit data
 	 */
 	@Async
-	public void asyncLogRequestResponseAspectAuditData(final AuditEventData auditEventData, final AuditableData auditData,
+	public void asyncAuditRequestResponseData(final AuditEventData auditEventData, final AuditableData auditData,
 			final Class<?> auditDataClass, final MessageSeverity messageSeverity, final Throwable t) {
 
 		String auditDetails = null;
@@ -71,7 +75,7 @@ public class AuditLogSerializer implements Serializable {
 				mapper.disable(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS);
 				mapper.disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES);
 
-				auditDetails = mapper.writeValueAsString(auditDataClass.cast(auditData));
+				auditDetails = mapper.writeValueAsString(auditData);
 			} catch (JsonProcessingException ex) {
 				LOGGER.error("Error occurred on ClassCast or JSON processing, calling custom toString()", ex);
 				try {
@@ -103,7 +107,7 @@ public class AuditLogSerializer implements Serializable {
 	 * @param activityDetail the activity detail
 	 */
 	@Async
-	public void asyncLogMessageAspectAuditData(final AuditEventData auditEventData, final String activityDetail,
+	public void asyncAuditMessageData(final AuditEventData auditEventData, final String activityDetail,
 			final MessageSeverity messageSeverity, final Throwable t) {
 
 		if (messageSeverity.equals(MessageSeverity.ERROR) || messageSeverity.equals(MessageSeverity.FATAL)) {

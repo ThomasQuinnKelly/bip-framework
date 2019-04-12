@@ -1,51 +1,54 @@
 ## What is this test library project for? ##
 
-Test -lib test Automation Framework is customized to support testing the REST Services deployed on BIP platform. It supports testing of REST protocols with the help of REST template. Spring RestTemplate provides a convenient way to test RESTful web services. It simplifies the interaction with HTTP servers and enforces RESTful systems.
+BIP Test library is customized to support testing the REST based Services deployed on BIP platform. This library is configured to use broad range of operations provided by Spring REST Client – RestTemplate. Spring RestTemplate provides a convenient way to test RESTful web services. It simplifies the interaction with HTTP servers and enforces RESTful systems.
 
 ## Dependencies:
 
-Rest template - This is the Rest-template library itself.
+Spring Rest template - Included via `spring-web` dependency.
    
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-web</artifactId>
 
-cucumber-java - a library that makes it easier for us to write and execute parameterized test.
+cucumber-java8 - a library that makes it easier for us to write and execute parameterized test.
 
-       <groupId>info.cukes</groupId>
+	   <groupId>info.cukes</groupId>
 	   <artifactId>cucumber-java8</artifactId>
 
 
-## How to add dependencies in your maven pom.xml? ##
+## How to add BIP Test Library dependencies in your maven pom.xml? ##
         
-          <dependency>
-             <groupId>gov.va.bip.framework</groupId>
-	     <artifactId>bip-framework-test-lib</artifactId>
-	     <version><!-- add the appropriate version --></version>
-	   </dependency>
-
+	<dependency>
+		<groupId>gov.va.bip.framework</groupId>
+		<artifactId>bip-framework-test-lib</artifactId>
+		<version><!-- add the appropriate version --></version>
+	</dependency>
 
 ## Overview of the packages ##
 
-Test-lib Test Framework uses Java - Maven platform, the REST-template  for core API validations.
+Test Library uses Java - Maven platform, the REST-template for core API validations.
 
-This folder has all the support classes and methods that can be re-used to build Automated API tests for each API.
+This library has the support classes and methods that can be used to build Automated API tests for the REST API services.
 
 **gov.va.bip.framework.test.rest**:
 
-BaseStepDef: Base class for all the step definition.
+BaseStepDef: Base class for all the step definitions.
 
-BaseStepDefHandler: Handler object that extends BaseStepDef to handle rest based api call. Step definition class inject this object thru constructor.
+BaseStepDefHandler: Handler object that extends BaseStepDef to handle rest based API call. 
 
 **gov.va.bip.framework.test.service**:
 
-RestConfigService: Loads the config file that has all the config related to reference services.
+RestConfigService: Loads the configuration file that has all the properties related to reference services.
 
-BearerTokenService: It Fetches token from the token API. The token will be used as a header while invoking actual endpoints.
+BearerTokenService: Fetches token from the token API. The token will be used as a header while invoking actual end points.
 
 **gov.va.bip.framework.test.util**:
 
-RestUtil: It is a wrapper for rest template API for making HTTP calls, parse JSON and XML responses and status code check.
+RestUtil: It's a wrapper for rest template API to make HTTP calls, parse JSON / XML responses and do status code check.
 
-JsonUtil: Utility class for parsing JSON.
+JsonUtil: Utility class for parsing JSON. We could use this utility to parse and extract JSON snippet.
 
-PropertiesUtil: Utilities for handling properties.
+PropertiesUtil: Utility class for handling properties.
+
+RequestResponseLoggingInterceptor: It is an interceptor for all rest API calls to trace request and responses. This interceptor can also be used as a troubleshooting technique to trace request headers, parameter and response body.
+
+In the `bip-reference-inttest` project, `bip-framework-test-lib` is added as a dependency. This project `bip-reference-inttest` can be used as a reference for writing functional tests https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/bip-reference-inttest

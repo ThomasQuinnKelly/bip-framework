@@ -15,7 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.Auditable;
+import gov.va.bip.framework.audit.annotation.Auditable;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.service.DomainRequest;

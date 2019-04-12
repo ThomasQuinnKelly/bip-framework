@@ -144,6 +144,19 @@ public class ExceptionHandlingUtilsTest {
 	}
 
 	@Test
+	public void testCastToBipRuntimeExceptionCatchBlock() {
+		try {
+			ExceptionHandlingUtils.castToBipRuntimeException(new Exception());
+		} catch (BipRuntimeException e) {
+			assertTrue(e.getMessageKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_CAST));
+			String msg = MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_CAST.getMessage((String[]) null);
+			assertTrue(e.getMessage().equals(msg));
+			assertTrue(e.getSeverity().equals(MessageSeverity.FATAL));
+			assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+		}
+	}
+
+	@Test
 	public void testCastToBipRuntimeExceptionExtenderWithClassCastException() {
 		try {
 			ExceptionHandlingUtils.convertFromBipExceptionExtender(new RuntimeException());

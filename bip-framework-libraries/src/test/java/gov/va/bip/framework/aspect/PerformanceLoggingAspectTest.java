@@ -85,6 +85,12 @@ public class PerformanceLoggingAspectTest extends AbstractBaseLogTester {
 
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testAroundAdviceWithNullMethod() throws Throwable {
+		when(signature.getMethod()).thenReturn(null);
+		PerformanceLoggingAspect.aroundAdvice(proceedingJoinPoint);
+	}
+
 	@Test
 	public void testAroundAdviceDebugOff() throws Throwable {
 		super.getAppender().clear();

@@ -12,6 +12,7 @@ import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
@@ -25,11 +26,15 @@ import org.springframework.cache.interceptor.CacheOperationSource;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.util.CollectionUtils;
 
+import gov.va.bip.framework.audit.AuditLogSerializer;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.cache.autoconfigure.BipCacheProperties.RedisExpires;
 import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
 import gov.va.bip.framework.cache.interceptor.BipCacheInterceptor;
@@ -45,6 +50,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 @AutoConfigureAfter(CacheAutoConfiguration.class)
 @EnableCaching
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
+@EnableMBeanExport(defaultDomain = "gov.va.bip", registration = RegistrationPolicy.FAIL_ON_EXISTING)
 public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 
 	static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipCacheAutoConfiguration.class);
@@ -59,6 +65,38 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 	@SuppressWarnings("unused")
 	@Autowired(required = false)
 	private BipEmbeddedRedisServer referenceServerRedisEmbedded;
+
+	/**
+	 * JMX MBean that exposes cache management operations.
+	 *
+	 * @return BipCacheOpsMBean - the management bean
+	 */
+	@Bean
+	public BipCacheOpsMBean bipCacheOpsMBean() {
+		return new BipCacheOpsImpl();
+	}
+	
+	/**
+	 * Audit log serializer.
+	 *
+	 * @return the audit log serializer
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public AuditLogSerializer auditLogSerializer() {
+		return new AuditLogSerializer();
+	}
+
+	/**
+	 * Base async audit.
+	 *
+	 * @return the base async audit
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public BaseAsyncAudit baseAsyncAudit() {
+		return new BaseAsyncAudit();
+	}
 
 	/**
 	 * Create the default cache configuration, with TTL set as declared by {@code reference:cache:defaultExpires} in the
@@ -114,7 +152,7 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 
 	/**
 	 * Interface to get cache operation attribute sources. Required by {@link #cacheInterceptor()}.
-	 * 
+	 *
 	 * @return CacheOperationSource - the cache operation attribute source
 	 */
 	@Bean
@@ -124,7 +162,7 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 
 	/**
 	 * Custom {@link BipCacheInterceptor} to audit {@code cache.get(Object, Object)} operations.
-	 * 
+	 *
 	 * @return CacheInterceptor - the interceptor
 	 */
 	@Bean

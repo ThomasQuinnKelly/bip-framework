@@ -19,6 +19,10 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
 public enum MessageKeys implements MessageKey {
 
+	//
+	// Default messages defined for enumerations SHOULD NOT have params ... no {} brackets.
+	//
+
 	/** No key provided or specified; no args */
 	NO_KEY("NO_KEY", "Unknown, no key provided."),
 	/** Key for warning messages; {0} = warning message */
@@ -33,6 +37,14 @@ public enum MessageKeys implements MessageKey {
 	 * super-interface
 	 */
 	BIP_DEV_ILLEGAL_INVOCATION("bip.framework.dev.illegal.invocation", "Could not find or instantiate class."),
+
+	/** Malformed JMX ObjectName; {0} is the name of the class being registered as a bean; {1} is the ObjectName being registered */
+	BIP_JMX_CACHE_NAMING_MALFORMED("bip.jmx.cache.naming.malformed",
+			"Could not register class on the MBeanServer because its ObjectName is malformed."),
+	/** Some pre-processing issue; {0} is the class name or JMX ObjectName being registered / deregistered */
+	BIP_JMX_REGISTRATION_PRE("bip.jmx.registration.pre", "Problem with pre-registration or pre-deregistration of JMX MBean."),
+	/** Non-compliant JMX bean; {0} is the class name or JMX ObjectName */
+	BIP_JMX_BEAN_NONCOMPLIANT("bip.jmx.bean.noncompliant", "Proposed class is not a JMX compliant MBean."),
 
 	/** Last resort, unexpected exception; {0} = exception class simple name; {1} = exception message */
 	BIP_GLOBAL_GENERAL_EXCEPTION("bip.framework.global.general.exception", "Unexpected exception."),
@@ -49,7 +61,8 @@ public enum MessageKeys implements MessageKey {
 	/** MethodArgumentTypeMismatchException; {0} = argument name; {1} = expected class name */
 	BIP_GLOBAL_REST_API_TYPE_MISMATCH("bip.framework.global.rest.api.type.mismatch", "API argument type could not be resolved."),
 	/** ConstraintViolationException; {0} = bean class name; {1} = property name; {2} = violation message */
-	BIP_GLBOAL_VALIDATOR_CONSTRAINT_VIOLATION("bip.framework.global.validator.constraint.violation", "Validation constraint was violated."),
+	BIP_GLBOAL_VALIDATOR_CONSTRAINT_VIOLATION("bip.framework.global.validator.constraint.violation",
+			"Validation constraint was violated."),
 
 	/** JAXB Marshaller configuration failed; no args */
 	BIP_REST_CONFIG_JAXB_MARSHALLER_FAIL("bip.framework.rest.config.jaxb.marshaller.failed", "Error configuring JAXB marshaller."),

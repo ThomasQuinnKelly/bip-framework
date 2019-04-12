@@ -1,5 +1,5 @@
 #This file is only used for the unit test purposes
-os-reference-partner.ws.client.endpoint: http://localhost:9736/testEndPoint
+bip-reference-partner.client.ws.endpoint: http://localhost:9736/testEndPoint
 
 #*********************************************************************
 # Apache Trusted Crypto Configuration Security files

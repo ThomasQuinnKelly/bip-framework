@@ -14,6 +14,7 @@ import gov.va.bip.framework.messages.MessageSeverity;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BipExceptionTest {
+	private static final String TEST_VALUE = "test value";
 	private static final MessageKey TEST_KEY = MessageKeys.NO_KEY;
 
 	@Test
@@ -24,13 +25,17 @@ public class BipExceptionTest {
 
 	@Test
 	public void getterTest() {
+		String[] params = new String[] { "param1", "param2" };
 		BipException bipException =
 				new BipException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
-						new Exception("wrapped message"));
+						new Exception("wrapped message"), params);
 		assertTrue(bipException.getKey().equals(TEST_KEY.getKey()));
 		assertTrue(bipException.getMessage().equals(TEST_KEY.getKey()));
 		assertTrue(bipException.getSeverity().equals(MessageSeverity.ERROR));
+		assertTrue(bipException.getParams().equals(params));
 		assertTrue(bipException.getStatus().equals(HttpStatus.BAD_REQUEST));
+		System.setProperty("server.name", TEST_VALUE);
+		assertTrue(bipException.getServerName().equals(System.getProperty("server.name")));
 	}
 
 }

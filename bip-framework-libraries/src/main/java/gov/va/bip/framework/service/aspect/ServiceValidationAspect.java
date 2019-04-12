@@ -36,6 +36,10 @@ import gov.va.bip.framework.validation.Validator;
  * Validators called by this aspect <b>should</b> extend {@link gov.va.bip.framework.validation.AbstractStandardValidator} or
  * similar implementation.
  *
+ * Developers note: this class cannot be converted to {@code @Before} and {@code @After}
+ * advice. JoinPoint.proceed() is called conditionally on success/failure of input validation.
+ * Before and After advice does not provide that opportunity.
+ *
  * @see gov.va.bip.framework.validation.Validator
  * @see gov.va.bip.framework.validation.AbstractStandardValidator
  *
@@ -58,6 +62,10 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 	 * <p>
 	 * Validators called by this aspect <b>should</b> extend {@link gov.va.bip.framework.validation.AbstractStandardValidator} or
 	 * similar implementation.
+	 * 
+	 * Developers note: this class cannot be converted to {@code @Before} and {@code @After}
+	 * advice. JoinPoint.proceed() is called conditionally on success/failure of input validation.
+	 * Before and After advice does not provide that opportunity.
 	 *
 	 * @param joinPoint
 	 * @return Object

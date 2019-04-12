@@ -18,7 +18,7 @@ import org.slf4j.event.Level;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.cache.interceptor.BipCacheInterceptor;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.service.DomainResponse;
 
@@ -31,7 +31,7 @@ public class BipCacheInterceptorTest {
 	BipCacheInterceptor bipCacheInterceptor = new BipCacheInterceptor();
 
 	class TestObject {
-		public String testMethod(String msg) {
+		public String testMethod(final String msg) {
 			return "Hello";
 		}
 	}
@@ -88,8 +88,10 @@ public class BipCacheInterceptorTest {
 
 	@Before
 	public void setup() throws Throwable {
-		doNothing().when(asyncAuditLogSerializer).asyncLogRequestResponseAspectAuditData(any(), any(), any(), any(), any());
-		bipCacheInterceptor.asyncLogging = asyncAuditLogSerializer;
+		doNothing().when(asyncAuditLogSerializer).asyncAuditRequestResponseData(any(), any(), any(), any(), any());
+		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
+		ReflectionTestUtils.setField(baseAsyncAudit, "auditLogSerializer", asyncAuditLogSerializer);
+		bipCacheInterceptor.baseAsyncAudit = baseAsyncAudit;
 	}
 
 	@Test
@@ -108,7 +110,7 @@ public class BipCacheInterceptorTest {
 		assertTrue(((DomainResponse) ret).getMessages().isEmpty());
 	}
 
-	@Test (expected = Throwable.class)
+	@Test(expected = Throwable.class)
 	public final void testHandleInternalException() throws Throwable {
 		BrokenTestInvocation testInvocation = new BrokenTestInvocation();
 

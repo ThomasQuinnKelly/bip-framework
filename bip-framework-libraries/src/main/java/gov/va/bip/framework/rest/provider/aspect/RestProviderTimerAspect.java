@@ -9,7 +9,7 @@ import gov.va.bip.framework.aspect.PerformanceLoggingAspect;
 
 @Aspect
 @Order(-9999)
-public class RestProviderTimerAspect extends BaseHttpProviderAspect {
+public class RestProviderTimerAspect extends BaseHttpProviderPointcuts {
 
 	@Around("publicServiceResponseRestMethod()")
 	public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {

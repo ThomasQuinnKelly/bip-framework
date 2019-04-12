@@ -27,7 +27,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.aspect.AuditAnnotationAspect;
+import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.messages.MessageKeys;
@@ -57,7 +57,7 @@ public class ProviderHttpAspectTest extends AbstractBaseLogTester {
 	private MethodSignature mockSignature;
 
 	@InjectMocks
-	private final AuditAnnotationAspect logAnnotatedAspect = new AuditAnnotationAspect();
+	private final AuditableAnnotationAspect logAnnotatedAspect = new AuditableAnnotationAspect();
 
 	private final Object[] mockArray = { new Object() };
 

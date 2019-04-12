@@ -11,17 +11,13 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.event.Level;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.AuditLogger;
-import gov.va.bip.framework.constants.BipConstants;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
@@ -34,14 +30,20 @@ import gov.va.bip.framework.rest.provider.ProviderResponse;
  * and converted to appropriate JSON object with a FATAL message.
  *
  * @author akulkarni
- * @see gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderAspect
+ * @see gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts
  */
 @Aspect
 @Order(-9998)
-public class ProviderHttpAspect extends BaseHttpProviderAspect {
+public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 
 	private static final String FINISHED_STRING = " finished.";
 	private static final String JOINPOINT_STRING = " joinpoint: ";
+
+	/**
+	 * Developers note: for thread safety, only static constants
+	 * or spring proxies can be put at class level.
+	 */
+
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(ProviderHttpAspect.class);
 	/** Identity of the before advice */
@@ -82,9 +84,12 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 				LOGGER.debug("Method: {}", method);
 				LOGGER.debug("AuditEventData: {}", auditEventData.toString());
 			}
-			writeRequestAuditLog(requestArgs, auditEventData);
+			super.auditServletRequest().writeHttpRequestAuditLog(requestArgs, auditEventData);
 
 		} catch (final Throwable throwable) { // NOSONAR intentionally catching throwable
+			LOGGER.error(this.getClass().getSimpleName() + " " + BEFORE_ADVICE + " while attempting " + ATTEMPTING_WRITE_REQUEST
+					+ ": " + throwable.getClass().getSimpleName() + " " + throwable.getMessage(),
+					throwable);
 			handleInternalException(BEFORE_ADVICE, ATTEMPTING_WRITE_REQUEST, auditEventData, throwable);
 		} finally {
 			LOGGER.debug(BEFORE_ADVICE + FINISHED_STRING);
@@ -118,7 +123,7 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 
 			auditEventData = new AuditEventData(AuditEvents.API_REST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
 
-			writeResponseAudit(providerResponse, auditEventData, MessageSeverity.INFO, null);
+			super.auditServletResponse().writeHttpResponseAuditLog(providerResponse, auditEventData, MessageSeverity.INFO, null);
 
 		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
 			handleInternalException(AFTER_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, throwable);
@@ -145,9 +150,17 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 		ResponseEntity<ProviderResponse> providerResponse = null;
 
 		try {
-			providerResponse = writeAuditError(AFTER_THROWING_ADVICE,
-					// null throwable almost certain not to happen, but check nonetheless
-					throwable != null ? throwable : new Throwable("Unknown problem. Thrown exception was null."), auditEventData);
+			ProviderResponse response = new ProviderResponse();
+			if (BipExceptionExtender.class.isAssignableFrom(throwable.getClass())) {
+				BipExceptionExtender bipee = (BipExceptionExtender) throwable;
+				response.addMessage(MessageSeverity.ERROR, bipee.getKey(), throwable.getMessage(), bipee.getStatus());
+			} else {
+				MessageKeys key = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION;
+				response.addMessage(MessageSeverity.ERROR, key.getKey(),
+						key.getMessage(throwable.getClass().getSimpleName(), throwable.getMessage()), HttpStatus.BAD_REQUEST);
+			}
+
+			auditServletResponse().writeHttpResponseAuditLog(response, auditEventData, MessageSeverity.ERROR, throwable);
 
 		} catch (Throwable t) { // NOSONAR intentionally catching throwable
 			providerResponse = handleInternalException(AFTER_THROWING_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, t);
@@ -155,66 +168,6 @@ public class ProviderHttpAspect extends BaseHttpProviderAspect {
 			LOGGER.debug(AFTER_THROWING_ADVICE + FINISHED_STRING);
 		}
 		return providerResponse;
-	}
-
-	/**
-	 * Standard handling of exceptions that are thrown from within the advice
-	 * (not exceptions thrown by application code).
-	 *
-	 * @param adviceName the name of the advice method in which the exception was thrown
-	 * @param attemptingTo the attempted task that threw the exception
-	 * @param auditEventData the audit event data object
-	 * @param throwable the exception that was thrown
-	 */
-	private ResponseEntity<ProviderResponse> handleInternalException(final String adviceName, final String attemptingTo,
-			final AuditEventData auditEventData, final Throwable throwable) {
-		ResponseEntity<ProviderResponse> entity = null;
-		try {
-			MessageKeys key = MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED;
-			final BipRuntimeException bipRuntimeException = new BipRuntimeException(key,
-					MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable, adviceName, attemptingTo);
-			entity = writeAuditError(adviceName, bipRuntimeException, auditEventData);
-
-		} catch (Throwable e) { // NOSONAR intentionally catching throwable
-			entity = handleAnyRethrownExceptions(adviceName, throwable, e);
-		}
-		return entity;
-	}
-
-	private ResponseEntity<ProviderResponse> handleAnyRethrownExceptions(final String adviceName, final Throwable originatingThrowable,
-			final Throwable e) {
-		ResponseEntity<ProviderResponse> entity;
-		MessageKeys key = MessageKeys.BIP_AUDIT_ASPECT_ERROR_CANNOT_AUDIT;
-		String msg = key.getMessage(new String[] { adviceName, originatingThrowable.getClass().getSimpleName() });
-		LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-				msg, e);
-
-		ProviderResponse body = new ProviderResponse();
-		body.addMessage(MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR.name(),
-				msg, HttpStatus.INTERNAL_SERVER_ERROR);
-		entity = new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-		return entity;
-	}
-
-	/**
-	 * Write into Audit when exceptions occur while attempting to log audit records.
-	 *
-	 * @param adviceName
-	 * @param exception
-	 * @param auditEventData
-	 * @return
-	 */
-	private ResponseEntity<ProviderResponse> writeAuditError(final String adviceName, final Throwable exception,
-			final AuditEventData auditEventData) {
-		String msg = "Error ServiceMessage: " + exception;
-		AuditLogger.error(auditEventData, msg, exception);
-		LOGGER.error(adviceName + " auditing uncaught exception.", exception);
-
-		final ProviderResponse providerResponse = new ProviderResponse();
-		providerResponse.addMessage(MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-				exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-		return new ResponseEntity<>(providerResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

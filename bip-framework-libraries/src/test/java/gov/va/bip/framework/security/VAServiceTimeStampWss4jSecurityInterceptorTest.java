@@ -12,9 +12,6 @@ import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
 import org.xml.sax.SAXException;
 
-import gov.va.bip.framework.security.CryptoProperties;
-import gov.va.bip.framework.security.VAServiceTimeStampWss4jSecurityInterceptor;
-
 public class VAServiceTimeStampWss4jSecurityInterceptorTest {
 	private static final String TTL_STR = "300";
 
@@ -31,7 +28,7 @@ public class VAServiceTimeStampWss4jSecurityInterceptorTest {
 	/** The property name whose value would be the path to the keystore file */
 	private static final String APACHE_KS_FILE = "org.apache.ws.security.crypto.merlin.keystore.file";
 	/** The property name whose value would be time-stamp of the TTL (time to live) */
-	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.ws.client.security.timestamp.ttl";
+	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.client.ws.security.timestamp.ttl";
 
 	@Test
 	public void testGettersAndSetters() {

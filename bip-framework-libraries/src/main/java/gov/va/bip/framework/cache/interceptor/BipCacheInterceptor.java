@@ -4,25 +4,17 @@ import java.util.Arrays;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.interceptor.CacheInterceptor;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.audit.AuditLogger;
-import gov.va.bip.framework.audit.ResponseAuditData;
-import gov.va.bip.framework.constants.BipConstants;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
 
 /**
  * Audit cache GET operations.
@@ -42,16 +34,14 @@ public class BipCacheInterceptor extends CacheInterceptor {
 
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipCacheInterceptor.class);
-	/**  */
+	/** The advice logging name for this interceptor */
 	private static final String ADVICE_NAME = "invokeBipCacheInterceptor";
+	/** The activity name for this interceptor */
 	private static final String ACTIVITY = "cacheInvoke";
 
+	/** Get the object for general auditing. */
 	@Autowired
-	transient MessageSource messageSource;
-
-	/** The {@link AuditLogSerializer} for async logging */
-	@Autowired
-	AuditLogSerializer asyncLogging;
+	BaseAsyncAudit baseAsyncAudit;
 
 	/**
 	 * Instantiate an BipCacheInterceptor.
@@ -95,76 +85,16 @@ public class BipCacheInterceptor extends CacheInterceptor {
 				LOGGER.debug(prefix + "Returning: " + ReflectionToStringBuilder.toString(response, null, false, false, Object.class));
 			}
 
-			ResponseAuditData auditData = new ResponseAuditData();
-			auditData.setResponse(response);
-			asyncLogging.asyncLogRequestResponseAspectAuditData(auditEventData, auditData, ResponseAuditData.class,
-					MessageSeverity.INFO, null);
+			baseAsyncAudit.writeResponseAuditLog(response, new HttpResponseAuditData(), auditEventData, null, null);
 			LOGGER.debug(ADVICE_NAME + " audit logging handed off to async.");
 
 		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
-			this.handleInternalException(ADVICE_NAME, ACTIVITY, auditEventData, throwable);
-			throw throwable;
+			baseAsyncAudit.handleInternalExceptionAndRethrowApplicationExceptions(ADVICE_NAME, ACTIVITY, auditEventData, MessageKeys.BIP_AUDIT_CACHE_ERROR_UNEXPECTED,
+					throwable);
 		} finally {
 			LOGGER.debug(ADVICE_NAME + " finished.");
 		}
 
 		return response;
-	}
-
-	/**
-	 * Standard handling of exceptions that are thrown from within the advice
-	 * (not exceptions thrown by application code).
-	 *
-	 * @param adviceName the name of the advice method in which the exception was thrown
-	 * @param attemptingTo the attempted task that threw the exception
-	 * @param auditEventData the audit event data object
-	 * @param throwable the exception that was thrown
-	 */
-	protected void handleInternalException(final String adviceName, final String attemptingTo,
-			final AuditEventData auditEventData, final Throwable throwable) {
-
-		try {
-			MessageKeys key = MessageKeys.BIP_AUDIT_CACHE_ERROR_UNEXPECTED;
-			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);
-			final BipRuntimeException bipRuntimeException = new BipRuntimeException(
-					key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable);
-			writeAuditError(adviceName, bipRuntimeException, auditEventData);
-
-		} catch (Throwable e) { // NOSONAR intentionally catching throwable
-			handleAnyRethrownExceptions(adviceName, e);
-		}
-	}
-
-	/**
-	 * If - after attempting to audit an internal error - another exception is thrown,
-	 * then put the whole mess on a response entity Message and return it.
-	 *
-	 * @param adviceName
-	 * @param e
-	 * @return ResponseEntity
-	 */
-	private void handleAnyRethrownExceptions(
-			final String adviceName, final Throwable e) {
-
-		String msg = adviceName + " - Throwable occured while attempting to writeAuditError for Throwable.";
-		LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-				msg, e);
-	}
-
-	/**
-	 * Write into Audit when exceptions occur while attempting to log audit records.
-	 *
-	 * @param bipRuntimeException
-	 * @param auditEventData
-	 * @return
-	 */
-	private void writeAuditError(final String adviceName, final BipRuntimeException bipRuntimeException,
-			final AuditEventData auditEventData) {
-
-		LOGGER.error(adviceName + " encountered uncaught exception.", bipRuntimeException);
-
-		AuditLogger.error(auditEventData,
-				"Error ServiceMessage: " + bipRuntimeException.getMessage(),
-				bipRuntimeException);
 	}
 }

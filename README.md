@@ -12,6 +12,13 @@ To run spring boot and spring cloud enabled services on the BIP Platform, it mus
 
 1. bip-framework-test-lib: Test library framework to support functional testing for the services
 
+## Links to sub projects
+
+* [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md)
+* [bip-framework-libraries](bip-framework-libraries/README.md)
+* [bip-framework-parentpom](bip-framework-parentpom/README.md)
+* [bip-framework-test-lib](bip-framework-test-lib/README.md)
+
 ## How to include and download these dependency libraries in your project
 
      <dependency>
@@ -39,8 +46,8 @@ To make these libraries available locally for the service projects to compile an
 
 **OPTION 1**
 
-1. Clone the BIP framework repository `git clone https://github.com/department-of-veterans-affairs/bip-framework.git`
-1. Navigate to the folder `bip-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
+1. Clone the BIP framework repository `git clone https://github.ec.va.gov/EPMO/bip-ocp-framework`
+1. Navigate to the folder `bip-ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
 
 **OPTION 2**
 
@@ -57,13 +64,13 @@ To make these libraries available locally for the service projects to compile an
 **OPTION 3**
 **If you are NOT on VA network, a temporary solution in provided where GitHub repository acts as your nexus repository.**
 
-Add the below section in the reactor (root) pom.xml of your service project. See example: https://github.com/department-of-veterans-affairs/ocp-reference-spring-boot/blob/master/pom.xml
+Add the below section in the reactor (root) pom.xml of your service project. See example: https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/pom.xml
  
 	<repositories>
 		<repository>
 			<id>github</id>
 			<name>GitHub Repository</name>
-			<url>https://raw.github.com/department-of-veterans-affairs/bip-framework/mvn-repo</url>
+			<url>https://github.ec.va.gov/raw/EPMO/bip-ocp-framework/mvn-repo</url>
 		</repository>
 	</repositories>
 	

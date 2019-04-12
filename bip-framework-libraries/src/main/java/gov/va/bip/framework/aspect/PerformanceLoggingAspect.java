@@ -8,8 +8,20 @@ import org.aspectj.lang.reflect.MethodSignature;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 
+/**
+ * Performance logging (elapsed execution time).
+ * This class should only be invoked from {@code @Aspect} annotated classes,
+ * and only from {@code @Around} advice.
+ *
+ * Developers note: this class cannot be converted to use {@code @Before}
+ * and {@code @After} advice. It would be necessary to maintain state between
+ * the advice calls for the startMillis value. Spring can only maintain
+ * threadsafety if injected (state) values are proxied, and a Long is not proxied.
+ *
+ * @author aburkholder
+ */
 public class PerformanceLoggingAspect {
-
+	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(PerformanceLoggingAspect.class);
 
 	/** number of milliseconds in a second */
@@ -36,10 +48,27 @@ public class PerformanceLoggingAspect {
 	/** The Constant DOT. */
 	private static final String DOT = ".";
 
+	/**
+	 * Do not instantiate this class.
+	 */
 	private PerformanceLoggingAspect() {
 		throw new IllegalAccessError("PerformanceLoggingAspect is a static class. Do not instantiate it.");
 	}
 
+	/**
+	 *
+	 * This method should only be invoked from {@code @Aspect} annotated classes,
+	 * and only from {@code @Around} advice.
+	 *
+	 * Developers note: this class cannot be converted to use {@code @Before}
+	 * and {@code @After} advice. It would be necessary to maintain state between
+	 * the advice calls for the startMillis value. Spring can only maintain
+	 * threadsafety if injected (state) values are proxied, and a Long is not proxied.
+	 *
+	 * @param joinPoint
+	 * @return
+	 * @throws Throwable
+	 */
 	public static final Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
 		LOGGER.debug("PerformanceLoggingAspect executing around method:" + joinPoint.toLongString());

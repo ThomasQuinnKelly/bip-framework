@@ -33,7 +33,7 @@ public class BipFeignAutoConfiguration {
 
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipFeignAutoConfiguration.class);
 
-	@Value("${bip.framework.rest.client.connectionTimeout:20000}")
+	@Value("${bip.framework.client.rest.connectionTimeout:20000}")
 	private String connectionTimeout;
 
 	private String groupKey = "defaultGroup";
@@ -55,14 +55,15 @@ public class BipFeignAutoConfiguration {
 	public void setGroupKey(final String groupKey) {
 		this.groupKey = groupKey;
 	}
-	
+
 	/**
 	 * Custom Feign Error Decoder
+	 * 
 	 * @return
 	 */
 	@Bean
 	public FeignCustomErrorDecoder feignCustomErrorDecoder() {
-	  return new FeignCustomErrorDecoder();
+		return new FeignCustomErrorDecoder();
 	}
 
 	/**
@@ -94,8 +95,8 @@ public class BipFeignAutoConfiguration {
 		}
 		Defense.state(connTimeoutValue > 0,
 				"Invalid settings: Connection Timeout value must be greater than zero.\n"
-						+ "  - Ensure spring scan directive includes gov.va.bip.framework.rest.client.resttemplate;\n"
-						+ "  - Application property must be set to non-zero positive integer values for bip.framework.rest.client.connectionTimeout {} "
+						+ "  - Ensure spring scan directive includes gov.va.bip.framework.client.rest.template;\n"
+						+ "  - Application property must be set to non-zero positive integer values for bip.framework.client.rest.connectionTimeout {} "
 						+ connectionTimeout + ".");
 		final int connTimeoutValueFinal = connTimeoutValue;
 
@@ -117,7 +118,7 @@ public class BipFeignAutoConfiguration {
 
 		return HystrixFeign.builder().setterFactory(commandKeyIsRequestLine).requestInterceptor(tokenFeignRequestInterceptor());
 	}
-	
+
 	/**
 	 * Request options.
 	 *
@@ -125,13 +126,13 @@ public class BipFeignAutoConfiguration {
 	 * @return the request. options
 	 */
 	@Bean
-    Request.Options requestOptions(ConfigurableEnvironment env){
-        int ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", int.class, 6000);
-        int ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", int.class, 3000);
+	Request.Options requestOptions(ConfigurableEnvironment env) {
+		int ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", int.class, 6000);
+		int ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", int.class, 3000);
 
-        return new Request.Options(ribbonConnectionTimeout, ribbonReadTimeout);
-    }
-	
+		return new Request.Options(ribbonConnectionTimeout, ribbonReadTimeout);
+	}
+
 	/**
 	 * Feign logger level.
 	 *
@@ -140,7 +141,7 @@ public class BipFeignAutoConfiguration {
 	@Bean
 	Logger.Level feignLoggerLevel() {
 		return Logger.Level.FULL;
-    }
+	}
 
 	/**
 	 * A bean for internal purposes, the standard (non-feign) REST request intercepter

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
 import gov.va.bip.framework.service.autoconfigure.BipServiceAutoConfiguration;
 
 /**
@@ -26,8 +27,7 @@ public class BipServiceAutoConfigurationTest {
 	@Test
 	public void testWebConfiguration() throws Exception {
 		context = new AnnotationConfigWebApplicationContext();
-		context.register(BipAuditAutoConfiguration.class);
-		context.register(BipServiceAutoConfiguration.class);
+		context.register(BipAuditAutoConfiguration.class, BipServiceAutoConfiguration.class, TestConfigurationForAuditBeans.class);
 		context.refresh();
 		assertNotNull(context);
 		assertNotNull(this.context.getBean(BipAuditAutoConfiguration.class));

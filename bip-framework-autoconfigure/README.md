@@ -148,4 +148,47 @@ to be used to Authenticate, URL's to be processed etc.
         <version><latest version></version>
     </dependency>
 
+## Class Diagrams
+
+##### Auditing Package
+gov.va.bip.framework.audit.autoconfigure
+
+<img src = "/images/bip-framework-audit-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.cache.autoconfigure
+
+<img src = "/images/bip-framework-cache-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.feign.autoconfigure
+
+<img src = "/images/bip-framework-feign-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.hystrix.autoconfigure
+
+<img src = "/images/bip-framework-hystrix-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.rest.autoconfigure
+<img src = "/images/bip-framework-rest-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.security.autoconfigure
+
+<img src = "/images/bip-framework-security-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.service.autoconfigure
+
+<img src = "/images/bip-framework-service-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.swagger.autoconfigure
+
+<img src = "/images/bip-framework-swagger-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.validator.autoconfigure
+
+<img src = "/images/bip-framework-validator-autoconfigure-class-diagram.jpg">
+
+gov.va.bip.framework.vault.bootstrap.autoconfigure
+
+<img src = "/images/bip-framework-vault-autoconfigure-class-diagram.jpg">
+
+
 

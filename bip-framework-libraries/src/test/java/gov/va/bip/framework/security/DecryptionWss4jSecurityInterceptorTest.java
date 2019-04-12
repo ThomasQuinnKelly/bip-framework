@@ -9,9 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.security.CryptoProperties;
-import gov.va.bip.framework.security.DecryptionWss4jSecurityInterceptor;
-
 public class DecryptionWss4jSecurityInterceptorTest {
 
 	/** The property name whose value would be the crypto provider */
@@ -27,7 +24,7 @@ public class DecryptionWss4jSecurityInterceptorTest {
 	/** The property name whose value would be the path to the keystore file */
 	private static final String APACHE_KS_FILE = "org.apache.ws.security.crypto.merlin.keystore.file";
 	/** The property name whose value would be time-stamp of the TTL (time to live) */
-	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.ws.client.security.timestamp.ttl";
+	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.client.ws.security.timestamp.ttl";
 
 	@Before
 	public void setUp() throws Exception {

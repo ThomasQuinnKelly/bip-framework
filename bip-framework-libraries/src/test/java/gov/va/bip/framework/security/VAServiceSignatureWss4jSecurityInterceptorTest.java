@@ -14,9 +14,6 @@ import org.mockito.Mockito;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
 
-import gov.va.bip.framework.security.CryptoProperties;
-import gov.va.bip.framework.security.VAServiceSignatureWss4jSecurityInterceptor;
-
 public class VAServiceSignatureWss4jSecurityInterceptorTest {
 
 	private static final String SOAP_MESSAGE_FILE = "src/test/resources/testFiles/security/soapMessage.xml";
@@ -34,7 +31,7 @@ public class VAServiceSignatureWss4jSecurityInterceptorTest {
 	/** The property name whose value would be the path to the keystore file */
 	private static final String APACHE_KS_FILE = "org.apache.ws.security.crypto.merlin.keystore.file";
 	/** The property name whose value would be time-stamp of the TTL (time to live) */
-	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.ws.client.security.timestamp.ttl";
+	private static final String TIMESTAMP_TTL = "vetservices-partner-efolder.client.ws.security.timestamp.ttl";
 
 	/** The security.crypto.merlin.keystore.alias */
 	private String securityCryptoMerlinKeystoreAlias;

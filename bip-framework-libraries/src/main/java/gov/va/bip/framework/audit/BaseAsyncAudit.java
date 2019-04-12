@@ -2,190 +2,110 @@ package gov.va.bip.framework.audit;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
+import gov.va.bip.framework.audit.model.HttpRequestAuditData;
+import gov.va.bip.framework.audit.model.HttpResponseAuditData;
+import gov.va.bip.framework.audit.model.RequestAuditData;
+import gov.va.bip.framework.audit.model.ResponseAuditData;
 import gov.va.bip.framework.constants.BipConstants;
+import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipBanner;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.util.SanitizationUtil;
 import gov.va.bip.framework.validation.Defense;
 
+/**
+ * Performs simple audit logging on any type of request or response objects.
+ *
+ * @author aburkholder
+ */
+@Component
 public class BaseAsyncAudit {
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BaseAsyncAudit.class);
 
+	private static final String INTERNAL_EXCEPTION_PREFIX = "Error ServiceMessage: ";
+
 	/** How many bytes of an uploaded file will be read for inclusion in the audit record */
-	private static final int NUMBER_OF_BYTES = 1024;
+	public static final int NUMBER_OF_BYTES = 1024;
 
 	@Autowired
-	AuditLogSerializer asyncLogging;
+	AuditLogSerializer auditLogSerializer;
 
 	/**
-	 * Protected constructor.
+	 * Instantiate the class.
 	 */
-	protected BaseAsyncAudit() {
+	public BaseAsyncAudit() {
 		super();
 	}
 
+	/**
+	 * Make sure the class was initialized properly
+	 */
 	@PostConstruct
 	public void postConstruct() {
-		Defense.notNull(asyncLogging);
+		Defense.notNull(auditLogSerializer);
 	}
 
 	/**
-	 * Write audit log for a request.
+	 * Get the asynchronous logger to initiate logging audit data.
 	 *
-	 * @param request the request
-	 * @param auditEventData the auditable annotation
+	 * @return AuditLogSerializer
 	 */
-	protected void writeRequestAuditLog(final List<Object> request, final AuditEventData auditEventData) {
+	public AuditLogSerializer getAsyncLogger() {
+		return auditLogSerializer;
+	}
 
-		LOGGER.debug("RequestContextHolder.getRequestAttributes() {}", RequestContextHolder.getRequestAttributes());
-
-		final RequestAuditData requestAuditData = new RequestAuditData();
-
-		// set request on audit data
+	/**
+	 * Write any kind of request object list to the audit logs.
+	 *
+	 * @param request - the list of request objects
+	 * @param requestAuditData - the {@link AuditableData} container to put the request in
+	 * @param auditEventData - the audit meta-data for the event
+	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
+	 * @param t - a throwable, if relevant (may be {@code null})
+	 */
+	public void writeRequestAuditLog(final List<Object> request, final RequestAuditData requestAuditData,
+			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t) {
 		if (request != null) {
 			requestAuditData.setRequest(request);
 		}
 
-		final HttpServletRequest httpServletRequest =
-				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		if (httpServletRequest != null) {
-			getHttpRequestAuditData(httpServletRequest, requestAuditData);
-		}
-
 		LOGGER.debug("RequestAuditData: {}", requestAuditData.toString());
 
-		asyncLogging.asyncLogRequestResponseAspectAuditData(auditEventData, requestAuditData, RequestAuditData.class,
-				MessageSeverity.INFO, null);
+		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, HttpRequestAuditData.class,
+				severity == null ? MessageSeverity.INFO : severity, t);
 	}
 
 	/**
-	 * The asynchronous audit log serializer.
+	 * Write any kind of response Object to the audit logs.
 	 *
-	 * @return AuditLogSerializer
+	 * @param response - the response object
+	 * @param responseAuditData - the {@link AuditableData} container to put the response in
+	 * @param auditEventData - the audit meta-data for the event
+	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
+	 * @param t - a throwable, if relevant (may be {@code null})
 	 */
-	protected AuditLogSerializer getAsyncLogger() {
-		return this.asyncLogging;
-	}
-
-	/**
-	 * Add request header information, and any multipart/form or multipart/mixed data, to the audit data.
-	 *
-	 * @param httpServletRequest the servlet request
-	 * @param requestAuditData the audit data object
-	 */
-	private void getHttpRequestAuditData(final HttpServletRequest httpServletRequest, final RequestAuditData requestAuditData) {
-		final Map<String, String> headers = new HashMap<>();
-
-		ArrayList<String> listOfHeaderNames = Collections.list(httpServletRequest.getHeaderNames());
-		populateHeadersMap(httpServletRequest, headers, listOfHeaderNames);
-
-		requestAuditData.setHeaders(headers);
-		requestAuditData.setUri(httpServletRequest.getRequestURI());
-		requestAuditData.setMethod(httpServletRequest.getMethod());
-
-		final String contentType = httpServletRequest.getContentType();
-
-		LOGGER.debug("Content Type: {}", SanitizationUtil.stripXSS(contentType));
-
-		if (contentType != null && (contentType.toLowerCase(Locale.ENGLISH).startsWith(MediaType.MULTIPART_FORM_DATA_VALUE)
-				|| contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_MULTIPART_MIXED))) {
-			final List<String> attachmentTextList = new ArrayList<>();
-			InputStream inputstream = null;
-			try {
-				for (final Part part : httpServletRequest.getParts()) {
-					final Map<String, String> partHeaders = new HashMap<>();
-					populateHeadersMap(part, partHeaders, part.getHeaderNames());
-					inputstream = part.getInputStream();
-
-					attachmentTextList.add(partHeaders.toString() + ", " + convertBytesToString(inputstream));
-					closeInputStreamIfRequired(inputstream);
-				}
-			} catch (final Exception ex) {
-				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-						"Error occurred while reading the upload file. {}", ex);
-
-			} finally {
-				if (inputstream != null) {
-					try {
-						inputstream.close();
-					} catch (IOException e) {
-						LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-								"Error occurred while closing the upload file. {}", e);
-					}
-				}
-			}
-			requestAuditData.setAttachmentTextList(attachmentTextList);
-			requestAuditData.setRequest(null);
+	public void writeResponseAuditLog(final Object response, final ResponseAuditData responseAuditData,
+			final AuditEventData auditEventData,
+			final MessageSeverity severity, final Throwable t) {
+		if (response != null) {
+			responseAuditData.setResponse(response);
 		}
-	}
 
-	/**
-	 * Copies headers in the servlet request into a Map.
-	 *
-	 * @param httpServletRequest
-	 * @param headersToBePopulated
-	 * @param listOfHeaderNames
-	 */
-	private void populateHeadersMap(final HttpServletRequest httpServletRequest, final Map<String, String> headersToBePopulated,
-			final Collection<String> listOfHeaderNames) {
-		for (final String headerName : listOfHeaderNames) {
-			String value;
-			value = httpServletRequest.getHeader(headerName);
-			headersToBePopulated.put(headerName, value);
-		}
-	}
-
-	/**
-	 * Copies headers from the Part into a Map.
-	 *
-	 * @param part
-	 * @param headersToBePopulated
-	 * @param listOfHeaderNames
-	 */
-	private void populateHeadersMap(final Part part, final Map<String, String> headersToBePopulated,
-			final Collection<String> listOfHeaderNames) {
-		for (final String headerName : listOfHeaderNames) {
-			String value;
-			value = part.getHeader(headerName);
-			headersToBePopulated.put(headerName, value);
-		}
-	}
-
-	/**
-	 * Attempt to close an input stream.
-	 *
-	 * @param inputstream
-	 * @throws IOException
-	 */
-	private void closeInputStreamIfRequired(InputStream inputstream) throws IOException {
-		if (inputstream != null) {
-			try {
-				inputstream.close();
-			} catch (Exception e) { // NOSONAR
-				// NOSONAR nothing to be done here
-			}
-		}
+		LOGGER.debug("Invoking AuditLogSerializer.asyncLogRequestResponseAspectAuditData()");
+		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, responseAuditData,
+				HttpResponseAuditData.class, severity == null ? MessageSeverity.INFO : severity, t);
 	}
 
 	/**
@@ -195,7 +115,7 @@ public class BaseAsyncAudit {
 	 * @return the string
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	protected static String convertBytesToString(final InputStream in) throws IOException {
+	public static String convertBytesToString(final InputStream in) throws IOException {
 		int offset = 0;
 		int bytesRead = 0;
 		final byte[] data = new byte[NUMBER_OF_BYTES];
@@ -208,4 +128,75 @@ public class BaseAsyncAudit {
 		return new String(data, 0, offset, "UTF-8");
 	}
 
+	/**
+	 * Attempt to close an input stream.
+	 *
+	 * @param inputstream
+	 * @throws IOException
+	 */
+	public void closeInputStreamIfRequired(final InputStream inputstream) {
+		if (inputstream != null) {
+			try {
+				inputstream.close();
+			} catch (Exception e) { // NOSONAR intentionally broad catch
+				LOGGER.debug("Problem closing input stream.", e);
+			}
+		}
+	}
+
+	/**
+	 * Standard handling of exceptions that are thrown from within the advice (not exceptions thrown by application code, such
+	 * exceptions are rethrown).
+	 *
+	 * @param adviceName the name of the advice/method in which the exception was thrown
+	 * @param attemptingTo the attempted task that threw the exception
+	 * @param auditEventData the audit event data object
+	 * @param throwable the exception that was thrown
+	 */
+	public void handleInternalExceptionAndRethrowApplicationExceptions(final String adviceName, final String attemptingTo,
+			final AuditEventData auditEventData, MessageKeys key, final Throwable throwable) {
+
+		try {
+			if (key == null) {
+				key = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION;
+			}
+			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);
+			final BipRuntimeException bipRuntimeException = new BipRuntimeException(
+					key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable,
+					adviceName, attemptingTo);
+
+			AuditLogger.error(auditEventData,
+					INTERNAL_EXCEPTION_PREFIX + bipRuntimeException.getMessage(),
+					bipRuntimeException);
+
+			throw bipRuntimeException;
+
+		} catch (Throwable e) { // NOSONAR intentionally catching throwable
+			handleAnyRethrownExceptions(adviceName, e);
+		}
+	}
+
+	/**
+	 * If - after attempting to audit an internal error - another exception is thrown,
+	 * then put the whole mess in an error log (non-audit), and throw the exception again
+	 * as a Runtime exception.
+	 *
+	 * @param adviceName the name of the advice/method in which the exception was thrown
+	 * @param e the unexpected exception
+	 * @throws RuntimeException
+	 */
+	private void handleAnyRethrownExceptions(final String adviceName, final Throwable e) {
+
+		String msg = adviceName + " - Throwable occured while attempting to writeAuditError for Throwable.";
+		LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
+				msg, e);
+
+		RuntimeException ise = null;
+		if (!RuntimeException.class.isAssignableFrom(e.getClass())) {
+			ise = new IllegalStateException(msg);
+		} else {
+			ise = (RuntimeException) e;
+		}
+		throw ise;
+	}
 }

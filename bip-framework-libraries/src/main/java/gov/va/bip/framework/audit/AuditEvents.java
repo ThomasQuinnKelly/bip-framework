@@ -1,5 +1,7 @@
 package gov.va.bip.framework.audit;
 
+import gov.va.bip.framework.audit.annotation.Auditable;
+
 /**
  * Events types to be associated with {@link AuditEventData} used in {@link Auditable} classes and/or methods.
  * Created by vgadda on 8/17/17.

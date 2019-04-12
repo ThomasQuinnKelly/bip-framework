@@ -23,7 +23,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import gov.va.bip.framework.rest.client.resttemplate.RestClientTemplate;
+import gov.va.bip.framework.client.rest.template.RestClientTemplate;
 import gov.va.bip.framework.rest.exception.BipRestGlobalExceptionHandler;
 import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
 import gov.va.bip.framework.rest.provider.aspect.RestProviderTimerAspect;
@@ -33,7 +33,7 @@ import gov.va.bip.framework.validation.Defense;
  * A collection of spring beans used for REST server and/or client operations.
  *
  * Created by rthota on 8/24/17.
- * 
+ *
  * @author akulkarni
  */
 @Configuration
@@ -41,22 +41,22 @@ public class BipRestAutoConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BipRestAutoConfiguration.class);
 
-	@Value("${bip.framework.rest.client.connectionTimeout:20000}")
+	@Value("${bip.framework.client.rest.connectionTimeout:20000}")
 	private String connectionTimeout;
 
-	@Value("${bip.framework.rest.client.readTimeout:30000}")
+	@Value("${bip.framework.client.rest.readTimeout:30000}")
 	private String readTimeout;
 
-	@Value("${bip.framework.rest.client.maxTotalPool:10}")
+	@Value("${bip.framework.client.rest.maxTotalPool:10}")
 	private String maxTotalPool;
 
-	@Value("${bip.framework.rest.client.defaultMaxPerRoutePool:5}")
+	@Value("${bip.framework.client.rest.defaultMaxPerRoutePool:5}")
 	private String defaultMaxPerRoutePool;
 
-	@Value("${bip.framework.rest.client.validateAfterInactivityPool:10000}")
+	@Value("${bip.framework.client.rest.validateAfterInactivityPool:10000}")
 	private String validateAfterInactivityPool;
 
-	@Value("${bip.framework.rest.client.connectionBufferSize:4128}")
+	@Value("${bip.framework.client.rest.connectionBufferSize:4128}")
 	private String connectionBufferSize;
 
 	/**
@@ -109,16 +109,22 @@ public class BipRestAutoConfiguration {
 		}
 		Defense.state(connTimeoutValue > 0,
 				"Invalid settings: Connection Timeout value must be greater than zero.\n"
-						+ "  - Ensure spring scan directive includes gov.va.bip.framework.rest.client.resttemplate;\n"
-						+ "  - Application property must be set to non-zero positive integer value: bip.framework.rest.client.connection-timeout {} "
+						+ "  - Ensure spring scan directive includes gov.va.bip.framework.client.rest.template;\n"
+						+ "  - Application property must be set to non-zero positive integer value: bip.framework.client.rest.connection-timeout {} "
 						+ connectionTimeout + ".");
 
 		ConnectionConfig connectionConfig = ConnectionConfig.custom()
 				.setBufferSize(Integer.valueOf(connectionBufferSize))
 				.build();
 		HttpClientBuilder clientBuilder = HttpClients.custom();
-		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR CloseableHttpClient#close should automatically 
-		                                                                                                        // shut down the connection pool only if exclusively owned by the client
+		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR
+																												 // CloseableHttpClient#close
+																												 // should
+																												 // automatically
+																												 // shut down the
+																												 // connection pool
+																												 // only if exclusively
+																												 // owned by the client
 		poolingConnectionManager.setMaxTotal(Integer.valueOf(maxTotalPool));
 		poolingConnectionManager.setDefaultMaxPerRoute(Integer.valueOf(defaultMaxPerRoutePool));
 		poolingConnectionManager.setValidateAfterInactivity(Integer.valueOf(validateAfterInactivityPool));
@@ -166,10 +172,10 @@ public class BipRestAutoConfiguration {
 		RestTemplate restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory());
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
 		restTemplate.getMessageConverters().stream().filter(StringHttpMessageConverter.class::isInstance)
-		.map(StringHttpMessageConverter.class::cast).forEach(a -> {
-			a.setWriteAcceptCharset(false);
-			a.setDefaultCharset(StandardCharsets.UTF_8);
-		});
+				.map(StringHttpMessageConverter.class::cast).forEach(a -> {
+					a.setWriteAcceptCharset(false);
+					a.setDefaultCharset(StandardCharsets.UTF_8);
+				});
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 		interceptors.add(tokenClientHttpRequestInterceptor());
 		restTemplate.setInterceptors(interceptors);

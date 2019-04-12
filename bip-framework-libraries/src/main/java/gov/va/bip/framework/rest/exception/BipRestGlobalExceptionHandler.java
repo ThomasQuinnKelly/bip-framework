@@ -1,8 +1,6 @@
 package gov.va.bip.framework.rest.exception;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -44,7 +42,7 @@ import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
-import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderAspect;
+import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
 
 /**
  * A global exception handler as the last line of defense before sending response to the service consumer.
@@ -53,7 +51,7 @@ import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderAspect;
  */
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
+public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 
 	/** The Constant LOGGER. */
 	private static final Logger logger = LoggerFactory.getLogger(BipRestGlobalExceptionHandler.class);
@@ -78,7 +76,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 			msg = msg + " :: "
 					+ ((ex != null) && !StringUtils.isBlank(ex.getMessage())
 							? ex.getMessage()
-									: getMessageFromWrappedException(ex));
+							: getMessageFromWrappedException(ex));
 		}
 		return msg;
 	}
@@ -86,7 +84,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 	private String getMessageFromWrappedException(final Exception ex) {
 		return (ex != null) && (ex.getCause() != null) && !StringUtils.isBlank(ex.getCause().getMessage())
 				? ex.getCause().getMessage()
-						: NO_EXCEPTION_MESSAGE;
+				: NO_EXCEPTION_MESSAGE;
 	}
 
 	/**
@@ -141,13 +139,13 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 	}
 
 	/**
-	 * Write an audit log for the request object(s).
+	 * Write an audit log for the response object(s).
 	 *
-	 * @param request the request
+	 * @param response the response
 	 * @param auditEventData the auditable annotation
 	 */
-	protected void audit(final List<Object> request, final AuditEventData auditEventData) {
-		super.writeRequestAuditLog(request, auditEventData);
+	protected void audit(final Object response, final AuditEventData auditEventData, Throwable throwable) {
+		super.auditServletResponse().writeHttpResponseAuditLog(response, auditEventData, MessageSeverity.ERROR, throwable);
 	}
 
 	/**
@@ -212,7 +210,8 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 	 */
 	@ExceptionHandler(value = BipPartnerRuntimeException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public final ResponseEntity<Object> handleBipPartnerRuntimeException(final HttpServletRequest req, final BipPartnerRuntimeException ex) {
+	public final ResponseEntity<Object> handleBipPartnerRuntimeException(final HttpServletRequest req,
+			final BipPartnerRuntimeException ex) {
 		return standardHandler(ex, HttpStatus.BAD_REQUEST);
 	}
 
@@ -238,7 +237,8 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 	 */
 	@ExceptionHandler(value = IllegalArgumentException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public final ResponseEntity<Object> handleIllegalArgumentException(final HttpServletRequest req, final IllegalArgumentException ex) {
+	public final ResponseEntity<Object> handleIllegalArgumentException(final HttpServletRequest req,
+			final IllegalArgumentException ex) {
 		return standardHandler(ex, MessageKeys.NO_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
 	}
 
@@ -288,8 +288,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 			}
 		}
 
-		audit(Arrays.asList(apiError),
-				new AuditEventData(AuditEvents.API_REST_REQUEST, "jsr303Validation", req.getPathInfo()));
+		audit(apiError, new AuditEventData(AuditEvents.API_REST_REQUEST, "jsr303Validation", req.getPathInfo()), ex);
 
 		return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
 	}
@@ -365,7 +364,8 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderAspect {
 	 */
 	@ExceptionHandler(value = ConstraintViolationException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public final ResponseEntity<Object> handleConstraintViolation(final HttpServletRequest req, final ConstraintViolationException ex) {
+	public final ResponseEntity<Object> handleConstraintViolation(final HttpServletRequest req,
+			final ConstraintViolationException ex) {
 
 		final ProviderResponse apiError = new ProviderResponse();
 		if ((ex == null) || (ex.getConstraintViolations() == null)) {
