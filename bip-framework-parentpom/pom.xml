@@ -305,7 +305,9 @@
 						<excludeProperty>git.build.user.*</excludeProperty>
 						<excludeProperty>git.commit.user.*</excludeProperty>
 					</excludeProperties>
+					<useNativeGit>false</useNativeGit> 
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
+					<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -726,7 +728,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<repository>ocpdev/${project.artifactId}</repository>
+							<repository>bipdev/${project.artifactId}</repository>
 						</configuration>
 					</plugin>
 				</plugins>

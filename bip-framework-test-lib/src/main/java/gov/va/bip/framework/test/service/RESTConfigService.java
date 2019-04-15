@@ -62,9 +62,9 @@ public class RESTConfigService {
 			final String environment = System.getProperty(TEST_ENV);
 			String url = "";
 			if (StringUtils.isNotBlank(environment)) {
-				url = "config/referenceperson-" + environment + ".properties";
+				url = "config/vetservices-inttest-" + environment + ".properties";
 			} else {
-				url = "config/referenceperson.properties";
+				url = "config/vetservices-inttest.properties";
 			}
 			final URL urlConfigFile = RESTConfigService.class.getClassLoader().getResource(url);
 			instance.prop = PropertiesUtil.readFile(urlConfigFile);

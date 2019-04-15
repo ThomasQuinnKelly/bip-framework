@@ -60,7 +60,7 @@ public class VaultForConsulBootstrapConfiguration implements ApplicationContextA
 			return;
 		}
 
-		LOGGER.info("Intializaing Vault Property Source...");
+		LOGGER.info("Initializing Vault Property Source...");
 		VaultOperations vaultOperations = applicationContext
 				.getBean(VaultOperations.class);
 		VaultConsulProperties consulProperties = applicationContext

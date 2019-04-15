@@ -1,5 +1,6 @@
 package gov.va.bip.framework.audit.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class HttpRequestAuditData extends RequestAuditData {
 	private static final long serialVersionUID = -6346123934909781965L;
 
 	/* A map of the http headers on the request. */
-	private Map<String, String> headers;
+	private Map<String, String> headers = Collections.emptyMap();
 
 	/* The uri of the request. */
 	private String uri;

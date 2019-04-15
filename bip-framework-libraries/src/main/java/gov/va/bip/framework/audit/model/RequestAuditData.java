@@ -1,6 +1,7 @@
 package gov.va.bip.framework.audit.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -16,7 +17,7 @@ public class RequestAuditData implements Serializable, AuditableData {
 	private static final long serialVersionUID = -6463691536690649662L;
 
 	/* The request. */
-	private transient List<Object> request;
+	private transient List<Object> request = Collections.emptyList();
 
 	/**
 	 * Gets the request that is being logged in the audit logs.
