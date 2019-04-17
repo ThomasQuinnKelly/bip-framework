@@ -23,8 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
 import gov.va.bip.framework.service.DomainResponse;
 import gov.va.bip.framework.service.aspect.ServiceValidationAspect;
@@ -207,6 +205,23 @@ public class ServiceValidationAspectTest {
 			fail("unable to find method named testMethod");
 		}
 		ReflectionTestUtils.invokeMethod(aspect, "validateRequest", new DomainResponse(), messages, testMethod);
+	}
+
+	@Test
+	public void testValidateInputsToTheMethodWithNullMethodParams() {
+		List<Object> methodParams = null;
+		Method testMethod = null;
+		try {
+			testMethod = this.getClass().getMethod("testMethod", String.class);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			fail("unable to find method named testMethod");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			fail("unable to find method named testMethod");
+		}
+		assertNull(ReflectionTestUtils.invokeMethod(aspect, "validateInputsToTheMethod", methodParams, testMethod));
+
 	}
 
 	public void testMethod(final String testParam) {

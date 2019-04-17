@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.2.3" icons="true" automaticImage="PNG" generate-combined-fragments="true">  
+  <object id="1" language="java" name="gov.va.bip.framework.log.BipLoggerFactory" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLoggerFactory.java" binary="false" 
+    label="bipLoggerFactory" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="78" y="0"/>    
+    <execution id="2">      
+      <position height="1962" width="0" x="0" y="80"/>    
+    </execution>  
+  </object>  
+  <object id="5" language="java" name="gov.va.bip.framework.log.BipLogger" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLogger.java" binary="false" 
+    label="bipLogger" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="4">      
+      <position height="1920" width="0" x="0" y="101"/>    
+    </execution>    
+    <execution id="7">      
+      <position height="1844" width="0" x="0" y="156"/>    
+    </execution>    
+    <execution id="9">      
+      <position height="1771" width="0" x="0" y="208"/>    
+    </execution>    
+    <execution id="11">      
+      <position height="21" width="0" x="0" y="260"/>    
+    </execution>    
+    <execution id="13">      
+      <position height="21" width="0" x="0" y="312"/>    
+    </execution>    
+    <execution id="15">      
+      <position height="187" width="0" x="0" y="454"/>    
+    </execution>    
+    <execution id="17">      
+      <position height="21" width="0" x="0" y="712"/>    
+    </execution>    
+    <execution id="19">      
+      <position height="187" width="0" x="0" y="848"/>    
+    </execution>    
+    <execution id="21">      
+      <position height="21" width="0" x="0" y="1137"/>    
+    </execution>    
+    <execution id="23">      
+      <position height="709" width="0" x="0" y="1249"/>    
+    </execution>    
+    <execution id="25">      
+      <position height="21" width="0" x="0" y="506"/>    
+    </execution>    
+    <execution id="27">      
+      <position height="21" width="0" x="0" y="599"/>    
+    </execution>    
+    <execution id="29">      
+      <position height="21" width="0" x="0" y="900"/>    
+    </execution>    
+    <execution id="31">      
+      <position height="21" width="0" x="0" y="993"/>    
+    </execution>    
+    <execution id="33">      
+      <position height="21" width="0" x="0" y="1332"/>    
+    </execution>    
+    <execution id="35">      
+      <position height="21" width="0" x="0" y="1455"/>    
+    </execution>    
+    <execution id="37">      
+      <position height="21" width="0" x="0" y="1578"/>    
+    </execution>    
+    <execution id="39">      
+      <position height="21" width="0" x="0" y="1701"/>    
+    </execution>    
+    <execution id="41">      
+      <position height="21" width="0" x="0" y="1824"/>    
+    </execution>    
+    <execution id="43">      
+      <position height="21" width="0" x="0" y="1916"/>    
+    </execution>  
+  </object>  
+  <combined-fragment id="44" interaction-operator="ALT">    
+    <interaction-operand id="45" constraint="mdcReserveLength + messageLength + stackTraceLength &gt; MAX_TOTAL_LOG_LEN">      
+      <fragment refId="46"/>      
+      <fragment refId="47"/>    
+    </interaction-operand>    
+    <interaction-operand id="48" constraint="else">      
+      <fragment refId="22"/>      
+      <fragment refId="49"/>    
+    </interaction-operand>    
+    <combined-fragment id="46" interaction-operator="ALT">      
+      <interaction-operand id="50" constraint="messageLength &gt;= MAX_MSG_LENGTH">        
+        <fragment refId="51"/>        
+        <fragment refId="14"/>        
+        <fragment refId="24"/>      
+      </interaction-operand>      
+      <interaction-operand id="52" constraint="else">        
+        <fragment refId="16"/>      
+      </interaction-operand>      
+      <combined-fragment id="51" interaction-operator="LOOP">        
+        <interaction-operand id="53" constraint="for: splitMessages">          
+          <fragment refId="26"/>        
+        </interaction-operand>      
+      </combined-fragment>    
+    </combined-fragment>    
+    <combined-fragment id="47" interaction-operator="ALT">      
+      <interaction-operand id="54" constraint="stackTraceLength &gt;= MAX_STACK_TRACE_TEXT_LENGTH">        
+        <fragment refId="55"/>        
+        <fragment refId="18"/>        
+        <fragment refId="28"/>      
+      </interaction-operand>      
+      <interaction-operand id="56" constraint="else">        
+        <fragment refId="57"/>      
+      </interaction-operand>      
+      <combined-fragment id="57" interaction-operator="OPT">        
+        <interaction-operand id="58" constraint="shouldStackTraceBePrinted">          
+          <fragment refId="20"/>        
+        </interaction-operand>      
+      </combined-fragment>      
+      <combined-fragment id="55" interaction-operator="LOOP">        
+        <interaction-operand id="59" constraint="for: splitstackTrace">          
+          <fragment refId="30"/>        
+        </interaction-operand>      
+      </combined-fragment>    
+    </combined-fragment>    
+    <combined-fragment id="49" interaction-operator="ALT">      
+      <interaction-operand id="60" constraint="level == null">        
+        <fragment refId="32"/>      
+      </interaction-operand>      
+      <interaction-operand id="61" constraint="else">        
+        <fragment refId="62"/>      
+      </interaction-operand>      
+      <combined-fragment id="62" interaction-operator="ALT">        
+        <interaction-operand id="63" constraint="org.slf4j.event.Level.ERROR.equals(level)">          
+          <fragment refId="34"/>        
+        </interaction-operand>        
+        <interaction-operand id="64" constraint="else">          
+          <fragment refId="65"/>        
+        </interaction-operand>        
+        <combined-fragment id="65" interaction-operator="ALT">          
+          <interaction-operand id="66" constraint="org.slf4j.event.Level.WARN.equals(level)">            
+            <fragment refId="36"/>          
+          </interaction-operand>          
+          <interaction-operand id="67" constraint="else">            
+            <fragment refId="68"/>          
+          </interaction-operand>          
+          <combined-fragment id="68" interaction-operator="ALT">            
+            <interaction-operand id="69" constraint="org.slf4j.event.Level.INFO.equals(level)">              
+              <fragment refId="38"/>            
+            </interaction-operand>            
+            <interaction-operand id="70" constraint="else">              
+              <fragment refId="71"/>            
+            </interaction-operand>            
+            <combined-fragment id="71" interaction-operator="ALT">              
+              <interaction-operand id="72" constraint="org.slf4j.event.Level.TRACE.equals(level)">                
+                <fragment refId="40"/>              
+              </interaction-operand>              
+              <interaction-operand id="73" constraint="else">                
+                <fragment refId="42"/>              
+              </interaction-operand>            
+            </combined-fragment>          
+          </combined-fragment>        
+        </combined-fragment>      
+      </combined-fragment>    
+    </combined-fragment>  
+  </combined-fragment>  
+  <note id="74">    
+    <position height="659" width="140" x="548" y="1270"/>    
+    <text><![CDATA[
+
+< < < <
+
+
+
+
+
+
+
+
+
+
+This sequence is relevant for any above call to sendLogAtLevel(..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+< < < <
+    ]]>
+    </text>  
+  </note>  
+  <note id="75">    
+    <position height="74" width="200" x="480" y="107"/>    
+    <text><![CDATA[Sample  of one of many static methods for invoking a log event.
+    ]]>
+    </text>  
+  </note>  
+  <message id="3" operation="getLogger(org.slf4j.Logger):gov.va.bip.framework.log.BipLogger" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="6" operation="error(gov.va.bip.framework.log.BipBanner,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </message>  
+  <message id="8" operation="sendlog(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </message>  
+  <message id="10" operation="safeMessage(java.lang.String):java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="11"/>  
+  </message>  
+  <message id="12" operation="getStackTraceAsString(java.lang.Throwable):java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="13"/>  
+  </message>  
+  <message id="14" 
+    operation="splitAndSendLargeMessage(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,int,boolean):int" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="15"/>  
+  </message>  
+  <message id="16" 
+    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="17"/>  
+  </message>  
+  <message id="18" 
+    operation="splitAndSendLargeStackTrace(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,int,java.lang.String):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="19"/>  
+  </message>  
+  <message id="20" 
+    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="21"/>  
+  </message>  
+  <message id="22" 
+    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="23"/>  
+  </message>  
+  <message id="24" operation="splitMessages(java.lang.String):java.lang.String[]" asynchronous="false">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="25"/>  
+  </message>  
+  <message id="26" 
+    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="27"/>  
+  </message>  
+  <message id="28" operation="splitStackTraceText(java.lang.String):java.lang.String[]" asynchronous="false">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="29"/>  
+  </message>  
+  <message id="30" 
+    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="31"/>  
+  </message>  
+  <message id="32" operation="sendLogDebug(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="33"/>  
+  </message>  
+  <message id="34" operation="sendLogError(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="35"/>  
+  </message>  
+  <message id="36" operation="sendLogWarn(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="37"/>  
+  </message>  
+  <message id="38" operation="sendLogInfo(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="39"/>  
+  </message>  
+  <message id="40" operation="sendLogTrace(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="41"/>  
+  </message>  
+  <message id="42" operation="sendLogDebug(org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="43"/>  
+  </message>  
+  <text-link id="76">    
+    <link-end type="SOURCE" refId="75"/>    
+    <link-end type="TARGET" refId="6"/>  
+  </text-link>
+</sequence-diagram>

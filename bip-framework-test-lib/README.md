@@ -1,11 +1,11 @@
-## What is this test library project for? ##
+## What is this test library project for?
 
 BIP Test library is customized to support testing the REST based Services deployed on BIP platform. This library is configured to use broad range of operations provided by Spring REST Client – RestTemplate. Spring RestTemplate provides a convenient way to test RESTful web services. It simplifies the interaction with HTTP servers and enforces RESTful systems.
 
 ## Dependencies:
 
 Spring Rest template - Included via `spring-web` dependency.
-   
+
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-web</artifactId>
 
@@ -15,15 +15,16 @@ cucumber-java8 - a library that makes it easier for us to write and execute para
 	   <artifactId>cucumber-java8</artifactId>
 
 
-## How to add BIP Test Library dependencies in your maven pom.xml? ##
-        
+## How to add BIP Test Library dependencies
+Add the dependency to your test projects POM file.
+
 	<dependency>
 		<groupId>gov.va.bip.framework</groupId>
 		<artifactId>bip-framework-test-lib</artifactId>
 		<version><!-- add the appropriate version --></version>
 	</dependency>
 
-## Overview of the packages ##
+## Overview of the packages
 
 Test Library uses Java - Maven platform, the REST-template for core API validations.
 
@@ -52,3 +53,7 @@ PropertiesUtil: Utility class for handling properties.
 RequestResponseLoggingInterceptor: It is an interceptor for all rest API calls to trace request and responses. This interceptor can also be used as a troubleshooting technique to trace request headers, parameter and response body.
 
 In the `bip-reference-inttest` project, `bip-framework-test-lib` is added as a dependency. This project `bip-reference-inttest` can be used as a reference for writing functional tests https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/bip-reference-inttest
+
+## Class Diagrams
+	gov.va.bip.framework.test 
+<img src="/images/cd-test-lib-package.jpg" />

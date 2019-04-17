@@ -2,7 +2,8 @@ This page documents the purpose and capabilities of **OpenShift Container Platfo
 
 ## What is this library project for? ##
 
-This project contains interfaces, annotations and classes consumed by the application services for various functionality as listed below
+This project contains interfaces, annotations and classes consumed by the application services for various functionality:
+* Marker interfaces for transfer objects to support common identification and behavior
 * Rest Provider Message classes, RestTemplate
 * Audit and Performance Logging aspects
 * Utility ops for logging and handling exceptions
@@ -11,7 +12,17 @@ This project contains interfaces, annotations and classes consumed by the applic
 * Security JWT base classes, properties and exceptions
 * Service Domain Message classes, timer and validation aspects
 
-## How to add dependency in your project?
+## BIP Framework principles
+BIP Framework aims to:
+* free developers from many of the complexities of dealing with the underlying platform,
+* enable centralized application configuration,
+* enable developers to focus more on business requirements and less on boilerplate code,
+* encourage developers to use good coding practices and patterns that are effective and efficient,
+* encourage developers to write code that presents a common "look and feel" across projects,
+* enable developers to produce reliable code that takes less time to develop and test.
+
+## How to add the Framework dependency
+Add the dependency in the application projects POM file.
 
     <dependency>
         <groupId>gov.va.bip.framework</groupId>
@@ -19,58 +30,124 @@ This project contains interfaces, annotations and classes consumed by the applic
         <version><!-- add the appropriate version --></version>
     </dependency>
 
+## Framework usage in service applications
+
+For more information about developing applications on the BIP Framework, see [Developing with BIP Framework](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/docs/developing-with-bip-framework.md).
+
+## Sequence Diagrams
+
+#### __Audit__
+
+##### *@Auditable*
+<img src="/images/sd-lib-audit-annotation-before.png">
+<img src="/images/sd-lib-audit-annotation-afterreturning.png">
+<img src="/images/sd-lib-audit-annotation-afterthrowing.png">
+
+##### *ProviderHttpAspect*
+
+<img src="/images/sd-lib-audit-providerhttpascpect-before.png">
+<img src="/images/sd-lib-audit-providerhttpascpect-afterreturning.png">
+<img src="/images/sd-lib-audit-providerhttpascpect-afterthrowing.png">
+
+##### *BipCacheInterceptor*
+<img src="/images/sd-lib-audit-cache.png">
+
+##### *AuditLogSerializer & AuditLogger*
+<img src="/images/sd-lib-audit-logserializer.png">
+
+#### __Logger__
+<img src="/images/sd-lib-log.png">
+
+#### __JWT Token Generator__
+<img src="/images/sd-lib-security-jwt-generator.png">
+
 ## Class Diagrams
 
-##### Auditing Package
-gov.va.bip.framework.audit
+#### __Aspects, Join Points and Pointcuts__
+    gov.va.bip.framework.aspect
+    gov.va.bip.framework.rest.provider.aspect
+    gov.va.bip.framework.service.aspect
+<img src="/images/cd-lib-aspect.png">
 
-<img src = "/images/cd-audit-package.jpg">
+#### __Audit__
+    gov.va.bip.framework.audit
+    gov.va.bip.framework.audit.annotation
+    gov.va.bip.framework.audit.http
+    gov.va.bip.framework.audit.model
+<img src="/images/cd-lib-audit.png">
 
-##### Aspects Join Points and Pointcuts Packages
-   gov.va.bip.framework.aspect <br/>
-   gov.va.bip.framework.rest.provider.aspect<br/>
-   gov.va.bip.framework.service.aspect<br/>
-   
-<img src = "/images/cd-aspect-packages.jpg">
+#### __Cache__
+    gov.va.bip.framework.cache
+    gov.va.bip.framework.cache.interceptor
+<img src="/images/cd-lib-cache.png">
 
-##### Exception Packages
-   gov.va.bip.framework.exception <br/>
-   gov.va.bip.framework.rest.exception<br/>
-   gov.va.bip.framework.service<br/>
-   
-<img src = "/images/bip-framework-exception-class-diagram.jpg">
+#### __Client__
+##### *REST Client*
+    gov.va.bip.framework.client.rest.template
+<img src="/images/cd-lib-client-rest.png">
 
-gov.va.bip.framework.log
+##### *SOAP Client*
+    gov.va.bip.framework.client.ws
+    gov.va.bip.framework.client.ws.interceptor
+    gov.va.bip.framework.client.ws.interceptor.transport
+    gov.va.bip.framework.client.ws.remote
+<img src="/images/cd-lib-client-ws.png">
 
-<img src = "/images/bip-framework-log-class-diagram.jpg">
+#### __Config__
+    gov.va.bip.framework.config
+<img src="/images/cd-lib-config.png">
 
-gov.va.bip.framework.security
-gov.va.bip.framework.security.model
-gov.va.bip.framework.security.util
+#### __Exception__
+    gov.va.bip.framework.exception
+    gov.va.bip.framework.exception.interceptor
+    gov.va.bip.framework.rest.exception
+    gov.va.bip.framework.security.jwt
+    gov.va.bip.framework.service
+<img src="/images/cd-lib-exception.png">
 
-<img src = "/images/bip-framework-security-class-diagram.jpg">
+#### __Logging__
+    gov.va.bip.framework.log
+<img src="/images/cd-lib-log.png">
 
-gov.va.bip.framework.security.jwt
-gov.va.bip.framework.security.jwt.correlation
+#### __Messages__
+    gov.va.bip.framework.messages
+<img src="/images/cd-lib-messages.png">
 
-<img src = "/images/bip-framework-jwt-class-diagram.jpg">
+#### __Rest__
+    gov.va.bip.framework.rest.exception
+    gov.va.bip.framework.rest.provider
+    gov.va.bip.framework.rest.aspect
+<img src="/images/cd-lib-rest.png">
 
-gov.va.bip.framework.transfer
-gov.va.bip.framework.transfer.jaxb.adapters
-gov.va.bip.framework.transfer.transform
+#### __Security__
+    gov.va.bip.framework.security
+    gov.va.bip.framework.security.model
+    gov.va.bip.framework.security.util
+<img src="/images/cd-lib-security.png">
 
-<img src = "/images/bip-framework-transfer-class-diagram.jpg">
+#### __Security JWT__
+    gov.va.bip.framework.security.jwt
+    gov.va.bip.framework.security.jwt.correlation
+<img src="/images/cd-lib-security-jwt.png">
 
-gov.va.bip.framework.validation
+#### __Service__
+    gov.va.bip.framework.service
+    gov.va.bip.framework.service.spect
+<img src="/images/cd-lib-service.png">
 
-<img src = "/images/bip-framework-validation-class-diagram.jpg">
+#### __Swagger__
+    gov.va.bip.framework.swagger
+<img src="/images/cd-lib-swagger.png">
 
-gov.va.bip.framework.client.ws
-gov.va.bip.framework.client.ws.interceptor
-gov.va.bip.framework.client.ws.interceptor.transport
+#### __Transfer__
+    gov.va.bip.framework.transfer
+    gov.va.bip.framework.transfer.jaxb.adapters
+    gov.va.bip.framework.transfer.transform
+<img src="/images/cd-lib-transfer.png">
 
-<img src = "/images/bip-framework-ws-class-diagram.jpg">
-
+#### __Validation__
+    gov.va.bip.framework.validation
+<img src="/images/cd-lib-validation.png">
 
 
 

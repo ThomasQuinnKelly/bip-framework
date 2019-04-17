@@ -134,7 +134,7 @@ public class BaseAsyncAudit {
 	 * @param inputstream
 	 * @throws IOException
 	 */
-	public void closeInputStreamIfRequired(final InputStream inputstream) {
+	public static void closeInputStreamIfRequired(final InputStream inputstream) {
 		if (inputstream != null) {
 			try {
 				inputstream.close();
@@ -157,12 +157,10 @@ public class BaseAsyncAudit {
 			final AuditEventData auditEventData, MessageKeys key, final Throwable throwable) {
 
 		try {
-			if (key == null) {
-				key = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION;
-			}
-			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);
+			MessageKeys effectiveKey = key == null ? MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION : key;
+			LOGGER.error(effectiveKey.getMessage(adviceName, attemptingTo), throwable);
 			final BipRuntimeException bipRuntimeException = new BipRuntimeException(
-					key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable,
+					effectiveKey, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable,
 					adviceName, attemptingTo);
 
 			AuditLogger.error(auditEventData,

@@ -1,6 +1,8 @@
 ## What is this repository for?
 
-To run spring boot and spring cloud enabled services on the BIP Platform, it must adhere to various service patterns. This repository contains suite of framework libraries, auto configurations, test libraries and parent POM that must be included as dependencies to enable the patterns
+To run spring boot and spring cloud enabled services on the BIP Platform, it must adhere to various service patterns. This repository contains a suite of framework libraries, auto configurations, test libraries and parent POM that must be included as dependencies to enable the patterns.
+
+For general information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-spring-boot README.md](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot).
 
 ## Project Breakdown
 
@@ -46,7 +48,7 @@ To make these libraries available locally for the service projects to compile an
 
 **OPTION 1**
 
-1. Clone the BIP framework repository `git clone https://github.ec.va.gov/EPMO/bip-ocp-framework`
+1. Clone the BIP framework repository `git clone https://github.ec.va.gov/EPMO/bip-ocp-framework.git`
 1. Navigate to the folder `bip-ocp-framework` and run `mvn clean install` command. This would build all the libraries with versions as configured in pom.xml files.
 
 **OPTION 2**
@@ -62,7 +64,7 @@ To make these libraries available locally for the service projects to compile an
 	</repositories>
 	
 **OPTION 3**
-**If you are NOT on VA network, a temporary solution in provided where GitHub repository acts as your nexus repository.**
+**If you are NOT on VA network, a temporary solution is provided where GitHub repository acts as your nexus repository.**
 
 Add the below section in the reactor (root) pom.xml of your service project. See example: https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/pom.xml
  
@@ -70,7 +72,7 @@ Add the below section in the reactor (root) pom.xml of your service project. See
 		<repository>
 			<id>github</id>
 			<name>GitHub Repository</name>
-			<url>https://github.ec.va.gov/raw/EPMO/bip-ocp-framework/mvn-repo</url>
+			<url>https://raw.github.com/department-of-veterans-affairs/bip-framework/mvn-repo</url>
 		</repository>
 	</repositories>
 	
@@ -122,4 +124,4 @@ Run command to deploy and upload artifacts to the repository
 	
      mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO 
          -- OR --
-     mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs
+     mvn clean deploy -Plocal-deploy -DrepositoryName=ocp-framework -DrepositoryOwner=department-of-veterans-affairs

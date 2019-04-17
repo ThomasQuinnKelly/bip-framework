@@ -117,14 +117,8 @@ public class BipRestAutoConfiguration {
 				.setBufferSize(Integer.valueOf(connectionBufferSize))
 				.build();
 		HttpClientBuilder clientBuilder = HttpClients.custom();
-		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR
-																												 // CloseableHttpClient#close
-																												 // should
-																												 // automatically
-																												 // shut down the
-																												 // connection pool
-																												 // only if exclusively
-																												 // owned by the client
+		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR CloseableHttpClient#close should automatically 
+        																										// shut down the connection pool only if exclusively owned by the client
 		poolingConnectionManager.setMaxTotal(Integer.valueOf(maxTotalPool));
 		poolingConnectionManager.setDefaultMaxPerRoute(Integer.valueOf(defaultMaxPerRoutePool));
 		poolingConnectionManager.setValidateAfterInactivity(Integer.valueOf(validateAfterInactivityPool));

@@ -2,16 +2,29 @@ package gov.va.bip.framework.transfer;
 
 import gov.va.bip.framework.messages.MessageSeverity;
 
+/**
+ * An abstract base class for provider and domain response objects.
+ * <p>
+ * Implementers of this class should implement the appropriate
+ * {@code gov.va.bip.framework.transfer.*TransferObjectMarker} interface.
+ */
 public abstract class AbstractResponseObject {
 
 	public AbstractResponseObject() {
 		super();
 	}
 
+	/**
+	 * Determine whether any of the messages in the response are of the specified
+	 * severity.
+	 *
+	 * @param severity - the {@link MessageSeverity} to look for
+	 * @return boolean - {@code true} if the specified severity was found in a message
+	 */
 	protected abstract boolean hasMessagesOfType(final MessageSeverity severity);
 
 	/**
-	 * Checks for fatals.
+	 * Checks the messages in the response for fatals.
 	 *
 	 * @return true, if successful
 	 */
@@ -20,7 +33,7 @@ public abstract class AbstractResponseObject {
 	}
 
 	/**
-	 * Checks for errors.
+	 * Checks the messages in the response for errors.
 	 *
 	 * @return true, if successful
 	 */
@@ -29,7 +42,7 @@ public abstract class AbstractResponseObject {
 	}
 
 	/**
-	 * Checks for warnings.
+	 * Checks the messages in the response for warnings.
 	 *
 	 * @return true, if successful
 	 */
@@ -38,7 +51,7 @@ public abstract class AbstractResponseObject {
 	}
 
 	/**
-	 * Checks for infos.
+	 * Checks the messages in the response for infos.
 	 *
 	 * @return true, if successful
 	 */

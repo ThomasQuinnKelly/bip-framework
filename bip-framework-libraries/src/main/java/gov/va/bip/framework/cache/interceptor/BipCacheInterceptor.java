@@ -41,7 +41,7 @@ public class BipCacheInterceptor extends CacheInterceptor {
 
 	/** Get the object for general auditing. */
 	@Autowired
-	BaseAsyncAudit baseAsyncAudit;
+	transient BaseAsyncAudit baseAsyncAudit;
 
 	/**
 	 * Instantiate an BipCacheInterceptor.

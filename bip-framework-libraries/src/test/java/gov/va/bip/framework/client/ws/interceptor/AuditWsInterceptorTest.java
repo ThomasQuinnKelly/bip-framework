@@ -70,6 +70,14 @@ public class AuditWsInterceptorTest {
 	}
 
 	@Test
+	public void afterCompletionAlreadyLoggedTest() {
+		ReflectionTestUtils.setField(interceptor, "alreadyLogged", true);
+		interceptor.afterCompletion(messageContext, new Exception());
+		verify(messageContext, times(0)).getRequest();
+		verify(messageContext, times(0)).getResponse();
+	}
+
+	@Test
 	public void doAuditTest() {
 		when(auditWsMetaData.eventData()).thenReturn(auditServiceEventData);
 		when(auditWsMetaData.messagePrefix()).thenReturn("test prefix value");

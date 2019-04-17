@@ -6,4 +6,4 @@ Spring Boot Version : 2.1.2.RELEASE
 
 Spring Cloud Release Train: Greenwich.RELEASE
 
-See <b>pom.xml</b> for the detailed configuration and dependency management
+See `pom.xml` for the detailed configuration and dependency management

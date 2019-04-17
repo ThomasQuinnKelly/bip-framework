@@ -11,11 +11,9 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.audit.annotation.Auditable;
 import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.audit.model.ResponseAuditData;
@@ -55,9 +53,6 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 	
 	/** The Constant AUDIT_ERROR_PREFIX_EXCEPTION. */
 	private static final String AUDIT_ERROR_PREFIX_EXCEPTION = "Could not audit event due to unexpected exception.";
-
-	@Autowired
-	BaseAsyncAudit baseAsyncAudit;
 
 	/**
 	 * Instantiate the aspect.

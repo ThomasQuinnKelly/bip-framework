@@ -88,7 +88,6 @@ public class AuditableAnnotationAspectTest {
 
 		@Override
 		public Class<?> getReturnType() {
-			// TODO Auto-generated method stub
 			return String.class;
 		}
 

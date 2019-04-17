@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.2.3" icons="true" automaticImage="PNG" generate-combined-fragments="true">  
+  <object id="1" language="java" name="gov.va.bip.framework.security.jwt.TokenResource" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/security/jwt/TokenResource.java" binary="false" 
+    label="tokenResource" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="133" y="0"/>    
+    <execution id="2">      
+      <position height="517" width="0" x="0" y="82"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="454" width="0" x="0" y="124"/>    
+    </execution>  
+  </object>  
+  <object id="13" language="java" name="gov.va.bip.framework.security.jwt.JwtAuthenticationProperties" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/security/jwt/JwtAuthenticationProperties.java" 
+    binary="false" label="jwtAuthenticationProperties" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="6">      
+      <position height="21" width="0" x="0" y="162"/>    
+    </execution>    
+    <execution id="8">      
+      <position height="21" width="0" x="0" y="204"/>    
+    </execution>    
+    <execution id="10">      
+      <position height="21" width="0" x="0" y="246"/>    
+    </execution>  
+  </object>  
+  <object id="14" language="java" name="gov.va.bip.framework.security.util.GenerateToken" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/security/util/GenerateToken.java" binary="false" 
+    label="&lt;static&gt;" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="12">      
+      <position height="260" width="0" x="0" y="297"/>    
+    </execution>    
+    <execution id="16">      
+      <position height="21" width="0" x="0" y="423"/>    
+    </execution>  
+  </object>  
+  <object id="21" language="java" name="gov.va.bip.framework.security.jwt.correlation.CorrelationIdsParser" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/security/jwt/correlation/CorrelationIdsParser.java" 
+    binary="false" label="&lt;static&gt;" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="18">      
+      <position height="21" width="0" x="0" y="477"/>    
+    </execution>  
+  </object>  
+  <object id="22" language="java" name="io.jsonwebtoken.Jwts" project="bip-framework-libraries" 
+    file="/Users/aburkholder/.m2/repository/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar" binary="true" 
+    label="&lt;static&gt;" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="20">      
+      <position height="21" width="0" x="0" y="515"/>    
+    </execution>  
+  </object>  
+  <message id="3" operation="getToken(gov.va.bip.framework.security.model.Person):java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="5" operation="getExpireInSeconds():int" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </message>  
+  <message id="7" operation="getSecret():java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>  
+  <message id="9" operation="getIssuer():java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="11" 
+    operation="generateJwt(gov.va.bip.framework.security.model.Person,int,java.lang.String,java.lang.String,java.lang.String[]):java.lang.String" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="12"/>  
+  </message>  
+  <message id="15" 
+    operation="populatePersonTraits(gov.va.bip.framework.security.model.Person):gov.va.bip.framework.security.PersonTraits" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="16"/>  
+  </message>  
+  <message id="17" 
+    operation="parseCorrelationIds(java.util.List&lt;java.lang.String&gt;,gov.va.bip.framework.security.PersonTraits):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="18"/>  
+  </message>  
+  <message id="19" operation="builder():io.jsonwebtoken.JwtBuilder" asynchronous="false">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="20"/>  
+  </message>
+</sequence-diagram>

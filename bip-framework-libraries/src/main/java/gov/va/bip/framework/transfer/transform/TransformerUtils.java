@@ -11,6 +11,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 
+/**
+ * Some static utility methods to support model object transformations.
+ *
+ * @author aburkholder
+ */
 public final class TransformerUtils {
 
 	/** Logger */
@@ -39,7 +44,6 @@ public final class TransformerUtils {
 		}
 	}
 
-
 	/**
 	 * Convert XMLGregorianCalendar to java.util.Date
 	 *
@@ -61,7 +65,8 @@ public final class TransformerUtils {
 	 *            {@link TransformerUtils.DatatypeFactoryManager})
 	 * @return XMLGregorianCalendar object
 	 */
-	public static XMLGregorianCalendar toXMLGregorianCalendar(final Date date, final TransformerUtils.DatatypeFactoryManager datatypeFactoryManager) {
+	public static XMLGregorianCalendar toXMLGregorianCalendar(final Date date,
+			final TransformerUtils.DatatypeFactoryManager datatypeFactoryManager) {
 		try {
 			final GregorianCalendar gc = new GregorianCalendar(Locale.getDefault());
 			gc.setTimeInMillis(date.getTime());

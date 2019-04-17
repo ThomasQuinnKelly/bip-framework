@@ -12,9 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import gov.va.bip.framework.security.AbstractWss4jSecurityInterceptor;
-import gov.va.bip.framework.security.CryptoProperties;
-
 public class AbstractWss4jSecurityInterceptorTest {
 
 	/** The property name whose value would be the crypto provider */
@@ -39,7 +36,6 @@ public class AbstractWss4jSecurityInterceptorTest {
 
 		@Override
 		public CryptoProperties retrieveCryptoProps() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}

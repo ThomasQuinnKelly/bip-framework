@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
 import gov.va.bip.framework.audit.AuditEvents;
 
 /**
@@ -23,6 +24,7 @@ import gov.va.bip.framework.audit.AuditEvents;
  * <ul>
  * <li>auditClass - name of the java Class under audit
  * </ul>
+ * Implementation is {@link AuditableAnnotationAspect}
  *
  * Created by vgadda on 8/17/17.
  */

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.2.3" icons="true" automaticImage="PNG" generate-combined-fragments="true">  
+  <object id="1" language="java" name="gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/rest/provider/aspect/ProviderHttpAspect.java" 
+    binary="false" label="providerHttpAspect" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="184" y="0"/>    
+    <execution id="2">      
+      <position height="874" width="0" x="0" y="107"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="811" width="0" x="0" y="149"/>    
+    </execution>    
+    <execution id="6">      
+      <position height="621" width="0" x="0" y="203"/>    
+    </execution>    
+    <execution id="8">      
+      <position height="21" width="0" x="0" y="918"/>    
+    </execution>  
+  </object>  
+  <object id="11" language="java" 
+    name="gov.va.bip.framework.audit.http.AuditHttpRequestResponse.AuditHttpServletRequest" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/http/AuditHttpRequestResponse.java" 
+    binary="false" label="auditHttpServletRequest" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="10">      
+      <position height="567" width="0" x="0" y="236"/>    
+    </execution>    
+    <execution id="15">      
+      <position height="21" width="0" x="0" y="403"/>    
+    </execution>  
+  </object>  
+  <object id="18" language="java" name="gov.va.bip.framework.audit.model.HttpRequestAuditData" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/model/HttpRequestAuditData.java" 
+    binary="false" label="requestAuditData" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="13">      
+      <position height="21" width="0" x="0" y="299"/>    
+    </execution>  
+  </object>  
+  <object id="19" language="java" name="gov.va.bip.framework.audit.BaseAsyncAudit" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/BaseAsyncAudit.java" binary="false" 
+    label="baseAsyncAudit" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="17">      
+      <position height="317" width="0" x="0" y="465"/>    
+    </execution>    
+    <execution id="25">      
+      <position height="72" width="0" x="0" y="689"/>    
+    </execution>  
+  </object>  
+  <object id="28" language="java" name="gov.va.bip.framework.audit.model.RequestAuditData" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/model/RequestAuditData.java" binary="false" 
+    label="requestAuditData1" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="21">      
+      <position height="21" width="0" x="0" y="532"/>    
+    </execution>    
+    <execution id="23">      
+      <position height="21" width="0" x="0" y="626"/>    
+    </execution>  
+  </object>  
+  <object id="29" language="java" name="gov.va.bip.framework.audit.AuditLogSerializer" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/AuditLogSerializer.java" binary="false" 
+    label="auditLogSerializer" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="290" y="0"/>    
+    <execution id="27">      
+      <position height="21" width="147" x="870" y="719"/>    
+    </execution>  
+  </object>  
+  <combined-fragment id="30" interaction-operator="NEG">    
+    <interaction-operand id="31" constraint="final Throwable throwable">      
+      <fragment refId="7"/>    
+    </interaction-operand>  
+  </combined-fragment>  
+  <combined-fragment id="32" interaction-operator="OPT">    
+    <interaction-operand id="33" constraint="httpServletRequest != null">      
+      <fragment refId="14"/>    
+    </interaction-operand>  
+  </combined-fragment>  
+  <combined-fragment id="34" interaction-operator="OPT">    
+    <interaction-operand id="35" constraint="request != null">      
+      <fragment refId="20"/>    
+    </interaction-operand>  
+  </combined-fragment>  
+  <note id="36">    
+    <position height="54" width="200" x="992" y="751"/>    
+    <text><![CDATA[See: AuditLogSerializer
+        sequence diagram
+    
+    ]]>
+    </text>  
+  </note>  
+  <message id="3" operation="beforeAuditAdvice(org.aspectj.lang.JoinPoint):void" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="5" 
+    operation="auditServletRequest():gov.va.bip.framework.audit.http.AuditHttpRequestResponse.AuditHttpServletRequest" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </message>  
+  <message id="7" 
+    operation="handleInternalException(java.lang.String,java.lang.String,gov.va.bip.framework.audit.AuditEventData,java.lang.Throwable):org.springframework.http.ResponseEntity&lt;ProviderResponse&gt;" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>  
+  <message id="9" 
+    operation="writeHttpRequestAuditLog(java.util.List&lt;java.lang.Object&gt;,gov.va.bip.framework.audit.AuditEventData):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="12" operation="HttpRequestAuditData()" asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="13"/>  
+  </message>  
+  <message id="14" 
+    operation="getHttpRequestAuditData(javax.servlet.http.HttpServletRequest,gov.va.bip.framework.audit.model.HttpRequestAuditData):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="15"/>  
+  </message>  
+  <message id="16" 
+    operation="writeRequestAuditLog(java.util.List&lt;java.lang.Object&gt;,gov.va.bip.framework.audit.model.RequestAuditData,gov.va.bip.framework.audit.AuditEventData,gov.va.bip.framework.messages.MessageSeverity,java.lang.Throwable):void" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="17"/>  
+  </message>  
+  <message id="20" operation="setRequest(java.util.List&lt;java.lang.Object&gt;):void" asynchronous="false">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="21"/>  
+  </message>  
+  <message id="22" operation="toString():java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="23"/>  
+  </message>  
+  <message id="24" operation="getAsyncLogger():gov.va.bip.framework.audit.AuditLogSerializer" asynchronous="false">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="25"/>  
+  </message>  
+  <message id="26" 
+    operation="asyncAuditRequestResponseData(gov.va.bip.framework.audit.AuditEventData,gov.va.bip.framework.audit.AuditableData,java.lang.Class&lt;?&gt;,gov.va.bip.framework.messages.MessageSeverity,java.lang.Throwable):void" 
+    asynchronous="true">    
+    <end type="SOURCE" refId="25"/>    
+    <end type="TARGET" refId="27"/>  
+  </message>  
+  <text-link id="37">    
+    <link-end type="SOURCE" refId="36"/>    
+    <link-end type="TARGET" refId="27"/>  
+  </text-link>
+</sequence-diagram>
