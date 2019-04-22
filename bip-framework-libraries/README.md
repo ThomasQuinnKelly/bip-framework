@@ -22,7 +22,7 @@ BIP Framework aims to:
 * enable developers to produce reliable code that takes less time to develop and test.
 
 ## How to add the Framework dependency
-Add the dependency in the application projects POM file.
+Add the dependency in the application project's POM file.
 
     <dependency>
         <groupId>gov.va.bip.framework</groupId>

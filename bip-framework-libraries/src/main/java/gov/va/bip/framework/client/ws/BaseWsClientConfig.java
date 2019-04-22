@@ -40,6 +40,7 @@ import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 
+import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptor;
 import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptorConfig;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
@@ -507,9 +508,13 @@ public class BaseWsClientConfig {
 		LOGGER.debug("KeyStore: {}", keyStore);
 		LOGGER.debug("Resource: {}", keystoreResource);
 
-		try (InputStream in = keystoreResource.getInputStream()) {
-			keyStore.load(in, pass);
+		InputStream inputstream = null;
+		try {
+			inputstream = keystoreResource.getInputStream();
+			keyStore.load(inputstream, pass);
 			LOGGER.debug("KeyStore load done");
+		} finally {
+			BaseAsyncAudit.closeInputStreamIfRequired(inputstream);
 		}
 		return keyStore;
 	}

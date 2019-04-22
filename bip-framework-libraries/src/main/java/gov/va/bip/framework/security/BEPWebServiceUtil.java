@@ -140,9 +140,11 @@ public final class BEPWebServiceUtil {
 	 */
 	private static String computeClientIP(final InetAddress inetAddress, final String defaultValue) {
 		String computedVal = null;
+		String hostAddress = inetAddress.getHostAddress();
+		
 		if (!inetAddress.isLoopbackAddress() && !inetAddress.isAnyLocalAddress()
-				&& !inetAddress.isLinkLocalAddress() && IPv4RegexPattern.matcher(inetAddress.getHostAddress()).matches()) {
-			computedVal = inetAddress.getHostAddress();
+				&& !inetAddress.isLinkLocalAddress() && IPv4RegexPattern.matcher(hostAddress).matches()) {
+			computedVal = hostAddress;
 		}
 		return getComputedValue(computedVal, defaultValue);
 	}

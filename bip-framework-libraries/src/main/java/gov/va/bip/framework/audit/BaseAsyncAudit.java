@@ -84,7 +84,7 @@ public class BaseAsyncAudit {
 		LOGGER.debug("RequestAuditData: {}", requestAuditData.toString());
 
 		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, HttpRequestAuditData.class,
-				severity == null ? MessageSeverity.INFO : severity, t);
+				severity, t);
 	}
 
 	/**
@@ -157,10 +157,9 @@ public class BaseAsyncAudit {
 			final AuditEventData auditEventData, MessageKeys key, final Throwable throwable) {
 
 		try {
-			MessageKeys effectiveKey = key == null ? MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION : key;
-			LOGGER.error(effectiveKey.getMessage(adviceName, attemptingTo), throwable);
+			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);
 			final BipRuntimeException bipRuntimeException = new BipRuntimeException(
-					effectiveKey, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable,
+					key, MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR, throwable,
 					adviceName, attemptingTo);
 
 			AuditLogger.error(auditEventData,

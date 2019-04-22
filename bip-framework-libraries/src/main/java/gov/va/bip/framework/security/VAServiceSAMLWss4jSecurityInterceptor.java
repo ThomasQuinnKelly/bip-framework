@@ -61,7 +61,12 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 		super.secureMessage(soapMessage, messageContext);
 
 		try {
-			final Document doc = soapMessage.getDocument();
+			Document doc = null;
+			
+			if (soapMessage != null && soapMessage.getDocument() != null) {
+				doc = soapMessage.getDocument();
+			}
+			
 			final WSSecHeader secHeader = new WSSecHeader();
 			LOGGER.info("doc before security header: "
 					+ ReflectionToStringBuilder.toString(doc == null ? "null" : doc, ToStringStyle.SHORT_PREFIX_STYLE, true, true,
@@ -84,7 +89,10 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 				LOGGER.error("Could not find an existing SAML assertion to use in web service request.");
 			}
 
-			soapMessage.setDocument(doc);
+			if (soapMessage != null) {
+				soapMessage.setDocument(doc);
+			}
+			
 			LOGGER.info("SOAP message: "
 					+ ReflectionToStringBuilder.toString(soapMessage == null ? "null" : soapMessage, ToStringStyle.SHORT_PREFIX_STYLE, // NOSONAR
 							true, true, null));
