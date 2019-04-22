@@ -144,9 +144,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 			}
 			// add any validation error messages
 			if (!messages.isEmpty()) {
-				if (response == null) {
-					response = new DomainResponse();
-				}
+				response = new DomainResponse();
 				response.addMessages(messages);
 			}
 		}

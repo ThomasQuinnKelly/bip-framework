@@ -30,7 +30,7 @@ public class BipBanner {
 	 */
 	public BipBanner(String bannerText, Level level) {
 		Level useLevel = getSafeLevel(level);
-		this.bannerText = bannerText == null ? "" : bannerText;
+		this.bannerText = bannerText;
 		this.level = useLevel;
 		this.banner = createBannerString(bannerText, useLevel);
 	}

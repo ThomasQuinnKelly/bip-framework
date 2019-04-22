@@ -12,6 +12,8 @@ import org.slf4j.event.Level;
 
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 
+import gov.va.bip.framework.util.SanitizationUtil;
+
 /**
  * Base logger class that:
  * <li>splits messages so large messages can be logged in spite of the docker 16 KB limit
@@ -268,18 +270,18 @@ public class BipBaseLogger {
 	 */
 	private void sendLogAtLevel(final Level level, final Marker marker, final String part, final Throwable t) {
 		if (level == null) {
-			sendLogDebug(marker, part, t);
+			sendLogDebug(marker, SanitizationUtil.stripXSS(part), t);
 		} else {
 			if (org.slf4j.event.Level.ERROR.equals(level)) {
-				sendLogError(marker, part, t);
+				sendLogError(marker,SanitizationUtil.stripXSS(part), t);
 			} else if (org.slf4j.event.Level.WARN.equals(level)) {
-				sendLogWarn(marker, part, t);
+				sendLogWarn(marker, SanitizationUtil.stripXSS(part), t);
 			} else if (org.slf4j.event.Level.INFO.equals(level)) {
-				sendLogInfo(marker, part, t);
+				sendLogInfo(marker, SanitizationUtil.stripXSS(part), t);
 			} else if (org.slf4j.event.Level.TRACE.equals(level)) {
-				sendLogTrace(marker, part, t);
+				sendLogTrace(marker, SanitizationUtil.stripXSS(part), t);
 			} else {
-				sendLogDebug(marker, part, t);
+				sendLogDebug(marker, SanitizationUtil.stripXSS(part), t);
 			}
 		}
 	}

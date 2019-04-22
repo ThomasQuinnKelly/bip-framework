@@ -92,6 +92,7 @@ public class BipFeignAutoConfiguration {
 			connTimeoutValue = Integer.valueOf(connectionTimeout);
 		} catch (NumberFormatException e) { // NOSONAR intentionally do nothing
 			// let the Defense below take care of it
+			LOGGER.warn("NumberFormatException occurred");
 		}
 		Defense.state(connTimeoutValue > 0,
 				"Invalid settings: Connection Timeout value must be greater than zero.\n"

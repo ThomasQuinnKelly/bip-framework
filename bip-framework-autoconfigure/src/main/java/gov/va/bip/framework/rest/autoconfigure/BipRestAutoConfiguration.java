@@ -106,6 +106,7 @@ public class BipRestAutoConfiguration {
 			connTimeoutValue = Integer.valueOf(connectionTimeout);
 		} catch (NumberFormatException e) { // NOSONAR intentionally do nothing
 			// let the Defense below take care of it
+			LOGGER.warn("NumberFormatException occurred");
 		}
 		Defense.state(connTimeoutValue > 0,
 				"Invalid settings: Connection Timeout value must be greater than zero.\n"
@@ -138,10 +139,11 @@ public class BipRestAutoConfiguration {
 
 		});
 
-		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = 
 				new HttpComponentsClientHttpRequestFactory(clientBuilder.build());
 		clientHttpRequestFactory.setConnectTimeout(connTimeoutValue);
 		clientHttpRequestFactory.setReadTimeout(Integer.valueOf(readTimeout));
+		
 		return clientHttpRequestFactory;
 	}
 

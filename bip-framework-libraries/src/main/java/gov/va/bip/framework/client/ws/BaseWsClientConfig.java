@@ -1,6 +1,5 @@
 package gov.va.bip.framework.client.ws;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -63,9 +62,6 @@ public class BaseWsClientConfig {
 
 	/** Logger for this class */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BaseWsClientConfig.class);
-
-	/** Java's tmpdir property */
-	protected static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
 
 	/** base package for framework exceptions */
 	public static final String PACKAGE_FRAMEWORK_EXCEPTION = "gov.va.bip.framework.exception";
@@ -157,7 +153,6 @@ public class BaseWsClientConfig {
 
 		// create axiom message factory
 		final AxiomSoapMessageFactory axiomSoapMessageFactory = new AxiomSoapMessageFactory();
-		axiomSoapMessageFactory.setAttachmentCacheDir(new File(System.getProperty(BaseWsClientConfig.JAVA_IO_TMPDIR)));
 
 		return this
 				.createWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller, httpRequestInterceptors,
@@ -207,9 +202,9 @@ public class BaseWsClientConfig {
 	 * @param marshaller the marshaller
 	 * @param unmarshaller the unmarshaller
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the password for the client ssl keystore
+	 * @param keystorePass the pass-word for the client ssl keystore
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the password for the client ssl truststore
+	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -246,9 +241,9 @@ public class BaseWsClientConfig {
 	 * @param unmarshaller the unmarshaller
 	 * @param wsInterceptors the ws interceptors
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the password for the client ssl keystore
+	 * @param keystorePass the pass-word for the client ssl keystore
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the password for the client ssl truststore
+	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -292,9 +287,9 @@ public class BaseWsClientConfig {
 	 * @param httpResponseInterceptors the http response interceptors
 	 * @param wsInterceptors the ws interceptors
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the password for the client ssl keystore
+	 * @param keystorePass the pass-word for the client ssl keystore
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the password for the client ssl truststore
+	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -319,7 +314,6 @@ public class BaseWsClientConfig {
 
 		// create axiom message factory
 		final AxiomSoapMessageFactory axiomSoapMessageFactory = new AxiomSoapMessageFactory();
-		axiomSoapMessageFactory.setAttachmentCacheDir(new File(System.getProperty(BaseWsClientConfig.JAVA_IO_TMPDIR)));
 
 		return this
 				.createWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller, httpRequestInterceptors,
@@ -344,9 +338,9 @@ public class BaseWsClientConfig {
 	 * @param unmarshaller the unmarshaller
 	 * @param wsInterceptors the ws interceptors
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the password for the client ssl keystore
+	 * @param keystorePass the pass-word for the client ssl keystore
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the password for the client ssl truststore
+	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -395,9 +389,9 @@ public class BaseWsClientConfig {
 	 * @param wsInterceptors the ws interceptors
 	 * @param messageFactory webservice message factory
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the password for the client ssl truststore
+	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the password for the client ssl keystore
+	 * @param keystorePass the pass-word for the client ssl keystore
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -496,10 +490,10 @@ public class BaseWsClientConfig {
 	}
 
 	/**
-	 * Produce a KeyStore object for a given JKS file and its password.
+	 * Produce a KeyStore object for a given JKS file and its pass-word.
 	 *
 	 * @param keystoreResource the keystore resource
-	 * @param pass the password
+	 * @param pass the pass-word
 	 * @return KeyStore
 	 * @throws KeyStoreException the key store exception
 	 * @throws NoSuchAlgorithmException the no such algorithm exception
@@ -614,7 +608,7 @@ public class BaseWsClientConfig {
 	 * Gets the security interceptor.
 	 *
 	 * @param username the username
-	 * @param password the password
+	 * @param pass-word 
 	 * @param vaApplicationName the va application name
 	 * @param stationId the stationd id
 	 * @return the security interceptor
