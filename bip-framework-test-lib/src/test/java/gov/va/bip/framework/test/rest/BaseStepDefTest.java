@@ -27,8 +27,12 @@ import gov.va.bip.framework.test.rest.BaseStepDef;
 public class BaseStepDefTest {
 
 	BaseStepDef subject = new BaseStepDef();
+	
 
 	private static WireMockServer wireMockServer;
+	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
+	private static final String LOCALHOST_MULTIPART_URL_PERSON = "http://localhost:9999/multipart/person";
+	private static final String SUBMIT_PAYLOAD_TXT = "submitpayload.txt";
 
 	@BeforeClass
 	public static void setup() {
@@ -97,48 +101,48 @@ public class BaseStepDefTest {
 
 	@Test
 	public void test_invokeAPIUsingDelete_Success() {
-		subject.invokeAPIUsingDelete("http://localhost:9999/person", false);
+		subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, false);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingDelete_WithBearerToken_Success() {
-		subject.invokeAPIUsingDelete("http://localhost:9999/person", true);
+		subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, true);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPut_Success() {
-		subject.invokeAPIUsingPut("http://localhost:9999/person", false);
+		subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, false);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPut_WithBearerToken_Success() {
-		subject.invokeAPIUsingPut("http://localhost:9999/person", true);
+		subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, true);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPost_Success() {
-		subject.invokeAPIUsingPost("http://localhost:9999/person", false);
+		subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, false);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPost_WithBearerToken_Success() {
-		subject.invokeAPIUsingPost("http://localhost:9999/person", true);
+		subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, true);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingGet_Success() {
-		subject.invokeAPIUsingGet("http://localhost:9999/person", false);
+		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, false);
 	}
 
 	@Test
 	public void test_invokeAPIUsingGet_WithBearerToken_Success() {
-		subject.invokeAPIUsingGet("http://localhost:9999/person", true);
+		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, true);
 	}
 
 	@Test
@@ -148,15 +152,15 @@ public class BaseStepDefTest {
 		tblHeader.put("Accept", "application/json");
 		tblHeader.put("Content-Type", "multipart/form-data");
 		subject.passHeaderInformation(tblHeader);
-		subject.invokeAPIUsingPostWithMultiPart("http://localhost:9999/multipart/person", "document.txt",
-				"submitpayload.txt");
+		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_TXT);
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 		subject.validateStatusCode(200);
 	}
 
 	@Test
 	public void test_invokeAPIUsingPostWithMultiPart_InvalidFile_Failed() {
-		subject.invokeAPIUsingPostWithMultiPart("http://localhost:9999/multipart/person", "document.txt",
+		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
 				"invalidpayload.txt");
 		assertNull(subject.strResponse);
 	}
@@ -168,7 +172,7 @@ public class BaseStepDefTest {
 		tblHeader.put("Accept", "application/json");
 		tblHeader.put("Content-Type", "multipart/form-data");
 		subject.passHeaderInformation(tblHeader);
-		subject.invokeAPIUsingPostWithMultiPart("http://localhost:9999/multipart/person", "document.txt",
+		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
 				"HelloWorld".getBytes());
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
@@ -181,7 +185,7 @@ public class BaseStepDefTest {
 		tblHeader.put("Content-Type", "multipart/form-data");
 		subject.passHeaderInformation(tblHeader);
 
-		subject.invokeAPIUsingPostWithMultiPart("http://localhost:9999/multipart/person", "invaliddocument.txt",
+		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "invaliddocument.txt",
 				"HelloWorld".getBytes());
 		assertNull(subject.strResponse);
 	}

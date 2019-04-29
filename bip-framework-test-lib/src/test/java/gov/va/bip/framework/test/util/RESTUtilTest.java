@@ -9,22 +9,41 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.google.common.net.HttpHeaders;
 
-import gov.va.bip.framework.test.util.RESTUtil;
+import gov.va.bip.framework.test.service.RESTConfigService;
 
 public class RESTUtilTest {
 
 	private static WireMockServer wireMockServer;
 	RESTUtil restUtil = new RESTUtil();
+	private static final String URL_PERSON = "/person";
+	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
+	private static final String LOCALHOST_MULTIPART_URL_PERSON = "http://localhost:9999/multipart/person";
+	private static final String SUBMIT_PAYLOAD_TXT = "submitpayload.txt";
 
 	@BeforeClass
 	public static void setup() {
@@ -47,56 +66,125 @@ public class RESTUtilTest {
 	}
 
 	private static void addGetPersonStub() {
-		wireMockServer.stubFor(get(urlEqualTo("/person"))
-				.willReturn(aResponse().withStatus(200).withBodyFile("json/get-person-response.json")));
+		wireMockServer.stubFor(get(urlEqualTo(URL_PERSON))
+				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/get-person-response.json")));
 	}
 
 	private static void addPostPersonStub() {
-		wireMockServer.stubFor(post(urlEqualTo("/person"))
-				.willReturn(aResponse().withStatus(200).withBodyFile("json/post-person-response.json")));
+		wireMockServer.stubFor(post(urlEqualTo(URL_PERSON))
+				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/post-person-response.json")));
 	}
 
 	private static void addPutPersonStub() {
-		wireMockServer.stubFor(put(urlEqualTo("/person"))
-				.willReturn(aResponse().withStatus(200).withBodyFile("json/put-person-response.json")));
+		wireMockServer.stubFor(put(urlEqualTo(URL_PERSON))
+				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/put-person-response.json")));
 	}
 
 	private static void addDeletePersonStub() {
-		wireMockServer.stubFor(delete(urlEqualTo("/person"))
-				.willReturn(aResponse().withStatus(200).withBodyFile("json/delete-person-response.json")));
-	}
-	private static void addPostMultiPart() {
-		wireMockServer.stubFor(post(urlEqualTo("/multipart/person"))
-				.willReturn(aResponse().withStatus(200).withBodyFile("json/post-multipart-person-response.json")));
+		wireMockServer.stubFor(delete(urlEqualTo(URL_PERSON))
+				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/delete-person-response.json")));
 	}
 
+	private static void addPostMultiPart() {
+		wireMockServer.stubFor(post(urlEqualTo("/multipart/person"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/post-multipart-person-response.json")));
+	}
 
 	@Test
 	public void test_setUpRequest_Success() {
 		Map<String, String> mapHeader = new HashMap<String, String>();
-		mapHeader.put("authorization", "Bearer abcdef");
-		mapHeader.put("content-type", "application/json");
+		mapHeader.put(HttpHeaders.AUTHORIZATION, "Bearer abcdef");
+		mapHeader.put(HttpHeaders.CONTENT_TYPE, "application/json");
 		restUtil.setUpRequest(mapHeader);
-		assertThat("Bearer abcdef", equalTo(restUtil.getRequest().get("authorization").get(0)));
+		assertThat("Bearer abcdef", equalTo(restUtil.getRequest().get(HttpHeaders.AUTHORIZATION).get(0)));
 	}
 
 	@Test
 	public void test_setUpRequest_WithBody_Success() {
 		Map<String, String> mapHeader = new HashMap<String, String>();
-		mapHeader.put("authorization", "Bearer abcdef");
-		mapHeader.put("content-type", "application/json");
+		mapHeader.put(HttpHeaders.AUTHORIZATION, "Bearer abcdef");
+		mapHeader.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		restUtil.setUpRequest("janedoe.request", mapHeader);
-		assertThat("Bearer abcdef", equalTo(restUtil.getRequest().get("authorization").get(0)));
+		assertThat("Bearer abcdef", equalTo(restUtil.getRequest().get(HttpHeaders.AUTHORIZATION).get(0)));
 		boolean isBodyEmpty = restUtil.jsonText.isEmpty();
 		assertThat(false, equalTo(isBodyEmpty));
 	}
 
 	@Test
+	public void test_setUpRequest_BadFile_Failed() {
+		Map<String, String> mapHeader = new HashMap<String, String>();
+		mapHeader.put(HttpHeaders.AUTHORIZATION, "Bearer abcdef");
+		mapHeader.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+		RESTUtil restUtilSpied = org.mockito.Mockito.spy(restUtil);
+		try {
+			doThrow(new IOException()).when(restUtilSpied).readFile(org.mockito.ArgumentMatchers.any(File.class));
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("exception not expected");
+		}
+		restUtilSpied.setUpRequest("janedoebad^^@.%%.request", mapHeader);
+		boolean isBodyEmpty = restUtil.jsonText.isEmpty();
+		assertThat(true, equalTo(isBodyEmpty));
+	}
+     
+	@Test
 	public void test_getResponse_validKeyStore() {
-		String response = restUtil.getResponse("http://localhost:9999/person");
+		String response = restUtil.getResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
 	
+	@Test
+	public void testGetRestTemplate() {
+		Constructor<RESTConfigService> constructor;
+		try {
+			constructor = RESTConfigService.class.getDeclaredConstructor();
+			constructor.setAccessible(true);
+			RESTConfigService config = constructor.newInstance();
+			Properties prop = new Properties();
+			prop.setProperty("javax.net.ssl.keyStore", "");
+			ReflectionTestUtils.setField(config, "prop", prop);
+			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
+			instanceOfRESTConfigService.setAccessible(true);
+			instanceOfRESTConfigService.set(null, config);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+	}
+	@Test
+	public void _testGetRestTemplateSuccess() {
+		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
+		File strFilePath;
+		strFilePath = new File(pathToKeyStore);
+		strFilePath.setReadable(false);
+		ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+		strFilePath.setReadable(true);
+	}
+	@Test
+	public void test_getResponse_WithRetry() {
+		String response = restUtil.getResponse("http://localhost:9999/urldoesnotexits");
+		assertThat(true, equalTo(!response.isEmpty()));
+	}
+
 	@Test
 	public void test_setUpRequest_WithBody_Failed() {
 		Map<String, String> mapHeader = new HashMap<String, String>();
@@ -107,58 +195,81 @@ public class RESTUtilTest {
 
 	@Test
 	public void test_getResponse_Success() {
-		String response = restUtil.getResponse("http://localhost:9999/person");
+		String response = restUtil.getResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
+
 	@Test
 	public void test_getResponse_Failed() {
-		restUtil.getResponse("http://localhost:9999/invalidurl");
+		restUtil.getResponse("http://localhost:9999/urldoesnotexits");
 	}
 
 	@Test
 	public void test_postResponse_Success() {
-		String response = restUtil.postResponse("http://localhost:9999/person");
+		String response = restUtil.postResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
 
 	@Test
 	public void test_putResponse_Success() {
-		String response = restUtil.putResponse("http://localhost:9999/person");
+		String response = restUtil.putResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
 
 	@Test
 	public void test_deleteResponse_Success() {
-		String response = restUtil.deleteResponse("http://localhost:9999/person");
+		String response = restUtil.deleteResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
-	
+
 	@Test
 	public void test_postResponseWithMultipart_Success() {
-		String response = restUtil.postResponseWithMultipart("http://localhost:9999/multipart/person", "document.txt", "submitpayload.txt");
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_TXT);
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+
+	@Test
+	public void test_postResponseWithMultipart__mbfile_Success() {
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "IS_25mb.txt",
+				SUBMIT_PAYLOAD_TXT);
 		assertThat(true, equalTo(!response.isEmpty()));
 		restUtil.validateStatusCode(200);
 	}
 
 	@Test
 	public void test_postResponseWithMultipart_InvalidFile_Failed() {
-		String response = restUtil.postResponseWithMultipart("http://localhost:9999/multipart/person", "document.txt", "invalidpayload.txt");
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				"invalidpayload.txt");
 		assertNull(response);
 	}
 
 	@Test
 	public void test_postResponseWithMultipart_ByteArray_Success() {
-		String response = restUtil.postResponseWithMultipart("http://localhost:9999/multipart/person", "document.txt", "HelloWorld".getBytes());
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				"HelloWorld".getBytes());
+		assertThat(true, equalTo(!response.isEmpty()));
+	}
+
+	@Test
+	public void test_postResponseWithMultipart_ByteArray__mbFileSuccess() throws IOException, URISyntaxException {
+		final URL urlSubmitPayload = RESTUtilTest.class.getClassLoader()
+				.getResource("payload" + "/" + SUBMIT_PAYLOAD_TXT);
+		final File filePathSubmitPayload = new File(urlSubmitPayload.toURI());
+		String submitPayload = FileUtils.readFileToString(filePathSubmitPayload, "UTF-8");
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "IS_25mb.txt",
+				submitPayload.getBytes());
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
 
 	@Test
 	public void test_postResponseWithMultipart_ByteArray_InvalidPart_Failed() {
-		String response = restUtil.postResponseWithMultipart("http://localhost:9999/multipart/person", "invaliddocument.txt", "HelloWorld".getBytes());
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON,
+				"invaliddocument.txt", "HelloWorld".getBytes());
 		assertNull(response);
 	}
 
-	
 	@Test
 	public void test_readExpectedResponse_Success() {
 		String response = restUtil.readExpectedResponse("test.response");
@@ -167,9 +278,22 @@ public class RESTUtilTest {
 	}
 
 	@Test
+	public void test_readExpectedResponse_FileNotExist_Success() {
+		final URL urlFilePath = RESTUtil.class.getClassLoader().getResource("response/" + "badfile.response");
+		File strFilePath;
+		try {
+			strFilePath = new File(urlFilePath.toURI());
+			strFilePath.setReadable(false);
+			String response = restUtil.readExpectedResponse("badfile1.response");
+			strFilePath.setReadable(true);
+			assertThat(null, equalTo(response));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	@Test
 	public void test_readExpectedResponse_FileNotExists_Success() {
 		String response = restUtil.readExpectedResponse("nonexistsfile.response");
 		assertThat(null, equalTo(response));
 	}
-
 }

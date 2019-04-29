@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.va.bip.framework.messages.MessageKey;
@@ -28,7 +27,7 @@ public class BipServiceExceptionTest {
 
 	@Test
 	public void testEmptyConstructor() {
-		BipServiceException bipServiceException = new BipServiceException(TEST_KEY, null, null, null, null);
+		BipServiceException bipServiceException = new BipServiceException(TEST_KEY, null, null, null, new String[] { null });
 		assertTrue(bipServiceException.getMessage().equals(TEST_KEY_MESSAGE));
 		assertNull(bipServiceException.getSeverity());
 		assertNull(bipServiceException.getStatus());

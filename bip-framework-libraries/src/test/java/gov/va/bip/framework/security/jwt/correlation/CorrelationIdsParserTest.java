@@ -34,11 +34,11 @@ public class CorrelationIdsParserTest {
 	@Test
 	public final void testPrivateConstructor() throws NoSuchMethodException, SecurityException {
 		// devnote: arg to getDeclaredConstructor must be a simple null
-		Constructor<CorrelationIdsParser> constructor = CorrelationIdsParser.class.getDeclaredConstructor(null);
+		Constructor<CorrelationIdsParser> constructor = CorrelationIdsParser.class.getDeclaredConstructor((Class<?>[]) null);
 		constructor.setAccessible(true);
 		try {
 			// devnote: arg to newInstance must be a simple null
-			constructor.newInstance(null);
+			constructor.newInstance();
 			fail("Should have thrown exception");
 		} catch (Throwable e) {
 			assertNotNull(e);

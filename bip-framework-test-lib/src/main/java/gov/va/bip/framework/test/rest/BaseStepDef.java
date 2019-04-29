@@ -28,13 +28,44 @@ import gov.va.bip.framework.test.util.RESTUtil;
  */
 
 public class BaseStepDef {
+	/**
+	 * Utility to handle Rest API calls
+	 */
 	protected RESTUtil resUtil = null;
+
+	/**
+	 * Map that holds key value pair for http headers.
+	 */
 	protected Map<String, String> headerMap = null;
+
+	/**
+	 * Holds api response of Rest API call. This is usually json response string.
+	 */
 	protected String strResponse = null;
+
+	/**
+	 * Utility for RESTConfigService to read REST API config
+	 */
 	protected RESTConfigService restConfig = null;
+
+	/**
+	 * A service object that deals with bearer token. BearerTokenService fetch token
+	 * before every API call.
+	 */
 	private BearerTokenService bearerTokenService = null;
 
+	/**
+	 * Logger object
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepDef.class);
+	/**
+	 * Constants for JSON response
+	 */
+	private static final String RESPONSE_PATH = "target/TestResults/Response/";
+
+	/**
+	 * Initialize services and utility
+	 */
 
 	public void initREST() {
 		resUtil = new RESTUtil();
@@ -96,6 +127,7 @@ public class BaseStepDef {
 		resUtil.setUpRequest(headerMap);
 		strResponse = resUtil.putResponse(strURL);
 	}
+
 	/**
 	 * Sets the bearer token and delegates put API call to rest util.
 	 * 
@@ -126,12 +158,21 @@ public class BaseStepDef {
 	 * @param fileName
 	 * @param submitPayloadPath
 	 */
-	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName, final String submitPayloadPath) {
+	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName,
+			final String submitPayloadPath) {
 		resUtil.setUpRequest(headerMap);
 		strResponse = resUtil.postResponseWithMultipart(strURL, fileName, submitPayloadPath);
 	}
 
-	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName, final byte[] submitPayloadPath) {
+	/**
+	 * Delegates Multipart API call without bearer token to rest util.
+	 * 
+	 * @param strURL
+	 * @param fileName
+	 * @param submitPayloadPath
+	 */
+	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName,
+			final byte[] submitPayloadPath) {
 		resUtil.setUpRequest(headerMap);
 		strResponse = resUtil.postResponseWithMultipart(strURL, fileName, submitPayloadPath);
 	}
@@ -160,7 +201,8 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Invokes bearer token service to get token and sets as authorization key in header map.
+	 * Invokes bearer token service to get token and sets as authorization key in
+	 * header map.
 	 */
 	private void setBearerToken() {
 		bearerTokenService = BearerTokenService.getInstance();
@@ -204,7 +246,7 @@ public class BaseStepDef {
 				tblHeader.put((String) entry.getKey(), (String) entry.getValue());
 			}
 		} finally {
-			if (is !=null) {
+			if (is != null) {
 				is.close();
 			}
 		}
@@ -212,6 +254,12 @@ public class BaseStepDef {
 		passHeaderInformation(tblHeader);
 	}
 
+	/**
+	 * Compares REST API call response with given string.
+	 * 
+	 * @param strResFile
+	 * @return
+	 */
 	public boolean compareExpectedResponseWithActual(final String strResFile) {
 		boolean isMatch = false;
 		try {
@@ -221,11 +269,14 @@ public class BaseStepDef {
 			final String prettyStrExpectedResponse = mapper.writerWithDefaultPrettyPrinter()
 					.writeValueAsString(strExpectedResponseJson);
 			final Object strResponseJson = mapper.readValue(strResponse, Object.class);
-			final String prettyStrResponseJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(strResponseJson);
+			final String prettyStrResponseJson = mapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(strResponseJson);
 			isMatch = prettyStrResponseJson.contains(prettyStrExpectedResponse);
-			Assert.assertEquals("Actual and expected response are not equal -"+ "Actual Response"+ prettyStrResponseJson +  "\n Expected Response" + prettyStrExpectedResponse ,prettyStrResponseJson, prettyStrExpectedResponse);	
-			} 
-		catch (final IOException ioe) {
+			Assert.assertEquals(
+					"Actual and expected response are not equal -" + "Actual Response" + prettyStrResponseJson
+							+ "\n Expected Response" + prettyStrExpectedResponse,
+					prettyStrResponseJson, prettyStrExpectedResponse);
+		} catch (final IOException ioe) {
 			LOGGER.error(ioe.getMessage(), ioe);
 		}
 		return isMatch;
@@ -259,10 +310,10 @@ public class BaseStepDef {
 	 * 
 	 * @param scenario
 	 */
-	public void postProcess(final Scenario scenario) { 
+	public void postProcess(final Scenario scenario) {
 		String strResponseFile = null;
 		try {
-			strResponseFile = "target/TestResults/Response/" + scenario.getName() + ".Response";
+			strResponseFile = RESPONSE_PATH + scenario.getName() + ".Response";
 			FileUtils.writeStringToFile(new File(strResponseFile), strResponse, StandardCharsets.UTF_8);
 		} catch (final Exception ex) {
 			LOGGER.error("Failed:Unable to write response to a file", ex);

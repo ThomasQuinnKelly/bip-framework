@@ -8,27 +8,28 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.messages.ServiceMessage;
-import gov.va.bip.framework.validation.AbstractStandardValidator;
 
 public class AbstractStandardValidatorTest {
 
-	private AbstractStandardValidator<String> abstractStandardValidator = new AbstractStandardValidator<String>() {
-
-		@Override
-		public void validate(final String toValidate, final List<ServiceMessage> messages) {
-			// do nothing
-		}
-	};
-
 	@Test
 	public void initializeAbstractStandardValidatorTest() {
+		AbstractStandardValidator<String> abstractStandardValidator = new AbstractStandardValidator<String>() {
+
+			@Override
+			public void validate(final String toValidate, final List<ServiceMessage> messages) {
+				// do nothing
+			}
+		};
 
 		try {
 			abstractStandardValidator.setCallingMethod(AbstractStandardValidatorTest.class.getMethod("testMethod", String.class));
@@ -67,6 +68,14 @@ public class AbstractStandardValidatorTest {
 
 	@Test
 	public void setToValidateClassTest() {
+		AbstractStandardValidator<String> abstractStandardValidator = new AbstractStandardValidator<String>() {
+
+			@Override
+			public void validate(final String toValidate, final List<ServiceMessage> messages) {
+				// do nothing
+			}
+		};
+
 		ReflectionTestUtils.invokeMethod(abstractStandardValidator, "setToValidateClass", "test Object");
 		assertNotNull(abstractStandardValidator.getValidatedType());
 		assertTrue(abstractStandardValidator.getValidatedType().equals(String.class));
@@ -93,6 +102,49 @@ public class AbstractStandardValidatorTest {
 			e.printStackTrace();
 			fail("exception not expected");
 		}
+	}
+
+	@Test
+	public void nullInvalidClassTest() {
+		AbstractStandardValidator<String> abstractStandardValidator = new AbstractStandardValidator<String>() {
+
+			@Override
+			public void validate(final String toValidate, final List<ServiceMessage> messages) {
+				// do nothing
+			}
+		};
+		AbstractStandardValidator<String> spiedValidator = Mockito.spy(abstractStandardValidator);
+		Mockito.doNothing().when(spiedValidator).setToValidateClass(Mockito.any(String.class));
+
+		List<ServiceMessage> messages = new ArrayList<>();
+		spiedValidator.initValidate("testString", messages);
+
+		assertTrue("The messsages list should not be empty", !messages.isEmpty());
+		assertTrue("Incorrect message", messages.get(0).getText().contains("no object"));
+	}
+
+	@Test
+	public void initThrowsException() {
+		AbstractStandardValidator<String> abstractStandardValidator = new AbstractStandardValidator<String>() {
+
+			@Override
+			public void validate(final String toValidate, final List<ServiceMessage> messages) {
+				// do nothing
+			}
+		};
+		AbstractStandardValidator<String> spiedValidator = Mockito.spy(abstractStandardValidator);
+		Mockito.doThrow(new RuntimeException("Throw exception")).when(spiedValidator).setToValidateClass(Mockito.any(String.class));
+
+		List<ServiceMessage> messages = new ArrayList<>();
+		try {
+			spiedValidator.initValidate("testString", messages);
+			fail("spiedValidator.initValidate() should have thrown exception.");
+		} catch (Throwable e) {
+			assertTrue(BipRuntimeException.class.isAssignableFrom(e.getClass()));
+			assertNotNull(e.getCause());
+			assertTrue(e.getCause().getMessage().contains("Throw exception"));
+		}
+
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-This page documents the purpose and capabilities of **OpenShift Container Platform Framework Libraries** for the services.
+This page documents the purpose and capabilities of **BIP Framework Libraries** for the services.
 
 ## What is this library project for? ##
 
@@ -24,11 +24,13 @@ BIP Framework aims to:
 ## How to add the Framework dependency
 Add the dependency in the application project's POM file.
 
+```xml
     <dependency>
         <groupId>gov.va.bip.framework</groupId>
         <artifactId>bip-framework-libraries</artifactId>
         <version><!-- add the appropriate version --></version>
     </dependency>
+```
 
 ## Framework usage in service applications
 

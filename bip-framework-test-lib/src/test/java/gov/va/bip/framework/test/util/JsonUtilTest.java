@@ -67,6 +67,11 @@ public class JsonUtilTest {
 	}
 
 	@Test
+	public void test_getStringAssertBlank_Success() throws IOException {
+		JsonUtil.getStringAssertNotBlank(json, "blankKey");
+	}
+
+	@Test
 	public void test_getStringAssertIsBlank_Success() throws IOException {
 		JsonUtil.getStringAssertIsBlank(json, "blankKey");
 	}

@@ -165,10 +165,10 @@ public class BipCommonSpringProfilesTest {
 
 	@Test
 	public void referenceCommonSpringProfilesConstructor() throws Exception {
-		Constructor<BipCommonSpringProfiles> c = BipCommonSpringProfiles.class.getDeclaredConstructor(null);
+		Constructor<BipCommonSpringProfiles> c = BipCommonSpringProfiles.class.getDeclaredConstructor((Class<?>[]) null);
 		c.setAccessible(true);
 		try {
-			c.newInstance(null);
+			c.newInstance();
 			fail("Should have thrown exception");
 		} catch (Exception e) {
 			assertTrue(InvocationTargetException.class.equals(e.getClass()));

@@ -20,7 +20,7 @@ public class ServiceMessageTest {
 
 	@Test
 	public void testEmptyConstructor() throws Exception {
-		ServiceMessage serviceMessage = new ServiceMessage(null, null, null, null, null);
+		ServiceMessage serviceMessage = new ServiceMessage(null, null, null, null, new String[] { null });
 		assertNull(serviceMessage.getKey());
 		assertNull(serviceMessage.getSeverity());
 		assertNull(serviceMessage.getText());

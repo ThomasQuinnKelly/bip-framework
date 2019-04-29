@@ -72,7 +72,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 
 			this.callingMethodName = callingMethod == null ? ""
 					: callingMethod.getDeclaringClass().getSimpleName()
-					+ "." + callingMethod.getName() + ": ";
+							+ "." + callingMethod.getName() + ": ";
 
 			LOGGER.debug("Validating " + (toValidate == null ? "null" : toValidate.getClass().getSimpleName())
 					+ " for " + callingMethodName);
@@ -116,7 +116,7 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 	 * @param toValidate - the object to be validated
 	 */
 	@SuppressWarnings("unchecked")
-	private void setToValidateClass(final Object toValidate) {
+	void setToValidateClass(final Object toValidate) {
 		this.toValidateClass = null;
 		try {
 			this.toValidateClass = (Class<T>) toValidate.getClass();
@@ -127,7 +127,9 @@ public abstract class AbstractStandardValidator<T> implements Validator<T> {
 
 	private void handleInvalidClass(final Object toValidate, final List<ServiceMessage> messages) {
 		MessageKeys key = MessageKeys.BIP_VALIDATOR_TYPE_MISMATCH;
-		String[] params = new String[] { toValidate.getClass().getName(), getValidatedType().getName() };
+		String[] params =
+				new String[] { (toValidate == null ? "'null Object'" : toValidate.getClass().getName()),
+						(getValidatedType() == null ? "'no object to validate'" : getValidatedType().getName()) };
 		LOGGER.debug(key.getMessage(params));
 		messages.add(new ServiceMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, key, params));
 	}

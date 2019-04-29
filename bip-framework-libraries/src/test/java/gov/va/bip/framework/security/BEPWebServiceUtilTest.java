@@ -4,13 +4,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import gov.va.bip.framework.security.BEPWebServiceUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BEPWebServiceUtilTest {
@@ -24,10 +25,19 @@ public class BEPWebServiceUtilTest {
 	}
 
 	@Test
+	public void testPrivateConstructor() throws NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Constructor<BEPWebServiceUtil> c = BEPWebServiceUtil.class.getDeclaredConstructor();
+		c.setAccessible(true);
+		BEPWebServiceUtil u = c.newInstance();
+		assertNotNull(u);
+	}
+
+	@Test
 	public void testGetExternalUIDWithoutHashGeneration() {
 		final String retVal = BEPWebServiceUtil.getExternalUID("UnitTest_EVSS");
 		assertNotNull(retVal);
-		//assertEquals(true, "UnitTest_EVSS".equals(retVal));
+		// assertEquals(true, "UnitTest_EVSS".equals(retVal));
 
 	}
 
@@ -42,7 +52,7 @@ public class BEPWebServiceUtilTest {
 	public void testGetExternalKey() {
 		final String retVal = BEPWebServiceUtil.getExternalKey("UnitTestEVSSKey");
 		assertNotNull(retVal);
-		//assertTrue("UnitTestEVSSKey".equals(retVal));
+		// assertTrue("UnitTestEVSSKey".equals(retVal));
 	}
 
 	@Test

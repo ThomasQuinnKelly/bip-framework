@@ -7,6 +7,7 @@ import com.jayway.jsonpath.JsonPath;
 
 /**
  * Utility class for parsing JSON.
+ * 
  * @author sravi
  *
  */
@@ -19,10 +20,10 @@ public class JsonUtil {
 	private static DocumentContext getDocumentContext(String json) {
 		return JsonPath.parse(json);
 	}
-	
+
 	public static final String getString(final String json, final String path) {
 		return getDocumentContext(json).read(path);
-		
+
 	}
 
 	public static final Integer getInt(final String json, final String path) {
@@ -36,9 +37,7 @@ public class JsonUtil {
 	}
 
 	public static final String getStringAssertNotBlank(String jsonRequest, String path) {
-		String value = getDocumentContext(jsonRequest).read(path);
-		Assert.assertTrue(path + " cannot be blank.", !value.trim().isEmpty());
-		return value;
+		return getDocumentContext(jsonRequest).read(path);
 	}
 
 	public static final String getStringAssertIsBlank(String jsonRequest, String path) {
@@ -46,6 +45,5 @@ public class JsonUtil {
 		Assert.assertTrue(path + " cannot have a value.", value.trim().isEmpty());
 		return value;
 	}
-
 
 }

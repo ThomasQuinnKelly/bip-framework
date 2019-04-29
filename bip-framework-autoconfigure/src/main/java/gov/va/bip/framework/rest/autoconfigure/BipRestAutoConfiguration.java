@@ -11,8 +11,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +22,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import gov.va.bip.framework.client.rest.template.RestClientTemplate;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.rest.exception.BipRestGlobalExceptionHandler;
 import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
 import gov.va.bip.framework.rest.provider.aspect.RestProviderTimerAspect;
@@ -39,7 +39,7 @@ import gov.va.bip.framework.validation.Defense;
 @Configuration
 public class BipRestAutoConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BipRestAutoConfiguration.class);
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipRestAutoConfiguration.class);
 
 	@Value("${bip.framework.client.rest.connectionTimeout:20000}")
 	private String connectionTimeout;

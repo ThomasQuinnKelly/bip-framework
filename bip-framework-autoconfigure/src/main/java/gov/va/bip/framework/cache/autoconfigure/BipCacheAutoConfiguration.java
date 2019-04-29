@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ import org.springframework.util.CollectionUtils;
 
 import gov.va.bip.framework.audit.AuditLogSerializer;
 import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.cache.autoconfigure.BipCacheProperties.RedisExpires;
+import gov.va.bip.framework.cache.autoconfigure.BipRedisCacheProperties.RedisExpires;
 import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsImpl;
 import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsMBean;
 import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
@@ -43,30 +45,52 @@ import gov.va.bip.framework.cache.interceptor.BipCacheInterceptor;
 import gov.va.bip.framework.log.BipBanner;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.validation.Defense;
 
 /**
- * The Class BipCacheAutoConfiguration.
+ * Cache auto configuration:
+ * <ul>
+ * <li> Configure and start Redis embedded server if necessary (as declared under spring profiles in application yaml).
+ * See {@link BipRedisProps}.
+ * <li> Configure the Redis "Standalone" module with the host and port. See {@link BipRedisProps}.
+ * // * <li> Configure the Jedis Client, including SSL and Connection Pooling. See {@link BipRedisClientProps}.
+ * // * <li> Configure Cache TTLs and expirations. See {@link BipRedisCacheProps}.
+ * </ul>
  */
 @Configuration
-@EnableConfigurationProperties(BipCacheProperties.class)
+@EnableConfigurationProperties(BipRedisCacheProperties.class)
 @AutoConfigureAfter(CacheAutoConfiguration.class)
 @EnableCaching
-@ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
-@EnableMBeanExport(defaultDomain = "gov.va.bip", registration = RegistrationPolicy.FAIL_ON_EXISTING)
+@ConditionalOnProperty(name = BipCacheAutoConfiguration.CONDITIONAL_SPRING_REDIS,
+		havingValue = BipCacheAutoConfiguration.CACHE_SERVER_TYPE)
+@EnableMBeanExport(defaultDomain = BipCacheAutoConfiguration.JMX_DOMAIN, registration = RegistrationPolicy.FAIL_ON_EXISTING)
 public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
-
+	/** Class logger */
 	static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipCacheAutoConfiguration.class);
 
-	/**
-	 * Cache properties derived from application properties file
-	 */
+	/** Domain under which JMX beans are exposed */
+	public static final String JMX_DOMAIN = "gov.va.bip";
+	/** ConditionalOnProperty property name */
+	public static final String CONDITIONAL_SPRING_REDIS = "spring.cache.type";
+	/** The cache server type */
+	public static final String CACHE_SERVER_TYPE = "redis";
+
+	/** Cache properties derived from application properties file */
 	@Autowired
-	private BipCacheProperties bipCacheProperties;
+	private BipRedisCacheProperties propertiesCache;
 
 	/** Embedded Redis bean to make sure embedded redis is started before redis cache is created. */
 	@SuppressWarnings("unused")
 	@Autowired(required = false)
 	private BipEmbeddedRedisServer referenceServerRedisEmbedded;
+
+	/**
+	 * Post construction validations.
+	 */
+	@PostConstruct
+	public void postConstruct() {
+		Defense.notNull(propertiesCache, BipRedisCacheProperties.class.getSimpleName() + " cannot be null.");
+	}
 
 	/**
 	 * JMX MBean that exposes cache management operations.
@@ -77,7 +101,7 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 	public BipCacheOpsMBean bipCacheOpsMBean() {
 		return new BipCacheOpsImpl();
 	}
-	
+
 	/**
 	 * Audit log serializer.
 	 *
@@ -108,7 +132,7 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 	 */
 	@Bean
 	public RedisCacheConfiguration redisCacheConfiguration() {
-		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(bipCacheProperties.getDefaultExpires()));
+		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(propertiesCache.getDefaultExpires()));
 	}
 
 	/**
@@ -121,9 +145,9 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 	public Map<String, org.springframework.data.redis.cache.RedisCacheConfiguration> redisCacheConfigurations() {
 		Map<String, org.springframework.data.redis.cache.RedisCacheConfiguration> cacheConfigs = new HashMap<>();
 
-		if (!CollectionUtils.isEmpty(bipCacheProperties.getExpires())) {
+		if (!CollectionUtils.isEmpty(propertiesCache.getExpires())) {
 			// key = name, value - TTL
-			final Map<String, Long> resultExpires = bipCacheProperties.getExpires().stream().filter(o -> o.getName() != null)
+			final Map<String, Long> resultExpires = propertiesCache.getExpires().stream().filter(o -> o.getName() != null)
 					.filter(o -> o.getTtl() != null).collect(Collectors.toMap(RedisExpires::getName, RedisExpires::getTtl));
 			for (Entry<String, Long> entry : resultExpires.entrySet()) {
 				org.springframework.data.redis.cache.RedisCacheConfiguration rcc =
@@ -229,4 +253,5 @@ public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
 			LOGGER.error(BipBanner.newBanner("Unable to clean cache " + cache.getName(), Level.ERROR), exception.getMessage());
 		}
 	}
+
 }

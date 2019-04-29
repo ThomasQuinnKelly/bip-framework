@@ -31,13 +31,13 @@ public class DefenseTest {
 	public void testPrivateConstructor() {
 		Constructor<Defense> constructor = null;
 		try {
-			constructor = Defense.class.getDeclaredConstructor(null);
+			constructor = Defense.class.getDeclaredConstructor((Class<?>[]) null);
 		} catch (NoSuchMethodException | SecurityException e1) {
 			fail("Should NOT have thrown exception");
 		}
 		constructor.setAccessible(true);
 		try {
-			constructor.newInstance(null);
+			constructor.newInstance();
 			fail("Should have thrown exception");
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			assertNotNull(e);

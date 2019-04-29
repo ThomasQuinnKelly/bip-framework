@@ -1,6 +1,8 @@
 package gov.va.bip.framework.cache.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,12 +17,12 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
- * 
+ *
  * @author rthota
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ReferenceEmbeddedRedisServerAutoConfiguration.class)
+@ContextConfiguration(classes = TestEmbeddedRedisServerAutoConfiguration.class)
 public class BipEmbeddedRedisServerTest {
 
 	@Autowired
@@ -38,7 +40,6 @@ public class BipEmbeddedRedisServerTest {
 		referenceEmbeddedServer.startRedis();
 		referenceEmbeddedServer.stopRedis();
 	}
-
 
 	@Test
 	public void shouldAllowSubsequentRuns() throws Exception {
@@ -67,14 +68,16 @@ public class BipEmbeddedRedisServerTest {
 			assertEquals("2", jedis.mget("def").get(0));
 			assertEquals(null, jedis.mget("xyz").get(0));
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				pool.close();
+			}
 			referenceEmbeddedServer.stopRedis();
 		}
 	}
 
 	@Test
 	public void shouldIndicateInactiveBeforeStart() throws Exception {
+		referenceEmbeddedServer.stopRedis();
 		assertFalse(referenceEmbeddedServer.getRedisServer().isActive());
 	}
 

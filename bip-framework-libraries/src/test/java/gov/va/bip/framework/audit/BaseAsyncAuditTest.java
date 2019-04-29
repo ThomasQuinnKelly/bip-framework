@@ -23,9 +23,8 @@ public class BaseAsyncAuditTest {
 
 	@Test
 	public void closeInputStreamIfRequiredTest() {
-		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
 		InputStream mockInputstream = mock(InputStream.class);
-		baseAsyncAudit.closeInputStreamIfRequired(mockInputstream);
+		BaseAsyncAudit.closeInputStreamIfRequired(mockInputstream);
 		try {
 			verify(mockInputstream, times(1)).close();
 		} catch (IOException e) {

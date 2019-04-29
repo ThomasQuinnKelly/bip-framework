@@ -9,8 +9,6 @@ import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -39,6 +37,8 @@ import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.exception.BipPartnerException;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
 import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
@@ -55,13 +55,13 @@ import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
 public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 
 	/** The Constant LOGGER. */
-	private static final Logger logger = LoggerFactory.getLogger(BipRestGlobalExceptionHandler.class);
+	private static final BipLogger logger = BipLoggerFactory.getLogger(BipRestGlobalExceptionHandler.class);
 
 	/**
 	 * Return value if no exception exists to provide a message.
 	 * To get default message text, use {@link #deriveMessage(Exception)}.
 	 */
-	private static final String NO_EXCEPTION_MESSAGE = "Source exception has no message.";
+	protected static final String NO_EXCEPTION_MESSAGE = "Source exception has no message.";
 
 	/**
 	 * For java.lang.Exception and all subclasses.
@@ -70,22 +70,31 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 * @param ex the Exception
 	 * @return String the message
 	 */
-	private String deriveMessage(final Exception ex, final MessageKey key, final String... params) {
-		MessageKey derivedKey = deriveKey(key);
-		String msg = derivedKey.getMessage(params);
-		if (StringUtils.isBlank(msg) || msg.matches("\\{[a-zA-Z0-9]{0,64}\\}")) {
-			msg = msg + " :: "
-					+ ((ex != null) && !StringUtils.isBlank(ex.getMessage())
-							? ex.getMessage()
-							: getMessageFromWrappedException(ex));
+	private String deriveMessage(final Exception ex) {
+		if (ex == null) {
+			return NO_EXCEPTION_MESSAGE;
 		}
-		return msg;
-	}
 
-	private String getMessageFromWrappedException(final Exception ex) {
-		return (ex != null) && (ex.getCause() != null) && !StringUtils.isBlank(ex.getCause().getMessage())
-				? ex.getCause().getMessage()
-				: NO_EXCEPTION_MESSAGE;
+		/*
+		 * If exception message is empty, and if cause is not null,
+		 * then cause class name will be in the exception message.
+		 * So get the cause classname so we can scrub it out of the message.
+		 */
+		String causeClassname = (ex.getCause() == null
+				? null
+				: ex.getCause().getClass().getName() + ":");
+
+		/* Scrub any occurrances of cause classname from exception message */
+		String msg = (causeClassname != null && StringUtils.isNotBlank(ex.getMessage())
+				? ex.getMessage().replaceAll(causeClassname, "")
+				: ex.getMessage());
+
+		/* Final check for empty */
+		if (StringUtils.isBlank(msg)) {
+			msg = NO_EXCEPTION_MESSAGE;
+		}
+
+		return msg;
 	}
 
 	/**
@@ -109,7 +118,11 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 */
 	private void log(final Exception ex, final MessageKey key, final MessageSeverity severity, final HttpStatus status,
 			final String... params) {
-		log(Level.INFO, ex, key, severity, status, params);
+		Level slf4jLevel = Level.INFO;
+		if (severity != null) {
+			slf4jLevel = severity.getLevel();
+		}
+		log(slf4jLevel, ex, key, severity, status, params);
 	}
 
 	/**
@@ -195,7 +208,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 
 		MessageKey derivedKey = deriveKey(key);
 		log(ex, derivedKey, severity, httpResponseStatus, params);
-		apiError.addMessage(severity, derivedKey.getKey(), deriveMessage(ex, derivedKey, params), httpResponseStatus);
+		apiError.addMessage(severity, derivedKey.getKey(), deriveMessage(ex), httpResponseStatus);
 
 		return new ResponseEntity<>(apiError, httpResponseStatus);
 	}
@@ -352,7 +365,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		MessageKey key = MessageKeys.BIP_GLOBAL_REST_API_TYPE_MISMATCH;
 		String[] params = new String[] { ex.getName(), ex.getRequiredType().getName() };
 
-		log(Level.INFO, ex, key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, params);
+		log(Level.ERROR, ex, key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, params);
 
 		final ProviderResponse apiError = new ProviderResponse();
 		apiError.addMessage(MessageSeverity.ERROR, key.getKey(),

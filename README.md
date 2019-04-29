@@ -16,6 +16,7 @@ For general information regarding recommended development patterns for developin
 
 ## How to include BIP Framework libraries in your project
 
+```xml
      <dependency>
          <groupId>gov.va.bip.framework</groupId>
          <artifactId>bip-framework-autoconfigure</artifactId>
@@ -36,6 +37,7 @@ For general information regarding recommended development patterns for developin
          <artifactId>bip-framework-test-lib</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
+```
 
 ## How to download the BIP Framework maven dependencies
 There are currently three ways to make these projects available for local activites.
@@ -44,10 +46,13 @@ There are currently three ways to make these projects available for local activi
 This will bring the framework source code to your local machine.
 
 1. Clone the BIP framework repository:
+
 	 `git clone https://github.ec.va.gov/EPMO/bip-ocp-framework.git`
 
 2. Navigate to the `bip-framework` folder, and run:
-	mvn clean install
+
+```	mvn clean install```
+
 This will build all the libraries with versions as configured in `pom.xml` files.
 
 #### Option 2 - get the JAR from the VA nexus repo
@@ -57,6 +62,7 @@ The base URL for the nexus repository is: https://nexus.dev.bip.va.gov/repositor
 
 You must have the BIP Nexus URL configured in the reactor (root) `pom.xml` file as shown below.
     
+```xml
 	<repositories>
 		<repository>
 			<id>nexus3</id>
@@ -64,16 +70,19 @@ You must have the BIP Nexus URL configured in the reactor (root) `pom.xml` file 
 			<url>https://nexus.dev.bip.va.gov/repository/maven-public</url>
 		</repository>
 	</repositories>
-	
-#### Option 3 - use GitHub as a nexus repository
+```
+
+#### Option 3 - use GitHub as a Nexus repository
 This option is a workaround if you are *not* on the VA network, and you only want the BIP Framework JAR.
 
-This is a temporary solution is provided where GitHub repository acts as your nexus repository.
+This is a temporary solution. The GitHub repository acts as your Nexus repository.
 It requires changes in the reactor POM, and in your local maven settings file, as shown below.
 
-**POM file**
+1. **POM file**
+
 Add the section shown below to the reactor (root) `pom.xml` of your service project. An example of this configuration can be seen in the [bip-reference reactor POM](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/pom.xml).
  
+```xml
 	<repositories>
 		<repository>
 			<id>github</id>
@@ -81,10 +90,13 @@ Add the section shown below to the reactor (root) `pom.xml` of your service proj
 			<url>https://raw.github.com/department-of-veterans-affairs/bip-framework/mvn-repo</url>
 		</repository>
 	</repositories>
+```
 
-**Settings file**
-Update your local `~/.m2/settings.xml` as shown below. Replace values between `{{Text}}` with your information
+2. **Settings file**
 
+Update your local `~/.m2/settings.xml` as shown below. Replace values between `{{Text}}` with your information.
+
+```xml
 	<settings>
 	  <servers>
 	    <server>
@@ -114,6 +126,7 @@ Update your local `~/.m2/settings.xml` as shown below. Replace values between `{
 	    </server>
 	  </servers>
 	</settings>
+```
 
 ## How to deploy and host a maven repository on GitHub
 
@@ -121,14 +134,19 @@ source : http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-
 
 1. Modify `~/.m2/settings.xml`, same format as mentioned in the previous section 
 
-2. Update your application's parent pom with a local-deploy profile that configures your GitHub repo. For an example, look in [bip-framework-parentpom/pom.xml](https://github.ec.va.gov/EPMO/bip-ocp-framework/blob/master/bip-framework-parentpom/pom.xml) for the section framed by:
-    <profile>
-        <id>local-deploy</id>
-        ...    ...
-    </profile>
+2. Update your application's parent pom with a `local-deploy` profile that configures your GitHub repo. For an example, look in [bip-framework-parentpom/pom.xml](https://github.ec.va.gov/EPMO/bip-ocp-framework/blob/master/bip-framework-parentpom/pom.xml) for the section framed by:
+
+```xml
+	<profile>
+		<id>local-deploy</id>
+			...    ...
+	</profile>
+```
 
 3. Run maven with the appropriate parameters to deploy and upload artifacts to the repository
-	
-     mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO 
+
+```	mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO ```
+
 -- OR --
-     mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs
+
+	mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs

@@ -26,6 +26,7 @@ public class BaseStepDefHandlerTest {
 	BaseStepDefHandler subject = new BaseStepDefHandler();
 
 	private static WireMockServer wireMockServer;
+	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
 
 	@BeforeClass
 	public static void setup() {
@@ -62,7 +63,7 @@ public class BaseStepDefHandlerTest {
 
 	@Test
 	public void test_getResponse_Success() {
-		subject.invokeAPIUsingGet("http://localhost:9999/person");
+		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!subject.getStrResponse().isEmpty()));
 	}
 

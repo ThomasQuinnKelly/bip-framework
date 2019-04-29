@@ -24,14 +24,15 @@ public class PropertiesUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
 
 	/**
-	 * Do not instantiate.
+	 * Empty private constructor that should not initialized.
 	 */
 	private PropertiesUtil() {
 		throw new UnsupportedOperationException("PropertiesUtil is a static class. Do not instantiate it.");
 	}
 
 	/**
-	 * Read a properties file. If the fileUrl cannot be found, the returned properties may be {@code null} or empty.
+	 * Read a properties file. If the fileUrl cannot be found, the returned
+	 * properties may be {@code null} or empty.
 	 * <p>
 	 * Simple variable substitution is done when reading the properties.<br/>
 	 * For example:
@@ -48,7 +49,8 @@ public class PropertiesUtil {
 	 * some.substitute.me=Substituted variable is: this is a test
 	 * </pre>
 	 *
-	 * @param fileUrl the properties file to read
+	 * @param fileUrl
+	 *            the properties file to read
 	 * @return the properties
 	 */
 	public static Properties readFile(final URL fileUrl) {
@@ -57,10 +59,9 @@ public class PropertiesUtil {
 		try (InputStream input = new FileInputStream(new File(fileUrl.toURI()))) {
 			properties = new Properties();
 			properties.load(input);
-
 			substitutePlaceholders(properties);
 
-		} catch (final IOException | URISyntaxException e) {
+		} catch (IOException | URISyntaxException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
