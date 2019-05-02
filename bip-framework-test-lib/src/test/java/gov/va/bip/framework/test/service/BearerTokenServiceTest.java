@@ -5,6 +5,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -12,11 +17,15 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.BearerTokenService;
 
 public class BearerTokenServiceTest {
 
 	private static WireMockServer wireMockServer;
+	private static final String TOKEN_URL_PROPERTY_KEY = "tokenUrl";
+	private static final String COULD_NOT_FIND_PROPERTY_STRING = "Could not find property : ";
+	private static final String BASE_URL_PROPERTY_KEY = "baseURL";
 
 	@BeforeClass
 	public static void setup() {
@@ -41,14 +50,67 @@ public class BearerTokenServiceTest {
 
 	@Test
 	public void test_getToken_Success() {
-		String token = BearerTokenService.getInstance().getBearerToken();
+		String token = null;
+		try {
+			token = BearerTokenService.getInstance().getBearerToken();
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!token.isEmpty()));
 	}
 
 	@Test
 	public void test_getTokenByHeaderFile_Success() {
-		String token = BearerTokenService.getTokenByHeaderFile("token.Request");
+		String token = null;
+		token = BearerTokenService.getTokenByHeaderFile("token.Request");
 		assertThat(true, equalTo(!token.isEmpty()));
+	}
+
+	@Test
+	public void test_handleNullUrls_bothNull() throws Throwable {
+		Method m;
+		try {
+			m = BearerTokenService.class.getDeclaredMethod("handleNullUrls", String.class, String.class);
+			m.setAccessible(true);
+			m.invoke(null, "", "");
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage().contains(COULD_NOT_FIND_PROPERTY_STRING));
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage()
+					.contains(BASE_URL_PROPERTY_KEY + ", " + TOKEN_URL_PROPERTY_KEY));
+		}
+	}
+
+	@Test
+	public void test_handleNullUrls_baseUrlNull() throws Throwable {
+		Method m;
+		try {
+			m = BearerTokenService.class.getDeclaredMethod("handleNullUrls", String.class, String.class);
+			m.setAccessible(true);
+			m.invoke(null, "", "");
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage().contains(COULD_NOT_FIND_PROPERTY_STRING));
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage().contains(BASE_URL_PROPERTY_KEY));
+		}
+	}
+
+	@Test
+	public void test_handleNullUrls_tokenUrlNull() throws Throwable {
+		Method m;
+		try {
+			m = BearerTokenService.class.getDeclaredMethod("handleNullUrls", String.class, String.class);
+			m.setAccessible(true);
+			m.invoke(null, "", "");
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage().contains(COULD_NOT_FIND_PROPERTY_STRING));
+			assertTrue(((InvocationTargetException) e).getTargetException().getMessage().contains(TOKEN_URL_PROPERTY_KEY));
+		}
 	}
 
 }

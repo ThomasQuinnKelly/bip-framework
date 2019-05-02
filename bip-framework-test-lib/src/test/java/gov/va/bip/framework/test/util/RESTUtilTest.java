@@ -9,6 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 
@@ -34,6 +35,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.net.HttpHeaders;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.RESTConfigService;
 
 public class RESTUtilTest {
@@ -126,13 +128,13 @@ public class RESTUtilTest {
 		boolean isBodyEmpty = restUtil.jsonText.isEmpty();
 		assertThat(true, equalTo(isBodyEmpty));
 	}
-     
+
 	@Test
 	public void test_getResponse_validKeyStore() {
 		String response = restUtil.getResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
 	}
-	
+
 	@Test
 	public void testGetRestTemplate() {
 		Constructor<RESTConfigService> constructor;
@@ -146,37 +148,32 @@ public class RESTUtilTest {
 			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
 			instanceOfRESTConfigService.setAccessible(true);
 			instanceOfRESTConfigService.set(null, config);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchFieldException | BipTestLibRuntimeException e) {
 			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Exception not expected!");
 		}
-		ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
 	}
+
 	@Test
 	public void _testGetRestTemplateSuccess() {
-		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
+		String pathToKeyStore = null;
+		try {
+			pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		File strFilePath;
 		strFilePath = new File(pathToKeyStore);
 		strFilePath.setReadable(false);
-		ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+		try {
+			ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		strFilePath.setReadable(true);
 	}
 	@Test
@@ -188,7 +185,11 @@ public class RESTUtilTest {
 	@Test
 	public void test_setUpRequest_WithBody_Failed() {
 		Map<String, String> mapHeader = new HashMap<String, String>();
-		restUtil.setUpRequest("nonexistsfile.request", mapHeader);
+		try {
+			restUtil.setUpRequest("nonexistsfile.request", mapHeader);
+		} catch (BipTestLibRuntimeException e) {
+			assertTrue(e.getMessage().contains("Requested File Doesn't Exist: request/"));
+		}
 		boolean isBodyEmpty = restUtil.jsonText.isEmpty();
 		assertThat(true, equalTo(isBodyEmpty));
 	}

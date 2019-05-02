@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.rest.BaseStepDefHandler;
 
 /**
@@ -46,7 +48,12 @@ public class BaseStepDefHandlerTest {
 		tblHeader.put("Accept", "application/json");
 		tblHeader.put("Content-Type", "application/json");
 		subject.passHeaderInformation(tblHeader);
-		subject.initREST();
+		try {
+			subject.initREST();
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(subject.getRestUtil() != null));
 		assertThat(true, equalTo(subject.getRestConfig() != null));
 	}

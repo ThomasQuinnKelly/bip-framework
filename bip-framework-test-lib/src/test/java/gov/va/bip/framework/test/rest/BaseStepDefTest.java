@@ -8,6 +8,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
@@ -22,6 +23,7 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.rest.BaseStepDef;
 
 public class BaseStepDefTest {
@@ -47,7 +49,12 @@ public class BaseStepDefTest {
 		tblHeader.put("Accept", "application/json");
 		tblHeader.put("Content-Type", "application/json");
 		subject.passHeaderInformation(tblHeader);
-		subject.initREST();
+		try {
+			subject.initREST();
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 	}
 
 	@AfterClass
@@ -101,48 +108,88 @@ public class BaseStepDefTest {
 
 	@Test
 	public void test_invokeAPIUsingDelete_Success() {
-		subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, false);
+		try {
+			subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, false);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingDelete_WithBearerToken_Success() {
-		subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, true);
+		try {
+			subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, true);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPut_Success() {
-		subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, false);
+		try {
+			subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, false);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPut_WithBearerToken_Success() {
-		subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, true);
+		try {
+			subject.invokeAPIUsingPut(LOCALHOST_URL_PERSON, true);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPost_Success() {
-		subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, false);
+		try {
+			subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, false);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingPost_WithBearerToken_Success() {
-		subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, true);
+		try {
+			subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, true);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test
 	public void test_invokeAPIUsingGet_Success() {
-		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, false);
+		try {
+			subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, false);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 	}
 
 	@Test
 	public void test_invokeAPIUsingGet_WithBearerToken_Success() {
-		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, true);
+		try {
+			subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON, true);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
 	}
 
 	@Test

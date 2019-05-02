@@ -2,6 +2,7 @@ package gov.va.bip.framework.audit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.slf4j.event.Level;
 
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
@@ -14,10 +15,22 @@ public class AuditLogger {
 
 	static final BipLogger LOGGER = BipLoggerFactory.getLogger(AuditLogger.class);
 
-	/** Replacement for {@code null} parameters to the MDC entries that cannot be null or empty */
+	/**
+	 * Replacement for {@code null} parameters to the MDC entries that cannot be
+	 * null or empty
+	 */
 	private static final String UNKNOWN = "Unknown";
-	/** Replacement for {@code null} parameters to the MDC entries that cannot be null */
+	/**
+	 * Replacement for {@code null} parameters to the MDC entries that cannot be
+	 * null
+	 */
 	private static final String EMPTY = "";
+
+	static {
+		LOGGER.setLevel(Level.DEBUG); // TO ENSURE THAT THE CLASS HAS DEBUG
+										// ENABLED TO WRITE ALL SEVERITY AUDIT
+										// LOGS
+	}
 
 	/*
 	 * private constructor
@@ -29,8 +42,10 @@ public class AuditLogger {
 	/**
 	 * Debug.
 	 *
-	 * @param auditable the auditable
-	 * @param activityDetail the activity detail
+	 * @param auditable
+	 *            the auditable
+	 * @param activityDetail
+	 *            the activity detail
 	 */
 	public static void debug(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
@@ -41,8 +56,10 @@ public class AuditLogger {
 	/**
 	 * Info.
 	 *
-	 * @param auditable the auditable
-	 * @param activityDetail the activity detail
+	 * @param auditable
+	 *            the auditable
+	 * @param activityDetail
+	 *            the activity detail
 	 */
 	public static void info(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
@@ -54,8 +71,10 @@ public class AuditLogger {
 	/**
 	 * Warn.
 	 *
-	 * @param auditable the auditable
-	 * @param activityDetail the activity detail
+	 * @param auditable
+	 *            the auditable
+	 * @param activityDetail
+	 *            the activity detail
 	 */
 	public static void warn(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
@@ -67,8 +86,10 @@ public class AuditLogger {
 	/**
 	 * Error.
 	 *
-	 * @param auditable the auditable
-	 * @param activityDetail the activity detail
+	 * @param auditable
+	 *            the auditable
+	 * @param activityDetail
+	 *            the activity detail
 	 */
 	public static void error(final AuditEventData auditable, final String activityDetail, final Throwable t) {
 		addMdcSecurityEntries(auditable);
@@ -80,7 +101,8 @@ public class AuditLogger {
 	/**
 	 * Adds the MDC security entries.
 	 *
-	 * @param auditable the auditable
+	 * @param auditable
+	 *            the auditable
 	 */
 	private static void addMdcSecurityEntries(AuditEventData auditable) {
 		if (auditable == null) {

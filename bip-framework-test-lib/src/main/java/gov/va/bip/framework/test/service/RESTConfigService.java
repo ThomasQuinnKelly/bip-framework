@@ -1,9 +1,13 @@
 package gov.va.bip.framework.test.service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.va.bip.framework.test.util.PropertiesUtil;
 
@@ -37,6 +41,9 @@ import gov.va.bip.framework.test.util.PropertiesUtil;
  */
 public class RESTConfigService {
 
+	/** Logger for this class */
+	private static final Logger LOGGER = LoggerFactory.getLogger(RESTConfigService.class);
+
 	/** The singleton instance of this class */
 	private static RESTConfigService instance = null;
 	/**
@@ -61,6 +68,8 @@ public class RESTConfigService {
 	 * Get the configured single instance of the REST controller.
 	 *
 	 * @return RESTConfigService
+	 * @throws URISyntaxException
+	 * @throws IOException
 	 */
 	public static RESTConfigService getInstance() {
 		if (instance == null) {
@@ -73,7 +82,11 @@ public class RESTConfigService {
 				url = "config/vetservices-inttest.properties";
 			}
 			final URL urlConfigFile = RESTConfigService.class.getClassLoader().getResource(url);
-			instance.prop = PropertiesUtil.readFile(urlConfigFile);
+			if (urlConfigFile != null) {
+				instance.prop = PropertiesUtil.readFile(urlConfigFile);
+			} else {
+				LOGGER.warn("No resource found with the URL: " + url + ". Property file could not be read.");
+			}
 		}
 
 		return instance;
@@ -108,11 +121,13 @@ public class RESTConfigService {
 		String value = "";
 		if (isCheckSystemProp) {
 			value = System.getProperty(pName);
-			if (StringUtils.isBlank(value)) {
+			if (StringUtils.isBlank(value) && (prop != null)) {
 				value = prop.getProperty(pName);
 			}
 		} else {
-			value = prop.getProperty(pName);
+			if (prop != null) {
+				value = prop.getProperty(pName);
+			}
 		}
 		return value;
 	}

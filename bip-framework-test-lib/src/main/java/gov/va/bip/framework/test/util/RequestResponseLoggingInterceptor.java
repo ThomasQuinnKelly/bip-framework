@@ -24,6 +24,9 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestResponseLoggingInterceptor.class);
 
+	/* (non-Javadoc)
+	 * @see org.springframework.http.client.ClientHttpRequestInterceptor#intercept(org.springframework.http.HttpRequest, byte[], org.springframework.http.client.ClientHttpRequestExecution)
+	 */
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {

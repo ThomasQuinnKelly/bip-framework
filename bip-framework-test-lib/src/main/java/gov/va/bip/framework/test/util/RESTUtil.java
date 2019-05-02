@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyStore;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
@@ -22,9 +23,11 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +39,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.RESTConfigService;
 
 /**
@@ -66,6 +72,7 @@ public class RESTUtil {
 	 * Constant for submit folder name
 	 */
 	private static final String SUBMIT_PAYLOAD = "submitPayload";
+	private static final String COULD_NOT_FIND_PROPERTY_STRING = "Could not find property : ";
 
 	/**
 	 * Logger
@@ -118,6 +125,7 @@ public class RESTUtil {
 			final URL urlFilePath = RESTUtil.class.getClassLoader().getResource("request/" + strRequestFile);
 			if (urlFilePath == null) {
 				LOGGER.error("Requested File Doesn't Exist: {}", "request/" + strRequestFile);
+				throw new BipTestLibRuntimeException("Requested File Doesn't Exist: request/" + strRequestFile);
 			} else {
 				// Note - Enhance the code so if Header.Accept is xml, then it
 				// should use something like convertToXML function
@@ -212,9 +220,8 @@ public class RESTUtil {
 	 * @param httpMethod
 	 * @return
 	 */
-	private String executeAPI(final String serviceURL, HttpEntity<?> request, HttpMethod httpMethod) {
+	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
-			// request.getHeaders().setContentType(MediaType.APPLICATION_JSON_UTF8);
 			response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
 			httpResponseCode = response.getStatusCodeValue();
 			return response.getBody();
@@ -275,14 +282,14 @@ public class RESTUtil {
 		}
 
 	}
-    /**
-     * Private method that is invoked by multipart methods. It uses
-     * RESTTemplate generic exchange method for multipart HTTP methods.
-     * @param serviceURL
-     * @param body
-     * @return
-     */
-	private String executeMultipartAPI(String serviceURL, MultiValueMap<String, Object> body) {
+	/**
+	 * Private method that is invoked by multipart methods. It uses
+	 * RESTTemplate generic exchange method for multipart HTTP methods.
+	 * @param serviceURL
+	 * @param body
+	 * @return
+	 */
+	private String executeMultipartAPI(final String serviceURL, final MultiValueMap<String, Object> body) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
@@ -295,14 +302,17 @@ public class RESTUtil {
 	 */
 
 	private RestTemplate getRestTemplate() {
-		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
+		// Create a new instance of the {@link RestTemplate} using default settings.
 		RestTemplate apiTemplate = new RestTemplate();
+		
+		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
 		if (StringUtils.isNotBlank(pathToKeyStore)) {
-			KeyStore keyStore = null;
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStorePassword", true);
-
+			if (StringUtils.isBlank(password)) {
+				throw new BipTestLibRuntimeException(COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.keyStorePassword");
+			}
 			try (FileInputStream instream = new FileInputStream(pathToKeyStore)) {
-				keyStore = KeyStore.getInstance("jks");
+				KeyStore keyStore = KeyStore.getInstance("jks");
 				keyStore.load(instream, password.toCharArray());
 				SSLContext sslContext = SSLContexts.custom().loadKeyMaterial(keyStore, password.toCharArray())
 						.loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
@@ -311,14 +321,21 @@ public class RESTUtil {
 						NoopHostnameVerifier.INSTANCE);
 				HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
 				ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-				apiTemplate = new RestTemplate(requestFactory);
+				apiTemplate.setRequestFactory(requestFactory);
 			} catch (Exception e) {
 				LOGGER.error("Issue with the certificate or password", e);
-			}
+				throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
+			}			
 		}
 		apiTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
 		apiTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		apiTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
+
+		for (HttpMessageConverter<?> converter : apiTemplate.getMessageConverters()) {
+		     if (converter instanceof StringHttpMessageConverter) {
+		         ((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
+		     }
+		}
 		return apiTemplate;
 	}
 
@@ -330,11 +347,11 @@ public class RESTUtil {
 	 */
 	public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
 		int connectionTimeout = 20000;
-		String readTimeout = "30000";
+		int readTimeout = 30000;
 		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
 				getHttpClientBuilder().build());
 		clientHttpRequestFactory.setConnectTimeout(connectionTimeout);
-		clientHttpRequestFactory.setReadTimeout(Integer.valueOf(readTimeout));
+		clientHttpRequestFactory.setReadTimeout(readTimeout);
 		return clientHttpRequestFactory;
 	}
 
@@ -344,17 +361,17 @@ public class RESTUtil {
 	 * @return
 	 */
 	private PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager() {
-		String maxTotalPool = "15";
-		String defaultMaxPerRoutePool = "5";
-		String validateAfterInactivityPool = "5000";
+		int maxTotalPool = 15;
+		int defaultMaxPerRoutePool = 5;
+		int validateAfterInactivityPool = 5000;
 		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR
-																												// CloseableHttpClient#close
-																												// should
-																												// automatically
+		// CloseableHttpClient#close
+		// should
+		// automatically
 		// shut down the connection pool only if exclusively owned by the client
-		poolingConnectionManager.setMaxTotal(Integer.valueOf(maxTotalPool));
-		poolingConnectionManager.setDefaultMaxPerRoute(Integer.valueOf(defaultMaxPerRoutePool));
-		poolingConnectionManager.setValidateAfterInactivity(Integer.valueOf(validateAfterInactivityPool));
+		poolingConnectionManager.setMaxTotal(maxTotalPool);
+		poolingConnectionManager.setDefaultMaxPerRoute(defaultMaxPerRoutePool);
+		poolingConnectionManager.setValidateAfterInactivity(validateAfterInactivityPool);
 		return poolingConnectionManager;
 	}
 
@@ -365,13 +382,26 @@ public class RESTUtil {
 	 * @return
 	 */
 	private HttpClientBuilder getHttpClientBuilder() {
-		String connectionBufferSize = "4128";
+		int connectionBufferSize = 4128;
 		ConnectionConfig connectionConfig = ConnectionConfig.custom()
-				.setBufferSize(Integer.valueOf(connectionBufferSize)).build();
+				.setBufferSize(connectionBufferSize).build();
 		HttpClientBuilder clientBuilder = HttpClients.custom();
 
 		clientBuilder.setConnectionManager(getPoolingHttpClientConnectionManager());
 		clientBuilder.setDefaultConnectionConfig(connectionConfig);
+		
+		clientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true, new ArrayList<>()) {
+			@Override
+			public boolean retryRequest(final IOException exception, final int executionCount, final HttpContext context) {
+				LOGGER.info("Retry request, execution count: {}, exception: {}", executionCount, exception);
+				if (exception instanceof org.apache.http.NoHttpResponseException) {
+					LOGGER.warn("No response from server on " + executionCount + " call");
+					return true;
+				}
+				return super.retryRequest(exception, executionCount, context);
+			}
+
+		});
 
 		return clientBuilder;
 	}
