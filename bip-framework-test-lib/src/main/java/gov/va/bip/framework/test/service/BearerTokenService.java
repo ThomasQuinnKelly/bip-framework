@@ -50,7 +50,7 @@ public class BearerTokenService {
 
 		if (instance == null) {
 			instance = new BearerTokenService();
-			instance.bearerToken = getToken("token.Request");
+			instance.bearerToken = getToken("token.request");
 		}
 		return instance;
 	}

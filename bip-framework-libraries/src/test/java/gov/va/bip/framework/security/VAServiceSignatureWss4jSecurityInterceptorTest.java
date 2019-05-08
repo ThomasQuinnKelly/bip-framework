@@ -1,18 +1,23 @@
 package gov.va.bip.framework.security;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 
+import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.message.WSSecHeader;
+import org.apache.ws.security.message.WSSecTimestamp;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
+import org.w3c.dom.Document;
 
 public class VAServiceSignatureWss4jSecurityInterceptorTest {
 
@@ -100,6 +105,42 @@ public class VAServiceSignatureWss4jSecurityInterceptorTest {
 
 		assertNotNull(sm);
 
+	}
+
+	@Test
+	public void testSecureMessageWithTimeStampNotNull() throws Exception {
+
+		SoapMessage sm = WSInterceptorTestUtil.createSoapMessage(SOAP_MESSAGE_FILE);
+		Crypto crypto = CryptoFactory.getInstance(propsCrypto);
+		crypto.setDefaultX509Identifier(securityCryptoMerlinKeystoreAlias);
+		interceptor.setValidationActions("Signature");
+		interceptor.setValidateRequest(false);
+		interceptor.setValidateResponse(false);
+		interceptor.setSecurementUsername("selfsigned");
+		interceptor.setSecurementPassword("password");
+		interceptor.afterPropertiesSet();
+		MessageContext messageContextMock = mock(MessageContext.class);
+		addTimestamp(sm);
+		interceptor.secureMessage(sm, messageContextMock);
+
+		assertNotNull(sm);
+
+	}
+
+	void addTimestamp(final SoapMessage soapMessage) {
+
+		try {
+			final Document doc = soapMessage.getDocument();
+			final WSSecHeader secHeader = new WSSecHeader();
+			secHeader.insertSecurityHeader(doc);
+			final WSSecTimestamp timestamp = new WSSecTimestamp();
+			timestamp.setTimeToLive(Integer.valueOf("1122"));
+			timestamp.build(doc, secHeader);
+			soapMessage.setDocument(doc);
+
+		} catch (final WSSecurityException e) {
+			fail("Timestamp could not be added");
+		}
 	}
 
 	@Test

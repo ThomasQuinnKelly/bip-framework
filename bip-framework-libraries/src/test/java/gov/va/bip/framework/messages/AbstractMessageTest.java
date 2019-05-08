@@ -25,4 +25,13 @@ public class AbstractMessageTest {
 		message.setTimestamp(TIME);
 		assertTrue(message.getTimestamp().equals(TIME));
 	}
+
+	@Test
+	public final void testGetParamCountWithNullConstraintParameters() {
+		AbstractMessage message = new AbstractMessage(null) {
+			private static final long serialVersionUID = 1L;
+		};
+
+		assertTrue(message.getParamCount().equals(0));
+	}
 }

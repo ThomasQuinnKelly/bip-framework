@@ -40,7 +40,7 @@ public class AuditableAnnotationAspectTest {
 
 	private static final String TESTS_EXCEPTION_MESSAGE = "Test exception";
 
-	private final class TestMethodSignature implements org.aspectj.lang.reflect.MethodSignature {
+	private class TestMethodSignature implements org.aspectj.lang.reflect.MethodSignature {
 		@Override
 		public Class<?>[] getParameterTypes() {
 			return new Class[] { String.class };
@@ -166,6 +166,42 @@ public class AuditableAnnotationAspectTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
+	public void testAuditAnnotationBeforeWithNoArgsJoinPoint() {
+		when(joinPoint.getArgs()).thenReturn(new Object[] {});
+		when(joinPoint.getSignature()).thenReturn(new TestMethodSignature() {
+			@Override
+			public Method getMethod() {
+				try {
+					return AuditableAnnotationAspectTest.this.getClass().getMethod("nonAnnotatedMethod", new Class[] { String.class });
+				} catch (NoSuchMethodException e) {
+					fail("Error mocking the join point");
+				} catch (SecurityException e) {
+					fail("Error mocking the join point");
+				}
+				return null;
+			}
+		});
+		RequestContextHolder.setRequestAttributes(attrs);
+		AuditableAnnotationAspect aspect = new AuditableAnnotationAspect();
+		AuditLogSerializer serializer = new AuditLogSerializer();
+		ReflectionTestUtils.setField(serializer, "dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
+		ReflectionTestUtils.setField(baseAsyncAudit, "auditLogSerializer", serializer);
+		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
+		try {
+			aspect.auditAnnotationBefore(joinPoint);
+			verify(mockAppender, Mockito.times(3)).doAppend(captorLoggingEvent.capture());
+			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+			assertNotNull(loggingEvents);
+			assertTrue(loggingEvents.size() > 0);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			fail("Exception should not be thrown");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testAuditAnnotationAfterReturning() {
 		when(joinPoint.getArgs()).thenReturn(new Object[] { TEST_STRING_ARGUMENTS });
 		when(joinPoint.getSignature()).thenReturn(new TestMethodSignature());
@@ -183,6 +219,42 @@ public class AuditableAnnotationAspectTest {
 			assertNotNull(loggingEvents);
 			assertTrue(loggingEvents.size() > 0);
 			assertTrue(loggingEvents.get(loggingEvents.size() - 1).getMessage().contains("messages"));
+		} catch (Throwable e) {
+			e.printStackTrace();
+			fail("Exception should not be thrown");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAuditAnnotationAfterReturningWithNoAnnotation() {
+		when(joinPoint.getArgs()).thenReturn(new Object[] { TEST_STRING_ARGUMENTS });
+		when(joinPoint.getSignature()).thenReturn(new TestMethodSignature() {
+			@Override
+			public Method getMethod() {
+				try {
+					return AuditableAnnotationAspectTest.this.getClass().getMethod("nonAnnotatedMethod", new Class[] { String.class });
+				} catch (NoSuchMethodException e) {
+					fail("Error mocking the join point");
+				} catch (SecurityException e) {
+					fail("Error mocking the join point");
+				}
+				return null;
+			}
+		});
+		RequestContextHolder.setRequestAttributes(attrs);
+		AuditableAnnotationAspect aspect = new AuditableAnnotationAspect();
+		AuditLogSerializer serializer = new AuditLogSerializer();
+		ReflectionTestUtils.setField(serializer, "dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
+		ReflectionTestUtils.setField(baseAsyncAudit, "auditLogSerializer", serializer);
+		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
+		try {
+			aspect.auditAnnotationAfterReturning(joinPoint, new ProviderResponse());
+			verify(mockAppender, Mockito.times(4)).doAppend(captorLoggingEvent.capture());
+			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+			assertNotNull(loggingEvents);
+			assertTrue(loggingEvents.size() > 0);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail("Exception should not be thrown");
@@ -254,6 +326,10 @@ public class AuditableAnnotationAspectTest {
 
 	@Auditable(event = AuditEvents.API_REST_REQUEST, activity = "testActivity")
 	public void annotatedMethod(final String parameter) {
+
+	}
+
+	public void nonAnnotatedMethod(final String parameter) {
 
 	}
 

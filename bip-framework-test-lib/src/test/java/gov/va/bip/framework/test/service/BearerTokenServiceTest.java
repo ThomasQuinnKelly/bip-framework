@@ -63,7 +63,7 @@ public class BearerTokenServiceTest {
 	@Test
 	public void test_getTokenByHeaderFile_Success() {
 		String token = null;
-		token = BearerTokenService.getTokenByHeaderFile("token.Request");
+		token = BearerTokenService.getTokenByHeaderFile("token.request");
 		assertThat(true, equalTo(!token.isEmpty()));
 	}
 

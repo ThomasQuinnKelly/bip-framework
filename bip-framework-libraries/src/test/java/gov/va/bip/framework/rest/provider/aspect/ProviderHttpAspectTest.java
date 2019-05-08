@@ -30,6 +30,7 @@ import gov.va.bip.framework.AbstractBaseLogTester;
 import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
@@ -104,6 +105,24 @@ public class ProviderHttpAspectTest extends AbstractBaseLogTester {
 			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
 			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
 			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
+
+			providerHttpAspect.beforeAuditAdvice(joinPoint);
+		} catch (final Throwable throwable) {
+			fail("Exception is not exceptecd");
+		}
+	}
+
+	@Test
+	public void testbeforeAuditAdviceWithNoArgsForJoinPoint() {
+		super.getAppender().clear();
+
+		providerHttpAspect = new ProviderHttpAspect();
+		try {
+			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
+			Mockito.lenient().when(joinPoint.getArgs()).thenReturn(new Object[] {});
+			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
+			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
+			BipLoggerFactory.getLogger(ProviderHttpAspect.class).setLevel(Level.INFO);
 
 			providerHttpAspect.beforeAuditAdvice(joinPoint);
 		} catch (final Throwable throwable) {

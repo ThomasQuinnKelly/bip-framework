@@ -1,5 +1,7 @@
 package gov.va.bip.framework.exception;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,5 +45,10 @@ public class BipRuntimeExceptionTest {
 		Throwable cause = new Throwable("test");
 		BipRuntimeException bipRuntimeException = new BipRuntimeException(TEST_KEY, null, null, cause);
 		Assert.assertTrue(bipRuntimeException.getMessage().equals(TEST_KEY_MESSAGE));
+	}
+
+	@Test
+	public void initializationWithNullKeyTest() {
+		assertNotNull(new BipRuntimeException(null, null, null, (String[]) null));
 	}
 }

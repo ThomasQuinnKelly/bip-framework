@@ -21,6 +21,7 @@ public class BipExceptionTest {
 	public void initializeBipExceptionTest() {
 		assertNotNull(new BipException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST));
 		assertNotNull(new BipException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, new Exception("wrapped message")));
+		assertNotNull(new BipException(null, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, new Exception("wrapped message")));
 	}
 
 	@Test

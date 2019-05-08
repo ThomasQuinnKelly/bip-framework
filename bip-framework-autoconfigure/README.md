@@ -24,7 +24,7 @@ Caches are configured for a specific naming scheme of: `cacheName_ProjectName_Ma
 
 Redis attributes are configured in the Service Application's application YAML file under `spring.redis` properties. See also [Redis configuration](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/docs/cache-management.md#redis-configuration).
 
-Cache-specific attributes for the application are configured in the application YAML under the `bip.framework.cache.**` property. See properties and comments under the `spring:redis:**` and he `bip.framework:cach:**` sections in [bip-reference-person.yml](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/bip-reference-person/src/main/resources/bip-reference-person.yml).
+Cache-specific attributes for the application are configured in the application YAML under the `bip.framework.cache.**` property. See properties and comments under the `spring:redis:**` and the `bip.framework:cache:**` sections in [bip-reference-person.yml](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/bip-reference-person/src/main/resources/bip-reference-person.yml).
 
 Any properties that do not appear in the appropriate hierarchy will be silently ignored, so default values, or nulls will be substituted for properties that were believed to be configured.
 

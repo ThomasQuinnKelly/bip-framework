@@ -4,6 +4,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +19,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
@@ -83,6 +89,15 @@ public class BipRestAutoConfigurationTest {
 		assertNotNull(bipRestAutoConfiguration.restProviderTimerAspect());
 		assertNotNull(bipRestAutoConfiguration.restClientTemplate());
 		assertNotNull(bipRestAutoConfiguration.tokenClientHttpRequestInterceptor());
+	}
+
+	@Test
+	public void testSetRetryHandlerToClientBuilder() throws Exception {
+		BipRestAutoConfiguration config = new BipRestAutoConfiguration();
+		HttpClientBuilder clientBuilder = HttpClients.custom();
+		ReflectionTestUtils.invokeMethod(config, "setRetryHandlerToClientBuilder", clientBuilder);
+		assertTrue(((HttpRequestRetryHandler) ReflectionTestUtils.getField(clientBuilder, "retryHandler"))
+				.retryRequest(new NoHttpResponseException(""), 0, new HttpClientContext()));
 	}
 
 }

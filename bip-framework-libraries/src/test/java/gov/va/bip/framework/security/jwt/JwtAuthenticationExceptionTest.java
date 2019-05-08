@@ -1,6 +1,7 @@
 package gov.va.bip.framework.security.jwt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -20,13 +21,23 @@ public class JwtAuthenticationExceptionTest {
 	}
 
 	@Test
-	public void testSomeMethod() {
-		new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+	public void testConstructor() {
+		JwtAuthenticationException exception = new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+		assertNotNull(exception);
 	}
 
 	@Test
-	public void testSomeMethod1() {
-		new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, new Throwable());
+	public void testConstructorWithThrowableArgument() {
+		JwtAuthenticationException exception =
+				new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, new Throwable());
+		assertNotNull(exception);
+	}
+
+	@Test
+	public void testConstructorWithNullKey() {
+		JwtAuthenticationException exception =
+				new JwtAuthenticationException(null, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, new Throwable());
+		assertNotNull(exception);
 	}
 
 	@Test
