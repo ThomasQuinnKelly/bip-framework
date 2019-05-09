@@ -119,6 +119,7 @@ public class BaseStepDefTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_invokeAPIUsingDelete_WithBearerToken_Success() {
 		try {
 			subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, true);
