@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -119,7 +118,6 @@ public class BaseStepDefTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_invokeAPIUsingDelete_WithBearerToken_Success() {
 		try {
 			subject.invokeAPIUsingDelete(LOCALHOST_URL_PERSON, true);
@@ -164,7 +162,6 @@ public class BaseStepDefTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_invokeAPIUsingPost_WithBearerToken_Success() {
 		try {
 			subject.invokeAPIUsingPost(LOCALHOST_URL_PERSON, true);
@@ -172,7 +169,7 @@ public class BaseStepDefTest {
 			e.printStackTrace();
 			fail("Exception not expected!");
 		}
-		assertThat(false, equalTo(subject.strResponse.isEmpty()));
+		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 	}
 
 	@Test

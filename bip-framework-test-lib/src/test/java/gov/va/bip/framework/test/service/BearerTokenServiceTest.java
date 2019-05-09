@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -50,7 +49,6 @@ public class BearerTokenServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_getToken_Success() {
 		String token = null;
 		try {
@@ -59,7 +57,7 @@ public class BearerTokenServiceTest {
 			e.printStackTrace();
 			fail("Exception not expected!");
 		}
-		assertThat(false, equalTo(token.isEmpty()));
+		assertThat(true, equalTo(!token.isEmpty()));
 	}
 
 	@Test
