@@ -75,7 +75,7 @@ public class BearerTokenService {
 		final RESTConfigService restConfig = RESTConfigService.getInstance();
 		final String baseUrl = restConfig.getProperty(BASE_URL_PROPERTY_KEY, true);
 		final String tokenUrl = restConfig.getProperty(TOKEN_URL_PROPERTY_KEY,true);
-		handleNullUrls(baseUrl, tokenUrl);
+		//handleNullUrls(baseUrl, tokenUrl);
 		final Map<String, String> headerMap = new HashMap<>();
 		headerMap.put("Accept", ContentType.APPLICATION_JSON.getMimeType());
 		headerMap.put("Content-Type", ContentType.APPLICATION_JSON.getMimeType());
