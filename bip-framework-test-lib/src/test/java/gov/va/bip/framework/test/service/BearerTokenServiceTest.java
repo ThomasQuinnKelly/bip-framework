@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -49,6 +50,7 @@ public class BearerTokenServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_getToken_Success() {
 		String token = null;
 		try {
