@@ -169,7 +169,7 @@ public class BaseStepDefTest {
 			e.printStackTrace();
 			fail("Exception not expected!");
 		}
-		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
+		assertThat(false, equalTo(subject.strResponse.isEmpty()));
 	}
 
 	@Test

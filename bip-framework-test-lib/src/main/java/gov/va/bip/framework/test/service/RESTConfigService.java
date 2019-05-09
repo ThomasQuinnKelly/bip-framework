@@ -118,15 +118,18 @@ public class RESTConfigService {
 	 * @return String the value associated with pName
 	 */
 	public String getProperty(final String pName, final boolean isCheckSystemProp) {
+		if (instance == null) {
+			getInstance();
+		}
 		String value = "";
 		if (isCheckSystemProp) {
 			value = System.getProperty(pName);
-			if (StringUtils.isBlank(value) && (prop != null)) {
-				value = prop.getProperty(pName);
+			if (StringUtils.isBlank(value) && (instance.prop != null)) {
+				value = instance.prop.getProperty(pName);
 			}
 		} else {
-			if (prop != null) {
-				value = prop.getProperty(pName);
+			if (instance.prop != null) {
+				value = instance.prop.getProperty(pName);
 			}
 		}
 		return value;

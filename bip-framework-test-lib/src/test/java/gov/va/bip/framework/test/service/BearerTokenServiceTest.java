@@ -57,7 +57,7 @@ public class BearerTokenServiceTest {
 			e.printStackTrace();
 			fail("Exception not expected!");
 		}
-		assertThat(true, equalTo(!token.isEmpty()));
+		assertThat(false, equalTo(token.isEmpty()));
 	}
 
 	@Test
