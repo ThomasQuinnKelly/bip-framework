@@ -125,7 +125,7 @@ public class RESTConfigService {
 	public String getProperty(final String pName, final boolean isCheckSystemProp) {
 		LOGGER.debug("RESTConfigService instance {}", instance);
 		if (instance == null) {
-			instance = getInstance();
+			getInstance();
 		}
 		LOGGER.debug("RESTConfigService instance.prop {}", instance.prop);
 		String value = "";
