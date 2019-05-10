@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -23,11 +27,13 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,8 +162,8 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a GET method using REST Template API and return
-	 * response JSON object.
+	 * Invokes REST end point for a GET method using REST Template API and
+	 * return response JSON object.
 	 *
 	 * @param serviceURL
 	 * @return
@@ -169,8 +175,8 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a POST method using REST Template API and return
-	 * response JSON object.
+	 * Invokes REST end point for a POST method using REST Template API and
+	 * return response JSON object.
 	 *
 	 * @param serviceURL
 	 * @return
@@ -183,8 +189,8 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a PUT method using REST Template API and return
-	 * response JSON object.
+	 * Invokes REST end point for a PUT method using REST Template API and
+	 * return response JSON object.
 	 *
 	 * @param serviceURL
 	 * @return
@@ -197,8 +203,8 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a DELETE method using REST Template API and return
-	 * response JSON object.
+	 * Invokes REST end point for a DELETE method using REST Template API and
+	 * return response JSON object.
 	 *
 	 * @param serviceURL
 	 * @return
@@ -258,9 +264,11 @@ public class RESTUtil {
 			return null;
 		}
 	}
+
 	/**
 	 * Invokes REST end point for a multipart method using REST Template API and
 	 * return response json object.
+	 * 
 	 * @param serviceURL
 	 * @param fileName
 	 * @param submitPayload
@@ -282,9 +290,11 @@ public class RESTUtil {
 		}
 
 	}
+
 	/**
-	 * Private method that is invoked by multipart methods. It uses
-	 * RESTTemplate generic exchange method for multipart HTTP methods.
+	 * Private method that is invoked by multipart methods. It uses RESTTemplate
+	 * generic exchange method for multipart HTTP methods.
+	 * 
 	 * @param serviceURL
 	 * @param body
 	 * @return
@@ -297,51 +307,79 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Loads the KeyStore and password in to rest Template API so all the API's are
-	 * SSL enabled.
+	 * Loads the KeyStore and password in to rest Template API so all the API's
+	 * are SSL enabled.
 	 */
 
 	private RestTemplate getRestTemplate() {
-		// Create a new instance of the {@link RestTemplate} using default settings.
+		// Create a new instance of the {@link RestTemplate} using default
+		// settings.
 		RestTemplate apiTemplate = new RestTemplate();
-		
-		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
-		if (StringUtils.isNotBlank(pathToKeyStore)) {
-			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStorePassword", true);
-			if (StringUtils.isBlank(password)) {
-				throw new BipTestLibRuntimeException(COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.keyStorePassword");
-			}
-			try (FileInputStream instream = new FileInputStream(pathToKeyStore)) {
-				KeyStore keyStore = KeyStore.getInstance("jks");
-				keyStore.load(instream, password.toCharArray());
-				SSLContext sslContext = SSLContexts.custom().loadKeyMaterial(keyStore, password.toCharArray())
-						.loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
 
-				SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext,
-						NoopHostnameVerifier.INSTANCE);
-				HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-				ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-				apiTemplate.setRequestFactory(requestFactory);
-			} catch (Exception e) {
-				LOGGER.error("Issue with the certificate or password", e);
-				throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
-			}			
+		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
+		String pathToTrustStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStore", true);
+		SSLContextBuilder sslContextBuilder = SSLContexts.custom();
+		try {
+			if (StringUtils.isBlank(pathToKeyStore) && StringUtils.isBlank(pathToTrustStore)) {
+				TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
+				sslContextBuilder = sslContextBuilder.loadTrustMaterial(null, acceptingTrustStrategy);
+			} else {
+				sslContextBuilder = loadKeyMaterial(pathToKeyStore, sslContextBuilder);
+				sslContextBuilder = loadTrustMaterial(pathToTrustStore, sslContextBuilder);
+			}
+			SSLContext sslContext = sslContextBuilder.build();
+			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext,
+					NoopHostnameVerifier.INSTANCE);
+			HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+			ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			apiTemplate.setRequestFactory(requestFactory);
+		} catch (Exception e) {
+			LOGGER.error("Issue with the certificate or password", e);
+			throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
 		}
 		apiTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
 		apiTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		apiTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
 
 		for (HttpMessageConverter<?> converter : apiTemplate.getMessageConverters()) {
-		     if (converter instanceof StringHttpMessageConverter) {
-		         ((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
-		     }
+			if (converter instanceof StringHttpMessageConverter) {
+				((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
+			}
 		}
 		return apiTemplate;
 	}
 
+	private SSLContextBuilder loadKeyMaterial(String pathToKeyStore, SSLContextBuilder sslContextBuilder)
+			throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, CertificateException,
+			IOException {
+		if (StringUtils.isNotBlank(pathToKeyStore)) {
+			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStorePassword", true);
+			if (StringUtils.isBlank(password)) {
+				throw new BipTestLibRuntimeException(COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.keyStorePassword");
+			}
+			return sslContextBuilder.loadKeyMaterial(new File(pathToKeyStore), password.toCharArray(),
+					password.toCharArray());
+		}
+		return sslContextBuilder;
+	}
+
+	private SSLContextBuilder loadTrustMaterial(String pathToTrustStore, SSLContextBuilder sslContextBuilder)
+			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+		if (StringUtils.isNotBlank(pathToTrustStore)) {
+			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
+			if (StringUtils.isBlank(password)) {
+				throw new BipTestLibRuntimeException(
+						COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.trustStorePassword");
+			}
+			return sslContextBuilder.loadTrustMaterial(new File(pathToTrustStore), password.toCharArray());
+		} else {
+			return sslContextBuilder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+		}
+	}
+
 	/**
-	 * Creates HttpComponentsClientHttpRequestFactory with different settings such
-	 * as connectionTimeout, readTimeout
+	 * Creates HttpComponentsClientHttpRequestFactory with different settings
+	 * such as connectionTimeout, readTimeout
 	 * 
 	 * @return
 	 */
@@ -383,16 +421,16 @@ public class RESTUtil {
 	 */
 	private HttpClientBuilder getHttpClientBuilder() {
 		int connectionBufferSize = 4128;
-		ConnectionConfig connectionConfig = ConnectionConfig.custom()
-				.setBufferSize(connectionBufferSize).build();
+		ConnectionConfig connectionConfig = ConnectionConfig.custom().setBufferSize(connectionBufferSize).build();
 		HttpClientBuilder clientBuilder = HttpClients.custom();
 
 		clientBuilder.setConnectionManager(getPoolingHttpClientConnectionManager());
 		clientBuilder.setDefaultConnectionConfig(connectionConfig);
-		
+
 		clientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true, new ArrayList<>()) {
 			@Override
-			public boolean retryRequest(final IOException exception, final int executionCount, final HttpContext context) {
+			public boolean retryRequest(final IOException exception, final int executionCount,
+					final HttpContext context) {
 				LOGGER.info("Retry request, execution count: {}, exception: {}", executionCount, exception);
 				if (exception instanceof org.apache.http.NoHttpResponseException) {
 					LOGGER.warn("No response from server on " + executionCount + " call");
