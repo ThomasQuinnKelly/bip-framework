@@ -123,18 +123,17 @@ public class RESTConfigService {
 	 * @return String the value associated with pName
 	 */
 	public String getProperty(final String pName, final boolean isCheckSystemProp) {
-		LOGGER.debug("instance {}", instance);
+		LOGGER.debug("RESTConfigService instance {}", instance);
 		if (instance == null) {
 			instance = getInstance();
 		}
-		LOGGER.debug("instance.prop {}", instance.prop);
-		LOGGER.debug("isCheckSystemProp {}", isCheckSystemProp);
+		LOGGER.debug("RESTConfigService instance.prop {}", instance.prop);
 		String value = "";
 		if (isCheckSystemProp) {
 			value = System.getProperty(pName);
 		}
 		if (StringUtils.isBlank(value) && (instance.prop != null)) {
-			LOGGER.debug("Checking Properties Object");
+			LOGGER.debug("Retrieving from Properties File");
 			value = instance.prop.getProperty(pName);
 		}
 		LOGGER.debug("Property Name: {}", pName);

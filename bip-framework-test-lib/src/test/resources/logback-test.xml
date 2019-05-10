@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="gov.va.bip.framework.test" level="DEBUG"/>
+    <logger name="gov.va.bip.framework.test" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
