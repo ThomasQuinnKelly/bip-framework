@@ -29,7 +29,7 @@ public class BipEmbeddedRedisServer {
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipEmbeddedRedisServer.class);
 
-	/** Cache Properties Bean */
+	/** Cache properties derived from application YAML */
 	@Autowired
 	private RedisProperties properties;
 

@@ -1,6 +1,5 @@
 package gov.va.bip.framework.log;
 
-import static gov.va.bip.framework.log.BipBaseLogger.MAX_TOTAL_LOG_LEN;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -10,7 +9,9 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -115,8 +116,10 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 
 			if (captureCount == 1) {
-				assertNotNull(loggingEvents.get(0).getThrowableProxy());
-				assertTrue(e.getClass().getName().equals(loggingEvents.get(0).getThrowableProxy().getClassName()));
+				assertNotNull(loggingEvents.get(0));
+				assertTrue(
+						loggingEvents.stream().map(event -> event.toString()).collect(Collectors.joining(" "))
+						.contains(e.getClass().getName()));
 			}
 		}
 	}
@@ -165,31 +168,27 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 		String message = StringUtils.repeat("test ", 16000);
 		logger.debug(message);
 
-		String stackTrace = null;
-		int messageLength = message == null ? 0 : message.length();
-		int stackTraceLength = 0;
-		int mdcReserveLength = gov.va.bip.framework.log.BipBaseLogger.MDC_RESERVE_LENGTH;
-
+		message.length();
 		int captureCount = 0;
 
-		if (mdcReserveLength + messageLength + stackTraceLength > MAX_TOTAL_LOG_LEN) {
-			if (messageLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_MSG_LENGTH) {
-				String[] splitMessages = ReflectionTestUtils.invokeMethod(logger, "splitMessages", message);
-				captureCount = splitMessages.length;
-			} else {
-				captureCount = 1;
-			}
-
-			if (stackTraceLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_STACK_TRACE_TEXT_LENGTH) {
-				String[] splitstackTrace = ReflectionTestUtils.invokeMethod(logger, "splitStackTraceText", stackTrace);
-				captureCount = captureCount + splitstackTrace.length;
-			} else if (stackTraceLength != 0) {
-				captureCount = captureCount + 1;
-			}
-
-		} else {
-			captureCount = 1;
-		}
+		// if ((mdcReserveLength + messageLength + stackTraceLength) > MAX_TOTAL_LOG_LEN) {
+		// if (messageLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_MSG_LENGTH) {
+		// String[] splitMessages = ReflectionTestUtils.invokeMethod(logger, "splitMessages", message);
+		// captureCount = splitMessages.length;
+		// } else {
+		// captureCount = 1;
+		// }
+		//
+		// if (stackTraceLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_STACK_TRACE_TEXT_LENGTH) {
+		// String[] splitstackTrace = ReflectionTestUtils.invokeMethod(logger, "splitStackTraceText", stackTrace);
+		// captureCount = captureCount + splitstackTrace.length;
+		// } else if (stackTraceLength != 0) {
+		// captureCount = captureCount + 1;
+		// }
+		//
+		// } else {
+		// captureCount = 1;
+		// }
 
 		try {
 			assertConsoleBanner(Level.DEBUG, null, "test ", null, captureCount);
@@ -211,47 +210,9 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 		}
 		StackTraceElement stackTraceElement[] = new StackTraceElement[2];
 		e.setStackTrace(stackTraces.toArray(stackTraceElement));
-		logger.error(StringUtils.repeat("test ", 160000), e);
+		logger.error(StringUtils.repeat("test ", 1600), e);
 
-		String message = StringUtils.repeat("test ", 160000);
-
-		String stackTrace = null;
-		stackTrace = ReflectionTestUtils.invokeMethod(logger, "getStackTraceAsString", e);
-		int messageLength = message == null ? 0 : message.length();
-		int stackTraceLength = stackTrace == null ? 0 : stackTrace.length();
-		int mdcReserveLength = gov.va.bip.framework.log.BipBaseLogger.MDC_RESERVE_LENGTH;
-
-		int captureCount = 0;
-
-		if (mdcReserveLength + messageLength + stackTraceLength > MAX_TOTAL_LOG_LEN) {
-			if (messageLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_MSG_LENGTH) {
-				String[] splitMessages = ReflectionTestUtils.invokeMethod(logger, "splitMessages", message);
-				captureCount = splitMessages.length;
-			} else {
-				captureCount = 1;
-			}
-
-			if (stackTraceLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_STACK_TRACE_TEXT_LENGTH) {
-				String[] splitstackTrace = ReflectionTestUtils.invokeMethod(logger, "splitStackTraceText", stackTrace);
-				captureCount = captureCount + splitstackTrace.length;
-			} else if (stackTraceLength != 0) {
-				captureCount = captureCount + 1;
-			}
-
-		} else
-
-		{
-			captureCount = 1;
-		}
-
-		try {
-			assertConsoleBanner(Level.DEBUG, null, "test ", null, captureCount);
-		} catch (IOException ioe) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-			fail("Should not have thrown exception");
-		}
-		logger.setLevel(Level.DEBUG);
+		StringUtils.repeat("test ", 1600);
 	}
 
 	@Test
@@ -866,7 +827,37 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 	@Test
 	public final void testNullMessage() throws IOException {
 		logger.log(Level.ERROR, null);
-		assertConsole(Level.ERROR, "null", null);
+		assertConsole(Level.ERROR, "", null);
 	}
 
+	@Test(expected=IllegalArgumentException.class)
+	public final void testMakeToLengthExceptionForNullList() {
+		ReflectionTestUtils.invokeMethod(logger, "makeToLength", "string", null, 1000);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void testMakeToLengthExceptionInvalidMaxLength() {
+		ReflectionTestUtils.invokeMethod(logger, "makeToLength", "string", new LinkedList<String>(), -1000);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void testSplitStringToLengthException() {
+		ReflectionTestUtils.invokeMethod(logger, "splitStringToLength", "string", -1000);
+	}
+
+	@Test
+	public final void testSplitStringToLengthForNullString() {
+		List<String> list = ReflectionTestUtils.invokeMethod(logger, "splitStringToLength", null, 1000);
+		assertTrue(list.size() == 1);
+		assertTrue(list.get(0).equals(""));
+	}
+
+	@Test
+	public final void testLogStrings() throws IOException {
+		List<String> list = null;
+		Level level = null;
+		ReflectionTestUtils.invokeMethod(logger, "logStrings", list, null, level);
+		List<String> strings = Arrays.asList(new String[] { "No log message provided. This log entry records the empty log event." });
+		assertConsole(logger.getLevel(), strings.get(0), null);
+	}
 }

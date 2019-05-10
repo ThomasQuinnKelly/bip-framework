@@ -34,9 +34,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.AuditLogSerializer;
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
@@ -177,7 +174,7 @@ public class AuditLogSerializerTest {
 
 		verify(mockAppender, times(1)).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		Assert.assertEquals("Error test", loggingEvents.get(0).getMessage());
+		Assert.assertTrue(loggingEvents.get(0).getMessage().startsWith("Error test"));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 	}
 }

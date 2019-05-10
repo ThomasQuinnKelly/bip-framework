@@ -3,6 +3,7 @@ package gov.va.bip.framework.log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,6 @@ import gov.va.bip.framework.util.SanitizationUtil;
  */
 public class BipBaseLogger {
 
-	/** The property name used by logback encoder for stack traces */
-	private static final String STACK_TRACE_MDC_NAME = "stack_trace";
-
 	/** Maximum length we are allowing for a single log, as dictated by docker limits */
 	public static final int MAX_TOTAL_LOG_LEN = 16384;
 
@@ -41,6 +39,9 @@ public class BipBaseLogger {
 
 	/** The actual logger implementation (logback under slf4j) */
 	private org.slf4j.Logger logger;
+
+	/** The space character */
+	protected static final String SPACE = " ";
 
 	/** Systems line separator */
 	protected static final String NEWLINE = System.lineSeparator();
@@ -84,7 +85,7 @@ public class BipBaseLogger {
 	/**
 	 * Get the current log level for the logger.
 	 * If no level has been set, the ROOT_LOGGER level is returned.
-	 * If ROOT_LOGGER has not been set, DEBUG is returned.
+	 * If ROOT_LOGGER has not been set, INFO is returned.
 	 * <p>
 	 * This method accesses the underlying log implementation (e.g. logback).
 	 *
@@ -95,7 +96,7 @@ public class BipBaseLogger {
 		if (lvl == null) {
 			lvl = ((ch.qos.logback.classic.Logger) LoggerFactory.getILoggerFactory().getLogger(ROOT_LOGGER_NAME)).getLevel();
 		}
-		return lvl == null ? Level.DEBUG : Level.valueOf(lvl.toString());
+		return lvl == null ? Level.INFO : Level.valueOf(lvl.toString());
 	}
 
 	/**
@@ -107,125 +108,116 @@ public class BipBaseLogger {
 		return this.logger;
 	}
 
-	/**
-	 * Splits a message into an array of strings that are {@link #MAX_MSG_LENGTH} KB or less. Short messages will be an array with one
-	 * element.
-	 *
-	 * @param message the message to split
-	 * @return an array of Strings
-	 */
-	private static String[] splitMessages(String message) {
-		message = message == null ? "null" : message; // NOSONAR intentional variable reuse
-
-		if (message.length() <= MAX_MSG_LENGTH) {
-			return new String[] { message };
-		} else {
-			// split message into MAX_MSG_LENGTH strings
-			return message.split("(?<=\\G.{" + MAX_MSG_LENGTH + "})");
-		}
-	}
-
-	/**
-	 * Splits a stack trace text into an array of strings that are {@link #MAX_STACK_TRACE_TEXT_LENGTH} KB or less. Short stack trace
-	 * text will be an array with one element.
-	 *
-	 * @param stackTraceText the message to split
-	 * @return an array of Strings
-	 */
-	private String[] splitStackTraceText(String stackTraceText) {
-		stackTraceText = stackTraceText == null ? "null" : stackTraceText; // NOSONAR intentional variable reuse
-
-		if (stackTraceText.length() <= MAX_STACK_TRACE_TEXT_LENGTH) {
-			return new String[] { stackTraceText };
-		} else {
-			// split message into MAX_MSG_OR_STACK_TRACE_LENGTH strings
-			List<String> listToReturn =
-					new ArrayList<>((stackTraceText.length() + MAX_STACK_TRACE_TEXT_LENGTH - 1) / MAX_STACK_TRACE_TEXT_LENGTH);
-
-			for (int start = 0; start < stackTraceText.length(); start += MAX_STACK_TRACE_TEXT_LENGTH) {
-				listToReturn
-						.add(stackTraceText.substring(start, Math.min(stackTraceText.length(), start + MAX_STACK_TRACE_TEXT_LENGTH)));
-			}
-			return listToReturn.toArray(new String[1]);
-		}
-	}
-
 	/* ================ Logger ================ */
 
 	/**
-	 * Generic logging, allowing to specify the log level.
+	 * Generic logging, allowing to specify the log level, and optional marker.
 	 *
-	 * @param level
-	 * @param marker
-	 * @param message
+	 * @param level the log level
+	 * @param marker the marker (or null)
+	 * @param message the message to log
 	 */
 	protected void sendlog(final Level level, final Marker marker, final String message, final Throwable t) {
 
-		String safeMessage = safeMessage(message);
-
-		// get the stack trace
 		String stackTrace = getStackTraceAsString(t);
+		List<String> logThis = splitStringToLength(
+				safeMessage(message) + (stackTrace.length() > 0 ? NEWLINE + NEWLINE + stackTrace : ""),
+				MAX_MSG_LENGTH);
 
-		int messageLength = safeMessage == null ? 0 : safeMessage.length();
-		int stackTraceLength = stackTrace == null ? 0 : stackTrace.length();
-		int mdcReserveLength = MDC_RESERVE_LENGTH;
+		logStrings(logThis, marker, level);
+	}
 
-		if (mdcReserveLength + messageLength + stackTraceLength > MAX_TOTAL_LOG_LEN) {
-			int seq = 0;
-			boolean shouldStackTraceBePrinted = stackTraceLength != 0;
-			if (messageLength >= MAX_MSG_LENGTH) {
-				seq = splitAndSendLargeMessage(level, marker, safeMessage, seq, shouldStackTraceBePrinted);
+	/**
+	 * Splits a string into a list of strings, each entry of which does not exceed
+	 * the specified maxLengthPerString.
+	 * <p>
+	 * Each entry on the returned list will be comprised of whole words.
+	 *
+	 * @param string the string to split
+	 * @return List of strings, each of which does not exceed maxLengthPerString
+	 */
+	private List<String> splitStringToLength(final String string, final int maxLengthPerString) {
+		if (maxLengthPerString < 1) {
+			throw new IllegalArgumentException(
+					"int argument 'maxLengthPerString' for splitStringToLength(..) must be greater than zero.");
+		}
+		if (string == null) {
+			return Arrays.asList(new String[] { "" });
+		}
+
+		// return an array of strings, each of which does not exceed max allowable docker length
+		ArrayList<String> returnList = new ArrayList<>();
+		makeToLength(string, returnList, maxLengthPerString);
+		return returnList;
+	}
+
+	/**
+	 * Accumulates "words" in the string up to the maxLength, and puts each accumulation
+	 * onto the addToThis list. Result is a list of strings (made up of full words), each
+	 * of which does not exceed the maxLength.
+	 *
+	 * @param string the string to split
+	 * @param addToThisList the list to add the split strings into, cannot be null
+	 * @param maxLength the max length allowed for each split string, must be greater than 0
+	 */
+	private void makeToLength(final String string, final List<String> addToThisList, final int maxLength) {
+		if (addToThisList == null) {
+			throw new IllegalArgumentException("List argument 'addToThisList' for makeToLength(..) must not be null.");
+		}
+		if (maxLength < 1) {
+			throw new IllegalArgumentException("int argument 'maxLength' for makeToLength(..) must be greater than zero.");
+		}
+		if (string.length() <= maxLength) {
+			addToThisList.add(string);
+			return;
+		}
+
+		String[] words = string.split(SPACE);
+		String toLength = "";
+		boolean alreadyAdded = false;
+		// accumulate words to the length specified for each addToThisList entry
+		for (String word : words) {
+			if ((toLength.length() + word.length() + 1) > maxLength) {
+				addToThisList.add(toLength);
+				toLength = word + SPACE; // start a new string
+				alreadyAdded = true;
 			} else {
-				if (shouldStackTraceBePrinted) {
-					MDC.put(SPLIT_MDC_NAME, Integer.toString(++seq));
-					// manually add a MDC put "stack_trace", string
-					MDC.put(STACK_TRACE_MDC_NAME, "stack trace will be printed in successive split logs");
-				}
-				// log the safeMessage
-				// throwable arg will be null if the stack trace needs to be split to another split log message
-				this.sendLogAtLevel(level, marker, safeMessage, null);
+				toLength = toLength + word + SPACE;
+				alreadyAdded = false;
 			}
-
-			String messageStub = "message is already printed in previous split logs";
-			if (stackTraceLength >= MAX_STACK_TRACE_TEXT_LENGTH) {
-				splitAndSendLargeStackTrace(level, marker, stackTrace, seq, messageStub);
-			} else if (shouldStackTraceBePrinted) {
-				MDC.put(SPLIT_MDC_NAME, Integer.toString(++seq));
-				this.sendLogAtLevel(level, marker, messageStub, t);
-			}
-
-		} else {
-			this.sendLogAtLevel(level, marker, safeMessage, t);
+		}
+		if (!alreadyAdded) {
+			addToThisList.add(toLength);
 		}
 	}
 
-	private void splitAndSendLargeStackTrace(final Level level, final Marker marker, final String stackTrace, final int seq,
-			final String messageStub) {
-		String[] splitstackTrace = splitStackTraceText(stackTrace);
-		int currentSequenceNumber = seq;
-		for (String part : splitstackTrace) {
-			MDC.put(SPLIT_MDC_NAME, Integer.toString(++currentSequenceNumber));
-			// manually add an MDC put "stack_trace", string
-			MDC.put(STACK_TRACE_MDC_NAME, part);
-			// throwable arg will be null if the stack trace needs to be split to another split log message
-			this.sendLogAtLevel(level, marker, messageStub, null);
-		}
-	}
+	/**
+	 * Logs each string in the strings list, using the marker and level supplied.
+	 * <p>
+	 * If there is more than one entry in the strings list, the MDC includes an entry with
+	 * SPLIT_MDC_NAME and the sequential '# of #' string.
+	 *
+	 * @param strings the list of strings to be logged
+	 * @param marker any marker (or null)
+	 * @param level the log level, if null, the current logger's log level is used
+	 */
+	private void logStrings(final List<String> strings, final Marker marker, final Level level) {
+		List<String> stringsToLog = ((strings == null) || strings.isEmpty())
+				? Arrays.asList(new String[] { "No log message provided. This log entry records the empty log event." })
+						: strings;
+		Level levelToLogAt = (level == null) ? this.getLevel() : level;
 
-	private int splitAndSendLargeMessage(final Level level, final Marker marker, final String safeMessage, final int seq,
-			final boolean shouldStackTraceBePrinted) {
-		String[] splitMessages = splitMessages(safeMessage);
-		int currentSequenceNumber = seq;
-		for (String part : splitMessages) {
-			MDC.put(SPLIT_MDC_NAME, Integer.toString(++currentSequenceNumber));
-			if (shouldStackTraceBePrinted) {
-				// manually add an MDC put "stack_trace", string
-				MDC.put(STACK_TRACE_MDC_NAME, "stack trace will be printed in successive split logs");
-			}
-			// throwable arg will be null if the stack trace needs to be split to another split log message
-			this.sendLogAtLevel(level, marker, part, null);
+		if (stringsToLog.size() < 2) {
+			this.sendLogAtLevel(levelToLogAt, marker, stringsToLog.get(0), null);
+			return; // all done here
 		}
-		return currentSequenceNumber;
+
+		String maxSequence = Integer.toString(stringsToLog.size());
+		int sequence = 1;
+		for (String toLog : stringsToLog) {
+			MDC.put(SPLIT_MDC_NAME, Integer.toString(sequence) + " of " + maxSequence);
+			this.sendLogAtLevel(levelToLogAt, marker, toLog, null);
+		}
 	}
 
 	/**
@@ -249,15 +241,18 @@ public class BipBaseLogger {
 	}
 
 	/**
-	 * Get a string that is safe for use within a JSON context - escapes quotes, etc.
+	 * Get a string that is stripped of XSS characters,
+	 * and is safe for use within a JSON context - escapes quotes, etc.
 	 * <p>
-	 * If {@code null} is passed as the message, then {@code null} will be returned.
+	 * If {@code null} is passed as the message, then empty string ({@code ""}) will be returned.
 	 *
 	 * @param message
 	 * @return String the escaped message, or {@code null}
 	 */
 	private String safeMessage(final String message) {
-		return message == null ? null : String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString(message));
+		return message == null ? ""
+				: String.valueOf(BufferRecyclers.getJsonStringEncoder()
+						.quoteAsString(SanitizationUtil.stripXSS(message)));
 	}
 
 	/**
@@ -273,7 +268,7 @@ public class BipBaseLogger {
 			sendLogDebug(marker, SanitizationUtil.stripXSS(part), t);
 		} else {
 			if (org.slf4j.event.Level.ERROR.equals(level)) {
-				sendLogError(marker,SanitizationUtil.stripXSS(part), t);
+				sendLogError(marker, SanitizationUtil.stripXSS(part), t);
 			} else if (org.slf4j.event.Level.WARN.equals(level)) {
 				sendLogWarn(marker, SanitizationUtil.stripXSS(part), t);
 			} else if (org.slf4j.event.Level.INFO.equals(level)) {
@@ -286,75 +281,145 @@ public class BipBaseLogger {
 		}
 	}
 
-	/** Because sonar is a PITA */
-	private void sendLogTrace(final Marker marker, final String part, final Throwable t) {
+	/**
+	 * Separate logger method for TRACE log levels.
+	 * <p>
+	 * Note that in this class, the '{@code t}' (Throwable) argument is likely
+	 * to always be {@code null}, because {@link #sendlog(Level, Marker, String, Throwable)}
+	 * always consolidates messages and stack traces for string length checks.
+	 * This is required to meet the maximum allowable log length dictated by docker.
+	 * <p>
+	 * This method is identical to the other {@code sendLog*} methods,
+	 * with the exception of the log level.
+	 *
+	 * @param marker the marker (or null)
+	 * @param message the message to log
+	 * @param t the Throwable, if needed
+	 */
+	private void sendLogTrace(final Marker marker, final String message, final Throwable t) {
 		if (t == null) {
 			if (marker == null) {
-				this.logger.trace(part);
+				this.logger.trace(message);
 			} else {
-				this.logger.trace(marker, part);
+				this.logger.trace(marker, message);
 			}
 		} else {
 			if (marker == null) {
-				this.logger.trace(part, t);
+				this.logger.trace(message, t);
 			} else {
-				this.logger.trace(marker, part, t);
+				this.logger.trace(marker, message, t);
 			}
 		}
 	}
 
-	/** Because sonar is a PITA */
-	private void sendLogDebug(final Marker marker, final String part, final Throwable t) {
+	/**
+	 * Separate logger method for DEBUG log levels.
+	 * <p>
+	 * Note that in this class, the '{@code t}' (Throwable) argument is likely
+	 * to always be {@code null}, because {@link #sendlog(Level, Marker, String, Throwable)}
+	 * always consolidates messages and stack traces for string length checks.
+	 * This is required to meet the maximum allowable log length dictated by docker.
+	 * <p>
+	 * This method is identical to the other {@code sendLog*} methods,
+	 * with the exception of the log level.
+	 *
+	 * @param marker the marker (or null)
+	 * @param message the message to log
+	 * @param t the Throwable, if needed
+	 */
+	private void sendLogDebug(final Marker marker, final String message, final Throwable t) {
 		if (t == null) {
 			if (marker == null) {
-				this.logger.debug(part);
+				this.logger.debug(message);
 			} else {
-				this.logger.debug(marker, part);
+				this.logger.debug(marker, message);
 			}
 		} else {
 			if (marker == null) {
-				this.logger.debug(part, t);
+				this.logger.debug(message, t);
 			} else {
-				this.logger.debug(marker, part, t);
+				this.logger.debug(marker, message, t);
 			}
 		}
 	}
 
-	/** Because sonar is a PITA */
-	private void sendLogInfo(final Marker marker, final String part, final Throwable t) {
+	/**
+	 * Separate logger method for INFO log levels.
+	 * <p>
+	 * Note that in this class, the '{@code t}' (Throwable) argument is likely
+	 * to always be {@code null}, because {@link #sendlog(Level, Marker, String, Throwable)}
+	 * always consolidates messages and stack traces for string length checks.
+	 * This is required to meet the maximum allowable log length dictated by docker.
+	 * <p>
+	 * This method is identical to the other {@code sendLog*} methods,
+	 * with the exception of the log level.
+	 *
+	 * @param marker the marker (or null)
+	 * @param message the message to log
+	 * @param t the Throwable, if needed
+	 */
+	private void sendLogInfo(final Marker marker, final String message, final Throwable t) {
 		if (t == null) {
 			if (marker == null) {
-				this.logger.info(part);
+				this.logger.info(message);
 			} else {
-				this.logger.info(marker, part);
+				this.logger.info(marker, message);
 			}
 		} else {
 			if (marker == null) {
-				this.logger.info(part, t);
+				this.logger.info(message, t);
 			} else {
-				this.logger.info(marker, part, t);
+				this.logger.info(marker, message, t);
 			}
 		}
 	}
 
-	/** Because sonar is a PITA */
-	private void sendLogWarn(final Marker marker, final String part, final Throwable t) {
+	/**
+	 * Separate logger method for WARN log levels.
+	 * <p>
+	 * Note that in this class, the '{@code t}' (Throwable) argument is likely
+	 * to always be {@code null}, because {@link #sendlog(Level, Marker, String, Throwable)}
+	 * always consolidates messages and stack traces for string length checks.
+	 * This is required to meet the maximum allowable log length dictated by docker.
+	 * <p>
+	 * This method is identical to the other {@code sendLog*} methods,
+	 * with the exception of the log level.
+	 *
+	 * @param marker the marker (or null)
+	 * @param message the message to log
+	 * @param t the Throwable, if needed
+	 */
+	private void sendLogWarn(final Marker marker, final String message, final Throwable t) {
 		if (t == null) {
 			if (marker == null) {
-				this.logger.warn(part);
+				this.logger.warn(message);
 			} else {
-				this.logger.warn(marker, part);
+				this.logger.warn(marker, message);
 			}
 		} else {
 			if (marker == null) {
-				this.logger.warn(part, t);
+				this.logger.warn(message, t);
 			} else {
-				this.logger.warn(marker, part, t);
+				this.logger.warn(marker, message, t);
 			}
 		}
 	}
 
-	/** Because sonar is a PITA */
+	/**
+	 * Separate logger method for ERROR log levels.
+	 * <p>
+	 * Note that in this class, the '{@code t}' (Throwable) argument is likely
+	 * to always be {@code null}, because {@link #sendlog(Level, Marker, String, Throwable)}
+	 * always consolidates messages and stack traces for string length checks.
+	 * This is required to meet the maximum allowable log length dictated by docker.
+	 * <p>
+	 * This method is identical to the other {@code sendLog*} methods,
+	 * with the exception of the log level.
+	 *
+	 * @param marker the marker (or null)
+	 * @param message the message to log
+	 * @param t the Throwable, if needed
+	 */
 	private void sendLogError(final Marker marker, final String part, final Throwable t) {
 		if (t == null) {
 			if (marker == null) {

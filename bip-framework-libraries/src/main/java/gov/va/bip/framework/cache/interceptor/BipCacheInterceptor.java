@@ -44,7 +44,7 @@ public class BipCacheInterceptor extends CacheInterceptor {
 	transient BaseAsyncAudit baseAsyncAudit;
 
 	/**
-	 * Instantiate an BipCacheInterceptor.
+	 * Instantiate an BipCacheInterceptor to audit cache GET operations.
 	 */
 	public BipCacheInterceptor() {
 		LOGGER.debug("Instantiating " + BipCacheInterceptor.class.getName());
@@ -89,7 +89,8 @@ public class BipCacheInterceptor extends CacheInterceptor {
 			LOGGER.debug(ADVICE_NAME + " audit logging handed off to async.");
 
 		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
-			baseAsyncAudit.handleInternalExceptionAndRethrowApplicationExceptions(ADVICE_NAME, ACTIVITY, auditEventData, MessageKeys.BIP_AUDIT_CACHE_ERROR_UNEXPECTED,
+			baseAsyncAudit.handleInternalExceptionAndRethrowApplicationExceptions(ADVICE_NAME, ACTIVITY, auditEventData,
+					MessageKeys.BIP_AUDIT_CACHE_ERROR_UNEXPECTED,
 					throwable);
 		} finally {
 			LOGGER.debug(ADVICE_NAME + " finished.");

@@ -1,18 +1,14 @@
 package gov.va.bip.framework.audit;
 
-import static gov.va.bip.framework.log.BipBaseLogger.MAX_TOTAL_LOG_LEN;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.junit.After;
@@ -31,10 +27,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.AuditLogger;
-import gov.va.bip.framework.log.BipBaseLogger;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.security.PersonTraits;
@@ -234,7 +226,7 @@ public class AuditLoggerTest {
 		// Check log level is correct
 		assertThat(loggingEvent.getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 		// Check the message being logged is correct
-		assertThat(loggingEvent.getFormattedMessage(), is("Audit ERROR Activity Detail"));
+		assertTrue(loggingEvent.getFormattedMessage().startsWith("Audit ERROR Activity Detail"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -258,54 +250,6 @@ public class AuditLoggerTest {
 		// Check log level is correct
 		assertThat(loggingEvent.getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 		// Check the message being logged is correct
-		assertThat(loggingEvent.getFormattedMessage(), is("Audit ERROR Activity Detail"));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void largeMessage() throws NoSuchMethodException, SecurityException {
-		// docker max message size including JSON formatting and AuditEventData is 16374
-		String message = StringUtils.repeat("test ", 3275);
-
-		Method method = AuditLoggerTest.class.getMethod("largeMessage", (Class<?>[]) null);
-		AuditEventData eventData =
-				new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName());
-		AuditLogger.info(eventData, message);
-
-		String stackTrace = null;
-		int messageLength = message == null ? 0 : message.length();
-		int stackTraceLength = 0;
-		int mdcReserveLength = gov.va.bip.framework.log.BipBaseLogger.MDC_RESERVE_LENGTH;
-
-		int captureCount = 0;
-
-		BipBaseLogger logger = BipLoggerFactory.getLogger(BipLogger.ROOT_LOGGER_NAME);
-		if (mdcReserveLength + messageLength + stackTraceLength > MAX_TOTAL_LOG_LEN) {
-			if (messageLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_MSG_LENGTH) {
-				String[] splitMessages = ReflectionTestUtils.invokeMethod(logger, "splitMessages", message);
-				captureCount = splitMessages.length;
-			} else {
-				captureCount = 1;
-			}
-
-			if (stackTraceLength >= gov.va.bip.framework.log.BipBaseLogger.MAX_STACK_TRACE_TEXT_LENGTH) {
-				String[] splitstackTrace = ReflectionTestUtils.invokeMethod(logger, "splitStackTraceText", stackTrace);
-				captureCount = captureCount + splitstackTrace.length;
-			} else if (stackTraceLength != 0) {
-				captureCount = captureCount + 1;
-			}
-
-		} else {
-			captureCount = 1;
-		}
-
-		// Now verify our logging interactions
-		verify(mockAppender, times(captureCount)).doAppend(captorLoggingEvent.capture());
-
-		List<ch.qos.logback.classic.spi.LoggingEvent> events = captorLoggingEvent.getAllValues();
-		for (ch.qos.logback.classic.spi.LoggingEvent event : events) {
-			assertThat(event.getFormattedMessage(), org.hamcrest.CoreMatchers.containsString("test "));
-			assertTrue(event.getFormattedMessage().length() < 16374);
-		}
+		assertTrue(loggingEvent.getFormattedMessage().startsWith("Audit ERROR Activity Detail"));
 	}
 }

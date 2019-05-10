@@ -3,8 +3,10 @@ package gov.va.bip.framework.exception.interceptor;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 import java.lang.reflect.Method;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.exception.interceptor.ExceptionHandlingUtils;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
@@ -75,9 +76,9 @@ public class ExceptionHandlingUtilsTest {
 				new Throwable("test throw"));
 		verify(mockAppender, times(1)).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		Assert.assertTrue(loggingEvents.get(0).toString().startsWith(
+		Assert.assertTrue(loggingEvents.get(0).toString().contains(
 				"[WARN] Catcher caught exception, handling it as configured.  Here are details [java.lang.Throwable thrown by gov.va.bip.framework.exception.interceptor.ExceptionHandlingUtilsTest.testLoggingUtils] args [[Arg One, 42]]."));
-		Assert.assertEquals("java.lang.Throwable", loggingEvents.get(0).getThrowableProxy().getClassName());
+		Assert.assertTrue(loggingEvents.get(0).getMessage().contains("java.lang.Throwable"));
 		Assert.assertEquals(ch.qos.logback.classic.Level.WARN, loggingEvents.get(0).getLevel());
 
 		logger.setLevel(originalLevel);
