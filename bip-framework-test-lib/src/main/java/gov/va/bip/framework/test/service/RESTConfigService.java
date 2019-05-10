@@ -81,9 +81,14 @@ public class RESTConfigService {
 			} else {
 				url = "config/vetservices-inttest.properties";
 			}
+			LOGGER.debug("Properties File URL: {}", url);
+			LOGGER.debug("Environment: {}", environment);
 			final URL urlConfigFile = RESTConfigService.class.getClassLoader().getResource(url);
+			LOGGER.info("Properties File ClassLoader URL: {}", urlConfigFile);
 			if (urlConfigFile != null) {
 				instance.prop = PropertiesUtil.readFile(urlConfigFile);
+				LOGGER.debug("Properties File Loaded");
+				LOGGER.debug("Properties {}", instance.prop);
 			} else {
 				LOGGER.warn("No resource found with the URL: " + url + ". Property file could not be read.");
 			}
@@ -128,6 +133,8 @@ public class RESTConfigService {
 		if (StringUtils.isBlank(value) && (instance.prop != null)) {
 			value = instance.prop.getProperty(pName);
 		}
+		LOGGER.debug("Property Name: {}", pName);
+		LOGGER.debug("Property Value: {}", value);
 		return value;
 	}
 
