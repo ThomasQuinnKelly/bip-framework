@@ -149,6 +149,9 @@ public class RESTUtilTest {
 			instanceOfRESTConfigService.setAccessible(true);
 			instanceOfRESTConfigService.set(null, config);
 			ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+			// reset the field instance and prop fields
+			instanceOfRESTConfigService.set(null,null);
+			ReflectionTestUtils.setField(config, "prop", null);
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | BipTestLibRuntimeException e) {
 			e.printStackTrace();
