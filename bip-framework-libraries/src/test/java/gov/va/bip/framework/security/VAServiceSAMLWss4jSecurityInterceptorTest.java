@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -108,6 +109,23 @@ public class VAServiceSAMLWss4jSecurityInterceptorTest {
 			assertTrue((e.getCause() instanceof WSSecurityException) && e.getCause().getMessage().equals("Testing"));
 		}
 
+		Assert.assertNotNull(sm.getDocument());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testSecureMessageWithNullSoapMessage() {
+		SoapMessage sm = null;
+		final MessageContext messageContextMock = mock(MessageContext.class);
+		interceptor.secureMessage(sm, messageContextMock);
+		Assert.assertNotNull(sm.getDocument());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testSecureMessageWithNullDoc() {
+		SoapMessage sm = mock(SoapMessage.class);
+		when(sm.getDocument()).thenReturn(null);
+		final MessageContext messageContextMock = mock(MessageContext.class);
+		interceptor.secureMessage(sm, messageContextMock);
 		Assert.assertNotNull(sm.getDocument());
 	}
 

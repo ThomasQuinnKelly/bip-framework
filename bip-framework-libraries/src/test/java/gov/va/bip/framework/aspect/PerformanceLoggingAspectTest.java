@@ -3,6 +3,7 @@ package gov.va.bip.framework.aspect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
@@ -10,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.JoinPoint.StaticPart;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.After;
@@ -106,22 +108,18 @@ public class PerformanceLoggingAspectTest extends AbstractBaseLogTester {
 	}
 
 	// TODO turned off until exception handling is decided
-	// @Ignore
-	// @Test
-	// public void testAroundAdviceThrowError() throws Throwable {
-	// super.getAppender().clear();
-	// AspectLoggingLOG.setLevel(Level.ERROR);
-	// AspectLoggingTestLOG.setLevel(Level.ERROR);
-	//
-	// when(proceedingJoinPoint.proceed()).thenThrow(new Throwable("Unit Testing"));
-	//
-	// try {
-	// PerformanceLoggingAspect.aroundAdvice(proceedingJoinPoint);
-	// fail("Should have thrown exception.");
-	// } catch (Throwable e) {
-	// assertTrue(e.getMessage().startsWith("Unit Testing"));
-	// }
-	// }
+	@Test(expected = NullPointerException.class)
+	public void testAroundAdviceThrowError() throws Throwable {
+		super.getAppender().clear();
+		AspectLoggingLOG.setLevel(Level.ERROR);
+		AspectLoggingTestLOG.setLevel(Level.ERROR);
+		MethodSignature mockSignature = mock(MethodSignature.class);
+		StaticPart mockStaticPart = mock(StaticPart.class);
+		when(mockSignature.getMethod()).thenReturn(null);
+		when(mockStaticPart.getSignature()).thenReturn(mockSignature);
+		when(proceedingJoinPoint.getStaticPart()).thenReturn(mockStaticPart);
+		PerformanceLoggingAspect.aroundAdvice(proceedingJoinPoint);
+	}
 
 	public Method myMethod() throws NoSuchMethodException {
 		return getClass().getDeclaredMethod("someMethod");

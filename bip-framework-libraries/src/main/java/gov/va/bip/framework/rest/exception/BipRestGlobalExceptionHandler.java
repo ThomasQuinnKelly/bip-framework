@@ -44,6 +44,7 @@ import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
+import gov.va.bip.framework.shared.sanitize.SanitizerException;
 
 /**
  * A global exception handler as the last line of defense before sending response to the service consumer.
@@ -476,6 +477,12 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	@ExceptionHandler(value = BipRuntimeException.class)
 	public final ResponseEntity<Object> handleBipRuntimeException(final HttpServletRequest req, final BipRuntimeException ex) {
 		return standardHandler(ex, ex.getStatus());
+	}
+
+	@ExceptionHandler(value = SanitizerException.class)
+	public final ResponseEntity<Object> handleSanitizerException(final HttpServletRequest req, final SanitizerException ex) {
+		return standardHandler(ex, MessageKeys.BIP_SECURITY_SANITIZE_FAIL, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
+				ex.getMessage());
 	}
 
 	/**

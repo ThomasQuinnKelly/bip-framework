@@ -13,7 +13,7 @@ import org.slf4j.event.Level;
 
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 
-import gov.va.bip.framework.util.SanitizationUtil;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
 /**
  * Base logger class that:
@@ -252,7 +252,7 @@ public class BipBaseLogger {
 	private String safeMessage(final String message) {
 		return message == null ? ""
 				: String.valueOf(BufferRecyclers.getJsonStringEncoder()
-						.quoteAsString(SanitizationUtil.stripXSS(message)));
+						.quoteAsString(Sanitizer.stripXss(message)));
 	}
 
 	/**
@@ -265,18 +265,18 @@ public class BipBaseLogger {
 	 */
 	private void sendLogAtLevel(final Level level, final Marker marker, final String part, final Throwable t) {
 		if (level == null) {
-			sendLogDebug(marker, SanitizationUtil.stripXSS(part), t);
+			sendLogDebug(marker, Sanitizer.stripXss(part), t);
 		} else {
 			if (org.slf4j.event.Level.ERROR.equals(level)) {
-				sendLogError(marker, SanitizationUtil.stripXSS(part), t);
+				sendLogError(marker, Sanitizer.stripXss(part), t);
 			} else if (org.slf4j.event.Level.WARN.equals(level)) {
-				sendLogWarn(marker, SanitizationUtil.stripXSS(part), t);
+				sendLogWarn(marker, Sanitizer.stripXss(part), t);
 			} else if (org.slf4j.event.Level.INFO.equals(level)) {
-				sendLogInfo(marker, SanitizationUtil.stripXSS(part), t);
+				sendLogInfo(marker, Sanitizer.stripXss(part), t);
 			} else if (org.slf4j.event.Level.TRACE.equals(level)) {
-				sendLogTrace(marker, SanitizationUtil.stripXSS(part), t);
+				sendLogTrace(marker, Sanitizer.stripXss(part), t);
 			} else {
-				sendLogDebug(marker, SanitizationUtil.stripXSS(part), t);
+				sendLogDebug(marker, Sanitizer.stripXss(part), t);
 			}
 		}
 	}

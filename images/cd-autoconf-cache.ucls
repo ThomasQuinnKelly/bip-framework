@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.3" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="MANHATTAN">  
-  <class id="1" language="java" 
-    name="gov.va.bip.framework.cache.autoconfigure.BipCacheAutoConfiguration.RedisCacheErrorHandler" 
-    project="bip-framework-autoconfigure" 
-    file="/bip-framework-autoconfigure/src/main/java/gov/va/bip/framework/cache/autoconfigure/BipCacheAutoConfiguration.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="660" y="128"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="gov.va.bip.framework.cache.autoconfigure.BipCacheAutoConfiguration" 
+  <class id="1" language="java" name="gov.va.bip.framework.cache.autoconfigure.BipCacheAutoConfiguration" 
     project="bip-framework-autoconfigure" 
     file="/bip-framework-autoconfigure/src/main/java/gov/va/bip/framework/cache/autoconfigure/BipCacheAutoConfiguration.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -24,7 +12,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer" 
+  <class id="2" language="java" name="gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer" 
     project="bip-framework-autoconfigure" 
     file="/bip-framework-autoconfigure/src/main/java/gov/va/bip/framework/cache/autoconfigure/server/BipEmbeddedRedisServer.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -35,7 +23,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="4" language="java" name="gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsMBean" 
+  <interface id="3" language="java" name="gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsMBean" 
     project="bip-framework-autoconfigure" 
     file="/bip-framework-autoconfigure/src/main/java/gov/va/bip/framework/cache/autoconfigure/jmx/BipCacheOpsMBean.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -46,7 +34,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="5" language="java" name="gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsImpl" 
+  <class id="4" language="java" name="gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsImpl" 
     project="bip-framework-autoconfigure" 
     file="/bip-framework-autoconfigure/src/main/java/gov/va/bip/framework/cache/autoconfigure/jmx/BipCacheOpsImpl.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -57,28 +45,23 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <realization id="6">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="4"/>  
+  <realization id="5">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
   </realization>  
-  <association id="7">    
+  <association id="6">    
     <bendpoint x="501" y="276"/>    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="8" name="referenceServerRedisEmbedded">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="7" name="referenceServerRedisEmbedded">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="9" minimum="0" maximum="1">        
+      <multiplicity id="8" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="10">    
-    <bendpoint x="444" y="155"/>    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </nesting>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

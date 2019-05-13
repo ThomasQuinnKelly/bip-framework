@@ -95,6 +95,21 @@ public class BipEmbeddedRedisServerTest {
 		assertFalse(referenceEmbeddedServer.getRedisServer().isActive());
 	}
 
+	@Test
+	public void shouldThrowWarnMessageException() {
+		try {
+			referenceEmbeddedServer.startRedis();
+
+			if (referenceEmbeddedServer.getRedisServer().isActive()) {
+				referenceEmbeddedServer.startRedis();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			referenceEmbeddedServer.stopRedis();
+		}
+	}
+
 	@After
 	public void teardown() {
 		if (referenceEmbeddedServer.getRedisServer().isActive()) {

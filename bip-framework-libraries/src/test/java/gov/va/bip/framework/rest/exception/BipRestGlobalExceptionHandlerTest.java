@@ -70,6 +70,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.shared.sanitize.SanitizerException;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration
@@ -432,6 +433,16 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		ResponseEntity<Object> response =
 				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleHttpMediaTypeNotSupported", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
+	}
+
+	@Test
+	public void handleSanitizerExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+		SanitizerException ex = new SanitizerException("test", new Exception("test exception"));
+
+		ResponseEntity<Object> response =
+				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleSanitizerException", req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
 	@Test

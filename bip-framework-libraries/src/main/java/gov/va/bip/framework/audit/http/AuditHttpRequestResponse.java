@@ -35,7 +35,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
-import gov.va.bip.framework.util.SanitizationUtil;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
 /**
  * Performs audit logging specifically for HttpServlet request/response objects.
@@ -112,7 +112,7 @@ public class AuditHttpRequestResponse {
 
 			final String contentType = httpServletRequest.getContentType();
 
-			LOGGER.debug("Content Type: {}", SanitizationUtil.stripXSS(contentType));
+			LOGGER.debug("Content Type: {}", Sanitizer.stripXss(contentType));
 
 			if ((contentType != null) && (contentType.toLowerCase(Locale.ENGLISH).startsWith(MediaType.MULTIPART_FORM_DATA_VALUE)
 					|| contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_MULTIPART_MIXED))) {
@@ -152,7 +152,7 @@ public class AuditHttpRequestResponse {
 			} catch (final Exception ex) {
 				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
 						"Error occurred while reading the upload file. {}", ex);
-			} 
+			}
 			return multipartHeaders;
 		}
 

@@ -110,8 +110,8 @@ public enum MessageKeys implements MessageKey {
 	/** SSL initialization failed {0} = exception simple class name; {1} = exception message */
 	BIP_SECURITY_SSL_CONTEXT_FAIL("bip.framework.security.ssl.context.failed", "Could not establish SSL context."),
 
-	/** Sanitizing filename failed; no args */
-	BIP_SECURITY_SANITIZE_FAIL("bip.framework.security.sanitize.failed", "Unexpected error."),
+	/** Sanitizing filename failed; {0} = operation */
+	BIP_SECURITY_SANITIZE_FAIL("bip.framework.security.sanitize.failed", "Unexpected error: {0}."),
 
 	/** Auditing error during cache operations; {0} = advice name, {1} = operation attempted */
 	BIP_AUDIT_CACHE_ERROR_UNEXPECTED("bip.framework.audit.cache.error.unexpected",

@@ -1,22 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
-	
-    <artifactId>bip-framework-reactor</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
-	<groupId>gov.va.bip.framework</groupId>
-    <packaging>pom</packaging>
-    <name>${project.artifactId}</name>
-    <description>Reactor POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
-    <modules>
+	<artifactId>bip-framework-reactor</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	<groupId>gov.va.bip.framework</groupId>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+	<description>Reactor POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
+
+	<modules>
 		<module>bip-framework-parentpom</module>
+		<module>bip-framework-shared</module>
 		<module>bip-framework-libraries</module>
-		<module>bip-framework-test-lib</module>
 		<module>bip-framework-autoconfigure</module>
-   </modules>
-   
-   <!-- TEMPORARY PLUGINS SKIP TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
+		<module>bip-framework-test-lib</module>
+	</modules>
+
+	<!-- TEMPORARY PLUGINS SKIP TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
 	<build>
 		<plugins>
 			<plugin>
@@ -29,8 +33,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			</plugin>
 			<plugin>
 				<groupId>com.github.github</groupId>
-		        <artifactId>site-maven-plugin</artifactId>
-		        <version>0.12</version>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.12</version>
 				<inherited>false</inherited>
 				<configuration>
 					<skip>true</skip>

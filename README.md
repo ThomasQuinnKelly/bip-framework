@@ -12,6 +12,8 @@ For general information regarding recommended development patterns for developin
 
 1. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
 
+1. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
+
 1. [bip-framework-test-lib](bip-framework-test-lib/README.md): Test library framework to support functional testing for service applications.
 
 ## How to include BIP Framework libraries in your project
@@ -30,6 +32,11 @@ For general information regarding recommended development patterns for developin
        <dependency>
          <groupId>gov.va.bip.framework</groupId>
          <artifactId>bip-framework-parentpom</artifactId>
+         <version><!-- add the appropriate version --></version>
+       </dependency>
+       <dependency>
+         <groupId>gov.va.bip.framework</groupId>
+         <artifactId>bip-framework-shared</artifactId>
          <version><!-- add the appropriate version --></version>
        </dependency>
        <dependency>

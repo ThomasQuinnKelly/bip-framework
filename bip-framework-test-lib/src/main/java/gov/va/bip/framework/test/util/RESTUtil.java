@@ -50,8 +50,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.RESTConfigService;
+
 
 /**
  * It is a wrapper for rest Template API for making HTTP calls, parse JSON and
@@ -218,7 +220,7 @@ public class RESTUtil {
 	 * Private method that is invoked by different http methods. It uses
 	 * RESTTemplate generic exchange method for various HTTP methods such as
 	 * GET,POST,PUT,DELETE
-	 * 
+	 *
 	 * @param serviceURL
 	 * @param request
 	 * @param httpMethod
@@ -290,12 +292,13 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Private method that is invoked by multipart methods. It uses RESTTemplate
-	 * generic exchange method for multipart HTTP methods.
-	 * 
+	 * Execute multipart API.
+	 *
 	 * @param serviceURL
+	 *            the service URL
 	 * @param body
-	 * @return
+	 *            the body
+	 * @return the string
 	 */
 	private String executeMultipartAPI(final String serviceURL, final MultiValueMap<String, Object> body) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
@@ -307,6 +310,8 @@ public class RESTUtil {
 	/**
 	 * Loads the KeyStore and password in to rest Template API so all the API's
 	 * are SSL enabled.
+	 *
+	 * @return the rest template
 	 */
 
 	private RestTemplate getRestTemplate() {
@@ -347,6 +352,25 @@ public class RESTUtil {
 		return apiTemplate;
 	}
 
+	/**
+	 * Load key material.
+	 *
+	 * @param pathToKeyStore
+	 *            the path to key store
+	 * @param sslContextBuilder
+	 *            the ssl context builder
+	 * @return the SSL context builder
+	 * @throws NoSuchAlgorithmException
+	 *             the no such algorithm exception
+	 * @throws KeyStoreException
+	 *             the key store exception
+	 * @throws UnrecoverableKeyException
+	 *             the unrecoverable key exception
+	 * @throws CertificateException
+	 *             the certificate exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private SSLContextBuilder loadKeyMaterial(String pathToKeyStore, SSLContextBuilder sslContextBuilder)
 			throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, CertificateException,
 			IOException {
@@ -355,12 +379,29 @@ public class RESTUtil {
 			if (StringUtils.isBlank(password)) {
 				throw new BipTestLibRuntimeException(COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.keyStorePassword");
 			}
-			return sslContextBuilder.loadKeyMaterial(new File(pathToKeyStore), password.toCharArray(),
-					password.toCharArray());
+			return sslContextBuilder.loadKeyMaterial(new File(Sanitizer.safePath(pathToKeyStore)),
+					password.toCharArray(), password.toCharArray());
 		}
 		return sslContextBuilder;
 	}
 
+	/**
+	 * Load trust material.
+	 *
+	 * @param pathToTrustStore
+	 *            the path to trust store
+	 * @param sslContextBuilder
+	 *            the ssl context builder
+	 * @return the SSL context builder
+	 * @throws NoSuchAlgorithmException
+	 *             the no such algorithm exception
+	 * @throws KeyStoreException
+	 *             the key store exception
+	 * @throws CertificateException
+	 *             the certificate exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private SSLContextBuilder loadTrustMaterial(String pathToTrustStore, SSLContextBuilder sslContextBuilder)
 			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
@@ -369,17 +410,17 @@ public class RESTUtil {
 				throw new BipTestLibRuntimeException(
 						COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.trustStorePassword");
 			}
-			return sslContextBuilder.loadTrustMaterial(new File(pathToTrustStore), password.toCharArray());
+			return sslContextBuilder.loadTrustMaterial(new File(Sanitizer.safePath(pathToTrustStore)),
+					password.toCharArray());
 		} else {
 			return sslContextBuilder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
 		}
 	}
 
 	/**
-	 * Creates HttpComponentsClientHttpRequestFactory with different settings
-	 * such as connectionTimeout, readTimeout
-	 * 
-	 * @return
+	 * Http components client http request factory.
+	 *
+	 * @return the http components client http request factory
 	 */
 	public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
 		int connectionTimeout = 20000;
@@ -393,7 +434,7 @@ public class RESTUtil {
 
 	/**
 	 * Creates PoolingHttpClientConnectionManager with various settings.
-	 * 
+	 *
 	 * @return
 	 */
 	private PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager() {
@@ -414,7 +455,7 @@ public class RESTUtil {
 	/**
 	 * Creates HttpClientBuilder and sets PoolingHttpClientConnectionManager,
 	 * ConnectionConfig
-	 * 
+	 *
 	 * @return
 	 */
 	private HttpClientBuilder getHttpClientBuilder() {
@@ -468,7 +509,7 @@ public class RESTUtil {
 
 	/**
 	 * Utility method to read file. The parameter holds absolute path.
-	 * 
+	 *
 	 * @param filename
 	 * @return
 	 * @throws IOException
