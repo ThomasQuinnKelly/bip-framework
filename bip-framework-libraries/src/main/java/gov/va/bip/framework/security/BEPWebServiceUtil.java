@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import gov.va.bip.framework.util.HashGenerator;
 import gov.va.bip.framework.validation.Defense;
 
@@ -99,9 +100,9 @@ public final class BEPWebServiceUtil {
 	public static String getClientMachine(final String defaultValue) {
 
 		// Holds final computed value
-		String computedVal = defaultValue;
+		String computedVal = Sanitizer.stripXss(defaultValue);
 
-		if (StringUtils.isEmpty(defaultValue)) {
+		if (StringUtils.isBlank(defaultValue)) {
 			try {
 				computedVal = InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {
@@ -122,9 +123,11 @@ public final class BEPWebServiceUtil {
 			}
 		} catch (final SocketException e) {
 			logError(e);
-			// handled further down
+			if (StringUtils.isBlank(computedVal)) {
+				computedVal = "UNKNOWN";
+			}
 		}
-		return computedVal;
+		return Sanitizer.stripXss(computedVal);
 	}
 
 	static void logError(final Exception e) {
@@ -140,8 +143,8 @@ public final class BEPWebServiceUtil {
 	 */
 	private static String computeClientIP(final InetAddress inetAddress, final String defaultValue) {
 		String computedVal = null;
-		String hostAddress = inetAddress.getHostAddress();
-		
+		String hostAddress = Sanitizer.stripXss(inetAddress.getHostAddress());
+
 		if (!inetAddress.isLoopbackAddress() && !inetAddress.isAnyLocalAddress()
 				&& !inetAddress.isLinkLocalAddress() && IPv4RegexPattern.matcher(hostAddress).matches()) {
 			computedVal = hostAddress;

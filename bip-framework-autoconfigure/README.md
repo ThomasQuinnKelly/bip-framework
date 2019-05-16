@@ -22,9 +22,9 @@ Redis cache auto-configuration that provides property-driven beans to set up the
 
 Caches are configured for a specific naming scheme of: `cacheName_ProjectName_MavenVersion`; the actual properties entry might look something like *`appName`*`Service\_@project.name@\_@project.version@`
 
-Redis attributes are configured in the Service Application's application YAML file under `spring.redis` properties. See also [Redis configuration](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/docs/cache-management.md#redis-configuration).
+Redis attributes are configured in the Service Application's application YAML file under `spring.redis` properties. See also [Redis configuration](https://github.ec.va.gov/EPMO/bip-reference-person/blob/master/docs/cache-management.md#redis-configuration).
 
-Cache-specific attributes for the application are configured in the application YAML under the `bip.framework.cache.**` property. See properties and comments under the `spring:redis:**` and the `bip.framework:cache:**` sections in [bip-reference-person.yml](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/bip-reference-person/src/main/resources/bip-reference-person.yml).
+Cache-specific attributes for the application are configured in the application YAML under the `bip.framework.cache.**` property. See properties and comments under the `spring:redis:**` and the `bip.framework:cache:**` sections in [bip-reference-person.yml](https://github.ec.va.gov/EPMO/bip-reference-person/blob/master/bip-reference-person/src/main/resources/bip-reference-person.yml).
 
 Any properties that do not appear in the appropriate hierarchy will be silently ignored, so default values, or nulls will be substituted for properties that were believed to be configured.
 
@@ -40,7 +40,7 @@ Auto-configuration is declared as below. Beans created in this class refer to th
 	...
 	}
 
-Developers needing to clear the cache for local testing purposes have a tool available, as outlined in [Clearing the Redis Cache](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/local-dev#clearing-the-redis-cache)
+Developers needing to clear the cache for local testing purposes have a tool available, as outlined in [Clearing the Redis Cache](https://github.ec.va.gov/EPMO/bip-reference-person/tree/master/local-dev#clearing-the-redis-cache)
 
 ### gov.va.bip.framework.feign.autoconfigure:
 Feign client auto-configuration creates a number of beans to support RESTful client calls through the feign library:

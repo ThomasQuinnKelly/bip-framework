@@ -2,7 +2,7 @@
 
 To run spring boot and spring cloud enabled services on the BIP Platform, it must adhere to various service patterns. This repository contains a suite of framework libraries, auto configurations, test libraries and parent POM that must be included as dependencies to enable the patterns.
 
-For general information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-spring-boot README.md](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot).
+For general information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-spring-boot README.md](https://github.ec.va.gov/EPMO/bip-reference-person).
 
 ## Project Breakdown & Links
 
@@ -54,7 +54,7 @@ This will bring the framework source code to your local machine.
 
 1. Clone the BIP framework repository:
 
-	 `git clone https://github.ec.va.gov/EPMO/bip-ocp-framework.git`
+	 `git clone https://github.ec.va.gov/EPMO/bip-framework.git`
 
 2. Navigate to the `bip-framework` folder, and run:
 
@@ -87,7 +87,7 @@ It requires changes in the reactor POM, and in your local maven settings file, a
 
 1. **POM file**
 
-Add the section shown below to the reactor (root) `pom.xml` of your service project. An example of this configuration can be seen in the [bip-reference reactor POM](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/blob/master/pom.xml).
+Add the section shown below to the reactor (root) `pom.xml` of your service project. An example of this configuration can be seen in the [bip-reference reactor POM](https://github.ec.va.gov/EPMO/bip-reference-person/blob/master/pom.xml).
  
 ```xml
 	<repositories>
@@ -141,7 +141,7 @@ source : http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-
 
 1. Modify `~/.m2/settings.xml`, same format as mentioned in the previous section 
 
-2. Update your application's parent pom with a `local-deploy` profile that configures your GitHub repo. For an example, look in [bip-framework-parentpom/pom.xml](https://github.ec.va.gov/EPMO/bip-ocp-framework/blob/master/bip-framework-parentpom/pom.xml) for the section framed by:
+2. Update your application's parent pom with a `local-deploy` profile that configures your GitHub repo. For an example, look in [bip-framework-parentpom/pom.xml](https://github.ec.va.gov/EPMO/bip-framework/blob/master/bip-framework-parentpom/pom.xml) for the section framed by:
 
 ```xml
 	<profile>
@@ -152,7 +152,7 @@ source : http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-
 
 3. Run maven with the appropriate parameters to deploy and upload artifacts to the repository
 
-```	mvn clean deploy -Plocal-deploy -DrepositoryName=bip-ocp-framework -DrepositoryOwner=EPMO ```
+```	mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=EPMO ```
 
 -- OR --
 

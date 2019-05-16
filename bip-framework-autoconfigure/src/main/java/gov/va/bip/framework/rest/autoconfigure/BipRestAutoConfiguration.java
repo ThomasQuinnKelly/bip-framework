@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -118,8 +119,14 @@ public class BipRestAutoConfiguration {
 				.setBufferSize(Integer.valueOf(connectionBufferSize))
 				.build();
 		HttpClientBuilder clientBuilder = HttpClients.custom();
-		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR CloseableHttpClient#close should automatically 
-        																										// shut down the connection pool only if exclusively owned by the client
+		PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager(); // NOSONAR
+																												 // CloseableHttpClient#close
+																												 // should
+																												 // automatically
+																												 // shut down the
+																												 // connection pool
+																												 // only if exclusively
+																												 // owned by the client
 		poolingConnectionManager.setMaxTotal(Integer.valueOf(maxTotalPool));
 		poolingConnectionManager.setDefaultMaxPerRoute(Integer.valueOf(defaultMaxPerRoutePool));
 		poolingConnectionManager.setValidateAfterInactivity(Integer.valueOf(validateAfterInactivityPool));
@@ -128,11 +135,11 @@ public class BipRestAutoConfiguration {
 		clientBuilder.setDefaultConnectionConfig(connectionConfig);
 		setRetryHandlerToClientBuilder(clientBuilder);
 
-		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = 
+		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
 				new HttpComponentsClientHttpRequestFactory(clientBuilder.build());
 		clientHttpRequestFactory.setConnectTimeout(connTimeoutValue);
 		clientHttpRequestFactory.setReadTimeout(Integer.valueOf(readTimeout));
-		
+
 		return clientHttpRequestFactory;
 	}
 
@@ -176,11 +183,15 @@ public class BipRestAutoConfiguration {
 	public RestClientTemplate restClientTemplate() {
 		RestTemplate restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory());
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
-		restTemplate.getMessageConverters().stream().filter(StringHttpMessageConverter.class::isInstance)
-				.map(StringHttpMessageConverter.class::cast).forEach(a -> {
-					a.setWriteAcceptCharset(false);
-					a.setDefaultCharset(StandardCharsets.UTF_8);
-				});
+
+		for (HttpMessageConverter<?> converter : restTemplate.getMessageConverters()) {
+			if (StringHttpMessageConverter.class.isAssignableFrom(converter.getClass())) {
+				LOGGER.debug("Casting converter to StringHttpMessageConverter");
+				((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
+				((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
+			}
+		}
+
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 		interceptors.add(tokenClientHttpRequestInterceptor());
 		restTemplate.setInterceptors(interceptors);

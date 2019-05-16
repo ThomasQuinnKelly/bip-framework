@@ -34,7 +34,7 @@ Add the dependency in the application project's POM file.
 
 ## Framework usage in service applications
 
-For more information about developing applications on the BIP Framework, see [Developing with BIP Framework](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/docs/developing-with-bip-framework.md).
+For more information about developing applications on the BIP Framework, see [Developing with BIP Framework](https://github.ec.va.gov/EPMO/bip-reference-person/tree/master/docs/developing-with-bip-framework.md).
 
 ## Sequence Diagrams
 

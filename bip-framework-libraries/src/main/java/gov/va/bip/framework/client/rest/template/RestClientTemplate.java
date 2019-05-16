@@ -6,6 +6,23 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import gov.va.bip.framework.security.jwt.JwtTokenService;
+
+/**
+ * This class is a base implementation of {@link RestTemplate} specifically for
+ * making client calls to other REST service providers.
+ * <p>
+ * The default template:
+ * <ul>
+ * <li>does <b>not</b> derive request timeout values from the application properties
+ * <li>does <b>not</b> attach the JWT from the existing session to the outgoing request
+ * <li>does <b>not</b> attach any interceptors to the request/response cycle
+ * </ul>
+ * This template is not appropriate as-is for most inter-service and external operations,
+ * and would need to be configured with an appropriate interceptor, or be extended.
+ * For an example of a JWT-based inter-service client, see {@code BipRestAutoConfiguration.restClientTemplate()}
+ * and its use of {@code BipRestAutoConfiguration.tokenClientHttpRequestInterceptor()}.
+ */
 public class RestClientTemplate {
 
 	/**
@@ -16,13 +33,16 @@ public class RestClientTemplate {
 	/**
 	 * Create the client template with the default Spring {@link RestTemplate}.
 	 * <p>
-	 * This type of client RestTemplate is not appropriate for most inter-service operations.</br>
 	 * The default template:
 	 * <ul>
-	 * <li>does <b>not</> derive request timeout values from the application properties
-	 * <li>does <b>not</> attach the JWT from the existing session to the outgoing request
-	 * <li>does <b>not</> attach any interceptors to the request/response cycle
+	 * <li>does <b>not</b> derive request timeout values from the application properties
+	 * <li>does <b>not</b> attach the JWT from the existing session to the outgoing request
+	 * <li>does <b>not</b> attach any interceptors to the request/response cycle
 	 * </ul>
+	 * This template is not appropriate as-is for most inter-service and external operations,
+	 * and would need to be configured with an appropriate interceptor, or be extended.
+	 * For an example of a JWT-based inter-service client, see {@code BipRestAutoConfiguration.restClientTemplate()}
+	 * and its use of {@code BipRestAutoConfiguration.tokenClientHttpRequestInterceptor()}.
 	 */
 	public RestClientTemplate() {
 		this.restTemplate = new RestTemplate();
@@ -37,6 +57,7 @@ public class RestClientTemplate {
 	 * <li>attach the JWT from the existing session to the outgoing request
 	 * <li>optionally attach interceptors or other configuration options to the request/response cycle
 	 * </ul>
+	 * For an internal inter-service implementation, see {@link JwtTokenService} and its {@link TokenClientHttpRequestInterceptor}.
 	 *
 	 * @param restTemplate the pre-configured RestTemplate
 	 */
@@ -55,10 +76,10 @@ public class RestClientTemplate {
 	 * @param responseType the {@link java.lang.reflect.Type} to return
 	 * @return ResponseEntity a {@link ResponseEntity} of {@code responseType}
 	 */
-	public <T> ResponseEntity<T> executeURL(String url, HttpMethod methodType, HttpEntity<?> requestEntity, ParameterizedTypeReference<T> responseType) {
+	public <T> ResponseEntity<T> executeURL(String url, HttpMethod methodType, HttpEntity<?> requestEntity,
+			ParameterizedTypeReference<T> responseType) {
 		return this.restTemplate.exchange(url, methodType, requestEntity, responseType);
 	}
-	
 
 	/**
 	 * Post for entity.

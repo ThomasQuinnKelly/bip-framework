@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -132,6 +133,11 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>vets.gov</id>
+			<name>Vets.gov Nexus Repository</name>
+			<url>https://nexus.internal.vetservices.gov/repository/maven-public/</url>
 		</repository>
 	</repositories>
 
@@ -281,7 +287,7 @@
 			</resource>
 		</resources>
 		<plugins>
-			<!-- repackages jar and war plugins so they can be executed with command 
+			<!-- repackages jar and war plugins so they can be executed with command
 				line -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -299,12 +305,12 @@
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<configuration>
-				    <verbose>false</verbose>
+					<verbose>false</verbose>
 					<excludeProperties>
 						<excludeProperty>git.build.user.*</excludeProperty>
 						<excludeProperty>git.commit.user.*</excludeProperty>
 					</excludeProperties>
-					<useNativeGit>false</useNativeGit> 
+					<useNativeGit>false</useNativeGit>
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 					<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
 				</configuration>
@@ -407,7 +413,7 @@
 							</resources>
 						</configuration>
 					</execution>
-					<!-- add the parsed version properties into the build environment for 
+					<!-- add the parsed version properties into the build environment for
 						usage as needed -->
 					<execution>
 						<phase>initialize</phase>
@@ -496,8 +502,8 @@
 					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
 				</configuration>
 			</plugin>
-			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 
-				are run using the sourceanalyzer and FPRUtility commandline applications 
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
+				are run using the sourceanalyzer and FPRUtility commandline applications
 				for now, so Fortify SCA will need to be installed before running -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -515,18 +521,15 @@
 
 								<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
 
-								<echo
-									message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+								<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
 								<echo message="Version: ${fortify.util.version}" />
 								<echo message="File name: ${fortify.util.jar.filename}" />
 								<echo message="Clean ${dir.scripts}" />
 								<delete dir="${dir.scripts}" />
 								<mkdir dir="${dir.scripts}" />
-								<copy todir="${dir.scripts}" flatten="true" overwrite="true"
-									file="${fortify.util.jar.path}" />
+								<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
 
-								<unzip src="${dir.scripts}/${fortify.util.jar.filename}"
-									dest="${dir.scripts}" failOnEmptyArchive="true">
+								<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
 									<mapper type="flatten" />
 									<patternset>
 										<include name="**/**/*.xml" />
@@ -537,15 +540,14 @@
 								<mkdir dir="${local.ant.lib}" />
 								<get
 									src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
-									dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true"
-									skipexisting="true" />
+									dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
 								<fail
-									message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
+									message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
+								>
 									<condition>
 										<not>
-											<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar"
-												algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb"
-												verifyproperty="checksum.matches" />
+											<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
+												property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
 										</not>
 									</condition>
 								</fail>
@@ -586,9 +588,9 @@
 			</plugin>
 		</plugins>
 		<pluginManagement>
-			<!-- NOTE: These plugins will be removed from future versions of the super 
+			<!-- NOTE: These plugins will be removed from future versions of the super
 				POM -->
-			<!-- They are kept for the moment as they are very unlikely to conflict 
+			<!-- They are kept for the moment as they are very unlikely to conflict
 				with lifecycle mappings (MNG-4453) -->
 			<plugins>
 				<plugin>
@@ -655,12 +657,12 @@
 						<skipTests>${skipPerfTests}</skipTests>
 						<!-- Enable JMeter reports -->
 						<generateReports>true</generateReports>
-						<!-- To simplify debugging, it is advisable to adapt the loglevel. 
+						<!-- To simplify debugging, it is advisable to adapt the loglevel.
 							The jmeter logs are written to the file jmeter.log. -->
 						<overrideRootLogLevel>DEBUG</overrideRootLogLevel>
-						<!-- By default, the console output during a jmeter test run is suppressed. 
-							We want to display the progress using the listener "Generate Summary Results" 
-							(which periodically prints stats to stdout). Therefore we have to make sure, 
+						<!-- By default, the console output during a jmeter test run is suppressed.
+							We want to display the progress using the listener "Generate Summary Results"
+							(which periodically prints stats to stdout). Therefore we have to make sure,
 							that the jmeter output is not suppressed. -->
 						<suppressJMeterOutput>false</suppressJMeterOutput>
 						<jmeterLogLevel>DEBUG</jmeterLogLevel>
@@ -702,7 +704,7 @@
 		<profile>
 			<id>docker-jar-project</id>
 			<activation>
-				<file><!-- add a file named .docker-jar-project-marker to war projects 
+				<file><!-- add a file named .docker-jar-project-marker to war projects
 						to activate this profile -->
 					<exists>${basedir}/.docker-jar-project-marker</exists>
 				</file>
@@ -766,7 +768,7 @@
 				<skipPerfTests>false</skipPerfTests>
 			</properties>
 		</profile>
-		<!-- Temporary Configuration to deploy libraries to MAVEN repository until 
+		<!-- Temporary Configuration to deploy libraries to MAVEN repository until
 			VA SOCKS Proxy Issue is resolved -->
 		<profile>
 			<id>local-deploy</id>
@@ -805,7 +807,7 @@
 							<merge>true</merge>
 						</configuration>
 						<executions>
-							<!-- run site-maven-plugin's 'site' target as part of the build's 
+							<!-- run site-maven-plugin's 'site' target as part of the build's
 								normal 'deploy' phase -->
 							<execution>
 								<goals>

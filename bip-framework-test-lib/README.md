@@ -59,7 +59,7 @@ vetservices-inttest-<env>.properties**
 `RequestResponseLoggingInterceptor`: An interceptor for all rest API calls to trace requests and responses. This interceptor can also be used for troubleshooting to trace request headers, parameters, and the response body.
 
 ## Test library example
-An example of a functioning integration test can be seen in the [reference-inttest project](https://github.ec.va.gov/EPMO/bip-ocp-ref-spring-boot/tree/master/bip-reference-inttest).
+An example of a functioning integration test can be seen in the [reference-inttest project](https://github.ec.va.gov/EPMO/bip-reference-person/tree/master/bip-reference-inttest).
 
 ## Class Diagrams
 	gov.va.bip.framework.test 
