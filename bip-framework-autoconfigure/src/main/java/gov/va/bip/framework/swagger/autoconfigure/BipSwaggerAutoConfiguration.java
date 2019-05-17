@@ -26,6 +26,7 @@ import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.ResponseMessage;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
@@ -80,6 +81,10 @@ public class BipSwaggerAutoConfiguration {
 				.title(swaggerProperties.getTitle())
 				.description(swaggerProperties.getDescription())
 				.version(swaggerProperties.getVersion())
+				.contact(new Contact(swaggerProperties.getContactName(),swaggerProperties.getContactUrl(), swaggerProperties.getContactEmail()))
+				.license(swaggerProperties.getLicense())
+				.licenseUrl(swaggerProperties.getLicenseUrl())
+				.termsOfServiceUrl(swaggerProperties.getTermsOfServiceUrl())
 				.build();
 	}
 
@@ -106,14 +111,14 @@ public class BipSwaggerAutoConfiguration {
 
 	private List<ResponseMessage> globalResponseMessages() {
 		List<ResponseMessage> responseMessages = new ArrayList<>();
-        responseMessages.add(new ResponseMessageBuilder().code(200).message(MESSAGE_200).
-                responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-        responseMessages.add(new ResponseMessageBuilder().code(400).message(MESSAGE_400).
-                responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-        responseMessages.add(new ResponseMessageBuilder().code(500).message(MESSAGE_500).
-                responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-        responseMessages.add(new ResponseMessageBuilder().code(403).message(MESSAGE_403).
-                responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
+		responseMessages.add(new ResponseMessageBuilder().code(200).message(MESSAGE_200).
+				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
+		responseMessages.add(new ResponseMessageBuilder().code(400).message(MESSAGE_400).
+				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
+		responseMessages.add(new ResponseMessageBuilder().code(500).message(MESSAGE_500).
+				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
+		responseMessages.add(new ResponseMessageBuilder().code(403).message(MESSAGE_403).
+				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
 		return responseMessages;
 	}
 }
