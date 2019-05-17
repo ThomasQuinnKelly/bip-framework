@@ -13,7 +13,7 @@
 	<groupId>gov.va.bip.framework</groupId>
 	<artifactId>bip-framework-parentpom</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>${project.artifactId}</name>
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
