@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.event.Level;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -45,6 +44,7 @@ import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
+import gov.va.bip.framework.util.HttpHeadersUtil;
 
 /**
  * A global exception handler as the last line of defense before sending response to the service consumer.
@@ -173,7 +173,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		ProviderResponse apiError = new ProviderResponse();
 		apiError.addMessage(MessageSeverity.FATAL, MessageKeys.NO_KEY.getKey(), MessageKeys.NO_KEY.getMessage(),
 				HttpStatus.INTERNAL_SERVER_ERROR);
-		return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		log(ex, derivedKey, severity, httpResponseStatus, params);
 		apiError.addMessage(severity, derivedKey.getKey(), deriveMessage(ex), httpResponseStatus);
 
-		return new ResponseEntity<>(apiError, httpResponseStatus);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), httpResponseStatus);
 	}
 
 	// 400
@@ -305,7 +305,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 
 		audit(apiError, new AuditEventData(AuditEvents.API_REST_REQUEST, "jsr303Validation", req.getPathInfo()), ex);
 
-		return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 			}
 		}
 
-		return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -371,7 +371,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		final ProviderResponse apiError = new ProviderResponse();
 		apiError.addMessage(MessageSeverity.ERROR, key.getKey(),
 				key.getMessage(params), HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -400,7 +400,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 						key.getMessage(params), HttpStatus.BAD_REQUEST);
 			}
 		}
-		return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -479,6 +479,13 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		return standardHandler(ex, ex.getStatus());
 	}
 
+	/**
+	 * Handle sanitizer exception.
+	 *
+	 * @param req the req
+	 * @param ex the ex
+	 * @return the response entity
+	 */
 	@ExceptionHandler(value = SanitizerException.class)
 	public final ResponseEntity<Object> handleSanitizerException(final HttpServletRequest req, final SanitizerException ex) {
 		return standardHandler(ex, MessageKeys.BIP_SECURITY_SANITIZE_FAIL, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,

@@ -36,6 +36,7 @@ import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import gov.va.bip.framework.util.HttpHeadersUtil;
 
 /**
  * Performs audit logging specifically for HttpServlet request/response objects.
@@ -262,7 +263,7 @@ public class AuditHttpRequestResponse {
 			providerResponse.addMessage(MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
 					bipRuntimeException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-			return new ResponseEntity<>(providerResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(providerResponse, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		} catch (Throwable e) { // NOSONAR intentionally catching throwable
 			return handleAnyRethrownExceptions(adviceName, throwable, e);
@@ -289,7 +290,7 @@ public class AuditHttpRequestResponse {
 		ProviderResponse body = new ProviderResponse();
 		body.addMessage(MessageSeverity.FATAL, HttpStatus.INTERNAL_SERVER_ERROR.name(),
 				msg, HttpStatus.INTERNAL_SERVER_ERROR);
-		entity = new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+		entity = new ResponseEntity<>(body, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.INTERNAL_SERVER_ERROR);
 		return entity;
 	}
 

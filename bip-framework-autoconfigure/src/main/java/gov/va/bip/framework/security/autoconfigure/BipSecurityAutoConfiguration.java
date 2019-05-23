@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +21,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import gov.va.bip.framework.rest.exception.BasicErrorController;
 import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
 import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
 import gov.va.bip.framework.security.jwt.JwtAuthenticationFilter;
@@ -43,19 +46,19 @@ public class BipSecurityAutoConfiguration {
 	@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", matchIfMissing = true)
 	@Order(JwtAuthenticationProperties.AUTH_ORDER)
 	protected static class JwtWebSecurityConfigurerAdapter
-			extends WebSecurityConfigurerAdapter {
+	extends WebSecurityConfigurerAdapter {
 		@Autowired
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests()
-					.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
-					.and()
-					.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-					.and()
-					.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-					.and().csrf().disable();
+			.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
+			.and()
+			.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+			.and()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and().csrf().disable();
 			http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 			http.headers().cacheControl();
 
@@ -90,7 +93,7 @@ public class BipSecurityAutoConfiguration {
 	@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", havingValue = "false")
 	@Order(JwtAuthenticationProperties.AUTH_ORDER)
 	protected static class JwtNoWebSecurityConfigurerAdapter
-			extends WebSecurityConfigurerAdapter {
+	extends WebSecurityConfigurerAdapter {
 
 		@Autowired
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
@@ -108,7 +111,7 @@ public class BipSecurityAutoConfiguration {
 	@Configuration
 	@Order(JwtAuthenticationProperties.NO_AUTH_ORDER)
 	protected static class NoWebSecurityConfigurerAdapter
-			extends WebSecurityConfigurerAdapter {
+	extends WebSecurityConfigurerAdapter {
 
 		@Autowired
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
@@ -143,6 +146,15 @@ public class BipSecurityAutoConfiguration {
 		return new JwtTokenService();
 	}
 
+
+	@Bean
+	@ConditionalOnMissingBean
+	@Primary
+	@Order(Ordered.HIGHEST_PRECEDENCE )
+	public BasicErrorController basicErrorController() {
+		return new BasicErrorController();
+	}
+	
 	/**
 	 * The REST Controller that creates a "valid" JWT token that can be used for testing.
 	 *

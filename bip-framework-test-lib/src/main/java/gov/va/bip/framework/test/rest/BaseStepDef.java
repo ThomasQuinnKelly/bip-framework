@@ -256,9 +256,9 @@ public class BaseStepDef {
 
 	/**
 	 * Compares REST API call response with given string.
-	 * 
-	 * @param strResFile
-	 * @return
+	 *
+	 * @param strResFile the str res file
+	 * @return true, if successful
 	 */
 	public boolean compareExpectedResponseWithActual(final String strResFile) {
 		boolean isMatch = false;
@@ -286,12 +286,12 @@ public class BaseStepDef {
 	 * Does an assertion per line. Reads the expected response file. Loops through
 	 * each of this file and does an assertion to see if it exists in the actual
 	 * service response.
-	 *
+	 * 
 	 * If the actual response contains a lot of information that we can ignore, we
 	 * can just target the lines we are concern with.
 	 *
-	 * @param responseFileName
-	 *            The response file.
+	 * @param strResFile the response file string
+	 * @return true, if successful
 	 */
 	public boolean compareExpectedResponseWithActualByRow(final String strResFile) {
 		final String strExpectedResponse = resUtil.readExpectedResponse(strResFile);

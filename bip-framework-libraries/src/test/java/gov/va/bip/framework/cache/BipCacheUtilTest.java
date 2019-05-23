@@ -1,4 +1,4 @@
-package gov.va.bip.framework.util;
+package gov.va.bip.framework.cache;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

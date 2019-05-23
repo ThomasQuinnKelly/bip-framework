@@ -1,4 +1,4 @@
-package gov.va.bip.framework.util;
+package gov.va.bip.framework.validation;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

@@ -20,9 +20,9 @@ public class BaseStepDefHandler extends BaseStepDef {
 	}
 
 	/**
-	 * Getter for RESTUtil
-	 * 
-	 * @return
+	 * Getter for RESTUtil.
+	 *
+	 * @return the rest util
 	 */
 	public RESTUtil getRestUtil() {
 		return resUtil;
@@ -38,26 +38,26 @@ public class BaseStepDefHandler extends BaseStepDef {
 
 	/**
 	 * Getter for header map.
-	 * 
-	 * @return
+	 *
+	 * @return the header map
 	 */
 	public Map<String, String> getHeaderMap() {
 		return headerMap;
 	}
 
 	/**
-	 * Getter for returning API call response
-	 * 
-	 * @return
+	 * Getter for returning API call response.
+	 *
+	 * @return the str response
 	 */
 	public String getStrResponse() {
 		return strResponse;
 	}
 
 	/**
-	 * Getter for RESTConfigService
-	 * 
-	 * @return
+	 * Getter for RESTConfigService.
+	 *
+	 * @return the rest config
 	 */
 	public RESTConfigService getRestConfig() {
 		return restConfig;

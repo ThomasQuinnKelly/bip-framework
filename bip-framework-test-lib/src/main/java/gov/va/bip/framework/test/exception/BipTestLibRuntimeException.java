@@ -1,7 +1,9 @@
 package gov.va.bip.framework.test.exception;
 
 /**
- * The Class BipTestLibRuntimeException.
+ * Custom runtime exception for BIP application that extends RuntimeException.
+ * Application use this test library will throw this exception for any runtime exception.
+ * 
  */
 public class BipTestLibRuntimeException extends RuntimeException {
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.classmate.TypeResolver;
-
 import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.swagger.SwaggerResponseMessages;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -45,10 +45,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Import({ BeanValidatorPluginsConfiguration.class })
 public class BipSwaggerAutoConfiguration {
 
-	private static final String MESSAGE_200 = "A Response which indicates a successful Request.  The Response may contain \"messages\" that could describe warnings or further information.";
-	private static final String MESSAGE_403 = "The request is not authorized.  Please verify credentials used in the request.";
-	private static final String MESSAGE_400 = "There was an error encountered processing the Request.  Response will contain a  \"messages\" element that will provide further information on the error.  This request shouldn\'t be retried until corrected.";
-	private static final String MESSAGE_500 = "There was an error encountered processing the Request.  Response will contain a  \"messages\" element that will provide further information on the error.  Please retry.  If problem persists, please contact support with a copy of the Response.";
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String PROVIDER_RESPONSE = "ProviderResponse";
 
@@ -58,6 +54,11 @@ public class BipSwaggerAutoConfiguration {
 	@Autowired
 	private TypeResolver typeResolver;
 
+	/**
+	 * Category api.
+	 *
+	 * @return the docket
+	 */
 	@Bean
 	public Docket categoryApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
@@ -69,6 +70,7 @@ public class BipSwaggerAutoConfiguration {
 				.ignoredParameterTypes(ApiIgnore.class)
 				.additionalModels(typeResolver.resolve(ProviderResponse.class))
 				.globalResponseMessage(RequestMethod.GET, globalResponseMessages())
+				.globalResponseMessage(RequestMethod.PUT, globalResponseMessages())
 				.globalResponseMessage(RequestMethod.POST, globalResponseMessages())
 				.globalResponseMessage(RequestMethod.DELETE, globalResponseMessages())
 				.enableUrlTemplating(false)
@@ -76,6 +78,11 @@ public class BipSwaggerAutoConfiguration {
 				.securitySchemes(Arrays.asList(apiKey()));
 	}
 
+	/**
+	 * Api info.
+	 *
+	 * @return the api info
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title(swaggerProperties.getTitle())
@@ -88,10 +95,20 @@ public class BipSwaggerAutoConfiguration {
 				.build();
 	}
 
+	/**
+	 * Api key.
+	 *
+	 * @return the api key
+	 */
 	private ApiKey apiKey() {
 		return new ApiKey(AUTHORIZATION, AUTHORIZATION, "header");
 	}
 
+	/**
+	 * Security context.
+	 *
+	 * @return the security context
+	 */
 	private SecurityContext securityContext() {
 		return SecurityContext.builder()
 				.securityReferences(defaultAuth())
@@ -99,6 +116,11 @@ public class BipSwaggerAutoConfiguration {
 				.build();
 	}
 
+	/**
+	 * Default auth.
+	 *
+	 * @return the list
+	 */
 	private List<SecurityReference> defaultAuth() {
 		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
 		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
@@ -109,15 +131,22 @@ public class BipSwaggerAutoConfiguration {
 		return list;
 	}
 
+	/**
+	 * Global response messages.
+	 *
+	 * @return the list
+	 */
 	private List<ResponseMessage> globalResponseMessages() {
 		List<ResponseMessage> responseMessages = new ArrayList<>();
-		responseMessages.add(new ResponseMessageBuilder().code(200).message(MESSAGE_200).
+		responseMessages.add(new ResponseMessageBuilder().code(200).message(SwaggerResponseMessages.MESSAGE_200).
 				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-		responseMessages.add(new ResponseMessageBuilder().code(400).message(MESSAGE_400).
+		responseMessages.add(new ResponseMessageBuilder().code(400).message(SwaggerResponseMessages.MESSAGE_400).
 				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-		responseMessages.add(new ResponseMessageBuilder().code(500).message(MESSAGE_500).
+		responseMessages.add(new ResponseMessageBuilder().code(401).message(SwaggerResponseMessages.MESSAGE_401).
 				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
-		responseMessages.add(new ResponseMessageBuilder().code(403).message(MESSAGE_403).
+		responseMessages.add(new ResponseMessageBuilder().code(403).message(SwaggerResponseMessages.MESSAGE_403).
+				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
+		responseMessages.add(new ResponseMessageBuilder().code(500).message(SwaggerResponseMessages.MESSAGE_500).
 				responseModel(new ModelRef(PROVIDER_RESPONSE)).build());
 		return responseMessages;
 	}

@@ -43,8 +43,8 @@ public class BearerTokenService {
 
 	/**
 	 * Function that initializes BearerTokenService as singleton object.
-	 * 
-	 * @return
+	 *
+	 * @return single instance of BearerTokenService
 	 */
 	public static BearerTokenService getInstance() {
 
@@ -57,9 +57,9 @@ public class BearerTokenService {
 
 	/**
 	 * Invokes bearer token API with header information loaded from give filepath.
-	 * 
-	 * @param headerFile
-	 * @return
+	 *
+	 * @param headerFile the header file
+	 * @return the token by header file
 	 */
 	public static String getTokenByHeaderFile(final String headerFile) {
 		return getToken(headerFile);
@@ -67,9 +67,9 @@ public class BearerTokenService {
 
 	/**
 	 * Makes API call to bearer token service and returns the token as string.
-	 * 
-	 * @param headerFile
-	 * @return
+	 *
+	 * @param headerFile the header file
+	 * @return the token
 	 */
 	public static String getToken(final String headerFile) {
 		final RESTConfigService restConfig = RESTConfigService.getInstance();
@@ -84,6 +84,12 @@ public class BearerTokenService {
 		return restUtility.postResponse(baseUrl + tokenUrl);
 	}
 
+	/**
+	 * Handle null urls.
+	 *
+	 * @param baseUrl the base url
+	 * @param tokenUrl the token url
+	 */
 	private static void handleNullUrls(final String baseUrl, final String tokenUrl) {
 		if (StringUtils.isBlank(baseUrl) || StringUtils.isBlank(tokenUrl)) {
 			String propertyNotFound = StringUtils.isBlank(baseUrl) ? BASE_URL_PROPERTY_KEY : "";
@@ -98,9 +104,9 @@ public class BearerTokenService {
 	}
 
 	/**
-	 * Returns bearer token
-	 * 
-	 * @return
+	 * Returns bearer token.
+	 *
+	 * @return the bearer token
 	 */
 	public String getBearerToken() {
 		return bearerToken;

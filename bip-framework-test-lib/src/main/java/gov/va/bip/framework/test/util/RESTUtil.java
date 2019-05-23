@@ -120,9 +120,8 @@ public class RESTUtil {
 	/**
 	 * Reads file content for a given file resource using URL object.
 	 *
-	 * @param strRequestFile
-	 * @param mapHeader
-	 * @throws Exception
+	 * @param strRequestFile the str request file
+	 * @param mapHeader the map header
 	 */
 	public void setUpRequest(final String strRequestFile, final Map<String, String> mapHeader) {
 		try {
@@ -145,8 +144,7 @@ public class RESTUtil {
 	/**
 	 * Assigns given header object into local header map.
 	 *
-	 * @param mapHeader
-	 * @throws Exception
+	 * @param mapHeader the map header
 	 */
 	public void setUpRequest(final Map<String, String> mapHeader) {
 		requestHeaders.setAll(mapHeader);
@@ -165,8 +163,8 @@ public class RESTUtil {
 	 * Invokes REST end point for a GET method using REST Template API and
 	 * return response JSON object.
 	 *
-	 * @param serviceURL
-	 * @return
+	 * @param serviceURL the service URL
+	 * @return the response
 	 */
 	public String getResponse(final String serviceURL) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
@@ -178,8 +176,8 @@ public class RESTUtil {
 	 * Invokes REST end point for a POST method using REST Template API and
 	 * return response JSON object.
 	 *
-	 * @param serviceURL
-	 * @return
+	 * @param serviceURL the service URL
+	 * @return the string
 	 */
 
 	public String postResponse(final String serviceURL) {
@@ -192,8 +190,8 @@ public class RESTUtil {
 	 * Invokes REST end point for a PUT method using REST Template API and
 	 * return response JSON object.
 	 *
-	 * @param serviceURL
-	 * @return
+	 * @param serviceURL the service URL
+	 * @return the string
 	 */
 
 	public String putResponse(final String serviceURL) {
@@ -206,8 +204,8 @@ public class RESTUtil {
 	 * Invokes REST end point for a DELETE method using REST Template API and
 	 * return response JSON object.
 	 *
-	 * @param serviceURL
-	 * @return
+	 * @param serviceURL the service URL
+	 * @return the string
 	 */
 
 	public String deleteResponse(final String serviceURL) {
@@ -221,10 +219,10 @@ public class RESTUtil {
 	 * RESTTemplate generic exchange method for various HTTP methods such as
 	 * GET,POST,PUT,DELETE
 	 *
-	 * @param serviceURL
-	 * @param request
-	 * @param httpMethod
-	 * @return
+	 * @param serviceURL the service URL
+	 * @param request the request
+	 * @param httpMethod the http method
+	 * @return the string
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
@@ -242,8 +240,10 @@ public class RESTUtil {
 	 * Invokes REST end point for a multipart method using REST Template API and
 	 * return response json object.
 	 *
-	 * @param serviceURL
-	 * @return
+	 * @param serviceURL the service URL
+	 * @param fileName the file name
+	 * @param submitPayloadPath the submit payload path
+	 * @return the string
 	 */
 
 	public String postResponseWithMultipart(final String serviceURL, final String fileName,
@@ -268,11 +268,11 @@ public class RESTUtil {
 	/**
 	 * Invokes REST end point for a multipart method using REST Template API and
 	 * return response json object.
-	 * 
-	 * @param serviceURL
-	 * @param fileName
-	 * @param submitPayload
-	 * @return
+	 *
+	 * @param serviceURL the service URL
+	 * @param fileName the file name
+	 * @param submitPayload the submit payload
+	 * @return the string
 	 */
 
 	public String postResponseWithMultipart(final String serviceURL, final String fileName,
@@ -486,8 +486,8 @@ public class RESTUtil {
 	/**
 	 * Loads the expected results from source folder and returns as string.
 	 *
-	 * @param filename
-	 * @return
+	 * @param filename the filename
+	 * @return the string
 	 */
 	public String readExpectedResponse(final String filename) {
 		String strExpectedResponse = null;
@@ -510,9 +510,9 @@ public class RESTUtil {
 	/**
 	 * Utility method to read file. The parameter holds absolute path.
 	 *
-	 * @param filename
-	 * @return
-	 * @throws IOException
+	 * @param filename the filename
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	protected String readFile(final File filename) throws IOException {
 		String content = null;

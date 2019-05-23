@@ -112,6 +112,7 @@ public class VAServiceSAMLWss4jSecurityInterceptorTest {
 		Assert.assertNotNull(sm.getDocument());
 	}
 
+	@SuppressWarnings("null")
 	@Test(expected = NullPointerException.class)
 	public void testSecureMessageWithNullSoapMessage() {
 		SoapMessage sm = null;

@@ -57,9 +57,9 @@ public class BipFeignAutoConfiguration {
 	}
 
 	/**
-	 * Custom Feign Error Decoder
-	 * 
-	 * @return
+	 * Custom Feign Error Decoder.
+	 *
+	 * @return the feign custom error decoder
 	 */
 	@Bean
 	public FeignCustomErrorDecoder feignCustomErrorDecoder() {

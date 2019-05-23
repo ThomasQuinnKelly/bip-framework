@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -40,9 +42,12 @@ import io.jsonwebtoken.SignatureException;
  */
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	private JwtAuthenticationProperties jwtAuthenticationProperties;
-
 	private static final BipLogger LOG = BipLoggerFactory.getLogger(JwtAuthenticationFilter.class);
+	
+	private JwtAuthenticationProperties jwtAuthenticationProperties;
+	
+	@Autowired
+	private AuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	private static final String TOKEN_TAMPERED = "Tampered Token";
 	private static final String TOKEN_MALFORMED = "Malformed Token";
@@ -70,7 +75,9 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		if (token == null || !token.startsWith("Bearer ")) {
 			MessageKeys key = MessageKeys.BIP_SECURITY_TOKEN_BLANK;
 			LOG.error(key.getMessage());
-			throw new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			return null;
 		}
 
 		token = token.substring(7);
@@ -81,12 +88,16 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
 			String[] params = new String[] { TOKEN_TAMPERED, token, se.getClass().getSimpleName(), se.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, se);
-			throw new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, se, params);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, se, params);
+			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			return null;
 		} catch (MalformedJwtException ex) {
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
 			String[] params = new String[] { TOKEN_MALFORMED, token, ex.getClass().getSimpleName(), ex.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, ex);
-			throw new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, ex, params);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, ex, params);
+			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			return null;
 		}
 	}
 

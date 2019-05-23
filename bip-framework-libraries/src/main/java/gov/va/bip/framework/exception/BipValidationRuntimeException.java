@@ -24,7 +24,6 @@ public class BipValidationRuntimeException extends BipRuntimeException {
 	 * @see BipRuntimeException#BipRuntimeException(String, String, MessageSeverity, HttpStatus)
 	 *
 	 * @param key - the consumer-facing key that can uniquely identify the nature of the exception
-	 * @param message - the detail message
 	 * @param severity - the severity of the event: FATAL (500 series), ERROR (400 series), WARN (200 series), or INFO/DEBUG/TRACE
 	 * @param status - the HTTP Status code that applies best to the encountered problem, see
 	 *            <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a>
@@ -41,7 +40,6 @@ public class BipValidationRuntimeException extends BipRuntimeException {
 	 * @see BipRuntimeException#BipRuntimeException(String, String, MessageSeverity, HttpStatus, Throwable)
 	 *
 	 * @param key - the consumer-facing key that can uniquely identify the nature of the exception
-	 * @param message - the detail message
 	 * @param severity - the severity of the event: FATAL (500 series), ERROR (400 series), WARN (200 series), or INFO/DEBUG/TRACE
 	 * @param status - the HTTP Status code that applies best to the encountered problem, see
 	 *            <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a>
