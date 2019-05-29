@@ -181,6 +181,7 @@ public class RESTUtilTest {
 	public void test_getResponse_Success() {
 		String response = restUtil.getResponse(LOCALHOST_URL_PERSON);
 		assertThat(true, equalTo(!response.isEmpty()));
+		assertThat(true, equalTo(restUtil.getResponseHttpHeaders() != null));
 	}
 
 	@Test

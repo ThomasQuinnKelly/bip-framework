@@ -138,6 +138,7 @@ public class BipCacheOpsImplTest {
 		when(mockRedisConnectionFactory.getClientConfiguration()).thenReturn(MockJcc);
 
 		GenericObjectPoolConfig<JedisPoolConfig> gopc = new GenericObjectPoolConfig<>();
+		@SuppressWarnings("unchecked")
 		GenericObjectPoolConfig<JedisPoolConfig> mockGopc = mock(gopc.getClass());
 		when(mockRedisConnectionFactory.getPoolConfig()).thenReturn(mockGopc);
 
