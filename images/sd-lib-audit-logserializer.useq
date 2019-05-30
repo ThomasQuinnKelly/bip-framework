@@ -3,184 +3,49 @@
   <object id="1" language="java" name="gov.va.bip.framework.audit.AuditLogSerializer" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/AuditLogSerializer.java" binary="false" 
     label="auditLogSerializer" type="class" autoSize="true">    
-    <position height="-1" width="-1" x="93" y="0"/>    
+    <position height="-1" width="-1" x="89" y="0"/>    
     <execution id="2">      
-      <position height="1913" width="0" x="0" y="78"/>    
+      <position height="530" width="147" x="5" y="116"/>    
     </execution>    
     <execution id="4">      
-      <position height="1850" width="0" x="0" y="120"/>    
+      <position height="467" width="7" x="75" y="158"/>    
     </execution>  
   </object>  
-  <object id="11" language="java" name="gov.va.bip.framework.audit.AuditLogger" project="bip-framework-libraries" 
+  <object id="7" language="java" name="gov.va.bip.framework.audit.AuditLogger" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/audit/AuditLogger.java" binary="false" 
-    label="&lt;static&gt;" type="class" autoSize="true">    
-    <position height="0" width="0" x="0" y="0"/>    
+    label="auditLogger" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="288" y="0"/>    
     <execution id="6">      
-      <position height="1291" width="0" x="0" y="182"/>    
+      <position height="408" width="126" x="156" y="196"/>    
     </execution>    
-    <execution id="8">      
-      <position height="170" width="0" x="0" y="1565"/>    
-    </execution>    
-    <execution id="10">      
-      <position height="166" width="0" x="0" y="1783"/>    
-    </execution>    
-    <execution id="13">      
-      <position height="21" width="0" x="0" y="224"/>    
-    </execution>    
-    <execution id="19">      
-      <position height="21" width="0" x="0" y="1607"/>    
-    </execution>    
-    <execution id="25">      
-      <position height="21" width="0" x="0" y="1825"/>    
+    <execution id="9">      
+      <position height="21" width="7" x="216" y="255"/>    
     </execution>  
   </object>  
-  <object id="30" language="java" name="gov.va.bip.framework.util.SanitizationUtil" project="bip-framework-libraries" 
-    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/util/SanitizationUtil.java" binary="false" 
-    label="&lt;static&gt;" type="class" autoSize="true">    
-    <position height="0" width="0" x="0" y="0"/>    
-    <execution id="15">      
-      <position height="21" width="0" x="0" y="271"/>    
+  <object id="12" language="java" name="gov.va.bip.framework.log.BipLogger" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLogger.java" binary="false" 
+    label="bipLogger" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="441" y="0"/>    
+    <execution id="11">      
+      <position height="299" width="118" x="286" y="284"/>    
     </execution>    
-    <execution id="21">      
-      <position height="21" width="0" x="0" y="1652"/>    
+    <execution id="14">      
+      <position height="218" width="7" x="342" y="344"/>    
     </execution>    
-    <execution id="27">      
-      <position height="21" width="0" x="0" y="1866"/>    
+    <execution id="16">      
+      <position height="21" width="7" x="345" y="395"/>    
+    </execution>    
+    <execution id="18">      
+      <position height="21" width="7" x="345" y="454"/>    
+    </execution>    
+    <execution id="20">      
+      <position height="21" width="7" x="345" y="520"/>    
     </execution>  
   </object>  
-  <object id="31" language="java" name="gov.va.bip.framework.log.BipLogger" project="bip-framework-libraries" 
-    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLogger.java" binary="false" label="LOGGER" 
-    type="class" autoSize="true">    
-    <position height="0" width="0" x="0" y="0"/>    
-    <execution id="17">      
-      <position height="1137" width="0" x="0" y="315"/>    
-    </execution>    
-    <execution id="23">      
-      <position height="21" width="0" x="0" y="1693"/>    
-    </execution>    
-    <execution id="29">      
-      <position height="21" width="0" x="0" y="1907"/>    
-    </execution>    
-    <execution id="33">      
-      <position height="1074" width="0" x="0" y="357"/>    
-    </execution>    
-    <execution id="35">      
-      <position height="21" width="0" x="0" y="409"/>    
-    </execution>    
-    <execution id="37">      
-      <position height="21" width="0" x="0" y="461"/>    
-    </execution>    
-    <execution id="39">      
-      <position height="187" width="0" x="0" y="585"/>    
-    </execution>    
-    <execution id="41">      
-      <position height="21" width="0" x="0" y="843"/>    
-    </execution>    
-    <execution id="43">      
-      <position height="187" width="0" x="0" y="967"/>    
-    </execution>    
-    <execution id="45">      
-      <position height="21" width="0" x="0" y="1256"/>    
-    </execution>    
-    <execution id="47">      
-      <position height="21" width="0" x="0" y="1389"/>    
-    </execution>    
-    <execution id="49">      
-      <position height="21" width="0" x="0" y="637"/>    
-    </execution>    
-    <execution id="51">      
-      <position height="21" width="0" x="0" y="730"/>    
-    </execution>    
-    <execution id="53">      
-      <position height="21" width="0" x="0" y="1019"/>    
-    </execution>    
-    <execution id="55">      
-      <position height="21" width="0" x="0" y="1112"/>    
-    </execution>  
-  </object>  
-  <combined-fragment id="56" interaction-operator="ALT">    
-    <interaction-operand id="57" 
-      constraint="messageSeverity.equals(MessageSeverity.ERROR) || messageSeverity.equals(MessageSeverity.FATAL)">      
-      <fragment refId="12"/>      
-      <fragment refId="34"/>      
-      <fragment refId="5"/>      
-      <fragment refId="58"/>      
-      <fragment refId="14"/>      
-      <fragment refId="36"/>      
-      <fragment refId="32"/>      
-      <fragment refId="16"/>    
-    </interaction-operand>    
-    <interaction-operand id="59" constraint="else">      
-      <fragment refId="60"/>    
-    </interaction-operand>    
-    <combined-fragment id="60" interaction-operator="ALT">      
-      <interaction-operand id="61" constraint="messageSeverity.equals(MessageSeverity.WARN)">        
-        <fragment refId="22"/>        
-        <fragment refId="18"/>        
-        <fragment refId="20"/>        
-        <fragment refId="7"/>      
-      </interaction-operand>      
-      <interaction-operand id="62" constraint="else">        
-        <fragment refId="9"/>        
-        <fragment refId="24"/>        
-        <fragment refId="28"/>        
-        <fragment refId="26"/>      
-      </interaction-operand>    
-    </combined-fragment>    
-    <combined-fragment id="58" interaction-operator="ALT">      
-      <interaction-operand id="63" 
-        constraint="mdcReserveLength + messageLength + stackTraceLength &gt; MAX_TOTAL_LOG_LEN">        
-        <fragment refId="64"/>        
-        <fragment refId="65"/>      
-      </interaction-operand>      
-      <interaction-operand id="66" constraint="else">        
-        <fragment refId="46"/>      
-      </interaction-operand>      
-      <combined-fragment id="64" interaction-operator="ALT">        
-        <interaction-operand id="67" constraint="messageLength &gt;= MAX_MSG_LENGTH">          
-          <fragment refId="38"/>          
-          <fragment refId="48"/>          
-          <fragment refId="68"/>        
-        </interaction-operand>        
-        <interaction-operand id="69" constraint="else">          
-          <fragment refId="40"/>        
-        </interaction-operand>        
-        <combined-fragment id="68" interaction-operator="LOOP">          
-          <interaction-operand id="70" constraint="for: splitMessages">            
-            <fragment refId="50"/>          
-          </interaction-operand>        
-        </combined-fragment>      
-      </combined-fragment>      
-      <combined-fragment id="65" interaction-operator="ALT">        
-        <interaction-operand id="71" constraint="stackTraceLength &gt;= MAX_STACK_TRACE_TEXT_LENGTH">          
-          <fragment refId="42"/>          
-          <fragment refId="52"/>          
-          <fragment refId="72"/>        
-        </interaction-operand>        
-        <interaction-operand id="73" constraint="else">          
-          <fragment refId="74"/>        
-        </interaction-operand>        
-        <combined-fragment id="74" interaction-operator="OPT">          
-          <interaction-operand id="75" constraint="shouldStackTraceBePrinted">            
-            <fragment refId="44"/>          
-          </interaction-operand>        
-        </combined-fragment>        
-        <combined-fragment id="72" interaction-operator="LOOP">          
-          <interaction-operand id="76" constraint="for: splitstackTrace">            
-            <fragment refId="54"/>          
-          </interaction-operand>        
-        </combined-fragment>      
-      </combined-fragment>    
-    </combined-fragment>  
-  </combined-fragment>  
-  <note id="77">    
-    <position height="64" width="200" x="545" y="1635"/>    
-    <text><![CDATA[Same sendLog(..) process as above]]>
-    </text>  
-  </note>  
-  <note id="78">    
-    <position height="58" width="200" x="546" y="1849"/>    
-    <text><![CDATA[Same sendLog(..) process as above]]>
+  <note id="21">    
+    <position height="99" width="133" x="482" y="145"/>    
+    <text><![CDATA[There are several logging options available. This diagram shows one example.
+    ]]>
     </text>  
   </note>  
   <message id="3" 
@@ -194,122 +59,37 @@
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="6"/>  
   </message>  
-  <message id="7" operation="warn(gov.va.bip.framework.audit.AuditEventData,java.lang.String):void" asynchronous="false">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="8"/>  
-  </message>  
-  <message id="9" operation="info(gov.va.bip.framework.audit.AuditEventData,java.lang.String):void" asynchronous="false">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="10"/>  
-  </message>  
-  <message id="12" operation="addMdcSecurityEntries(gov.va.bip.framework.audit.AuditEventData):void" 
-    asynchronous="false">    
+  <message id="8" operation="addMdcSecurityEntries(gov.va.bip.framework.audit.AuditEventData):void" asynchronous="false">    
     <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="13"/>  
+    <end type="TARGET" refId="9"/>  
   </message>  
-  <message id="14" operation="stripXSS(java.lang.String):java.lang.String" asynchronous="false">    
+  <message id="10" operation="error(java.lang.String,java.lang.Throwable):void" asynchronous="false" x="227" y="280">    
     <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="15"/>  
+    <end type="TARGET" refId="11"/>  
   </message>  
-  <message id="16" operation="error(java.lang.String,java.lang.Throwable):void" asynchronous="false">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="17"/>  
-  </message>  
-  <message id="18" operation="addMdcSecurityEntries(gov.va.bip.framework.audit.AuditEventData):void" 
+  <message id="13" operation="sendlog(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
     asynchronous="false">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="19"/>  
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="14"/>  
   </message>  
-  <message id="20" operation="stripXSS(java.lang.String):java.lang.String" asynchronous="false">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="21"/>  
+  <message id="15" operation="getStackTraceAsString(java.lang.Throwable):java.lang.String" asynchronous="false">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="16"/>  
   </message>  
-  <message id="22" operation="warn(java.lang.String):void" asynchronous="false">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="23"/>  
-  </message>  
-  <message id="24" operation="addMdcSecurityEntries(gov.va.bip.framework.audit.AuditEventData):void" 
+  <message id="17" operation="splitStringToLength(java.lang.String,int):java.util.List&lt;String&gt;" 
     asynchronous="false">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="25"/>  
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="18"/>  
   </message>  
-  <message id="26" operation="stripXSS(java.lang.String):java.lang.String" asynchronous="false">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="27"/>  
-  </message>  
-  <message id="28" operation="info(java.lang.String):void" asynchronous="false">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="29"/>  
-  </message>  
-  <message id="32" operation="sendlog(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
+  <message id="19" 
+    operation="logStrings(java.util.List&lt;java.lang.String&gt;,org.slf4j.Marker,org.slf4j.event.Level):void" 
     asynchronous="false">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="33"/>  
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="20"/>  
   </message>  
-  <message id="34" operation="safeMessage(java.lang.String):java.lang.String" asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="35"/>  
-  </message>  
-  <message id="36" operation="getStackTraceAsString(java.lang.Throwable):java.lang.String" asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="37"/>  
-  </message>  
-  <message id="38" 
-    operation="splitAndSendLargeMessage(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,int,boolean):int" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="39"/>  
-  </message>  
-  <message id="40" 
-    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="41"/>  
-  </message>  
-  <message id="42" 
-    operation="splitAndSendLargeStackTrace(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,int,java.lang.String):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="43"/>  
-  </message>  
-  <message id="44" 
-    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="45"/>  
-  </message>  
-  <message id="46" 
-    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="47"/>  
-  </message>  
-  <message id="48" operation="splitMessages(java.lang.String):java.lang.String[]" asynchronous="false">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="49"/>  
-  </message>  
-  <message id="50" 
-    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="51"/>  
-  </message>  
-  <message id="52" operation="splitStackTraceText(java.lang.String):java.lang.String[]" asynchronous="false">    
-    <end type="SOURCE" refId="43"/>    
-    <end type="TARGET" refId="53"/>  
-  </message>  
-  <message id="54" 
-    operation="sendLogAtLevel(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Throwable):void" 
-    asynchronous="false">    
-    <end type="SOURCE" refId="43"/>    
-    <end type="TARGET" refId="55"/>  
-  </message>  
-  <text-link id="79">    
-    <link-end type="SOURCE" refId="78"/>    
-    <link-end type="TARGET" refId="29"/>  
-  </text-link>  
-  <text-link id="80">    
-    <link-end type="SOURCE" refId="77"/>    
-    <link-end type="TARGET" refId="23"/>  
+  <text-link id="22">    
+    <bendpoint x="221" y="205"/>    
+    <link-end type="SOURCE" refId="21"/>    
+    <link-end type="TARGET" refId="6"/>  
   </text-link>
 </sequence-diagram>
