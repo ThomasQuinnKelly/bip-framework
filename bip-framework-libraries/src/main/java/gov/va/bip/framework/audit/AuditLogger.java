@@ -6,7 +6,6 @@ import org.slf4j.event.Level;
 
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
 /**
  * The Class AuditLogger.
@@ -49,7 +48,7 @@ public class AuditLogger {
 	 */
 	public static void debug(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
-		LOGGER.debug(Sanitizer.stripXss(activityDetail));
+		LOGGER.debug(activityDetail);
 		MDC.clear();
 	}
 
@@ -63,7 +62,7 @@ public class AuditLogger {
 	 */
 	public static void info(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
-		LOGGER.info(Sanitizer.stripXss(activityDetail));
+		LOGGER.info(activityDetail);
 		MDC.clear();
 
 	}
@@ -78,7 +77,7 @@ public class AuditLogger {
 	 */
 	public static void warn(AuditEventData auditable, String activityDetail) {
 		addMdcSecurityEntries(auditable);
-		LOGGER.warn(Sanitizer.stripXss(activityDetail));
+		LOGGER.warn(activityDetail);
 		MDC.clear();
 
 	}
@@ -93,7 +92,7 @@ public class AuditLogger {
 	 */
 	public static void error(final AuditEventData auditable, final String activityDetail, final Throwable t) {
 		addMdcSecurityEntries(auditable);
-		LOGGER.error(Sanitizer.stripXss(activityDetail), t);
+		LOGGER.error(activityDetail, t);
 		MDC.clear();
 
 	}

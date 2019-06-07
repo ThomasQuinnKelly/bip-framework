@@ -178,7 +178,7 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 				LOGGER.info(PREFIX + "    clientName = " + jcc.getClientName());
 				LOGGER.info(PREFIX + "    connectTimeout = " + jcc.getConnectTimeout().toMillis());
 				LOGGER.info(PREFIX + "    hostnameVerifier = " + jcc.getHostnameVerifier());
-				LOGGER.info(PREFIX + "    poolConfig = " + (jcc.getPoolConfig() == null ? NULL : jcc.getPoolConfig().getClass()));
+				LOGGER.info(PREFIX + "    poolConfig = " + (jcc.getPoolConfig().isPresent() ? jcc.getPoolConfig().getClass() : NULL));
 				LOGGER.info(PREFIX + "    readTimeout = " + jcc.getReadTimeout().toMillis());
 			}
 

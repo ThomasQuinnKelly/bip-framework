@@ -50,7 +50,7 @@ public class JwtAuthenticationExceptionTest {
 		assertTrue(exception.getStatus().equals(HttpStatus.BAD_REQUEST));
 		assertTrue(exception.getSeverity().equals(MessageSeverity.ERROR));
 
-		assertEquals(exception.getParams().length, 2);
+		assertEquals(2, exception.getParams().length);
 		assertTrue(exception.getParams()[0].equals(PARAMS[0]));
 		assertTrue(exception.getParams()[1].equals(PARAMS[1]));
 

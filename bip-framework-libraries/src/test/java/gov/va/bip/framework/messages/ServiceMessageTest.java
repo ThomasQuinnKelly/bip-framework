@@ -21,7 +21,7 @@ public class ServiceMessageTest {
 	@Test
 	public void testEmptyConstructor() throws Exception {
 		ServiceMessage serviceMessage = new ServiceMessage(null, null, null, null, new String[] { null });
-		assertNull(serviceMessage.getKey());
+		assertEquals(TEST_KEY.getKey(), serviceMessage.getKey());
 		assertNull(serviceMessage.getSeverity());
 		assertNull(serviceMessage.getText());
 	}
@@ -49,14 +49,6 @@ public class ServiceMessageTest {
 				new ConstraintParam[] { new ConstraintParam("param1", "para1Value") }, TEST_KEY, new String[] {});
 		assertEquals(new Integer(1), serviceMessage.getParamCount());
 	}
-
-	//TODO: TO BE REVIEWED AS ITS FAILING IN DEV PIPELINE
-	//	@Test
-	//	public void testEquals() throws Exception {
-	//		ServiceMessage message1 = new ServiceMessage(MessageSeverity.INFO, "UnitTestKey", "TextMsg", null);
-	//		ServiceMessage message2 = new ServiceMessage(MessageSeverity.INFO, "UnitTestKey", "Not included in equals determination", null);
-	//		assertTrue(message1.equals(message2));
-	//	}
 
 	@Test
 	public void testGetStatus() throws Exception {

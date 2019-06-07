@@ -158,7 +158,7 @@ public class AbstractStandardValidatorTest {
 		};
 		ReflectionTestUtils.setField(abstractStandardValidator, "supplemental", new Object[] { "test object 1", "test object2" });
 		Object[] returnValue = ReflectionTestUtils.invokeMethod(abstractStandardValidator, "getSupplemental");
-		assertEquals(returnValue.length, 2);
+		assertEquals(2, returnValue.length);
 	}
 
 	@Test
@@ -172,7 +172,7 @@ public class AbstractStandardValidatorTest {
 		};
 		ReflectionTestUtils.setField(abstractStandardValidator, "supplemental", new Object[] { "test object 1", "test object2" });
 		Object returnValue = ReflectionTestUtils.invokeMethod(abstractStandardValidator, "getSupplemental", Integer.class);
-		assertEquals(returnValue, null);
+		assertEquals(null, returnValue);
 	}
 
 	@Test

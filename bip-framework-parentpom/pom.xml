@@ -672,6 +672,8 @@
 								<argument>-Djavax.net.ssl.keyStorePassword=${javax.net.ssl.keyStorePassword}</argument>
 							</arguments>
 						</jMeterProcessJVMSettings>
+						<!-- Configuration will fail build only if error rate is higher than 1%. -->
+						<errorRateThresholdInPercent>1</errorRateThresholdInPercent>
 					</configuration>
 					<executions>
 						<!-- Configure JMeter tests -->

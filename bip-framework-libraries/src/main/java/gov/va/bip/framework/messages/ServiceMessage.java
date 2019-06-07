@@ -33,7 +33,7 @@ public class ServiceMessage extends AbstractMessage {
 	/** The key */
 	@XmlElement(required = true)
 	@NotNull
-	private String key;
+	private String key = MessageKeys.NO_KEY.getKey();
 
 	/** The message, with values already replaced for any replaceable parameters */
 	private String text;
@@ -86,7 +86,9 @@ public class ServiceMessage extends AbstractMessage {
 		this.messageKey = key;
 		this.messageParams = params;
 
-		this.key = key == null ? null : key.getKey();
+		if (key != null) {
+			this.key = key.getKey();
+		}
 		this.text = key == null ? null : key.getMessage(params);
 		this.status = httpStatus == null ? null : Integer.toString(httpStatus.value());
 	}

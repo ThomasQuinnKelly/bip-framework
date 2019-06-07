@@ -154,7 +154,7 @@ public class BipCacheOpsImplTest {
 		verify(MockJcc, times(1)).getClientName();
 		verify(MockJcc, times(1)).getConnectTimeout();
 		verify(MockJcc, times(1)).getHostnameVerifier();
-		verify(MockJcc, times(2)).getPoolConfig();
+		verify(MockJcc, times(1)).getPoolConfig();
 		verify(MockJcc, times(1)).getReadTimeout();
 
 		verify(mockGopc, times(1)).getEvictionPolicyClassName();
