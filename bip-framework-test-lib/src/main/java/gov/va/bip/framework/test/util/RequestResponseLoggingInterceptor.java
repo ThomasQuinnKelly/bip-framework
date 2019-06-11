@@ -24,8 +24,13 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestResponseLoggingInterceptor.class);
 
-	/* (non-Javadoc)
-	 * @see org.springframework.http.client.ClientHttpRequestInterceptor#intercept(org.springframework.http.HttpRequest, byte[], org.springframework.http.client.ClientHttpRequestExecution)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.http.client.ClientHttpRequestInterceptor#intercept(
+	 * org.springframework.http.HttpRequest, byte[],
+	 * org.springframework.http.client.ClientHttpRequestExecution)
 	 */
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
@@ -37,25 +42,27 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 	}
 
 	/**
-	 * Function that logs header, body and other parameters before API call. It logs
-	 * all info in debug.
+	 * Function that logs header, body and other parameters before API call. It
+	 * logs all info in debug.
 	 * 
 	 * @param request
 	 * @param body
 	 * @throws IOException
 	 */
-	private void logRequest(HttpRequest request, byte[] body) throws IOException {
+	private void logRequest(HttpRequest request, byte[] body) {
 		LOGGER.debug("===========================request begin================================================");
 		LOGGER.debug("URI         : {}", request.getURI());
 		LOGGER.debug("Method      : {}", request.getMethod());
 		LOGGER.debug("Headers     : {}", request.getHeaders());
-		LOGGER.debug("Request body: {}", new String(body, "UTF-8"));
+		if ((body != null) && LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Request body: {}", new String(body, Charset.defaultCharset()));
+		}
 		LOGGER.debug("==========================request end================================================");
 	}
 
 	/**
-	 * Function that logs response, status code parameters after API call. It logs
-	 * all info in debug.
+	 * Function that logs response, status code parameters after API call. It
+	 * logs all info in debug.
 	 * 
 	 * @param response
 	 * @throws IOException
@@ -65,7 +72,9 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 		LOGGER.debug("Status code  : {}", response.getStatusCode());
 		LOGGER.debug("Status text  : {}", response.getStatusText());
 		LOGGER.debug("Headers      : {}", response.getHeaders());
-		LOGGER.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), Charset.defaultCharset()));
+		if ((response.getBody() != null) && LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), Charset.defaultCharset()));
+		}
 		LOGGER.debug("=======================response end=================================================");
 	}
 }

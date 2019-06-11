@@ -22,9 +22,13 @@ import gov.va.bip.framework.constants.BipConstants;
 public class BipConstantsTest {
 	public static final String UNCHECKED = "unchecked";
 
+	public static String getUnchecked() {
+		return UNCHECKED;
+	}
+
 	@Test
 	public void annotationConstantsTest() throws Exception {
-		assertEquals(UNCHECKED, BipConstants.UNCHECKED);
+		assertEquals(BipConstants.UNCHECKED, getUnchecked());
 	}
 
 	@Test

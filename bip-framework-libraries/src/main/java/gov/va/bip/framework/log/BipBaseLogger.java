@@ -142,7 +142,7 @@ public class BipBaseLogger {
 					"int argument 'maxLengthPerString' for splitStringToLength(..) must be greater than zero.");
 		}
 		if (string == null) {
-			return Arrays.asList(new String[] { "" });
+			return Arrays.asList("");
 		}
 
 		// return an array of strings, each of which does not exceed max allowable docker length
@@ -239,7 +239,7 @@ public class BipBaseLogger {
 	 */
 	private void logStrings(final List<String> strings, final Marker marker, final Level level) {
 		List<String> stringsToLog = ((strings == null) || strings.isEmpty())
-				? Arrays.asList(new String[] { "No log message provided. This log entry records the empty log event." })
+				? Arrays.asList("No log message provided. This log entry records the empty log event.")
 						: strings;
 				Level levelToLogAt = (level == null) ? this.getLevel() : level;
 

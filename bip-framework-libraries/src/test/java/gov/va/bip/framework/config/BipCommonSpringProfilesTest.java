@@ -86,81 +86,141 @@ public class BipCommonSpringProfilesTest {
 	/**
 	 * Spring Profile to signify that the configuration will not be loaded in embedded aws
 	 */
-	public static final String TES_NOT_PROFILE_EMBEDDED_AWS = "!embedded-aws";
+	public static final String TEST_NOT_PROFILE_EMBEDDED_AWS = "!embedded-aws";
+
+	public static String getTestProfileDefault() {
+		return TEST_PROFILE_DEFAULT;
+	}
+
+	public static String getTestProfileEnvLocalInt() {
+		return TEST_PROFILE_ENV_LOCAL_INT;
+	}
+
+	public static String getTestProfileEnvDockerDemo() {
+		return TEST_PROFILE_ENV_DOCKER_DEMO;
+	}
+
+	public static String getTestProfileEnvCi() {
+		return TEST_PROFILE_ENV_CI;
+	}
+
+	public static String getTestProfileEnvDev() {
+		return TEST_PROFILE_ENV_DEV;
+	}
+
+	public static String getTestProfileEnvStage() {
+		return TEST_PROFILE_ENV_STAGE;
+	}
+
+	public static String getTestProfileEnvProd() {
+		return TEST_PROFILE_ENV_PROD;
+	}
+
+	public static String getTestProfileRemoteClientImpls() {
+		return TEST_PROFILE_REMOTE_CLIENT_IMPLS;
+	}
+
+	public static String getTestProfileRemoteClientSimulators() {
+		return TEST_PROFILE_REMOTE_CLIENT_SIMULATORS;
+	}
+
+	public static String getTestProfileUnitTest() {
+		return TEST_PROFILE_UNIT_TEST;
+	}
+
+	public static String getTestProfileRemoteAuditSimulators() {
+		return TEST_PROFILE_REMOTE_AUDIT_SIMULATORS;
+	}
+
+	public static String getTestProfileRemoteAuditImpls() {
+		return TEST_PROFILE_REMOTE_AUDIT_IMPLS;
+	}
+
+	public static String getTestProfileEmbeddedRedis() {
+		return TEST_PROFILE_EMBEDDED_REDIS;
+	}
+
+	public static String getTestProfileEmbeddedAws() {
+		return TEST_PROFILE_EMBEDDED_AWS;
+	}
+
+	public static String getTestNotProfileEmbeddedAws() {
+		return TEST_NOT_PROFILE_EMBEDDED_AWS;
+	}
 
 	@Test
 	public void profileDefaultTest() throws Exception {
-		assertEquals(TEST_PROFILE_DEFAULT, BipCommonSpringProfiles.PROFILE_DEFAULT);
+		assertEquals(BipCommonSpringProfiles.PROFILE_DEFAULT, getTestProfileDefault());
 	}
 
 	@Test
 	public void profileLocalIntTest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_LOCAL_INT, BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT, getTestProfileEnvLocalInt());
 	}
 
 	@Test
 	public void profileDockerDemoTest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_DOCKER_DEMO, BipCommonSpringProfiles.PROFILE_ENV_DOCKER_DEMO);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_DOCKER_DEMO, getTestProfileEnvDockerDemo());
 	}
 
 	@Test
 	public void profileAwsCITest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_CI, BipCommonSpringProfiles.PROFILE_ENV_CI);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_CI, getTestProfileEnvCi());
 	}
 
 	@Test
 	public void profileAwsDevTest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_DEV, BipCommonSpringProfiles.PROFILE_ENV_DEV);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_DEV, getTestProfileEnvDev());
 	}
 
 	@Test
 	public void profileAwsStageTest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_STAGE, BipCommonSpringProfiles.PROFILE_ENV_STAGE);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_STAGE, getTestProfileEnvStage());
 	}
 
 	@Test
 	public void profileAwsProdTest() throws Exception {
-		assertEquals(TEST_PROFILE_ENV_PROD, BipCommonSpringProfiles.PROFILE_ENV_PROD);
+		assertEquals(BipCommonSpringProfiles.PROFILE_ENV_PROD, getTestProfileEnvProd());
 	}
 
 	@Test
 	public void profileRemoteClientSimulatorsTest() throws Exception {
-		assertEquals(TEST_PROFILE_REMOTE_CLIENT_SIMULATORS, BipCommonSpringProfiles.PROFILE_REMOTE_CLIENT_SIMULATORS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_REMOTE_CLIENT_SIMULATORS, getTestProfileRemoteClientSimulators());
 	}
 
 	@Test
 	public void profileRemoteClientImplsTest() throws Exception {
-		assertEquals(TEST_PROFILE_REMOTE_CLIENT_IMPLS, BipCommonSpringProfiles.PROFILE_REMOTE_CLIENT_IMPLS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_REMOTE_CLIENT_IMPLS, getTestProfileRemoteClientImpls());
 	}
 
 	@Test
 	public void profileRemoteAuditSimulatorsTest() throws Exception {
-		assertEquals(TEST_PROFILE_REMOTE_AUDIT_SIMULATORS, BipCommonSpringProfiles.PROFILE_REMOTE_AUDIT_SIMULATORS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_REMOTE_AUDIT_SIMULATORS, getTestProfileRemoteAuditSimulators());
 	}
 
 	@Test
 	public void profileRemoteAuditImplsTest() throws Exception {
-		assertEquals(TEST_PROFILE_REMOTE_AUDIT_IMPLS, BipCommonSpringProfiles.PROFILE_REMOTE_AUDIT_IMPLS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_REMOTE_AUDIT_IMPLS, getTestProfileRemoteAuditImpls());
 	}
 
 	@Test
 	public void profileUnitTestingTest() throws Exception {
-		assertEquals(TEST_PROFILE_UNIT_TEST, BipCommonSpringProfiles.PROFILE_UNIT_TEST);
+		assertEquals(BipCommonSpringProfiles.PROFILE_UNIT_TEST, getTestProfileUnitTest());
 	}
 
 	@Test
 	public void profileEmbeddedRedisTest() throws Exception {
-		assertEquals(TEST_PROFILE_EMBEDDED_REDIS, BipCommonSpringProfiles.PROFILE_EMBEDDED_REDIS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_EMBEDDED_REDIS, getTestProfileEmbeddedRedis());
 	}
 
 	@Test
 	public void profileEmbeddedAwsTest() throws Exception {
-		assertEquals(TEST_PROFILE_EMBEDDED_AWS, BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS);
+		assertEquals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS, getTestProfileEmbeddedAws());
 	}
 
 	@Test
 	public void notProfileEmbeddedAwsTest() throws Exception {
-		assertEquals(TES_NOT_PROFILE_EMBEDDED_AWS, BipCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS);
+		assertEquals(BipCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS, getTestNotProfileEmbeddedAws());
 	}
 
 	@Test

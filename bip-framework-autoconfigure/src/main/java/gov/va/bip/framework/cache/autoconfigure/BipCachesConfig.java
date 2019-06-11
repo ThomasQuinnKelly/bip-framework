@@ -143,18 +143,18 @@ public class BipCachesConfig extends CachingConfigurerSupport {
 	@RefreshScope
 	public RedisCacheManager cacheManager(final RedisConnectionFactory redisConnectionFactory) {
 		if (LOGGER.isDebugEnabled()) {
-			String initialCacheProperties = "null";
+			StringBuilder initialCacheProperties = new StringBuilder("null");
 			if (bipRedisCacheProperties.getExpires() != null) {
-				initialCacheProperties = "";
+				initialCacheProperties = new StringBuilder("");
 				for (BipRedisCacheProperties.RedisExpires expires : bipRedisCacheProperties.getExpires()) {
-					initialCacheProperties += "[name=" + expires.getName() + ";TTL=" + expires.getTtl() + "]";
+					initialCacheProperties.append("[name=" + expires.getName() + ";TTL=" + expires.getTtl() + "]") ;
 				}
 			}
 			LOGGER.debug(this.getClass() + ".cacheManager build with ["
 					+ "RedisCacheWriter=previously configured JedisConnectionFactory"
 					+ "; Default RedisCacheConfiguration[TTL=" + bipRedisCacheProperties.getDefaultExpires()
 					+ ";all others as defined by RedisCacheConfiguration.defaultCacheConfig()]"
-					+ "; InitialCacheConfigurations[" + initialCacheProperties + "]");
+					+ "; InitialCacheConfigurations[" + initialCacheProperties.toString() + "]");
 		}
 
 		return RedisCacheManager

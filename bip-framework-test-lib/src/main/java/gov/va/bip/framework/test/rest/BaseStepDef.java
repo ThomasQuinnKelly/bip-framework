@@ -49,12 +49,6 @@ public class BaseStepDef {
 	protected RESTConfigService restConfig = null;
 
 	/**
-	 * A service object that deals with bearer token. BearerTokenService fetch token
-	 * before every API call.
-	 */
-	private BearerTokenService bearerTokenService = null;
-
-	/**
 	 * Logger object
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepDef.class);
@@ -205,8 +199,7 @@ public class BaseStepDef {
 	 * header map.
 	 */
 	private void setBearerToken() {
-		bearerTokenService = BearerTokenService.getInstance();
-		final String bearerToken = bearerTokenService.getBearerToken();
+		final String bearerToken = BearerTokenService.getInstance().getBearerToken();
 		headerMap.put("Authorization", "Bearer " + bearerToken);
 	}
 

@@ -94,12 +94,7 @@ public class RESTUtil {
 	/**
 	 * Holds json that represents header info
 	 */
-	protected String jsonText = new String();
-
-	/**
-	 * Holds API response object.
-	 */
-	private ResponseEntity<String> response = null;
+	protected String jsonText = StringUtils.EMPTY;
 
 	/**
 	 * API response status code
@@ -242,7 +237,7 @@ public class RESTUtil {
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
-			response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
+			ResponseEntity<String> response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
 			httpResponseCode = response.getStatusCodeValue();
 			responseHttpHeaders = response.getHeaders();
 			return response.getBody();
@@ -270,9 +265,10 @@ public class RESTUtil {
 	public String postResponseWithMultipart(final String serviceURL, final String fileName,
 			final String submitPayloadPath) {
 		try {
-			final URL urlFilePath = RESTUtil.class.getClassLoader().getResource(DOCUMENTS_FOLDER_NAME + "/" + fileName);
+			final URL urlFilePath = RESTUtil.class.getClassLoader()
+					.getResource(DOCUMENTS_FOLDER_NAME + File.separator + fileName);
 			final URL urlSubmitPayload = RESTUtil.class.getClassLoader()
-					.getResource(PAYLOAD_FOLDER_NAME + "/" + submitPayloadPath);
+					.getResource(PAYLOAD_FOLDER_NAME + File.separator + submitPayloadPath);
 			final File filePath = new File(urlFilePath.toURI());
 			final File filePathSubmitPayload = new File(urlSubmitPayload.toURI());
 			String submitPayload = FileUtils.readFileToString(filePathSubmitPayload, "UTF-8");
@@ -302,7 +298,8 @@ public class RESTUtil {
 	public String postResponseWithMultipart(final String serviceURL, final String fileName,
 			final byte[] submitPayload) {
 		try {
-			final URL urlFilePath = RESTUtil.class.getClassLoader().getResource(DOCUMENTS_FOLDER_NAME + "/" + fileName);
+			final URL urlFilePath = RESTUtil.class.getClassLoader()
+					.getResource(DOCUMENTS_FOLDER_NAME + File.separator + fileName);
 			final File filePath = new File(urlFilePath.toURI());
 			MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 			body.add("file", filePath);
@@ -395,7 +392,7 @@ public class RESTUtil {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private SSLContextBuilder loadKeyMaterial(String pathToKeyStore, SSLContextBuilder sslContextBuilder)
+	private SSLContextBuilder loadKeyMaterial(final String pathToKeyStore, final SSLContextBuilder sslContextBuilder)
 			throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, CertificateException,
 			IOException {
 		if (StringUtils.isNotBlank(pathToKeyStore)) {
@@ -426,7 +423,8 @@ public class RESTUtil {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private SSLContextBuilder loadTrustMaterial(String pathToTrustStore, SSLContextBuilder sslContextBuilder)
+	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
+			final SSLContextBuilder sslContextBuilder)
 			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
@@ -559,7 +557,8 @@ public class RESTUtil {
 	/**
 	 * Asserts the response status code with the given status code.
 	 *
-	 * @param intStatusCode the int status code
+	 * @param intStatusCode
+	 *            the int status code
 	 */
 	public void validateStatusCode(final int intStatusCode) {
 		assertThat(httpResponseCode, equalTo(intStatusCode));
