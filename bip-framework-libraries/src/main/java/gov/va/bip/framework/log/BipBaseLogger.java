@@ -175,9 +175,9 @@ public class BipBaseLogger {
 			String originalWord = word;
 			if ((toLength.length() + word.length() + 1) > maxLength) {
 				while ((word.length() + 1) > maxLength) {
-					toLength = avoidEmptyAdditions(addToThisList, toLength);
-					addToThisList.add(word.substring(0, maxLength - 1));
-					word = word.substring(maxLength - 1);
+					toLength = addToListWhileAvoidingEmptyAdditions(addToThisList, toLength);
+					addToThisList.add(word.substring(0, maxLength));
+					word = word.substring(maxLength);
 				}
 				if (!"".equals(toLength)) {
 					addToThisList.add(toLength);
@@ -203,7 +203,7 @@ public class BipBaseLogger {
 	 * @param toLength current log message being accumulated so as to not exceed max length
 	 * @return
 	 */
-	private String avoidEmptyAdditions(final List<String> addToThisList, final String toLength) {
+	private String addToListWhileAvoidingEmptyAdditions(final List<String> addToThisList, final String toLength) {
 		String stringTobeAdded = toLength;
 		if (!"".equals(stringTobeAdded)) {
 			addToThisList.add(stringTobeAdded);
@@ -251,8 +251,9 @@ public class BipBaseLogger {
 				String maxSequence = Integer.toString(stringsToLog.size());
 				int sequence = 1;
 				for (String toLog : stringsToLog) {
-					MDC.put(SPLIT_MDC_NAME, Integer.toString(sequence) + " of " + maxSequence);
+					MDC.put(SPLIT_MDC_NAME, Integer.toString(sequence++) + " of " + maxSequence);
 					this.sendLogAtLevel(levelToLogAt, marker, toLog, null);
+					MDC.clear();
 				}
 	}
 

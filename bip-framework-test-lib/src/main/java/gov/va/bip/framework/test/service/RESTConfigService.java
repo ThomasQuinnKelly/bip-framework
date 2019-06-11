@@ -91,7 +91,7 @@ public class RESTConfigService {
 				LOGGER.debug("Properties File Loaded");
 				LOGGER.debug("Properties {}", instance.prop);
 			} else {
-				LOGGER.warn("No resource found with the URL: " + url + ". Property file could not be read.");
+				LOGGER.warn("No resource found with the URL {}. Property file could not be read.", url);
 			}
 		}
 

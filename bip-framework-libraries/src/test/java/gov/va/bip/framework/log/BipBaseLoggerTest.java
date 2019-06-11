@@ -35,8 +35,8 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 		ReflectionTestUtils.invokeMethod(logger, "makeToLength", StringUtils.repeat("a", MAX_MSG_LENGTH) + "extraSuffix",
 				listOfLogMessages,
 				MAX_MSG_LENGTH);
-		assertTrue(listOfLogMessages.get(0).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(1).equals("aextraSuffix "));
+		assertTrue(listOfLogMessages.get(0).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(1).equals("extraSuffix "));
 	}
 
 	@Test
@@ -45,9 +45,9 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 		LinkedList<String> listOfLogMessages = new LinkedList<String>();
 		ReflectionTestUtils.invokeMethod(logger, "makeToLength",
 				StringUtils.repeat("a", MAX_MSG_LENGTH * 2) + "extraSuffix plus a few more words", listOfLogMessages, MAX_MSG_LENGTH);
-		assertTrue(listOfLogMessages.get(0).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(2).equals("aaextraSuffix plus a few more words "));
+		assertTrue(listOfLogMessages.get(0).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(2).equals("extraSuffix plus a few more words "));
 	}
 
 	@Test
@@ -58,8 +58,8 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 				"few words " + StringUtils.repeat("a", MAX_MSG_LENGTH) + "extraSuffix plus a few more words", listOfLogMessages,
 				MAX_MSG_LENGTH);
 		assertTrue(listOfLogMessages.get(0).equals("few words "));
-		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(2).equals("aextraSuffix plus a few more words "));
+		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(2).equals("extraSuffix plus a few more words "));
 	}
 
 	@Test
@@ -70,9 +70,9 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 				"few words " + StringUtils.repeat("a", MAX_MSG_LENGTH * 2) + "extraSuffix plus a few more words", listOfLogMessages,
 				MAX_MSG_LENGTH);
 		assertTrue(listOfLogMessages.get(0).equals("few words "));
-		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(2).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(3).equals("aaextraSuffix plus a few more words "));
+		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(2).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(3).equals("extraSuffix plus a few more words "));
 	}
 
 	@Test
@@ -83,8 +83,8 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 				"words before last word " + StringUtils.repeat("a", MAX_MSG_LENGTH) + "extraSuffix", listOfLogMessages,
 				MAX_MSG_LENGTH);
 		assertTrue(listOfLogMessages.get(0).equals("words before last word "));
-		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(2).equals("aextraSuffix "));
+		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(2).equals("extraSuffix "));
 	}
 
 	@Test
@@ -95,8 +95,8 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 				"words before last word " + StringUtils.repeat("a", MAX_MSG_LENGTH * 2) + "extraSuffix", listOfLogMessages,
 				MAX_MSG_LENGTH);
 		assertTrue(listOfLogMessages.get(0).equals("words before last word "));
-		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(2).equals(StringUtils.repeat("a", MAX_MSG_LENGTH - 1)));
-		assertTrue(listOfLogMessages.get(3).equals("aaextraSuffix "));
+		assertTrue(listOfLogMessages.get(1).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(2).equals(StringUtils.repeat("a", MAX_MSG_LENGTH)));
+		assertTrue(listOfLogMessages.get(3).equals("extraSuffix "));
 	}
 }

@@ -95,7 +95,7 @@ public class BipCacheAutoConfigurationTest {
 				ReflectionTestUtils.invokeMethod(bipCachesConfig, "getRedisCacheConfigs");
 
 		assertNotNull(cacheConfigs);
-		assertEquals(cacheConfigs.get("testName").getTtl().getSeconds(), 1500L);
+		assertEquals(1500L, cacheConfigs.get("testName").getTtl().getSeconds());
 	}
 
 	@Test
