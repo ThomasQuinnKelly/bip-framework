@@ -168,31 +168,31 @@ public class BipBaseLogger {
 		}
 
 		String[] words = string.split(SPACE);
-		String toLength = "";
+		StringBuilder toLength = new StringBuilder("");
 		boolean alreadyAdded = false;
 		// accumulate words to the length specified for each addToThisList entry
 		for (String word : words) {
 			String originalWord = word;
 			if ((toLength.length() + word.length() + 1) > maxLength) {
 				while ((word.length() + 1) > maxLength) {
-					toLength = addToListWhileAvoidingEmptyAdditions(addToThisList, toLength);
+					toLength = new StringBuilder(addToListWhileAvoidingEmptyAdditions(addToThisList, toLength.toString()));
 					addToThisList.add(word.substring(0, maxLength));
 					word = word.substring(maxLength);
 				}
-				if (!"".equals(toLength)) {
-					addToThisList.add(toLength);
+				if (!"".equals(toLength.toString())) {
+					addToThisList.add(toLength.toString());
 				}
-				toLength = word + SPACE; // start a new string
+				toLength = new StringBuilder(word + SPACE); // start a new string
 
 				// if it is the last word then adding to the list is still pending
 				alreadyAdded = (originalWord == words[words.length - 1] ? false : true);
 			} else {
-				toLength = toLength + word + SPACE;
+				toLength.append(word + SPACE);
 				alreadyAdded = false;
 			}
 		}
 		if (!alreadyAdded) {
-			addToThisList.add(toLength);
+			addToThisList.add(toLength.toString());
 		}
 	}
 

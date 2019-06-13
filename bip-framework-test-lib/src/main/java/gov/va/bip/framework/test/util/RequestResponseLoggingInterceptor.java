@@ -69,11 +69,15 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 	 */
 	private void logResponse(ClientHttpResponse response) throws IOException {
 		LOGGER.debug("============================response begin==========================================");
-		LOGGER.debug("Status code  : {}", response.getStatusCode());
-		LOGGER.debug("Status text  : {}", response.getStatusText());
-		LOGGER.debug("Headers      : {}", response.getHeaders());
-		if ((response.getBody() != null) && LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), Charset.defaultCharset()));
+		if (response == null) {
+			LOGGER.debug("No client-side HTTP response (Returned Null)");
+		} else {
+			LOGGER.debug("Status code  : {}", response.getStatusCode());
+			LOGGER.debug("Status text  : {}", response.getStatusText());
+			LOGGER.debug("Headers      : {}", response.getHeaders());
+			if ((response.getBody() != null) && LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), Charset.defaultCharset()));
+			}
 		}
 		LOGGER.debug("=======================response end=================================================");
 	}

@@ -2,6 +2,8 @@ package gov.va.bip.framework.security;
 
 import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
@@ -134,5 +136,15 @@ public class PersonTraits extends AbstractPersonTraitsObject {
 
 	public boolean hasTokenId() {
 		return !StringUtils.isEmpty(tokenId);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this, getToStringEqualsHashExcludeFields());
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj, getToStringEqualsHashExcludeFields());
 	}
 }
