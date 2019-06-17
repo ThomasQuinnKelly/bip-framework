@@ -29,7 +29,6 @@ public class ByteArrayTransportOutputStreamTest {
 			e.printStackTrace();
 			fail("Unable to add header to output stream");
 		}
-		System.out.println(StringUtils.newStringUtf8(stream.toByteArray()));
 		assertTrue(StringUtils.newStringUtf8(stream.toByteArray()).equals("test_header_name: test_header_value" + NEW_LINE));
 		try {
 			stream.close();

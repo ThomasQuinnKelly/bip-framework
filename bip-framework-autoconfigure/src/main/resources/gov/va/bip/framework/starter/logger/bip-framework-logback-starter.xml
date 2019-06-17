@@ -3,16 +3,25 @@
 <included>
 	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook" />
 	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
-	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	<include
+		resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-	<springProperty scope="context" name="app_name" source="spring.application.name" />
-	<springProperty scope="context" name="app_profile" source="spring.profiles.active" />
-	<springProperty scope="context" name="app_version" source="info.build.version" />
+	<springProperty scope="context" name="app_name"
+		source="spring.application.name" />
+	<springProperty scope="context" name="app_profile"
+		source="spring.profiles.active" />
+	<springProperty scope="context" name="app_version"
+		source="info.build.version" />
 
 	<appender name="BIP_FRAMEWORK_CONSOLE_LOG_ENCODER" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+		<!-- JSON composite encoder instead of the LogstashEncoder. The composite 
+			encoders allow you to selectively add things as needed (rather than removing 
+			things). IMPORTANT NOTE: Don't add <message> field as the provider class 
+			[BipMaskingMessageProvider] is enabled for masking If added in the <providers> 
+			section, then the message field will be logged twice. -->
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
 			<providers>
-
 				<timestamp>
 					<timeZone>UTC</timeZone>
 				</timestamp>
@@ -29,32 +38,72 @@
 				</pattern>
 				<threadName />
 				<mdc /> <!-- MDC variables on the Thread will be written as JSON fields -->
-				<message />
 				<logstashMarkers /> <!-- Useful so we can add extra information for specific log lines as Markers -->
 				<arguments /> <!--or through StructuredArguments -->
 				<stackTrace>
 					<!-- limit the size of stack traces, show root cause first -->
-					<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+					<throwableConverter
+						class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
 						<maxDepthPerThrowable>30</maxDepthPerThrowable>
 						<maxLength>2048</maxLength>
 						<shortenedClassNameLength>40</shortenedClassNameLength>
 						<rootCauseFirst>true</rootCauseFirst>
 					</throwableConverter>
 				</stackTrace>
+
+				<provider
+					class="gov.va.bip.framework.log.logback.BipMaskingMessageProvider">
+					<!-- - Base rules for masking data, apps. Can add more rules via BipMaskRules.addRule(..). 
+						- By default, all fields are subject to each defined <rule>. -->
+					<!-- Rules are embodied in BipMaskRule -->
+					<rules>
+						<!-- Credit cards are a challenge to identify, especially if foreign 
+							cards are included. See: https://en.wikipedia.org/wiki/Payment_card_number 
+							https://baymard.com/checkout-usability/credit-card-patterns -->
+						<rule>
+							<name>Credit Card</name>
+							<prefix></prefix>
+							<!-- limits length 13-19 digits -->
+							<pattern>\d{13,19}</pattern>
+							<suffix></suffix>
+							<unmasked>4</unmasked>
+						</rule>
+						<!-- US Banks have no size or format limits, but for electronic use 
+							must not exceed 17 digits. Foreign banks can have numbers between 12-23 digits. 
+							See: https://en.wikipedia.org/wiki/International_Bank_Account_Number -->
+						<rule>
+							<name>Bank Account</name>
+							<prefix></prefix>
+							<!-- limits length 12-17 digits -->
+							<pattern>\d{4}[- ]?\d{4}[ -]?\d{4}[ -]?\d{1,5}</pattern>
+							<suffix></suffix>
+							<unmasked>4</unmasked>
+						</rule>
+						<rule>
+							<name>SSN</name>
+							<prefix></prefix>
+							<!-- Rejects 9 digit numbers beginning with 000, 666, 734 to 749, 
+								and greater than 772 and numbers with all zeros in any of the 3-2-4 digit 
+								group. Accepts 9 digit numbers without separators, or with dash or space 
+								as a separator. -->
+							<pattern>((?!000)(?!666)(?:[0-6]\d{2}|7[0-2][0-9]|73[0-3]|7[5-6][0-9]|77[0-2]))[-\s]?((?!00)\d{2})[-\s]?((?!0000)\d{4})</pattern>
+							<suffix></suffix>
+							<unmasked>4</unmasked>
+						</rule>
+					</rules>
+				</provider>
 			</providers>
 		</encoder>
 	</appender>
-	
-	<!--
-	  Async appenders can drastically speed up logging as well as your application's response time but with some potential drawbacks. 
-	  Read more at. 
-	  https://logback.qos.ch/manual/appenders.html#AsyncAppender
-	  http://blog.takipi.com/how-to-instantly-improve-your-java-logging-with-7-logback-tweaks/
-	  
-	  Always be sure to test different configurations for yourself. Every application has different requirements.
-	-->
+
+	<!-- Async appenders can drastically speed up logging as well as your application's 
+		response time but with some potential drawbacks. Read more at. https://logback.qos.ch/manual/appenders.html#AsyncAppender 
+		http://blog.takipi.com/how-to-instantly-improve-your-java-logging-with-7-logback-tweaks/ 
+		Always be sure to test different configurations for yourself. Every application 
+		has different requirements. -->
 	<appender name="BIP_FRAMEWORK_ASYNC_CONSOLE_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
-		<queueSize>262144</queueSize> <!--default is 256 -->
+		<queueSize>250000</queueSize> <!--default is 256. No data yet available to support any specific queueSize, 
+			set to 250,000 events -->
 		<discardingThreshold>0</discardingThreshold> <!--events are not discarded -->
 		<appender-ref ref="BIP_FRAMEWORK_CONSOLE_LOG_ENCODER" />
 	</appender>

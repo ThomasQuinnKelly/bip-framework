@@ -49,7 +49,6 @@ public class RestClientTemplateTest {
 		try {
 			setResponseEntity(restClientTemplate.executeURL(DUMMY_ENDPOINT, HttpMethod.GET, null, responseType));
 		} catch (Exception e) {
-			System.out.println("REST call is expected to fail");
 			assertTrue(e instanceof RestClientException);
 		}
 	}

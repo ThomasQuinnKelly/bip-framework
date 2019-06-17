@@ -4,7 +4,7 @@
   <class id="1" language="java" name="gov.va.bip.framework.log.BipLogger" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLogger.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="564" y="825"/>    
+    <position height="-1" width="-1" x="737" y="826"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -14,7 +14,7 @@
   <class id="2" language="java" name="gov.va.bip.framework.log.BipBanner" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipBanner.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="981" y="627"/>    
+    <position height="-1" width="-1" x="1103" y="541"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -34,7 +34,7 @@
   <enumeration id="4" language="java" name="gov.va.bip.framework.log.BipLogMarkers" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLogMarkers.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="860" y="23"/>    
+    <position height="-1" width="-1" x="1016" y="24"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -44,7 +44,7 @@
   <class id="5" language="java" name="gov.va.bip.framework.log.BipLoggerFactory" project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/BipLoggerFactory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="857" y="233"/>    
+    <position height="-1" width="-1" x="1013" y="234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -55,43 +55,137 @@
     project="bip-framework-libraries" 
     file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/PerformanceLogMethodInterceptor.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1232" y="142"/>    
+    <position height="-1" width="-1" x="1362" y="144"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <dependency id="7">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="5"/>  
+  <class id="7" language="java" name="gov.va.bip.framework.log.logback.BipMaskingMessageProvider" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/logback/BipMaskingMessageProvider.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="174" y="578"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="gov.va.bip.framework.log.logback.BipMaskRules" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/logback/BipMaskRules.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="181" y="767"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="gov.va.bip.framework.log.logback.BipMaskRule" project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/logback/BipMaskRule.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="179" y="940"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="gov.va.bip.framework.log.logback.BipMaskRule.Definition" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/logback/BipMaskRule.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="178" y="1287"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="gov.va.bip.framework.log.logback.BipMaskingFilter" 
+    project="bip-framework-libraries" 
+    file="/bip-framework-libraries/src/main/java/gov/va/bip/framework/log/logback/BipMaskingFilter.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="457" y="779"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="12">    
+    <bendpoint x="879" y="228"/>    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="1"/>  
   </dependency>  
-  <association id="8">    
-    <bendpoint x="783" y="683"/>    
-    <bendpoint x="783" y="682"/>    
+  <association id="13">    
+    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
+      <attribute id="14" name="rules"/>      
+      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="16">    
+    <bendpoint x="190" y="653"/>    
+    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
+      <attribute id="17" name="rules"/>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="19">    
+    <bendpoint x="481" y="384"/>    
+    <bendpoint x="481" y="382"/>    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <nesting id="20">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="10"/>  
+  </nesting>  
+  <association id="21">    
+    <bendpoint x="936" y="450"/>    
+    <bendpoint x="936" y="449"/>    
     <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="9" name="LOGGER">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="22" name="LOGGER">        
+        <position height="0" width="0" x="173" y="1"/>      
       </attribute>      
-      <multiplicity id="10" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="23" minimum="0" maximum="1">        
+        <position height="0" width="0" x="173" y="1"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="11">    
+  <dependency id="24">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="12">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="1"/>  
+  <association id="25">    
+    <bendpoint x="467" y="476"/>    
+    <end type="SOURCE" refId="11" navigable="false" variant="ASSOCIATION">      
+      <attribute id="26" name="LOGGER"/>      
+      <multiplicity id="27" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="28">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <generalization id="13">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
+  <association id="29">    
+    <end type="SOURCE" refId="9" navigable="false" variant="ASSOCIATION">      
+      <attribute id="30" name="definition"/>      
+      <multiplicity id="31" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

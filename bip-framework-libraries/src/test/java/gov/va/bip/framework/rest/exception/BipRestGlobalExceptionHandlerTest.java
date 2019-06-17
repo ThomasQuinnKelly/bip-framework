@@ -223,32 +223,27 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 		// exception without cause or message
 		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception());
-		System.out.println("returnValue:" + returnValue);
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 
 		// exception with message; cause that has a message
 		Exception cause = new IllegalStateException(TEST_MESSAGE);
 		returnValue =
 				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(TEST_MESSAGE, cause));
-		System.out.println("returnValue:" + returnValue);
 		assertTrue(returnValue.contains(TEST_MESSAGE));
 
 		// exception with blank space message; cause that has a message
 		cause = new IllegalStateException(TEST_MESSAGE);
 		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception("  ", cause));
-		System.out.println("returnValue:" + returnValue);
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 
 		// exception without message; cause that has a message
 		cause = new IllegalStateException(TEST_MESSAGE);
 		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(cause));
-		System.out.println("returnValue:" + returnValue);
 		assertTrue(returnValue.contains(TEST_MESSAGE));
 
 		// exception without message; cause that does not have a message
 		cause = new IllegalStateException("");
 		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(cause));
-		System.out.println("returnValue:" + returnValue);
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 	}
 

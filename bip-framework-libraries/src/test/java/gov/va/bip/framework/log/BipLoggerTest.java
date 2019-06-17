@@ -193,7 +193,6 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 		try {
 			assertConsoleBanner(Level.DEBUG, null, "test ", null, captureCount);
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
 			e.printStackTrace();
 			fail("Should not have thrown exception");
 		}

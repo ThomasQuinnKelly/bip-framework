@@ -154,7 +154,7 @@ public class BipRestAutoConfiguration {
 			public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
 				LOGGER.info("Retry request, execution count: {}, exception: {}", executionCount, exception);
 				if (exception instanceof org.apache.http.NoHttpResponseException) {
-					LOGGER.warn("No response from server on " + executionCount + " call");
+					LOGGER.warn("No response from server on {}", executionCount, " call");
 					return true;
 				}
 				return super.retryRequest(exception, executionCount, context);
