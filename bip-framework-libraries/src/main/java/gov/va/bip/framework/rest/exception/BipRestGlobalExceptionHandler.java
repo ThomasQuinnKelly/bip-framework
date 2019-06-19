@@ -184,10 +184,11 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 * @return ResponseEntity - the HTTP Response Entity
 	 */
 	protected ResponseEntity<Object> standardHandler(final BipExceptionExtender ex, final HttpStatus httpResponseStatus) {
-		if ((ex == null) || (ex.getMessageKey() == null)) {
+		if ((ex == null) || (ex.getExceptionData().getMessageKey() == null)) {
 			return failSafeHandler();
 		}
-		return standardHandler((Exception) ex, ex.getMessageKey(), ex.getSeverity(), httpResponseStatus);
+		return standardHandler((Exception) ex, ex.getExceptionData().getMessageKey(), ex.getExceptionData().getSeverity(),
+				httpResponseStatus);
 	}
 
 	/**
@@ -476,7 +477,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 */
 	@ExceptionHandler(value = BipRuntimeException.class)
 	public final ResponseEntity<Object> handleBipRuntimeException(final HttpServletRequest req, final BipRuntimeException ex) {
-		return standardHandler(ex, ex.getStatus());
+		return standardHandler(ex, ex.getExceptionData().getStatus());
 	}
 
 	/**

@@ -153,7 +153,8 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 			ProviderResponse response = new ProviderResponse();
 			if (BipExceptionExtender.class.isAssignableFrom(throwable.getClass())) {
 				BipExceptionExtender bipee = (BipExceptionExtender) throwable;
-				response.addMessage(MessageSeverity.ERROR, bipee.getKey(), throwable.getMessage(), bipee.getStatus());
+				response.addMessage(MessageSeverity.ERROR, bipee.getExceptionData().getKey(), throwable.getMessage(),
+						bipee.getExceptionData().getStatus());
 			} else {
 				MessageKeys key = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION;
 				response.addMessage(MessageSeverity.ERROR, key.getKey(),

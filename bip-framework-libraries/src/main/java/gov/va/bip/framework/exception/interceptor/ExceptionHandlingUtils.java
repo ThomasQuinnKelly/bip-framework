@@ -86,7 +86,8 @@ public final class ExceptionHandlingUtils {
 			// instantiate the Runtime version of the interface
 			resolvedRuntimeException = (BipRuntimeException) throwable.getClass()
 					.getConstructor(MessageKey.class, MessageSeverity.class, HttpStatus.class, Throwable.class, stringArray.getClass())
-					.newInstance(bip.getMessageKey(), bip.getSeverity(), bip.getStatus(), throwable, stringArray);
+					.newInstance(bip.getExceptionData().getMessageKey(), bip.getExceptionData().getSeverity(),
+							bip.getExceptionData().getStatus(), throwable, stringArray);
 		} catch (ClassCastException | IllegalAccessException | IllegalArgumentException | InstantiationException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			MessageKeys key = MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES;

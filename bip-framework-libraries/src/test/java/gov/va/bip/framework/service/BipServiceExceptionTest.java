@@ -29,8 +29,8 @@ public class BipServiceExceptionTest {
 	public void testEmptyConstructor() {
 		BipServiceException bipServiceException = new BipServiceException(TEST_KEY, null, null, null, new String[] { null });
 		assertTrue(bipServiceException.getMessage().equals(TEST_KEY_MESSAGE));
-		assertNull(bipServiceException.getSeverity());
-		assertNull(bipServiceException.getStatus());
+		assertNull(bipServiceException.getExceptionData().getSeverity());
+		assertNull(bipServiceException.getExceptionData().getStatus());
 		assertNull(bipServiceException.getCause());
 	}
 
@@ -39,10 +39,10 @@ public class BipServiceExceptionTest {
 		BipServiceException bipServiceException =
 				new BipServiceException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST,
 						new Throwable("test"));
-		assertNotNull(bipServiceException.getKey());
+		assertNotNull(bipServiceException.getExceptionData().getKey());
 		assertNotNull(bipServiceException.getMessage());
-		assertNotNull(bipServiceException.getSeverity());
-		assertNotNull(bipServiceException.getStatus());
+		assertNotNull(bipServiceException.getExceptionData().getSeverity());
+		assertNotNull(bipServiceException.getExceptionData().getStatus());
 		assertNotNull(bipServiceException.getCause());
 	}
 
@@ -50,10 +50,10 @@ public class BipServiceExceptionTest {
 	public void testPopulatedNoCauseConstructor() {
 		BipServiceException bipServiceException =
 				new BipServiceException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
-		assertNotNull(bipServiceException.getKey());
+		assertNotNull(bipServiceException.getExceptionData().getKey());
 		assertNotNull(bipServiceException.getMessage());
-		assertNotNull(bipServiceException.getSeverity());
-		assertNotNull(bipServiceException.getStatus());
+		assertNotNull(bipServiceException.getExceptionData().getSeverity());
+		assertNotNull(bipServiceException.getExceptionData().getStatus());
 		assertNull(bipServiceException.getCause());
 	}
 

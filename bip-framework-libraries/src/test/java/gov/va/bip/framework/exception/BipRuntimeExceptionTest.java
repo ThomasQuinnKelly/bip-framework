@@ -31,7 +31,7 @@ public class BipRuntimeExceptionTest {
 	public void getMessageTestServerNameNull() throws Exception {
 		BipRuntimeException bipRuntimeException =
 				new BipRuntimeException(TEST_KEY, null, null, (String[]) null);
-		Assert.assertTrue(bipRuntimeException.getServerName().equals(System.getProperty("server.name")));
+		Assert.assertTrue(bipRuntimeException.getExceptionData().getServerName().equals(System.getProperty("server.name")));
 	}
 
 	@Test

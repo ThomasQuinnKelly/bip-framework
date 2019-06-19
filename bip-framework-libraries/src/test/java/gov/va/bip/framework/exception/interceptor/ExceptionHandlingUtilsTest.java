@@ -112,10 +112,10 @@ public class ExceptionHandlingUtilsTest {
 	public void testConvertFromBipExceptionExtender() {
 		BipRuntimeException resolvedRuntimeException = ExceptionHandlingUtils
 				.convertFromBipExceptionExtender(new BipRuntimeException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST));
-		assertTrue(resolvedRuntimeException.getKey().equals(TEST_KEY.getKey()));
+		assertTrue(resolvedRuntimeException.getExceptionData().getKey().equals(TEST_KEY.getKey()));
 		assertTrue(resolvedRuntimeException.getMessage().equals(TEST_KEY_MESSAGE));
-		assertTrue(resolvedRuntimeException.getSeverity().equals(MessageSeverity.ERROR));
-		assertTrue(resolvedRuntimeException.getStatus().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(resolvedRuntimeException.getExceptionData().getSeverity().equals(MessageSeverity.ERROR));
+		assertTrue(resolvedRuntimeException.getExceptionData().getStatus().equals(HttpStatus.BAD_REQUEST));
 	}
 
 	@Test
@@ -123,10 +123,10 @@ public class ExceptionHandlingUtilsTest {
 		try {
 			ExceptionHandlingUtils.convertFromBipExceptionExtender(new RuntimeException());
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getKey()));
+			assertTrue(e.getExceptionData().getKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getKey()));
 			assertTrue(e.getMessage().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getMessage((String[]) null)));
-			assertTrue(e.getSeverity().equals(MessageSeverity.FATAL));
-			assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+			assertTrue(e.getExceptionData().getSeverity().equals(MessageSeverity.FATAL));
+			assertTrue(e.getExceptionData().getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 		}
 	}
 
@@ -136,11 +136,11 @@ public class ExceptionHandlingUtilsTest {
 			ExceptionHandlingUtils.castToBipRuntimeException(
 					new BipRuntimeException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST));
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getKey().equals(""));
+			assertTrue(e.getExceptionData().getKey().equals(""));
 			String msg = "Could not instantiate BipRuntimeException using values from throwable java.lang.RuntimeException";
 			assertTrue(e.getMessage().equals(msg));
-			assertTrue(e.getSeverity().equals(MessageSeverity.FATAL));
-			assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+			assertTrue(e.getExceptionData().getSeverity().equals(MessageSeverity.FATAL));
+			assertTrue(e.getExceptionData().getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 		}
 	}
 
@@ -149,11 +149,11 @@ public class ExceptionHandlingUtilsTest {
 		try {
 			ExceptionHandlingUtils.castToBipRuntimeException(new Exception());
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getMessageKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_CAST));
+			assertTrue(e.getExceptionData().getMessageKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_CAST));
 			String msg = MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_CAST.getMessage((String[]) null);
 			assertTrue(e.getMessage().equals(msg));
-			assertTrue(e.getSeverity().equals(MessageSeverity.FATAL));
-			assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+			assertTrue(e.getExceptionData().getSeverity().equals(MessageSeverity.FATAL));
+			assertTrue(e.getExceptionData().getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 		}
 	}
 
@@ -162,10 +162,10 @@ public class ExceptionHandlingUtilsTest {
 		try {
 			ExceptionHandlingUtils.convertFromBipExceptionExtender(new RuntimeException());
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getKey()));
+			assertTrue(e.getExceptionData().getKey().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getKey()));
 			assertTrue(e.getMessage().equals(MessageKeys.BIP_EXCEPTION_HANDLER_ERROR_VALUES.getMessage((String[]) null)));
-			assertTrue(e.getSeverity().equals(MessageSeverity.FATAL));
-			assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+			assertTrue(e.getExceptionData().getSeverity().equals(MessageSeverity.FATAL));
+			assertTrue(e.getExceptionData().getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 		}
 	}
 

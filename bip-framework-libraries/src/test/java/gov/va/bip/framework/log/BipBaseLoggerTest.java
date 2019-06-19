@@ -27,7 +27,6 @@ public class BipBaseLoggerTest extends AbstractBaseLogTester {
 		logger.info("Test message");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testMakeToLength_firstWordIsBiggerThanMaxLength() {
 		BipLogger logger = BipLoggerFactory.getLogger(BipBanner.class);

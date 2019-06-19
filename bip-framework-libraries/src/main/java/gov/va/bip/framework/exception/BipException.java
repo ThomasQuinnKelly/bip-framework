@@ -20,14 +20,8 @@ import gov.va.bip.framework.messages.MessageSeverity;
 public class BipException extends Exception implements BipExceptionExtender {
 	private static final long serialVersionUID = 4717771104509731434L;
 
-	/** The consumer facing identity key */
-	private final MessageKey key;
-	/** Any values needed to fill in params (e.g. value for {0}) in the MessageKey message */
-	private final String[] params;
-	/** The severity of the event: FATAL (500 series), ERROR (400 series), WARN (200 series), or INFO/DEBUG/TRACE */
-	private final MessageSeverity severity;
-	/** The best-fit HTTP Status, see <a href="https://tools.ietf.org/html/rfc7231">https://tools.ietf.org/html/rfc7231</a> */
-	private final HttpStatus status;
+	/** The {@link BipExceptionData} object*/
+	private final BipExceptionData exceptionData;
 
 	/**
 	 * Constructs a new <b>checked</b> Exception with the specified detail key, message, severity, and status.
@@ -63,39 +57,17 @@ public class BipException extends Exception implements BipExceptionExtender {
 	public BipException(final MessageKey key, final MessageSeverity severity, final HttpStatus status,
 			final Throwable cause, final String... params) {
 		super((key == null ? MessageKeys.NO_KEY.toString() : key.getMessage(params)), cause);
-		this.key = (key == null ? MessageKeys.NO_KEY : key);
-		this.params = params;
-		this.severity = severity;
-		this.status = status;
+		this.exceptionData = new BipExceptionData(key, severity, status, params);
 	}
 
+	/**
+	 * Returns the BIP Exception Data.
+	 *
+	 * @return the exception data
+	 * @see BipExceptionData
+	 */
 	@Override
-	public MessageKey getMessageKey() {
-		return key;
-	}
-
-	@Override
-	public String getKey() {
-		return key.getKey();
-	}
-
-	@Override
-	public String[] getParams() {
-		return params;
-	}
-
-	@Override
-	public HttpStatus getStatus() {
-		return status;
-	}
-
-	@Override
-	public MessageSeverity getSeverity() {
-		return severity;
-	}
-
-	@Override
-	public String getServerName() {
-		return System.getProperty("server.name");
+	public BipExceptionData getExceptionData() {
+		return exceptionData;
 	}
 }

@@ -24,10 +24,10 @@ public class BipFeignRuntimeExceptionTest {
 		BipFeignRuntimeException bipFeignRuntimeException =
 				new BipFeignRuntimeException(TEST_KEY, TEST_SEVERITY, TEST_HTTP_STATUS);
 
-		Assert.assertTrue(bipFeignRuntimeException.getKey().equals(TEST_KEY.getKey()));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getKey().equals(TEST_KEY.getKey()));
 		Assert.assertTrue(bipFeignRuntimeException.getMessage().equals(TEST_TEXT));
-		Assert.assertTrue(bipFeignRuntimeException.getStatus().equals(TEST_HTTP_STATUS));
-		Assert.assertTrue(bipFeignRuntimeException.getSeverity().equals(TEST_SEVERITY));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getStatus().equals(TEST_HTTP_STATUS));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getSeverity().equals(TEST_SEVERITY));
 	}
 
 	@Test
@@ -36,10 +36,10 @@ public class BipFeignRuntimeExceptionTest {
 				new BipFeignRuntimeException(TEST_KEY, TEST_SEVERITY,
 						TEST_HTTP_STATUS, new Exception("test wrapped error"));
 
-		Assert.assertTrue(bipFeignRuntimeException.getKey().equals(TEST_KEY.getKey()));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getKey().equals(TEST_KEY.getKey()));
 		Assert.assertTrue(bipFeignRuntimeException.getMessage().equals(TEST_TEXT));
-		Assert.assertTrue(bipFeignRuntimeException.getStatus().equals(TEST_HTTP_STATUS));
-		Assert.assertTrue(bipFeignRuntimeException.getSeverity().equals(TEST_SEVERITY));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getStatus().equals(TEST_HTTP_STATUS));
+		Assert.assertTrue(bipFeignRuntimeException.getExceptionData().getSeverity().equals(TEST_SEVERITY));
 	}
 
 }
