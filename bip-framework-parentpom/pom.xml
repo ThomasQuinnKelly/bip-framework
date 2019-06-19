@@ -252,8 +252,22 @@
 				<version>${micrometer.version}</version>
 				<scope>runtime</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+				<artifactId>fortify-build-utils</artifactId>
+				<version>${fortify-build-utils.version}</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+			<artifactId>fortify-build-utils</artifactId>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -558,14 +572,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>gov.va.vetservices.fortify-build-utils</groupId>
-						<artifactId>fortify-build-utils</artifactId>
-						<version>${fortify-build-utils.version}</version>
-						<type>jar</type>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
