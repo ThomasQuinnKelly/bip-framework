@@ -134,11 +134,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>vets.gov</id>
-			<name>Vets.gov Nexus Repository</name>
-			<url>https://nexus.internal.vetservices.gov/repository/maven-public/</url>
-		</repository>
 	</repositories>
 
 	<pluginRepositories>
