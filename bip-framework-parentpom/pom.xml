@@ -262,13 +262,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>gov.va.vetservices.fortify-build-utils</groupId>
-			<artifactId>fortify-build-utils</artifactId>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<resources>
@@ -830,6 +823,16 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox users -->
+		<profile>
+			<id>fortify</id>
+			<dependencies>
+				<dependency>
+					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+					<artifactId>fortify-build-utils</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
