@@ -504,68 +504,6 @@
 					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
 				</configuration>
 			</plugin>
-			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
-				are run using the sourceanalyzer and FPRUtility commandline applications
-				for now, so Fortify SCA will need to be installed before running -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>fortify-scan</id>
-						<configuration>
-							<target>
-								<property name="dir.scripts" value="target/antscripts" />
-								<property name="fortify.util.version" value="${fortify-build-utils.version}" />
-								<property name="fortify.util.jar.path"
-									value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
-								<property name="settings.file.location" value="${settings.file.location}" />
-
-								<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
-
-								<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
-								<echo message="Version: ${fortify.util.version}" />
-								<echo message="File name: ${fortify.util.jar.filename}" />
-								<echo message="Clean ${dir.scripts}" />
-								<delete dir="${dir.scripts}" />
-								<mkdir dir="${dir.scripts}" />
-								<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
-
-								<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
-									<mapper type="flatten" />
-									<patternset>
-										<include name="**/**/*.xml" />
-									</patternset>
-								</unzip>
-
-								<property name="local.ant.lib" value="target/antlib" />
-								<mkdir dir="${local.ant.lib}" />
-								<get
-									src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
-									dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
-								<fail
-									message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
-								>
-									<condition>
-										<not>
-											<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
-												property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
-										</not>
-									</condition>
-								</fail>
-
-								<echo message="Running antfile ${dir.scripts}/fortify.xml" />
-								<ant antfile="${dir.scripts}/fortify.xml">
-									<property name="mvn.project.settings" value="${settings.file.location}" />
-								</ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -827,6 +765,72 @@
 		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox users -->
 		<profile>
 			<id>fortify</id>
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
+				are run using the sourceanalyzer and FPRUtility commandline applications
+				for now, so Fortify SCA will need to be installed before running -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>fortify-scan</id>
+								<configuration>
+									<target>
+										<property name="dir.scripts" value="target/antscripts" />
+										<property name="fortify.util.version" value="${fortify-build-utils.version}" />
+										<property name="fortify.util.jar.path"
+												  value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
+										<property name="settings.file.location" value="${settings.file.location}" />
+
+										<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
+
+										<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+										<echo message="Version: ${fortify.util.version}" />
+										<echo message="File name: ${fortify.util.jar.filename}" />
+										<echo message="Clean ${dir.scripts}" />
+										<delete dir="${dir.scripts}" />
+										<mkdir dir="${dir.scripts}" />
+										<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
+
+										<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
+											<mapper type="flatten" />
+											<patternset>
+												<include name="**/**/*.xml" />
+											</patternset>
+										</unzip>
+
+										<property name="local.ant.lib" value="target/antlib" />
+										<mkdir dir="${local.ant.lib}" />
+										<get
+												src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
+												dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
+										<fail
+												message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
+										>
+											<condition>
+												<not>
+													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
+															  property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
+												</not>
+											</condition>
+										</fail>
+
+										<echo message="Running antfile ${dir.scripts}/fortify.xml" />
+										<ant antfile="${dir.scripts}/fortify.xml">
+											<property name="mvn.project.settings" value="${settings.file.location}" />
+										</ant>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 			<dependencies>
 				<dependency>
 					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
