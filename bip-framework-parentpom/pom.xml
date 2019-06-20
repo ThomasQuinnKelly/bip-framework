@@ -252,6 +252,13 @@
 				<version>${micrometer.version}</version>
 				<scope>runtime</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+				<artifactId>fortify-build-utils</artifactId>
+				<version>${fortify-build-utils.version}</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -816,6 +823,16 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox users -->
+		<profile>
+			<id>fortify</id>
+			<dependencies>
+				<dependency>
+					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+					<artifactId>fortify-build-utils</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
