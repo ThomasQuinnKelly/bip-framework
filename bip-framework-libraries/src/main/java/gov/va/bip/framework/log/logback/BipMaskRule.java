@@ -35,11 +35,11 @@ public class BipMaskRule {
 	 */
 	BipMaskRule(final BipMaskRule.Definition definition) {
 
-		if (definition == null || StringUtils.isBlank(definition.name) || StringUtils.isBlank(definition.pattern)
+		if (definition == null) {
+			throw new IllegalArgumentException("Rule Definition cannot be null.");
+		}
+		if (StringUtils.isBlank(definition.name) || StringUtils.isBlank(definition.pattern)
 				|| definition.unmasked < 0) {
-			if (definition == null) {
-				throw new IllegalArgumentException("Rule Definition cannot be null.");
-			}
 			throw new IllegalArgumentException("Name {" + definition.name + "} and pattern {" + definition.pattern
 					+ "} cannot be null or blank, and unmasked {" + definition.unmasked + "} must be >= 0");
 		}
@@ -298,7 +298,7 @@ public class BipMaskRule {
 		public boolean equals(Object obj) {
 			// reflectUpToClass arg is not inclusive, so must be set to the superclass
 			return EqualsBuilder.reflectionEquals(this, obj, false, super.getClass(),
-					new String[] { "definition", "bracesPattern", "maskPattern" });
+					"definition", "bracesPattern", "maskPattern");
 		}
 	}
 }
