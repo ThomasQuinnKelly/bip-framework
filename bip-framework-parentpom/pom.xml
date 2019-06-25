@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.2.RELEASE</version>
+		<version>2.1.6.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -17,6 +17,11 @@
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
+		<!-- This version down-grade required to work around POM build errors
+		 in older versions of STS / Eclipse with spring-boot 2.1.5.
+		 Upgrading to latest STS / Eclipse version would also solve the issue. -->
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+	
 		<!-- Configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -61,6 +66,8 @@
 		<!-- build plugins -->
 		<lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
 		<templating-maven-plugin.version>1.0.0</templating-maven-plugin.version>
+
+		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl are not compliant -->
 		<jaxb2-maven-plugin-codehaus.version>1.5</jaxb2-maven-plugin-codehaus.version>
 		<maven-jaxb2-plugin-jvnet.version>0.14.0</maven-jaxb2-plugin-jvnet.version>
 		<krasa-jaxb-tools.version>1.5</krasa-jaxb-tools.version>
@@ -77,36 +84,39 @@
 		<prometheus.version>0.5.0</prometheus.version>
 
 		<!-- testing - unit / integration / performance -->
-		<mockito-core.version>2.24.5</mockito-core.version>
+		<site-maven-plugin.version>0.12</site-maven-plugin.version>
+		<mockito-core.version>2.28.2</mockito-core.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-		<surefire-junit47.version>2.22.0</surefire-junit47.version>
-		<maven-cucumber-reporting.version>4.4.0</maven-cucumber-reporting.version>
-		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<jmeter-maven-plugin.version>2.8.5</jmeter-maven-plugin.version>
+		<surefire-junit47.version>3.0.0-M3</surefire-junit47.version>
+		<maven-cucumber-reporting.version>4.7.0</maven-cucumber-reporting.version>
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<jmeter-maven-plugin.version>2.9.0</jmeter-maven-plugin.version>
 		<jmeter-maven-plugin.versionRange>[2.8.5,)</jmeter-maven-plugin.versionRange>
 		<testng.version>6.14.3</testng.version>
-		<cucumber.version>1.2.5</cucumber.version>
+		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x version -->
 
 		<!-- application plugins -->
-		<spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>Greenwich.SR2</spring-cloud-dependencies.version>
 		<jjwt.version>0.9.1</jjwt.version>
+		<wss4j.version>1.6.19</wss4j.version>
 		<el-impl.version>2.2</el-impl.version>
 		<axiom-impl.version>1.2.22</axiom-impl.version>
-		<swagger-annotations.version>1.5.22</swagger-annotations.version>
+		<!-- WARNING Upgrade of swagger-ui to 3.22.2 causes swagger-ui-jar errors -->
 		<swagger-ui.version>3.22.1</swagger-ui.version>
+		<swagger-annotations.version>1.5.22</swagger-annotations.version>
 		<openapi.codegen.version>3.3.4</openapi.codegen.version>
 		<google.codereplacer.version>1.5.3</google.codereplacer.version>
 		<fest-assert.version>2.0M10</fest-assert.version>
 		<commons-io.version>2.6</commons-io.version>
-		<commons-lang3.version>3.8.1</commons-lang3.version>
-		<jackson-databind.version>2.9.8</jackson-databind.version>
+		<commons-lang3.version>3.9</commons-lang3.version>
+		<jackson-databind.version>2.9.9</jackson-databind.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<logstash-logback-encoder.version>5.3</logstash-logback-encoder.version>
-		<janino-version>3.0.12</janino-version>
+		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!-- 5.3 to 6.1 -->
+		<janino-version>3.0.13</janino-version>
 		<logback-classic.version>1.2.3</logback-classic.version>
 		<embedded-redis.version>0.6</embedded-redis.version>
 		<jfiglet.version>0.0.8</jfiglet.version>
-		<httpclient.version>4.5.7</httpclient.version>
+		<httpclient.version>4.5.9</httpclient.version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<!-- TEMPORARY TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
@@ -132,6 +142,14 @@
 			<id>spring-cloud</id>
 			<name>Spring Cloud</name>
 			<url>https://github.com/spring-cloud</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>maven-central</id>
+			<name>Maven Central</name>
+			<url>https://repo1.maven.org/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -226,7 +244,7 @@
 			<dependency>
 				<groupId>org.apache.ws.security</groupId>
 				<artifactId>wss4j</artifactId>
-				<version>1.6.18</version>
+				<version>${wss4j.version}</version>
 			</dependency>
 			<!-- unit test dependencies -->
 			<dependency>
@@ -735,7 +753,7 @@
 					<plugin>
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
-						<version>0.12</version>
+						<version>${site-maven-plugin.version}</version>
 						<configuration>
 							<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
 							<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
