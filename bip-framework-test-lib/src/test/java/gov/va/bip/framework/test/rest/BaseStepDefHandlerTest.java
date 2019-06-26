@@ -15,10 +15,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.rest.BaseStepDefHandler;
+import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 
 /**
  * The Class BaseStepDefHandlerTest.
@@ -27,19 +26,17 @@ public class BaseStepDefHandlerTest {
 
 	BaseStepDefHandler subject = new BaseStepDefHandler();
 
-	private static WireMockServer wireMockServer;
 	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
 
 	@BeforeClass
 	public static void setup() {
-		wireMockServer = new WireMockServer(9999);
-		wireMockServer.start();
+		WireMockServerInstance.getWiremockserver().start();
 		addGetPersonStub();
 	}
 
 	@AfterClass
 	public static void teardown() {
-		wireMockServer.stop();
+		WireMockServerInstance.getWiremockserver().stop();
 	}
 
 	@Before
@@ -59,7 +56,8 @@ public class BaseStepDefHandlerTest {
 	}
 
 	private static void addGetPersonStub() {
-		wireMockServer.stubFor(get(urlEqualTo("/person"))
+		WireMockServerInstance.getWiremockserver().stubFor(
+				get(urlEqualTo("/person"))
 				.willReturn(aResponse().withStatus(200).withBodyFile("json/get-person-response.json")));
 	}
 
