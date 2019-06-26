@@ -14,7 +14,6 @@ import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKeys;
 
 /**
  * Audit cache GET operations.
@@ -88,10 +87,6 @@ public class BipCacheInterceptor extends CacheInterceptor {
 			baseAsyncAudit.writeResponseAuditLog(response, new HttpResponseAuditData(), auditEventData, null, null);
 			LOGGER.debug(ADVICE_NAME + " audit logging handed off to async.");
 
-		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
-			baseAsyncAudit.handleInternalExceptionAndRethrowApplicationExceptions(ADVICE_NAME, ACTIVITY, auditEventData,
-					MessageKeys.BIP_AUDIT_CACHE_ERROR_UNEXPECTED,
-					throwable);
 		} finally {
 			LOGGER.debug(ADVICE_NAME + " finished.");
 		}
