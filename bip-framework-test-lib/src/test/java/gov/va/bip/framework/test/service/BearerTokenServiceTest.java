@@ -15,28 +15,25 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.BearerTokenService;
+import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 
 public class BearerTokenServiceTest {
 
-	private static WireMockServer wireMockServer;
 	private static final String TOKEN_URL_PROPERTY_KEY = "tokenUrl";
 	private static final String COULD_NOT_FIND_PROPERTY_STRING = "Could not find property : ";
 	private static final String BASE_URL_PROPERTY_KEY = "baseURL";
 
 	@BeforeClass
 	public static void setup() {
-		wireMockServer = new WireMockServer(9999);
-		wireMockServer.start();
+		WireMockServerInstance.getWiremockserver().start();
 		setupStub();
 	}
 
 	@AfterClass
 	public static void teardown() {
-		wireMockServer.stop();
+		WireMockServerInstance.getWiremockserver().stop();
 	}
 
 	public static void setupStub() {
@@ -44,7 +41,8 @@ public class BearerTokenServiceTest {
 	}
 
 	private static void addPostBearerStub() {
-		wireMockServer.stubFor(post(urlEqualTo("/token"))
+		WireMockServerInstance.getWiremockserver().stubFor(
+				post(urlEqualTo("/token"))
 				.willReturn(aResponse().withStatus(200).withBodyFile("bearer/post-bearer-response.txt")));
 	}
 
