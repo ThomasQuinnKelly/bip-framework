@@ -65,4 +65,10 @@ public class BasicErrorControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
 	}
+	
+	@Test
+	public void testCSRFBasicController() throws Exception{
+		this.mockMvc.perform(post("/csrf"))
+		.andExpect(status().isOk());
+	}
 }
