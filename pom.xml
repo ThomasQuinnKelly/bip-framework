@@ -22,6 +22,7 @@
 
 	<properties>
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
+		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 	</properties>
 
 	<!-- TEMPORARY PLUGINS SKIP TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
@@ -29,6 +30,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven-deploy-plugin.version}</version>
 				<inherited>false</inherited>
 				<configuration>
 					<skip>true</skip>
