@@ -5,44 +5,44 @@
   <version>1.0.3-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20190626.145316</timestamp>
+      <timestamp>20190626.155950</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20190626145316</lastUpdated>
+    <lastUpdated>20190626155950</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>javadoc</classifier>
         <extension>jar</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>tests</classifier>
         <extension>jar</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>test-sources</classifier>
         <extension>jar</extension>
-        <value>1.0.3-20190626.145316-1</value>
-        <updated>20190626145316</updated>
+        <value>1.0.3-20190626.155950-1</value>
+        <updated>20190626155950</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
