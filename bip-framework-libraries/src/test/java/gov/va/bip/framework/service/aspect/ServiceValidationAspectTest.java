@@ -224,8 +224,56 @@ public class ServiceValidationAspectTest {
 
 	}
 
+	@Test(expected = BipRuntimeException.class)
+	public void testaddValidationErrorMessages_forInstantiationExceptionCatchBlockCode() {
+		new LinkedList<Object>();
+		// .add("some string");
+		Method testMethod = null;
+		try {
+			testMethod = this.getClass().getMethod("testMethodToThrowInstantiationException", String.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			fail("unable to test validateInputsToTheMethod's catchBlockCode");
+			e.printStackTrace();
+		}
+		ReflectionTestUtils.invokeMethod(aspect, "addValidationErrorMessages", testMethod, null);
+	}
+
+	@Test(expected = BipRuntimeException.class)
+	public void testaddValidationErrorMessages_forIllegalAccessExceptionCatchBlockCode() {
+		Method testMethod = null;
+		try {
+			testMethod = this.getClass().getMethod("testMethodToThrowIllegalAccessException", String.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			fail("unable to test validateInputsToTheMethod's catchBlockCode");
+			e.printStackTrace();
+		}
+		ReflectionTestUtils.invokeMethod(aspect, "addValidationErrorMessages", testMethod, null);
+	}
+
 	public void testMethod(final String testParam) {
 		// do nothing
+	}
+
+	public NonInitializableReturnType testMethodToThrowInstantiationException(final String testParam) {
+		// do nothing
+		return null;
+	}
+
+	public static class NonInitializableReturnType {
+		NonInitializableReturnType() throws InstantiationException {
+			throw new InstantiationException();
+		}
+	}
+
+	public ReturnTypeWithInaccessibleConstructor testMethodToThrowIllegalAccessException(final String testParam) {
+		// do nothing
+		return null;
+	}
+
+	public static class ReturnTypeWithInaccessibleConstructor {
+		ReturnTypeWithInaccessibleConstructor() throws IllegalAccessException {
+			throw new IllegalAccessException();
+		}
 	}
 
 	public static class DomainResponseValidatorForTest implements Validator<DomainResponse> {

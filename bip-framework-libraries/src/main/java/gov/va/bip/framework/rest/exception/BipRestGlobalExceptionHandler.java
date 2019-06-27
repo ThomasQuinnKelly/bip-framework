@@ -1,7 +1,7 @@
 package gov.va.bip.framework.rest.exception;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -83,12 +83,12 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		 */
 		String causeClassname = (ex.getCause() == null
 				? null
-				: ex.getCause().getClass().getName() + ":");
+						: ex.getCause().getClass().getName() + ":");
 
 		/* Scrub any occurrances of cause classname from exception message */
 		String msg = (causeClassname != null && StringUtils.isNotBlank(ex.getMessage())
 				? ex.getMessage().replaceAll(causeClassname, "")
-				: ex.getMessage());
+						: ex.getMessage());
 
 		/* Final check for empty */
 		if (StringUtils.isBlank(msg)) {
@@ -339,13 +339,9 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 			} catch (IOException e) {
 				log(e, MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION, MessageSeverity.ERROR, status,
 						params);
-				try {
-					apiError.addMessage(MessageSeverity.ERROR, key.getKey(),
-							new String(responseBody, "UTF-8"),
-							httpClientErrorException.getStatusCode());
-				} catch (UnsupportedEncodingException ex) {
-					logger.warn("Error occurred while converting byte to string", ex);
-				}
+				apiError.addMessage(MessageSeverity.ERROR, key.getKey(),
+						new String(responseBody, Charset.defaultCharset()),
+						httpClientErrorException.getStatusCode());
 			}
 		}
 
