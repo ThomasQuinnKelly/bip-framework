@@ -151,6 +151,13 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 		return response;
 	}
 
+	/**
+	 * Adds the validation error messages.
+	 *
+	 * @param method the method
+	 * @param messages the messages
+	 * @return the domain response
+	 */
 	private DomainResponse addValidationErrorMessages(final Method method, final List<ServiceMessage> messages) {
 		DomainResponse response = null;
 		try {
