@@ -144,21 +144,27 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 			}
 			// add any validation error messages
 			if (!messages.isEmpty()) {
-				try {
-					response = (DomainResponse) method.getReturnType().newInstance();
-				}catch (InstantiationException e) {
-					LOGGER.error("Could not return input validation errors because the class " + method.getReturnType() + " could not be instantiated", e);
-					throw new BipRuntimeException(MessageKeys.BIP_DEV_ILLEGAL_INSTANTIATION, MessageSeverity.ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR, method.getReturnType().getSimpleName());
-				}catch (IllegalAccessException e) {
-					LOGGER.error("Could not return input validation errors because the class " + method.getReturnType() + " could not be accessed", e);
-					throw new BipRuntimeException(MessageKeys.BIP_DEV_ILLEGAL_ACCESS, MessageSeverity.ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR, method.getReturnType().getSimpleName());
-				}
-				response.addMessages(messages);
+				response = addValidationErrorMessages(method, messages);
 			}
 		}
 
+		return response;
+	}
+
+	private DomainResponse addValidationErrorMessages(final Method method, final List<ServiceMessage> messages) {
+		DomainResponse response = null;
+		try {
+			response = (DomainResponse) method.getReturnType().newInstance();
+		}catch (InstantiationException e) {
+			LOGGER.error("Could not return input validation errors because the class " + method.getReturnType() + " could not be instantiated", e);
+			throw new BipRuntimeException(MessageKeys.BIP_DEV_ILLEGAL_INSTANTIATION, MessageSeverity.ERROR,
+					HttpStatus.INTERNAL_SERVER_ERROR, method.getReturnType().getSimpleName());
+		}catch (IllegalAccessException e) {
+			LOGGER.error("Could not return input validation errors because the class " + method.getReturnType() + " could not be accessed", e);
+			throw new BipRuntimeException(MessageKeys.BIP_DEV_ILLEGAL_ACCESS, MessageSeverity.ERROR,
+					HttpStatus.INTERNAL_SERVER_ERROR, method.getReturnType().getSimpleName());
+		}
+		response.addMessages(messages);
 		return response;
 	}
 
