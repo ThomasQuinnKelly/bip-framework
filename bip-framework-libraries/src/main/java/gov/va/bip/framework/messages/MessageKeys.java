@@ -31,7 +31,10 @@ public enum MessageKeys implements MessageKey {
 	PROPAGATE("PROPAGATE", ""),
 
 	/** Problem with reflection; {0} = class simple name */
-	BIP_DEV_ILLEGAL_INSTANTIATION("bip.framework.dev.illegal.instantiation", "Do not instantiate static classes."),
+	BIP_DEV_ILLEGAL_INSTANTIATION("bip.framework.dev.illegal.instantiation",
+			"Do not instantiate static classes or do not try to instantiate when an appropriate constructor does not exist."),
+	/** Problem with reflection; {0} = class simple name */
+	BIP_DEV_ILLEGAL_ACCESS("bip.framework.dev.illegal.access", "Could not access appropriate constructor."),
 	/**
 	 * Problem with reflection; {0} = class being instantiated; {1} = action being taken; {2} = type being acted against; {3}
 	 * super-interface
@@ -166,7 +169,7 @@ public enum MessageKeys implements MessageKey {
 	 * @param key - the key as declared in the properties file
 	 * @param defaultMessage - in case the key cannot be found
 	 */
-	private MessageKeys(String key, String defaultMessage) {
+	private MessageKeys(final String key, final String defaultMessage) {
 		this.key = key;
 		this.defaultMessage = defaultMessage;
 	}
