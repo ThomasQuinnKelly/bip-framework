@@ -1,7 +1,7 @@
 package gov.va.bip.framework.rest.exception;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -353,13 +353,9 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 			} catch (IOException e) {
 				log(e, MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION, MessageSeverity.ERROR, status,
 						params);
-				try {
-					apiError.addMessage(MessageSeverity.ERROR, key.getKey(),
-							new String(responseBody, "UTF-8"),
-							httpClientErrorException.getStatusCode());
-				} catch (UnsupportedEncodingException ex) {
-					logger.warn("Error occurred while converting byte to string", ex);
-				}
+				apiError.addMessage(MessageSeverity.ERROR, key.getKey(),
+						new String(responseBody, Charset.defaultCharset()),
+						httpClientErrorException.getStatusCode());
 			}
 		}
 
