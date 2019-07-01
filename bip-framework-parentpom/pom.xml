@@ -17,7 +17,7 @@
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
-			<!-- This version down-grade required to work around POM build errors in 
+		<!-- This version down-grade required to work around POM build errors in 
 			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest 
 			STS / Eclipse version would also solve the issue. -->
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -896,7 +896,7 @@
 											<groupId>org.webjars</groupId>
 											<artifactId>swagger-ui</artifactId>
 											<version>${swagger-ui.version}</version>
-											<overWrite>false</overWrite>
+											<overWrite>true</overWrite>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -971,7 +971,8 @@
 												dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}" />
 										</copy>
 										<delete
-											dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}" />
+											dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}"
+											failonerror="false" />
 									</target>
 								</configuration>
 							</execution>
