@@ -12,16 +12,16 @@
 	<groupId>gov.va.bip.framework</groupId>
 	<artifactId>bip-framework-parentpom</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>${project.artifactId}</name>
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
-		<!-- This version down-grade required to work around POM build errors
-		 in older versions of STS / Eclipse with spring-boot 2.1.5.
-		 Upgrading to latest STS / Eclipse version would also solve the issue. -->
+			<!-- This version down-grade required to work around POM build errors in 
+			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest 
+			STS / Eclipse version would also solve the issue. -->
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-	
+
 		<!-- Configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -61,24 +61,25 @@
 		<fortify.upload>false</fortify.upload> <!-- pass as -D from build server where upload is desired -->
 		<fortify.token>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.token>
 		<fortify.url>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.url>
-		
+
 		<!-- 3rd party maven plugin versions -->
 		<!-- build plugins -->
 		<lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
 		<templating-maven-plugin.version>1.0.0</templating-maven-plugin.version>
 
-		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl are not compliant -->
+		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl 
+			are not compliant -->
 		<jaxb2-maven-plugin-codehaus.version>1.5</jaxb2-maven-plugin-codehaus.version>
 		<maven-jaxb2-plugin-jvnet.version>0.14.0</maven-jaxb2-plugin-jvnet.version>
 		<krasa-jaxb-tools.version>1.5</krasa-jaxb-tools.version>
 		<jaxb2-basics-annotate.version>1.1.0</jaxb2-basics-annotate.version>
-		
+
 		<!-- build pipeline plugins -->
 		<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
 		<fortify-build-utils.version>1.2</fortify-build-utils.version>
 		<sca-maven-plugin.version>17.20</sca-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.4</dockerfile-maven-plugin.version>
-		
+
 		<!-- instrumentation plugins -->
 		<spring-metrics.version>0.5.1.RELEASE</spring-metrics.version>
 		<prometheus.version>0.5.0</prometheus.version>
@@ -94,7 +95,8 @@
 		<jmeter-maven-plugin.version>2.9.0</jmeter-maven-plugin.version>
 		<jmeter-maven-plugin.versionRange>[2.8.5,)</jmeter-maven-plugin.versionRange>
 		<testng.version>6.14.3</testng.version>
-		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x version -->
+		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x 
+			version -->
 
 		<!-- application plugins -->
 		<spring-cloud-dependencies.version>Greenwich.SR2</spring-cloud-dependencies.version>
@@ -111,7 +113,8 @@
 		<commons-lang3.version>3.9</commons-lang3.version>
 		<jackson-databind.version>2.9.9</jackson-databind.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!-- 5.3 to 6.1 -->
+		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!-- 
+			5.3 to 6.1 -->
 		<janino-version>3.0.13</janino-version>
 		<logback-classic.version>1.2.3</logback-classic.version>
 		<embedded-redis.version>0.6</embedded-redis.version>
@@ -174,7 +177,6 @@
 			<url>${repo.snapshot}</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 
 	<dependencyManagement>
 		<dependencies>
@@ -268,14 +270,14 @@
 			</dependency>
 			<!-- OpenAPI Tools -->
 			<dependency>
-			    <groupId>org.openapitools</groupId>
-			    <artifactId>openapi-generator-cli</artifactId>
-			    <version>${openapi.codegen.version}</version>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-cli</artifactId>
+				<version>${openapi.codegen.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.openapitools</groupId>
-			    <artifactId>openapi-generator</artifactId>
-			    <version>${openapi.codegen.version}</version>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator</artifactId>
+				<version>${openapi.codegen.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -630,7 +632,8 @@
 								<argument>-Djavax.net.ssl.keyStorePassword=${javax.net.ssl.keyStorePassword}</argument>
 							</arguments>
 						</jMeterProcessJVMSettings>
-						<!-- Configuration will fail build only if error rate is higher than 1%. -->
+						<!-- Configuration will fail build only if error rate is higher than 
+							1%. -->
 						<errorRateThresholdInPercent>1</errorRateThresholdInPercent>
 					</configuration>
 					<executions>
@@ -745,8 +748,8 @@
 					<!-- TEMPORARY GITHUB PLUGIN TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-					    <artifactId>maven-deploy-plugin</artifactId>
-					    <version>${maven-deploy-plugin.version}</version>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>${maven-deploy-plugin.version}</version>
 						<configuration>
 							<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
 						</configuration>
@@ -782,11 +785,12 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox users -->
+		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox 
+			users -->
 		<profile>
 			<id>fortify</id>
-			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
-				are run using the sourceanalyzer and FPRUtility commandline applications
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 
+				are run using the sourceanalyzer and FPRUtility commandline applications 
 				for now, so Fortify SCA will need to be installed before running -->
 			<build>
 				<plugins>
@@ -801,20 +805,23 @@
 										<property name="dir.scripts" value="target/antscripts" />
 										<property name="fortify.util.version" value="${fortify-build-utils.version}" />
 										<property name="fortify.util.jar.path"
-												  value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
+											value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
 										<property name="settings.file.location" value="${settings.file.location}" />
 
 										<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
 
-										<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+										<echo
+											message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
 										<echo message="Version: ${fortify.util.version}" />
 										<echo message="File name: ${fortify.util.jar.filename}" />
 										<echo message="Clean ${dir.scripts}" />
 										<delete dir="${dir.scripts}" />
 										<mkdir dir="${dir.scripts}" />
-										<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
+										<copy todir="${dir.scripts}" flatten="true" overwrite="true"
+											file="${fortify.util.jar.path}" />
 
-										<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
+										<unzip src="${dir.scripts}/${fortify.util.jar.filename}"
+											dest="${dir.scripts}" failOnEmptyArchive="true">
 											<mapper type="flatten" />
 											<patternset>
 												<include name="**/**/*.xml" />
@@ -824,15 +831,16 @@
 										<property name="local.ant.lib" value="target/antlib" />
 										<mkdir dir="${local.ant.lib}" />
 										<get
-												src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
-												dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
+											src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
+											dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true"
+											skipexisting="true" />
 										<fail
-												message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
-										>
+											message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
 											<condition>
 												<not>
-													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
-															  property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
+													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar"
+														algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb"
+														verifyproperty="checksum.matches" />
 												</not>
 											</condition>
 										</fail>
@@ -862,12 +870,10 @@
 		<profile>
 			<id>org-openapitools-codegen-parent</id>
 			<activation>
-				<!-- Profile is activated if openapi.yml exists  -->
+				<!-- Profile is activated if openapi.yml exists -->
 				<file>
-					<!--
-						This path is also used in the framework parentpom.
-						If this path changes, framework must also be updated.
-					-->
+					<!-- This path is also used in the framework parentpom. If this path 
+						changes, framework must also be updated. -->
 					<exists>${basedir}/src/main/resources/openapi/openapi.yml</exists>
 				</file>
 			</activation>
