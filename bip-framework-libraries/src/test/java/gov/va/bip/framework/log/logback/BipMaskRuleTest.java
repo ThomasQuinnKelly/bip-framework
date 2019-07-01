@@ -104,118 +104,120 @@ public class BipMaskRuleTest {
 
 	}
 
-	@Test
-	public void testDefinition() {
-		BipMaskRule.Definition def = null;
-		try {
-			new BipMaskRule(def);
-		} catch (Exception e) {
-			assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+	public static class GeneralTests {
+		@Test
+		public void testDefinition() {
+			BipMaskRule.Definition def = null;
+			try {
+				new BipMaskRule(def);
+			} catch (Exception e) {
+				assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+			}
+
+			def = new BipMaskRule.Definition();
+			try {
+				new BipMaskRule(def);
+			} catch (Exception e) {
+				assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+			}
+
+			def.setName("Some Name");
+			try {
+				new BipMaskRule(def);
+			} catch (Exception e) {
+				assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+			}
+
+			def.setPattern("some[ -]?Pattern");
+			def.setUnmasked(-1);
+			try {
+				new BipMaskRule(def);
+			} catch (Exception e) {
+				assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+			}
 		}
 
-		def = new BipMaskRule.Definition();
-		try {
-			new BipMaskRule(def);
-		} catch (Exception e) {
-			assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+		@Test
+		public void testDefinitionGetters() {
+			BipMaskRule.Definition def = new BipMaskRule.Definition("Name", "Prefix", "Suffix", "Pattern", 1);
+			assertThat(def.getName()).isEqualTo("Name");
+			assertThat(def.getPrefix()).isEqualTo("Prefix");
+			assertThat(def.getSuffix()).isEqualTo("Suffix");
+			assertThat(def.getPattern()).isEqualTo("Pattern");
+			assertThat(def.getUnmasked()).isEqualTo(1);
 		}
 
-		def.setName("Some Name");
-		try {
-			new BipMaskRule(def);
-		} catch (Exception e) {
-			assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+		@Test
+		public final void testHashCodeAndEqualsAndEtters()
+				throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+			BipMaskRule.Definition testDef = new BipMaskRule.Definition();
+			BipMaskRule.Definition otherDef = new BipMaskRule.Definition();
+
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(testDef));
+			assertFalse(testDef.equals(null));
+			assertFalse(testDef.equals("A different type"));
+			assertTrue(testDef.equals(otherDef));
+
+			testDef.setName("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			otherDef.setName("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(otherDef));
+			testDef.setName(null);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			testDef.setName("TEST"); // for next test
+
+			testDef.setPattern("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			otherDef.setPattern("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(otherDef));
+			testDef.setPattern(null);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			testDef.setPattern("TEST"); // for next test
+
+			testDef.setPrefix("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			otherDef.setPrefix("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(otherDef));
+			testDef.setPrefix(null);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			testDef.setPrefix("TEST"); // for next test
+
+			testDef.setSuffix("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			otherDef.setSuffix("TEST");
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(otherDef));
+			testDef.setSuffix(null);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			testDef.setSuffix("TEST"); // for next test
+
+			testDef.setUnmasked(4);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
+			otherDef.setUnmasked(4);
+			assertTrue(testDef.hashCode() != 0);
+			assertTrue(testDef.equals(otherDef));
+			testDef.setUnmasked(0);
+			assertTrue(testDef.hashCode() != 0);
+			assertFalse(testDef.equals(otherDef));
 		}
 
-		def.setPattern("somePattern");
-		def.setUnmasked(-1);
-		try {
-			new BipMaskRule(def);
-		} catch (Exception e) {
-			assertTrue(IllegalArgumentException.class.equals(e.getClass()));
+		@Test
+		public final void testToString() {
+			BipMaskRule.Definition testFilter = new BipMaskRule.Definition();
+			assertTrue(testFilter.toString().length() > 0);
 		}
-	}
-
-	@Test
-	public void testDefinitionGetters() {
-		BipMaskRule.Definition def = new BipMaskRule.Definition("Name", "Prefix", "Suffix", "Pattern", 1);
-		assertThat(def.getName()).isEqualTo("Name");
-		assertThat(def.getPrefix()).isEqualTo("Prefix");
-		assertThat(def.getSuffix()).isEqualTo("Suffix");
-		assertThat(def.getPattern()).isEqualTo("Pattern");
-		assertThat(def.getUnmasked()).isEqualTo(1);
-	}
-
-	@Test
-	public final void testHashCodeAndEqualsAndEtters()
-			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		BipMaskRule.Definition testDef = new BipMaskRule.Definition();
-		BipMaskRule.Definition otherDef = new BipMaskRule.Definition();
-
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(testDef));
-		assertFalse(testDef.equals(null));
-		assertFalse(testDef.equals("A different type"));
-		assertTrue(testDef.equals(otherDef));
-
-		testDef.setName("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		otherDef.setName("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(otherDef));
-		testDef.setName(null);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		testDef.setName("TEST"); // for next test
-
-		testDef.setPattern("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		otherDef.setPattern("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(otherDef));
-		testDef.setPattern(null);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		testDef.setPattern("TEST"); // for next test
-
-		testDef.setPrefix("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		otherDef.setPrefix("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(otherDef));
-		testDef.setPrefix(null);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		testDef.setPrefix("TEST"); // for next test
-
-		testDef.setSuffix("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		otherDef.setSuffix("TEST");
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(otherDef));
-		testDef.setSuffix(null);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		testDef.setSuffix("TEST"); // for next test
-
-		testDef.setUnmasked(4);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-		otherDef.setUnmasked(4);
-		assertTrue(testDef.hashCode() != 0);
-		assertTrue(testDef.equals(otherDef));
-		testDef.setUnmasked(0);
-		assertTrue(testDef.hashCode() != 0);
-		assertFalse(testDef.equals(otherDef));
-	}
-
-	@Test
-	public final void testToString() {
-		BipMaskRule.Definition testFilter = new BipMaskRule.Definition();
-		assertTrue(testFilter.toString().length() > 0);
 	}
 }
