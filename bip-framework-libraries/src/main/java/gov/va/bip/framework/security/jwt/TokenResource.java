@@ -2,6 +2,7 @@ package gov.va.bip.framework.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,8 +33,7 @@ public class TokenResource implements SwaggerResponseMessages {
 			+ "<tr><td>File Number</td><td>123456789</td><td>PI</td><td>200BRLS</td><td>USVBA</td><td>A</td></tr>"
 			+ "<tr><td>ICN</td><td>1234567890V123456</td><td>NI</td><td>200M</td><td>USVHA</td><td>A</td></tr>"
 			+ "<tr><td>EDIPI / PNID</td><td>1234567890</td><td>NI</td><td>200DOD</td><td>USDOD</td><td>A</td></tr>"
-			+ "<tr><td>SSN</td><td>123456789</td><td>SS</td><td></td><td></td><td></td></tr>"
-			+ "</table>";
+			+ "<tr><td>SSN</td><td>123456789</td><td>SS</td><td></td><td></td><td></td></tr>" + "</table>";
 
 	@Autowired
 	private JwtAuthenticationProperties jwtAuthenticationProperties;
@@ -41,15 +41,18 @@ public class TokenResource implements SwaggerResponseMessages {
 	@Value("${bip.framework.security.jwt.validation.required-parameters:}")
 	private String[] jwtTokenRequiredParameterList;
 
-	@RequestMapping(value = "/token", method = RequestMethod.POST, consumes = { "application/json" })
+	@RequestMapping(value = { "/token", "/api/{v?.*}/token" }, method = RequestMethod.POST, consumes = {
+			MediaType.ALL_VALUE }, produces = { MediaType.ALL_VALUE })
 	@ApiOperation(value = API_OPERATION_VALUE, notes = API_OPERATION_NOTES)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = MESSAGE_200), @ApiResponse(code = 400, message = MESSAGE_400),
-			@ApiResponse(code = 500, message = MESSAGE_500) })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = MESSAGE_200),
+			@ApiResponse(code = 400, message = MESSAGE_400), @ApiResponse(code = 500, message = MESSAGE_500) })
 	public String getToken(
 			@ApiParam(value = API_PARAM_GETTOKEN_PERSON, required = true) @RequestBody final Person person) {
-		// @ApiModel(description="Identity information for the authenticated user.")
+		// @ApiModel(description="Identity information for the authenticated
+		// user.")
 		return GenerateToken.generateJwt(person, jwtAuthenticationProperties.getExpireInSeconds(),
-				jwtAuthenticationProperties.getSecret(), jwtAuthenticationProperties.getIssuer(), jwtTokenRequiredParameterList);
+				jwtAuthenticationProperties.getSecret(), jwtAuthenticationProperties.getIssuer(),
+				jwtTokenRequiredParameterList);
 	}
 
 	/**
@@ -60,8 +63,8 @@ public class TokenResource implements SwaggerResponseMessages {
 	 */
 	@InitBinder
 	public void initBinder(final WebDataBinder binder) {
-		binder.setAllowedFields("birthDate", "firstName", "lastName", "middleName", "prefix", "suffix",
-				"gender", "assuranceLevel", "email", "dodedipnid", "pnidType", "pnid", "pid", "icn", "fileNumber",
-				"tokenId", "correlationIds");
+		binder.setAllowedFields("birthDate", "firstName", "lastName", "middleName", "prefix", "suffix", "gender",
+				"assuranceLevel", "email", "dodedipnid", "pnidType", "pnid", "pid", "icn", "fileNumber", "tokenId",
+				"correlationIds");
 	}
 }

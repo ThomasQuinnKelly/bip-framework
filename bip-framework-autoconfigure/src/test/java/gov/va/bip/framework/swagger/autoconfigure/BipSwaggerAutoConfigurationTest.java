@@ -1,44 +1,62 @@
 package gov.va.bip.framework.swagger.autoconfigure;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.fasterxml.classmate.TypeResolver;
-
-import gov.va.bip.framework.swagger.autoconfigure.BipSwaggerAutoConfiguration;
-import gov.va.bip.framework.swagger.autoconfigure.SwaggerProperties;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.util.UrlPathHelper;
 
 @RunWith(SpringRunner.class)
 public class BipSwaggerAutoConfigurationTest {
 
-	@Mock
-	private SwaggerProperties swaggerProperties = new SwaggerProperties();
-
-	@Mock
-	private TypeResolver typeResolver;
-
 	@InjectMocks
 	BipSwaggerAutoConfiguration bipSwaggerAutoConfiguration;
+	
+	@Mock
+	private ResourceHandlerRegistry registry;
+	
+	@Mock
+	private ResourceHandlerRegistration registration;
+	
+	@Mock
+	private MockHttpServletResponse response;
+	
+	@Mock
+	private MockHttpServletRequest request;
+	
+	@Mock
+	private ViewControllerRegistry viewControllerRegistry;
+	
+	@Before
+	public void setUp() {
+		GenericWebApplicationContext appContext = new GenericWebApplicationContext();
+		appContext.refresh();
+
+		this.registry = new ResourceHandlerRegistry(appContext, new MockServletContext(),
+				new ContentNegotiationManager(), new UrlPathHelper());
+
+		this.registration = this.registry.addResourceHandler("/**");
+		this.registration.addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
+		
+		this.viewControllerRegistry = new ViewControllerRegistry(new StaticApplicationContext());
+		this.request = new MockHttpServletRequest("GET", "/");
+		this.response = new MockHttpServletResponse();
+	}
 
 	@Test
 	public void swaggerAutoConfigurationTest() throws Exception {
-		Docket docket = bipSwaggerAutoConfiguration.categoryApi();
-		assertEquals("default", docket.getGroupName());
-		DocumentationType documentationType = docket.getDocumentationType();
-		assertEquals("swagger", documentationType.getName());
-		assertEquals("2.0", documentationType.getVersion());
-		assertEquals("application", documentationType.getMediaType().getType());
-		assertEquals("json", documentationType.getMediaType().getSubtype());
-		assertEquals(0, documentationType.getMediaType().getParameters().size());
-		assertNotNull(bipSwaggerAutoConfiguration.categoryApi());
+		bipSwaggerAutoConfiguration.addResourceHandlers(registry);
+		bipSwaggerAutoConfiguration.addViewControllers(viewControllerRegistry);
 	}
-
 }

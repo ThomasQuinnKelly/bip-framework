@@ -1,23 +1,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.2.RELEASE</version>
+		<version>2.1.6.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>gov.va.bip.framework</groupId>
 	<artifactId>bip-framework-parentpom</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>${project.artifactId}</name>
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
+		<!-- This version down-grade required to work around POM build errors in 
+			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest 
+			STS / Eclipse version would also solve the issue. -->
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+
 		<!-- Configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -40,7 +44,6 @@
 		<sonar.coverage.exclusions>**/api/v*/transfer/**/*,**/*Application.java,**/*AbstractRemoteServiceCallMock.java</sonar.coverage.exclusions>
 		<sonar.exclusions>**/api/v*/transfer/**/*,**/*Application.java,**/*AbstractRemoteServiceCallMock.java</sonar.exclusions>
 		<sonar.test.exclusions>**/test/*</sonar.test.exclusions>
-
 		<include.int.tests.pattern>**/*IT.java,**/*Runner.java</include.int.tests.pattern>
 
 		<!-- Code version control configuration -->
@@ -58,53 +61,65 @@
 		<fortify.upload>false</fortify.upload> <!-- pass as -D from build server where upload is desired -->
 		<fortify.token>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.token>
 		<fortify.url>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.url>
+
 		<!-- 3rd party maven plugin versions -->
 		<!-- build plugins -->
 		<lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
 		<templating-maven-plugin.version>1.0.0</templating-maven-plugin.version>
+
+		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl 
+			are not compliant -->
 		<jaxb2-maven-plugin-codehaus.version>1.5</jaxb2-maven-plugin-codehaus.version>
 		<maven-jaxb2-plugin-jvnet.version>0.14.0</maven-jaxb2-plugin-jvnet.version>
 		<krasa-jaxb-tools.version>1.5</krasa-jaxb-tools.version>
 		<jaxb2-basics-annotate.version>1.1.0</jaxb2-basics-annotate.version>
+
 		<!-- build pipeline plugins -->
 		<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
 		<fortify-build-utils.version>1.2</fortify-build-utils.version>
 		<sca-maven-plugin.version>17.20</sca-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.4</dockerfile-maven-plugin.version>
+
 		<!-- instrumentation plugins -->
 		<spring-metrics.version>0.5.1.RELEASE</spring-metrics.version>
 		<prometheus.version>0.5.0</prometheus.version>
 
-		<!-- testing - unit / integratino / performance -->
-		<mockito-core.version>2.24.5</mockito-core.version>
+		<!-- testing - unit / integration / performance -->
+		<site-maven-plugin.version>0.12</site-maven-plugin.version>
+		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+		<mockito-core.version>2.28.2</mockito-core.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-		<surefire-junit47.version>2.22.0</surefire-junit47.version>
-		<maven-cucumber-reporting.version>4.4.0</maven-cucumber-reporting.version>
-		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<jmeter-maven-plugin.version>2.8.5</jmeter-maven-plugin.version>
+		<surefire-junit47.version>3.0.0-M3</surefire-junit47.version>
+		<maven-cucumber-reporting.version>4.7.0</maven-cucumber-reporting.version>
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<jmeter-maven-plugin.version>2.9.0</jmeter-maven-plugin.version>
 		<jmeter-maven-plugin.versionRange>[2.8.5,)</jmeter-maven-plugin.versionRange>
 		<testng.version>6.14.3</testng.version>
-		<cucumber.version>1.2.5</cucumber.version>
-		<rest-assured.version>3.3.0</rest-assured.version>
+		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x 
+			version -->
 
 		<!-- application plugins -->
-		<spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>Greenwich.SR2</spring-cloud-dependencies.version>
 		<jjwt.version>0.9.1</jjwt.version>
+		<wss4j.version>1.6.19</wss4j.version>
 		<el-impl.version>2.2</el-impl.version>
 		<axiom-impl.version>1.2.22</axiom-impl.version>
+		<swagger-ui.version>3.22.2</swagger-ui.version>
 		<swagger-annotations.version>1.5.22</swagger-annotations.version>
-		<springfox.version>2.9.2</springfox.version>
+		<openapi.codegen.version>3.3.4</openapi.codegen.version>
+		<google.codereplacer.version>1.5.3</google.codereplacer.version>
 		<fest-assert.version>2.0M10</fest-assert.version>
 		<commons-io.version>2.6</commons-io.version>
-		<commons-lang3.version>3.8.1</commons-lang3.version>
-		<jackson-databind.version>2.9.8</jackson-databind.version>
+		<commons-lang3.version>3.9</commons-lang3.version>
+		<jackson-databind.version>2.9.9</jackson-databind.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<logstash-logback-encoder.version>5.3</logstash-logback-encoder.version>
-		<janino-version>3.0.12</janino-version>
+		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!-- 
+			5.3 to 6.1 -->
+		<janino-version>3.0.13</janino-version>
 		<logback-classic.version>1.2.3</logback-classic.version>
 		<embedded-redis.version>0.6</embedded-redis.version>
 		<jfiglet.version>0.0.8</jfiglet.version>
-		<httpclient.version>4.5.7</httpclient.version>
+		<httpclient.version>4.5.9</httpclient.version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<!-- TEMPORARY TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
@@ -134,6 +149,14 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>maven-central</id>
+			<name>Maven Central</name>
+			<url>https://repo1.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -154,7 +177,6 @@
 			<url>${repo.snapshot}</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 
 	<dependencyManagement>
 		<dependencies>
@@ -224,7 +246,7 @@
 			<dependency>
 				<groupId>org.apache.ws.security</groupId>
 				<artifactId>wss4j</artifactId>
-				<version>1.6.18</version>
+				<version>${wss4j.version}</version>
 			</dependency>
 			<!-- unit test dependencies -->
 			<dependency>
@@ -233,12 +255,6 @@
 				<version>${mockito-core.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.seleniumhq.selenium</groupId>
-				<artifactId>selenium-api</artifactId>
-				<version>3.11.0</version>
-			</dependency>
-
 			<!-- Micormeter core dependecy -->
 			<dependency>
 				<groupId>io.micrometer</groupId>
@@ -252,12 +268,16 @@
 				<version>${micrometer.version}</version>
 				<scope>runtime</scope>
 			</dependency>
-
+			<!-- OpenAPI Tools -->
 			<dependency>
-				<groupId>gov.va.vetservices.fortify-build-utils</groupId>
-				<artifactId>fortify-build-utils</artifactId>
-				<version>${fortify-build-utils.version}</version>
-				<scope>provided</scope>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-cli</artifactId>
+				<version>${openapi.codegen.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator</artifactId>
+				<version>${openapi.codegen.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -289,7 +309,7 @@
 			</resource>
 		</resources>
 		<plugins>
-			<!-- repackages jar and war plugins so they can be executed with command
+			<!-- repackages jar and war plugins so they can be executed with command 
 				line -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -415,7 +435,7 @@
 							</resources>
 						</configuration>
 					</execution>
-					<!-- add the parsed version properties into the build environment for
+					<!-- add the parsed version properties into the build environment for 
 						usage as needed -->
 					<execution>
 						<phase>initialize</phase>
@@ -528,9 +548,9 @@
 			</plugin>
 		</plugins>
 		<pluginManagement>
-			<!-- NOTE: These plugins will be removed from future versions of the super
+			<!-- NOTE: These plugins will be removed from future versions of the super 
 				POM -->
-			<!-- They are kept for the moment as they are very unlikely to conflict
+			<!-- They are kept for the moment as they are very unlikely to conflict 
 				with lifecycle mappings (MNG-4453) -->
 			<plugins>
 				<plugin>
@@ -597,12 +617,12 @@
 						<skipTests>${skipPerfTests}</skipTests>
 						<!-- Enable JMeter reports -->
 						<generateReports>true</generateReports>
-						<!-- To simplify debugging, it is advisable to adapt the loglevel.
+						<!-- To simplify debugging, it is advisable to adapt the loglevel. 
 							The jmeter logs are written to the file jmeter.log. -->
 						<overrideRootLogLevel>DEBUG</overrideRootLogLevel>
-						<!-- By default, the console output during a jmeter test run is suppressed.
-							We want to display the progress using the listener "Generate Summary Results"
-							(which periodically prints stats to stdout). Therefore we have to make sure,
+						<!-- By default, the console output during a jmeter test run is suppressed. 
+							We want to display the progress using the listener "Generate Summary Results" 
+							(which periodically prints stats to stdout). Therefore we have to make sure, 
 							that the jmeter output is not suppressed. -->
 						<suppressJMeterOutput>false</suppressJMeterOutput>
 						<jmeterLogLevel>DEBUG</jmeterLogLevel>
@@ -612,7 +632,8 @@
 								<argument>-Djavax.net.ssl.keyStorePassword=${javax.net.ssl.keyStorePassword}</argument>
 							</arguments>
 						</jMeterProcessJVMSettings>
-						<!-- Configuration will fail build only if error rate is higher than 1%. -->
+						<!-- Configuration will fail build only if error rate is higher than 
+							1%. -->
 						<errorRateThresholdInPercent>1</errorRateThresholdInPercent>
 					</configuration>
 					<executions>
@@ -646,7 +667,7 @@
 		<profile>
 			<id>docker-jar-project</id>
 			<activation>
-				<file><!-- add a file named .docker-jar-project-marker to war projects
+				<file><!-- add a file named .docker-jar-project-marker to war projects 
 						to activate this profile -->
 					<exists>${basedir}/.docker-jar-project-marker</exists>
 				</file>
@@ -710,7 +731,7 @@
 				<skipPerfTests>false</skipPerfTests>
 			</properties>
 		</profile>
-		<!-- Temporary Configuration to deploy libraries to MAVEN repository until
+		<!-- Temporary Configuration to deploy libraries to MAVEN repository until 
 			VA SOCKS Proxy Issue is resolved -->
 		<profile>
 			<id>local-deploy</id>
@@ -726,7 +747,9 @@
 				<plugins>
 					<!-- TEMPORARY GITHUB PLUGIN TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
+						<version>${maven-deploy-plugin.version}</version>
 						<configuration>
 							<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
 						</configuration>
@@ -735,7 +758,7 @@
 					<plugin>
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
-						<version>0.12</version>
+						<version>${site-maven-plugin.version}</version>
 						<configuration>
 							<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
 							<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
@@ -749,7 +772,7 @@
 							<merge>true</merge>
 						</configuration>
 						<executions>
-							<!-- run site-maven-plugin's 'site' target as part of the build's
+							<!-- run site-maven-plugin's 'site' target as part of the build's 
 								normal 'deploy' phase -->
 							<execution>
 								<goals>
@@ -762,11 +785,12 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox users -->
+		<!-- A profile to prevent inclusion of unresolvable dependency for non-GFE/JumpBox 
+			users -->
 		<profile>
 			<id>fortify</id>
-			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
-				are run using the sourceanalyzer and FPRUtility commandline applications
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 
+				are run using the sourceanalyzer and FPRUtility commandline applications 
 				for now, so Fortify SCA will need to be installed before running -->
 			<build>
 				<plugins>
@@ -781,20 +805,23 @@
 										<property name="dir.scripts" value="target/antscripts" />
 										<property name="fortify.util.version" value="${fortify-build-utils.version}" />
 										<property name="fortify.util.jar.path"
-												  value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
+											value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
 										<property name="settings.file.location" value="${settings.file.location}" />
 
 										<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
 
-										<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+										<echo
+											message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
 										<echo message="Version: ${fortify.util.version}" />
 										<echo message="File name: ${fortify.util.jar.filename}" />
 										<echo message="Clean ${dir.scripts}" />
 										<delete dir="${dir.scripts}" />
 										<mkdir dir="${dir.scripts}" />
-										<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
+										<copy todir="${dir.scripts}" flatten="true" overwrite="true"
+											file="${fortify.util.jar.path}" />
 
-										<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
+										<unzip src="${dir.scripts}/${fortify.util.jar.filename}"
+											dest="${dir.scripts}" failOnEmptyArchive="true">
 											<mapper type="flatten" />
 											<patternset>
 												<include name="**/**/*.xml" />
@@ -804,15 +831,16 @@
 										<property name="local.ant.lib" value="target/antlib" />
 										<mkdir dir="${local.ant.lib}" />
 										<get
-												src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
-												dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
+											src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
+											dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true"
+											skipexisting="true" />
 										<fail
-												message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
-										>
+											message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
 											<condition>
 												<not>
-													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
-															  property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
+													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar"
+														algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb"
+														verifyproperty="checksum.matches" />
 												</not>
 											</condition>
 										</fail>
@@ -838,6 +866,196 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<!-- OpenAPI Specification (OAS) Code generation profile -->
+		<profile>
+			<id>org-openapitools-codegen-parent</id>
+			<activation>
+				<!-- Profile is activated if openapi.yml exists -->
+				<file>
+					<!-- This path is also used in the framework parentpom. If this path 
+						changes, framework must also be updated. -->
+					<exists>${basedir}/src/main/resources/openapi/openapi.yml</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Download and unpack swagger-ui web jar -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>download-swagger-ui-webjar</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.webjars</groupId>
+											<artifactId>swagger-ui</artifactId>
+											<version>${swagger-ui.version}</version>
+											<overWrite>true</overWrite>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Generate the swagger ui from application yaml spec -->
+					<plugin>
+						<groupId>org.openapitools</groupId>
+						<artifactId>openapi-generator-maven-plugin</artifactId>
+						<version>${openapi.codegen.version}</version>
+						<executions>
+							<execution>
+								<id>generate-openapi-spec</id>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<inputSpec>${basedir}/src/main/resources/openapi/openapi.yml</inputSpec>
+									<validateSpec>true</validateSpec>
+									<generatorName>openapi</generatorName>
+									<output>${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui</output>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- replace name of the specification file to show -->
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>${google.codereplacer.version}</version>
+						<executions>
+							<execution>
+								<id>replace-tokens-swaggerui</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<filesToInclude>
+								${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/index.html,
+								${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}/index.html
+							</filesToInclude>
+							<replacements>
+								<replacement>
+									<token>"https://petstore.swagger.io/v2/swagger.json"</token>
+									<value>"/openapi.json"</value>
+								</replacement>
+							</replacements>
+						</configuration>
+					</plugin>
+					<!-- Move generated artifacts to their final location -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-delete-swaggerui</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy
+											todir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui"
+											flatten="true" overwrite="true">
+											<fileset
+												dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}" />
+										</copy>
+										<delete
+											dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}"
+											failonerror="false" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Add generated source directory for eclipse -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<!-- TODO for eclipse/m2e users: install the m2e connector 'buildhelper' 
+								by selecting 'Discover new m2e connectors' while hovering over the following 
+								execution tag -->
+							<execution>
+								<id>add-generated-source</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${project.build.directory}/generated-sources/openapi</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+				<!-- the following is only necessary if you are using eclipse and m2e -->
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.openapitools</groupId>
+												<artifactId>openapi-generator-maven-plugin</artifactId>
+												<versionRange>[${openapi.codegen.version},)</versionRange>
+												<goals>
+													<goal>generate</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>com.google.code.maven-replacer-plugin</groupId>
+												<artifactId>replacer</artifactId>
+												<versionRange>[${google.codereplacer.version},)</versionRange>
+												<goals>
+													<goal>replace</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.apache.maven.plugins</groupId>
+												<artifactId>maven-antrun-plugin</artifactId>
+												<versionRange>[${maven-antrun-plugin.version},)</versionRange>
+												<goals>
+													<goal>run</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
 	</profiles>
-
 </project>

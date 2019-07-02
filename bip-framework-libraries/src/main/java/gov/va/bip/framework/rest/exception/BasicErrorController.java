@@ -20,7 +20,6 @@ import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.util.HttpHeadersUtil;
-import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * Spring Boot automatically registers a BasicErrorController bean if you don’t
@@ -35,12 +34,11 @@ import springfox.documentation.annotations.ApiIgnore;
  * information for these specific types
  *
  * @author akulkarni
- * 
+ *
  * @see org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
  * @see org.springframework.boot.autoconfigure.web.ErrorProperties
  */
 @RestController
-@ApiIgnore
 public class BasicErrorController implements ErrorController {
 
 	/** Constant for the logger for this class */
@@ -104,7 +102,7 @@ public class BasicErrorController implements ErrorController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.springframework.boot.web.servlet.error.ErrorController#getErrorPath()
 	 */

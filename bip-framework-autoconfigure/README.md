@@ -22,7 +22,7 @@ The framework-supplied appender can be referenced in service [`logback-spring.xm
 Audit auto-configuration that provides the serializer bean and enables async execution.
 
 ```java
-@Configuration
+    @Configuration
     @EnableAsync
     public class BipAuditAutoConfiguration {
 
@@ -49,13 +49,26 @@ Any properties that do not appear in the appropriate hierarchy will be silently 
 Auto-configuration is declared as below. Beans created in this class refer to the other classes found in the package.
 
 ```java
-@Configuration
-    @EnableConfigurationProperties(BipCacheProperties.class)
+    @Configuration
     @AutoConfigureAfter(CacheAutoConfiguration.class)
     @EnableCaching
-    @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
+    /* @Import to participate in the auto configure bootstrap process */
+    @Import({ BipCachesConfig.class, BipJedisConnectionConfig.class })
+    @ConditionalOnProperty(name = BipCacheAutoConfiguration.CONDITIONAL_SPRING_REDIS,
+		havingValue = BipCacheAutoConfiguration.CACHE_SERVER_TYPE)
     @EnableMBeanExport(defaultDomain = "gov.va.bip", registration = RegistrationPolicy.FAIL_ON_EXISTING)
     public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
+         /** Domain under which JMX beans are exposed */
+	    public static final String JMX_DOMAIN = "gov.va.bip";
+	    /** ConditionalOnProperty property name */
+	    public static final String CONDITIONAL_SPRING_REDIS = "spring.cache.type";
+	    /** The cache server type */
+	    public static final String CACHE_SERVER_TYPE = "redis";
+        
+        /** Refresh order for JedisConnectionFactory must be lower than for CacheManager */
+	    static final int REFRESH_ORDER_CONNECTION_FACTORY = 1;
+	    /** Refresh order for CacheManager must be higher than for JedisConnectionFactory */
+	    static final int REFRESH_ORDER_CACHES = 10;
     ...
     }
 ```
@@ -81,7 +94,7 @@ Feign client auto-configuration creates a number of beans to support RESTful cli
 Hystrix auto-configuration sets up Hystrix with the THREAD strategy. The configuration copies RequestAttributes from ThreadLocal to Hystrix threads in the `RequestAttributeAwareCallableWrapper` bean. This is done to make sure the necessary request information is available on the Hystrix thread.
 
 ```java
-@Configuration
+    @Configuration
     @ConditionalOnProperty(value = "hystrix.wrappers.enabled", matchIfMissing = true)
     public class HystrixContextAutoConfiguration {
     ...
@@ -99,7 +112,7 @@ REST auto-configuration creates beans to enable a number of capabilities related
 - `RestProviderTimerAspect` logs performance data using `PerformanceLoggingAspect`.
 
 ```java
-@Configuration
+        @Configuration
         public class BipRestAutoConfiguration {
 
             @Bean
@@ -141,7 +154,7 @@ Security auto-configuration creates beans for the security framework using JWT.
 - `JwtWebSecurityConfigurerAdapter` provides configuration for JWT security processing and provides configuration like filters need to be used to Authenticate, URL's to be processed etc.
 
 ```java
-@Configuration
+    @Configuration
     @ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", matchIfMissing = true)
     @Order(JwtAuthenticationProperties.AUTH_ORDER)
     protected static class JwtWebSecurityConfigurerAdapter
@@ -182,7 +195,7 @@ Service auto-configuration configures beans that get used in service application
   - Validators called by this aspect should extend `gov.va.bip.framework.validation.AbstractStandardValidator` or similar implementation.
 
 ```java
-@Configuration
+        @Configuration
         public class BipServiceAutoConfiguration {
         ...
         }
@@ -193,12 +206,10 @@ Service auto-configuration configures beans that get used in service application
 Swagger starter and autoconfiguration to generate and configure swagger documentation:
 
 ```java
-@Configuration
-    @EnableConfigurationProperties(SwaggerProperties.class)
-    @EnableSwagger2
-    @ConditionalOnProperty(prefix = "bip.framework.swagger", name = "enabled", matchIfMissing = true)
-    @Import({ BeanValidatorPluginsConfiguration.class })
-    public class SwaggerAutoConfiguration {
+  @Configuration
+  @EnableWebMvc
+  @ConditionalOnProperty(prefix = "bip.framework.swagger", name = "enabled", matchIfMissing = true)
+  public class BipSwaggerAutoConfiguration implements WebMvcConfigurer {
     ...
     }
 ```
