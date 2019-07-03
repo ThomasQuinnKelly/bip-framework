@@ -40,6 +40,13 @@ public final class HashGenerator {
 		return getGivenHashForString(strInput, MD5_DIGEST_ALGORITHM);
 	}
 
+	/**
+	 * Gets the given hash for string.
+	 *
+	 * @param strInput the str input
+	 * @param algorithm the algorithm
+	 * @return the given hash for string
+	 */
 	private static String getGivenHashForString(final String strInput, final String algorithm) {
 		MessageDigest digest;
 		try {
