@@ -107,10 +107,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 				domainResponse = (DomainResponse) joinPoint.proceed();
 
 				// only call post-proceed() validation if there are no errors on the response
-				if ((domainResponse != null) && !(domainResponse.hasErrors() || domainResponse.hasFatals())) {
-					LOGGER.debug("Validating service interface response outputs.");
-					validateResponse(domainResponse, domainResponse.getMessages(), method, joinPoint.getArgs());
-				}
+				callPostValidationBasedOnDomainResponse(joinPoint, domainResponse, method);
 			}
 		} finally {
 			LOGGER.debug(this.getClass().getSimpleName() + " after method was called.");
@@ -118,6 +115,14 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 		return domainResponse;
 
+	}
+
+	private void callPostValidationBasedOnDomainResponse(final ProceedingJoinPoint joinPoint, DomainResponse domainResponse,
+			Method method) {
+		if ((domainResponse != null) && !(domainResponse.hasErrors() || domainResponse.hasFatals())) {
+			LOGGER.debug("Validating service interface response outputs.");
+			validateResponse(domainResponse, domainResponse.getMessages(), method, joinPoint.getArgs());
+		}
 	}
 
 	/**
