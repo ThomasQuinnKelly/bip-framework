@@ -2,7 +2,6 @@ package gov.va.bip.framework.shared.sanitize;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
@@ -46,6 +45,11 @@ public class SanitizerTest {
 	}
 
 	@Test
+	public void testSafePathWithNullPath() {
+		assertNull(Sanitizer.safePath(null));
+	}
+
+	@Test
 	public void testSafeFilename() {
 
 		// copied from the method under test
@@ -64,4 +68,8 @@ public class SanitizerTest {
 		assertTrue("Test  file.name".equals(safe));
 	}
 
+	@Test
+	public void testSafeFilename_withNullFilename() {
+		assertNull(Sanitizer.safeFilename(null));
+	}
 }

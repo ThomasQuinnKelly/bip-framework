@@ -2,20 +2,24 @@ package gov.va.bip.framework.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.security.NoSuchAlgorithmException;
+import java.lang.reflect.Method;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import gov.va.bip.framework.util.HashGenerator;
 
 public class HashGeneratorTest {
+
+	private static final String TEST_INPUT_STRING = "TestInputString";
+
+	private static final String INVALID_ALGORITHM = "InvalidAlgoritm";
 
 	@Before
 	public void setUp() throws Exception {
@@ -27,12 +31,20 @@ public class HashGeneratorTest {
 
 	@Test
 	public void testGetMd5ForString() {
-		try {
-			String encryptStr = HashGenerator.getMd5ForString("TestInputString");
-			assertNotNull(encryptStr);
-			assertFalse(encryptStr.equals("TestInputString"));
-		} catch (NoSuchAlgorithmException e) {
+		String encryptStr = HashGenerator.getMd5ForString(TEST_INPUT_STRING);
+		assertNotNull(encryptStr);
+		assertFalse(encryptStr.equals(TEST_INPUT_STRING));
+	}
 
+	@Test
+	public void testGetGivenHashForString_CatchBlockCode() {
+		try {
+			Method method = HashGenerator.class.getDeclaredMethod("getGivenHashForString", String.class, String.class);
+			method.setAccessible(true);
+			assertNull(method.invoke(null, TEST_INPUT_STRING, INVALID_ALGORITHM));
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			fail("Exceptions not expected");
 		}
 	}
 
