@@ -9,7 +9,6 @@ import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
@@ -82,22 +81,6 @@ public class BasicErrorController implements ErrorController {
 		providerResponse.addMessage(MessageSeverity.ERROR, httpStatus.name(), message, httpStatus);
 
 		return new ResponseEntity<>(providerResponse, HttpHeadersUtil.buildHttpHeadersForError(), httpStatus);
-	}
-	
-	/**
-	 * Respond to CSRF protection token and return null since CSRF is disabled
-	 * in BIP framework. This solution is chosen because disabling CSRF is not
-	 * currently being supported in SwaggerUI as given in
-	 * 
-	 * https://github.com/springfox/springfox/pull/2639
-	 *
-	 * @return the CsrfToken being returned
-	 */
-	@RequestMapping("/csrf")
-	public CsrfToken csrf() {
-		return null;
-		// logic to return the CSRF token:
-		// return null since no CSRF token is required
 	}
 
 	/*
