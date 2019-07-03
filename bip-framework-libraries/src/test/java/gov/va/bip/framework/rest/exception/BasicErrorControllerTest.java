@@ -57,7 +57,7 @@ public class BasicErrorControllerTest {
 		this.mockMvc.perform(post("/error")
 				.with(new RequestPostProcessor() { 
 					@Override
-					public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+					public MockHttpServletRequest postProcessRequest(final MockHttpServletRequest request) {
 						request.setAttribute("message", "Unexpected Error Occured");
 						return request;
 					}})
@@ -66,9 +66,4 @@ public class BasicErrorControllerTest {
 		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
 	}
 	
-	@Test
-	public void testCSRFBasicController() throws Exception{
-		this.mockMvc.perform(post("/csrf"))
-		.andExpect(status().isOk());
-	}
 }
