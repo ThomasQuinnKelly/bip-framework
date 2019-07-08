@@ -5,10 +5,16 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.xml.bind.DatatypeConverter;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+
 /**
  * Utility class for generating hashes using different algorithms.
  */
 public final class HashGenerator {
+
+	/** The Constant LOGGER. */
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(HashGenerator.class);
 
 	/** The Constant MD5_DIGEST_ALGORITHM. */
 	public static final String MD5_DIGEST_ALGORITHM = "MD5";
@@ -30,12 +36,30 @@ public final class HashGenerator {
 	 * @return the MD5 hash
 	 * @throws NoSuchAlgorithmException the no such algorithm exception
 	 */
-	public static String getMd5ForString(final String strInput) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance(MD5_DIGEST_ALGORITHM);
-		digest.update(strInput.getBytes());
-		byte[] byteData = digest.digest();
+	public static String getMd5ForString(final String strInput) {
+		return getGivenHashForString(strInput, MD5_DIGEST_ALGORITHM);
+	}
 
-		return DatatypeConverter.printHexBinary(byteData).toLowerCase();
+	/**
+	 * Gets the given hash for string.
+	 *
+	 * @param strInput the str input
+	 * @param algorithm the algorithm
+	 * @return the given hash for string
+	 */
+	private static String getGivenHashForString(final String strInput, final String algorithm) {
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance(algorithm);
+			digest.update(strInput.getBytes());
+			byte[] byteData = digest.digest();
+
+			return DatatypeConverter.printHexBinary(byteData).toLowerCase();
+
+		} catch (NoSuchAlgorithmException e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
 	}
 
 }
