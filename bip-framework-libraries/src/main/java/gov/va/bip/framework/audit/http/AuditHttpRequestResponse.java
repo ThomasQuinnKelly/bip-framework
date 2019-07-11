@@ -273,8 +273,8 @@ public class AuditHttpRequestResponse {
 					BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
 				}
 				responseAuditData.setAttachmentTextList(linkedList);
-				responseAuditData.setHeaders(headers);
 			}
+			responseAuditData.setHeaders(headers);
 		}
 	}
 
