@@ -1,14 +1,18 @@
 package gov.va.bip.framework.audit.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -21,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditLogger;
@@ -120,6 +125,19 @@ public class AuditHttpRequestResponse {
 
 				final List<String> attachmentTextList = getMultipartHeaders(httpServletRequest);
 				requestAuditData.setAttachmentTextList(attachmentTextList);
+				requestAuditData.setRequest(null);
+			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM)) {
+				LinkedList<String> linkedList = new LinkedList<String>();
+				ServletInputStream inputStream = null;
+				try {
+					inputStream = httpServletRequest.getInputStream();
+					linkedList.add(BaseAsyncAudit.convertBytesToString(inputStream));
+				} catch (IOException e) {
+					LOGGER.error("Could not read httpRequest", e);
+				} finally {
+					BaseAsyncAudit.closeInputStreamIfRequired(inputStream);
+				}
+				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
 			}
 		}
@@ -235,7 +253,28 @@ public class AuditHttpRequestResponse {
 				headers.put(headerName, value);
 			}
 
-			responseAuditData.setHeaders(headers);
+			String contentType = httpServletResponse.getContentType();
+			if(contentType.toLowerCase().equals(BipConstants.MIME_OCTET_STREAM)) {
+				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
+				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
+				LinkedList<String> linkedList = new LinkedList<String>();
+				try {
+					linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
+				} catch (IOException e) {
+					LOGGER.error("Could not read httpReponse", e);
+				} finally {
+					try {
+						responseWrapper.copyBodyToResponse();
+					} catch (IOException e) {
+						LOGGER.error("Could not continue copying the response", e);
+						throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
+								HttpStatus.INTERNAL_SERVER_ERROR, "");
+					}
+					BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
+				}
+				responseAuditData.setAttachmentTextList(linkedList);
+				responseAuditData.setHeaders(headers);
+			}
 		}
 	}
 
