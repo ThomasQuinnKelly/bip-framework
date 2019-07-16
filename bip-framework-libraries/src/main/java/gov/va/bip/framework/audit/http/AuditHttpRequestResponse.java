@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -25,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
@@ -127,15 +127,16 @@ public class AuditHttpRequestResponse {
 				requestAuditData.setAttachmentTextList(attachmentTextList);
 				requestAuditData.setRequest(null);
 			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM)) {
+				ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(httpServletRequest);
 				LinkedList<String> linkedList = new LinkedList<String>();
-				ServletInputStream inputStream = null;
+				InputStream in = null;
 				try {
-					inputStream = httpServletRequest.getInputStream();
-					linkedList.add(BaseAsyncAudit.convertBytesToString(inputStream));
+					in = wrapper.getRequest().getInputStream();
+					linkedList.add(BaseAsyncAudit.convertBytesToString(in));
 				} catch (IOException e) {
-					LOGGER.error("Could not read httpRequest", e);
+					LOGGER.error("Could not read httpReponse", e);
 				} finally {
-					BaseAsyncAudit.closeInputStreamIfRequired(inputStream);
+					BaseAsyncAudit.closeInputStreamIfRequired(in);
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
