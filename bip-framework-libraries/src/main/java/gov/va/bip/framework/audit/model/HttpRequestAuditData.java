@@ -108,6 +108,7 @@ public class HttpRequestAuditData extends RequestAuditData {
 	@Override
 	public String toString() {
 		return ("HttpRequestAuditData{" + "headers=" + (headers == null ? "" : ReflectionToStringBuilder.toString(headers)) + ", uri='"
-				+ uri + "\'" + ", method='" + method + "\'" + ", " + (getRequest() == null ? "[]" : getRequest().toString()) + '}');
+				+ uri + "\'" + ", method='" + method + "\'" + ", " + "\'" + ", request='"
+				+ (getRequest() == null ? "[]" : getRequest().toString()) + "\'" + ", attachmentList='" + attachmentTextList + '}');
 	}
 }

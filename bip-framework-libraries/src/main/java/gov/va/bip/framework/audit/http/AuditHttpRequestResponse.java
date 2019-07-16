@@ -18,13 +18,13 @@ import javax.servlet.http.Part;
 
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
@@ -85,7 +85,7 @@ public class AuditHttpRequestResponse {
 		 * @param request - the request object
 		 * @param auditEventData - the audit meta-data for the event
 		 */
-		public void writeHttpRequestAuditLog(final List<Object> request, final AuditEventData auditEventData) {
+		public void writeHttpRequestAuditLog(final List<Object> requests, final AuditEventData auditEventData) {
 
 			LOGGER.debug("RequestContextHolder.getRequestAttributes() {}", RequestContextHolder.getRequestAttributes());
 
@@ -94,10 +94,10 @@ public class AuditHttpRequestResponse {
 			final HttpServletRequest httpServletRequest =
 					((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			if (httpServletRequest != null) {
-				getHttpRequestAuditData(httpServletRequest, requestAuditData);
+				getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
 			}
 
-			baseAsyncAudit.writeRequestAuditLog(request, requestAuditData, auditEventData, MessageSeverity.INFO, null);
+			baseAsyncAudit.writeRequestAuditLog(requests, requestAuditData, auditEventData, MessageSeverity.INFO, null);
 		}
 
 		/**
@@ -107,7 +107,7 @@ public class AuditHttpRequestResponse {
 		 * @param requestAuditData the audit data object
 		 */
 		private void getHttpRequestAuditData(final HttpServletRequest httpServletRequest,
-				final HttpRequestAuditData requestAuditData) {
+				final HttpRequestAuditData requestAuditData, final List<Object> requests) {
 
 			ArrayList<String> listOfHeaderNames = Collections.list(httpServletRequest.getHeaderNames());
 			final Map<String, String> headers = populateRequestHeadersMap(httpServletRequest, listOfHeaderNames);
@@ -127,16 +127,20 @@ public class AuditHttpRequestResponse {
 				requestAuditData.setAttachmentTextList(attachmentTextList);
 				requestAuditData.setRequest(null);
 			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM)) {
-				ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(httpServletRequest);
 				LinkedList<String> linkedList = new LinkedList<String>();
-				InputStream in = null;
-				try {
-					in = wrapper.getRequest().getInputStream();
-					linkedList.add(BaseAsyncAudit.convertBytesToString(in));
-				} catch (IOException e) {
-					LOGGER.error("Could not read httpReponse", e);
-				} finally {
-					BaseAsyncAudit.closeInputStreamIfRequired(in);
+				for (Object eachRequest : requests) {
+					if (eachRequest instanceof Resource) {
+						Resource resource = (Resource) eachRequest;
+						InputStream in = null;
+						try {
+							in = resource.getInputStream();
+							linkedList.add(BaseAsyncAudit.convertBytesToString(in));
+						} catch (IOException e) {
+							LOGGER.error("Could not read httpReponse", e);
+						} finally {
+							BaseAsyncAudit.closeInputStreamIfRequired(in);
+						}
+					}
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
