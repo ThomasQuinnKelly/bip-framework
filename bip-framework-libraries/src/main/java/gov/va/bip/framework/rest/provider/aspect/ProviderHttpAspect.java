@@ -63,7 +63,7 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	 *
 	 * @param joinPoint
 	 */
-	@Before("!auditableAnnotation() && publicServiceResponseRestMethod()")
+	@Before("!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())")
 	public void beforeAuditAdvice(final JoinPoint joinPoint) {
 		LOGGER.debug(BEFORE_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 
@@ -102,7 +102,7 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	 * @param joinPoint
 	 * @param responseToConsumer
 	 */
-	@AfterReturning(pointcut = "!auditableAnnotation() && publicServiceResponseRestMethod()",
+	@AfterReturning(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())",
 			returning = "responseToConsumer")
 	public void afterreturningAuditAdvice(final JoinPoint joinPoint, final ProviderResponse responseToConsumer) {
 		LOGGER.debug(AFTER_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
@@ -140,7 +140,7 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	 * @param joinPoint the intersection for the pointcut
 	 * @param throwable the exception thrown by the application code
 	 */
-	@AfterThrowing(pointcut = "!auditableAnnotation() && publicServiceResponseRestMethod()",
+	@AfterThrowing(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())",
 			throwing = "throwable")
 	public ResponseEntity<ProviderResponse> afterThrowingAdvice(final JoinPoint joinPoint, final Throwable throwable) {
 		LOGGER.debug(AFTER_THROWING_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());

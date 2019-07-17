@@ -126,7 +126,7 @@ public class AuditHttpRequestResponse {
 				final List<String> attachmentTextList = getMultipartHeaders(httpServletRequest);
 				requestAuditData.setAttachmentTextList(attachmentTextList);
 				requestAuditData.setRequest(null);
-			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM)) {
+			} else if ((contentType != null) && (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM))) {
 				LinkedList<String> linkedList = new LinkedList<String>();
 				for (Object eachRequest : requests) {
 					if (eachRequest instanceof Resource) {
