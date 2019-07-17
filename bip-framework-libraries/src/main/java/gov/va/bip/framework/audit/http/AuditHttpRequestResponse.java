@@ -259,7 +259,7 @@ public class AuditHttpRequestResponse {
 			}
 
 			String contentType = httpServletResponse.getContentType();
-			if(contentType.toLowerCase().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
+			if(contentType != null && contentType.toLowerCase().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
 				LinkedList<String> linkedList = new LinkedList<String>();
