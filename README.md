@@ -168,3 +168,7 @@ source : <http://stackoverflow.com/questions/14013644/hosting-a-maven-repository
 ```
 mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs
 ```
+
+# Contribution guidelines
+If you or your team wants to contribute to this repository, then fork the repository and follow the steps to create a PR for our upstream repository to review and commit the changes:
+[Creating a pull request from a fork](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
