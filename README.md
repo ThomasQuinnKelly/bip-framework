@@ -2,19 +2,25 @@
 
 To run spring boot and spring cloud enabled services on the BIP Platform, it must adhere to various service patterns. This repository contains a suite of framework libraries, auto configurations, test libraries and parent POM that must be included as dependencies to enable the patterns.
 
-For information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-spring-boot README.md](https://github.com/department-of-veterans-affairs/bip-reference-person).
+For information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-person README.md](https://github.com/department-of-veterans-affairs/bip-reference-person).
 
 # Project Breakdown & Links
 
-1. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
+1. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration that attempts to automatically configure your application based on the configuration properties. For example, if `spring.cache.type` is set to `redis`, then `BipCacheAutoConfiguration` configures the necessary beans, connection factory and cache configurations. Similarly, it also supports auto configuration for Audit, Feign, REST, JWT Security, Swagger, Hystrix, Validator and Vault.
 
-2. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior.
+2. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior. It contains interfaces, annotations and classes consumed by the application services for various functionality.
 
 3. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
 
 4. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
 
 5. [bip-framework-test-lib](bip-framework-test-lib/README.md): Test library framework to support functional testing for service applications.
+
+# Developing with BIP Framework
+
+Refer to the page [Developing with BIP Framework](https://github.com/department-of-veterans-affairs/bip-reference-person/blob/master/docs/developing-with-bip-framework.md) that provides a quick overview of the primary capabilities that the BIP Framework offers. 
+
+Refer to the page [Application Core Concepts and Patterns](https://github.com/department-of-veterans-affairs/bip-reference-person/tree/master#application-core-concepts-and-patterns) that provides detailed information related to design, development, configuration and usage patterns for an application service. 
 
 # How to include BIP Framework libraries in your project
 
@@ -162,3 +168,7 @@ source : <http://stackoverflow.com/questions/14013644/hosting-a-maven-repository
 ```
 mvn clean deploy -Plocal-deploy -DrepositoryName=bip-framework -DrepositoryOwner=department-of-veterans-affairs
 ```
+
+# Contribution guidelines
+If you or your team wants to contribute to this repository, then fork the repository and follow the steps to create a PR for our upstream repository to review and commit the changes:
+[Creating a pull request from a fork](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
