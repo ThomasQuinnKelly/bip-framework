@@ -126,7 +126,7 @@ public class AuditHttpRequestResponse {
 				final List<String> attachmentTextList = getMultipartHeaders(httpServletRequest);
 				requestAuditData.setAttachmentTextList(attachmentTextList);
 				requestAuditData.setRequest(null);
-			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(BipConstants.MIME_OCTET_STREAM)) {
+			} else if (contentType.toLowerCase(Locale.ENGLISH).startsWith(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				LinkedList<String> linkedList = new LinkedList<String>();
 				for (Object eachRequest : requests) {
 					if (eachRequest instanceof Resource) {
@@ -136,7 +136,7 @@ public class AuditHttpRequestResponse {
 							in = resource.getInputStream();
 							linkedList.add(BaseAsyncAudit.convertBytesToString(in));
 						} catch (IOException e) {
-							LOGGER.error("Could not read httpReponse", e);
+							LOGGER.error("Could not read Http Request", e);
 						} finally {
 							BaseAsyncAudit.closeInputStreamIfRequired(in);
 						}
@@ -259,14 +259,14 @@ public class AuditHttpRequestResponse {
 			}
 
 			String contentType = httpServletResponse.getContentType();
-			if(contentType.toLowerCase().equals(BipConstants.MIME_OCTET_STREAM)) {
+			if(contentType.toLowerCase().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
 				LinkedList<String> linkedList = new LinkedList<String>();
 				try {
 					linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
 				} catch (IOException e) {
-					LOGGER.error("Could not read httpReponse", e);
+					LOGGER.error("Could not read Http Response", e);
 				} finally {
 					try {
 						responseWrapper.copyBodyToResponse();
