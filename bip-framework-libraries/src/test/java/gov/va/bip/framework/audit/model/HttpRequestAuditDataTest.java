@@ -23,13 +23,15 @@ public class HttpRequestAuditDataTest {
 		httpRequestAuditData.setRequest(requestList);
 		assertTrue(httpRequestAuditData.toString()
 				.equals("HttpRequestAuditData{headers=" + ReflectionToStringBuilder.toString(headers) +
-						", uri='" + httpRequestAuditData.getUri() + "\'" + ", method='" + httpRequestAuditData.getMethod() + "\'" + ", " + requestList + "}"));
+						", uri='" + httpRequestAuditData.getUri() + "\'" + ", method='" + httpRequestAuditData.getMethod()
+						+ "', request='" + requestList + "', attachmentList='" + httpRequestAuditData.getAttachmentTextList() + "'}"));
 	}
 
 	@Test
 	public void toStringWithNullHeadersTest() {
 		HttpRequestAuditData httpRequestAuditData = new HttpRequestAuditData();
 		httpRequestAuditData.setHeaders(null);
-		assertTrue(httpRequestAuditData.toString().equals("HttpRequestAuditData{headers=, uri='null', method='null', []}"));
+		assertTrue(httpRequestAuditData.toString()
+				.equals("HttpRequestAuditData{headers=, uri='null', method='null', request='[]', attachmentList='null'}"));
 	}
 }

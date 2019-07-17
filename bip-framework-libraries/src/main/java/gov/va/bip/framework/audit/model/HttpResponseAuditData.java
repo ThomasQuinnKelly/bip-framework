@@ -62,8 +62,8 @@ public class HttpResponseAuditData extends ResponseAuditData {
 	 */
 	@Override
 	public String toString() {
-		return "HttpResponseAuditData{" + "headers=" + (headers == null ? "" : ReflectionToStringBuilder.toString(headers)) + ", uri="
-				+ ", response=" + (getResponse() == null ? "" : getResponse().toString()) + "\'" + ", attachmentList='"
-				+ attachmentTextList + '}';
+		return "HttpResponseAuditData{" + "headers=" + (headers == null ? "" : ReflectionToStringBuilder.toString(headers)) + ", uri='"
+				+ "', response='" + (getResponse() == null ? "" : getResponse().toString()) + "', attachmentTextList='"
+				+ attachmentTextList + "'}";
 	}
 }

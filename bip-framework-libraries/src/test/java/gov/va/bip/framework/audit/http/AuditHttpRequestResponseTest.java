@@ -39,7 +39,7 @@ public class AuditHttpRequestResponseTest {
 		when(httpServletRequest.getHeaderNames()).thenReturn(enumeration);
 		when(httpServletRequest.getContentType()).thenReturn(MediaType.MULTIPART_FORM_DATA_VALUE);
 		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletRequest(),
-				"getHttpRequestAuditData", httpServletRequest, requestAuditData);
+				"getHttpRequestAuditData", httpServletRequest, requestAuditData, null);
 		verify(requestAuditData, times(1)).setAttachmentTextList(any());
 		verify(requestAuditData, times(1)).setRequest(any());
 	}

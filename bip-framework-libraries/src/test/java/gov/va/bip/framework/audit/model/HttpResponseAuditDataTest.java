@@ -19,13 +19,15 @@ public class HttpResponseAuditDataTest {
 		String response = "test response";
 		responseAuditData.setResponse(response);
 		assertTrue(responseAuditData.toString().equals("HttpResponseAuditData{headers=" + ReflectionToStringBuilder.toString(headers)
-				+ ", uri=" + ", response=" + response + "}"));
+		+ ", uri='" + "', response='" + response + "', attachmentTextList='" + responseAuditData.getAttachmentTextList()
+		+ "'}"));
 	}
 
 	@Test
 	public void toStringWithNullHeadersTest() {
 		HttpResponseAuditData responseAuditData = new HttpResponseAuditData();
 		responseAuditData.setHeaders(null);
-		assertTrue(responseAuditData.toString().equals("HttpResponseAuditData{headers=, uri=, response=}"));
+		assertTrue(responseAuditData.toString()
+				.equals("HttpResponseAuditData{headers=, uri='', response='', attachmentTextList='null'}"));
 	}
 }
