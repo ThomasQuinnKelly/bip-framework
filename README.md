@@ -6,15 +6,21 @@ For information regarding recommended development patterns for developing servic
 
 # Project Breakdown & Links
 
-1. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
+1. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration that attempts to automatically configure your application based on the configuration properties. For example, if `spring.cache.type` is set to `redis`, then `BipCacheAutoConfiguration` configures the necessary beans, connection factory and cache configurations. Similarly, it also supports configuration and beans to support Audit, Feign, REST, JWT Security, Swagger, Hystrix, Validator and Vault.
 
-2. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior.
+2. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior. It contains interfaces, annotations and classes consumed by the application services for various functionality.
 
 3. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
 
 4. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
 
 5. [bip-framework-test-lib](bip-framework-test-lib/README.md): Test library framework to support functional testing for service applications.
+
+# Developing with BIP Framework
+
+Refer to the page [Developing with BIP Framework](https://github.com/department-of-veterans-affairs/bip-reference-person/blob/master/docs/developing-with-bip-framework.md) that provides a quick overview of the primary capabilities that the BIP Framework offers. 
+
+Refer to the page [Application Core Concepts and Patterns](https://github.com/department-of-veterans-affairs/bip-reference-person/tree/master#application-core-concepts-and-patterns) that provides information related to Design, Development, Configuration and Usage patterns in depth from an application service point of view. 
 
 # How to include BIP Framework libraries in your project
 
