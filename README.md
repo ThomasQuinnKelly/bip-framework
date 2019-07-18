@@ -2,49 +2,29 @@
 
 To run spring boot and spring cloud enabled services on the BIP Platform, it must adhere to various service patterns. This repository contains a suite of framework libraries, auto configurations, test libraries and parent POM that must be included as dependencies to enable the patterns.
 
-For information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-spring-boot README.md](https://github.com/department-of-veterans-affairs/bip-reference-person).
+For information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-person README.md](https://github.com/department-of-veterans-affairs/bip-reference-person).
 
 # Project Breakdown & Links
 
-1. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
+1. bip-framework-reactor: This is the root reactor project (you are in that repo now). This project forms the aggregate of modules that make up the complete framework, and manages the Fortify scans.
+	- The reactor POM **must not** have a `<parent>` tag, or Fortify scans will fail. This is due to an issue in Fortify's sca-maven-plugin.
+	- A "fortify-sca" profile is included in this POM to manage the fortify scans for the project as a whole.
 
-2. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior.
+2. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
+	- A "fortify-sca" profile is included in this POM for any child modules (in the framework itself, and for any inheriting service applications) to manage the fortify scans for the individual modules in the overall project.
 
-3. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
+3. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
 
-4. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
+4. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior.
 
-5. [bip-framework-test-lib](bip-framework-test-lib/README.md): Test library framework to support functional testing for service applications.
+
+5. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
+
+6. [bip-framework-test-lib](bip-framework-test-lib/README.md): Test library framework to support functional testing for service applications.
 
 # How to include BIP Framework libraries in your project
 
-```xml
-<dependency>
-         <groupId>gov.va.bip.framework</groupId>
-         <artifactId>bip-framework-autoconfigure</artifactId>
-         <version><!-- add the appropriate version --></version>
-       </dependency>
-       <dependency>
-         <groupId>gov.va.bip.framework</groupId>
-         <artifactId>bip-framework-libraries</artifactId>
-         <version><!-- add the appropriate version --></version>
-       </dependency>
-       <dependency>
-         <groupId>gov.va.bip.framework</groupId>
-         <artifactId>bip-framework-parentpom</artifactId>
-         <version><!-- add the appropriate version --></version>
-       </dependency>
-       <dependency>
-         <groupId>gov.va.bip.framework</groupId>
-         <artifactId>bip-framework-shared</artifactId>
-         <version><!-- add the appropriate version --></version>
-       </dependency>
-       <dependency>
-         <groupId>gov.va.bip.framework</groupId>
-         <artifactId>bip-framework-test-lib</artifactId>
-         <version><!-- add the appropriate version --></version>
-       </dependency>
-```
+See the [bip-reference-person README](https://github.com/department-of-veterans-affairs/bip-reference-person#how-to-include-the-framework-libraries-in-your-project)
 
 # How to download the BIP Framework maven dependencies
 
