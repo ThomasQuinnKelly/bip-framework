@@ -37,9 +37,6 @@ public final class BipConstants {
 	/** MIME multipart/mixed */
 	public static final String MIME_MULTIPART_MIXED = "multipart/mixed";
 
-	/** MIME multipart/mixed */
-	public static final String MIME_OCTET_STREAM = "application/octet-stream";
-
 	/**
 	 * This is a class for statics. Do not instantiate it.
 	 */
