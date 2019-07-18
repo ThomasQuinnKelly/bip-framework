@@ -42,7 +42,9 @@ public class RESTUtilTest {
 
 	RESTUtil restUtil = new RESTUtil();
 	private static final String URL_PERSON = "/person";
+	private static final String URL_PERSON_DOCUMENT = "/person/pid/document";
 	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
+	private static final String LOCALHOST_URL_PERSON_DOCUMENT = "http://localhost:9999/person/pid/document";
 	private static final String LOCALHOST_MULTIPART_URL_PERSON = "http://localhost:9999/multipart/person";
 	private static final String SUBMIT_PAYLOAD_TXT = "submitpayload.txt";
 
@@ -63,6 +65,7 @@ public class RESTUtilTest {
 		addDeletePersonStub();
 		addPutPersonStub();
 		addPostMultiPart();
+		addGetPerson500Stub();
 	}
 
 	private static void addGetPersonStub() {
@@ -88,6 +91,11 @@ public class RESTUtilTest {
 	private static void addPostMultiPart() {
 		WireMockServerInstance.getWiremockserver().stubFor(post(urlEqualTo("/multipart/person"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK_200).withBodyFile("json/post-multipart-person-response.json")));
+	}
+	
+	private static void addGetPerson500Stub() {
+		WireMockServerInstance.getWiremockserver().stubFor(get(urlEqualTo(URL_PERSON_DOCUMENT))
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR_500).withBodyFile("json/get-person-doc-error-response.json")));
 	}
 
 	@Test
@@ -279,4 +287,12 @@ public class RESTUtilTest {
 		String response = restUtil.readExpectedResponse("nonexistsfile.response");
 		assertThat(null, equalTo(response));
 	}
+	
+	@Test
+	public void test_getResponse_PersonDocument() {
+		String response = restUtil.getResponse(LOCALHOST_URL_PERSON_DOCUMENT);
+		assertThat(true, equalTo(!response.isEmpty()));
+		assertThat(true, equalTo(restUtil.getResponseHttpHeaders() != null));
+	}
+
 }

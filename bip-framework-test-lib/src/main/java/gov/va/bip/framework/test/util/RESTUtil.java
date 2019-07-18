@@ -48,6 +48,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
@@ -140,7 +141,7 @@ public class RESTUtil {
 				jsonText = readFile(new File(urlFilePath.toURI()));
 			}
 		} catch (final URISyntaxException | IOException ex) {
-			LOGGER.error("Unable to do setUpRequest", ex);
+			LOGGER.error("Unable to set up request {}", ex);
 		}
 	}
 
@@ -242,10 +243,17 @@ public class RESTUtil {
 			responseHttpHeaders = response.getHeaders();
 			return response.getBody();
 		} catch (HttpClientErrorException clientError) {
-			LOGGER.error("Http client exception is thrown", clientError);
+			LOGGER.error("Http client exception is thrown{}", clientError);
+			LOGGER.error("Response Body {}", clientError.getResponseBodyAsString());
 			httpResponseCode = clientError.getRawStatusCode();
 			responseHttpHeaders = clientError.getResponseHeaders();
 			return clientError.getResponseBodyAsString();
+		} catch(HttpServerErrorException serverError) {
+			LOGGER.error("Http server exception is thrown {}", serverError);
+			LOGGER.error("Response Body {}", serverError.getResponseBodyAsString());
+			httpResponseCode = serverError.getRawStatusCode();
+			responseHttpHeaders = serverError.getResponseHeaders();
+			return serverError.getResponseBodyAsString();
 		}
 	}
 
@@ -358,7 +366,7 @@ public class RESTUtil {
 			ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
 			apiTemplate.setRequestFactory(requestFactory);
 		} catch (Exception e) {
-			LOGGER.error("Issue with the certificate or password", e);
+			LOGGER.error("Issue with the certificate or password{}", e);
 			throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
 		}
 		apiTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
@@ -425,7 +433,7 @@ public class RESTUtil {
 	 */
 	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
 			final SSLContextBuilder sslContextBuilder)
-			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+					throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
 			if (StringUtils.isBlank(password)) {

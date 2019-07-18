@@ -1,0 +1,9 @@
+{
+  "messages" : [ {
+    "timestamp" : "2019-07-18T17:20:28.451",
+    "key" : "NO_KEY",
+    "severity" : "FATAL",
+    "status" : "500",
+    "text" : "Could not find acceptable representation"
+  } ]
+}

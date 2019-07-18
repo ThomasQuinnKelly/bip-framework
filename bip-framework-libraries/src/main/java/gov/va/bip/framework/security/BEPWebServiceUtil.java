@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
@@ -56,12 +55,7 @@ public final class BEPWebServiceUtil {
 		String computedVal = getComputedValue(SecurityUtils.getUserId(), defaultVal);
 
 		if (computedVal.length() > EXTERNALUID_LENGTH) {
-			try {
-				computedVal = HashGenerator.getMd5ForString(computedVal);
-			} catch (final NoSuchAlgorithmException e) {
-				logError(e);
-				computedVal = null;
-			}
+			computedVal = HashGenerator.getMd5ForString(computedVal);
 		}
 
 		Defense.notNull(computedVal);
