@@ -81,6 +81,10 @@
 			</properties>
 			<build>
 				<plugins>
+					<!--
+					This plugin runs the aggregate scan on the reactor project only.
+					The parent POM contains the sca-maven-plugin needs for modules.
+					-->
 					<plugin>
 						<groupId>com.fortify.sca.plugins.maven</groupId>
 						<artifactId>sca-maven-plugin</artifactId>

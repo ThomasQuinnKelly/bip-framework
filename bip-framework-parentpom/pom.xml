@@ -754,13 +754,18 @@
 				</plugins>
 			</build>
 		</profile>
+		<!--
+			The fortify-sca profile provides teh base Fortify requirements
+			for all modules of project parentpom's that inherit this POM.
+			Changes here will impact all BIP service app projects.
+		-->
 		<profile>
 			<id>fortify-sca</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<!-- No tests - fortify-sca should be run as: "mvn install -P fortify-sca" -->
+				<!-- Don't run tests from SCA - profile should be run as: "mvn install -P fortify-sca" -->
 				<skipTests>true</skipTests>
 				<skipITs>true</skipITs>
 				<skipPerfTests>true</skipPerfTests>
