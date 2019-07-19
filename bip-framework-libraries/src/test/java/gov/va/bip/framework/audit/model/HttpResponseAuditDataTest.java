@@ -3,6 +3,8 @@ package gov.va.bip.framework.audit.model;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -18,6 +20,10 @@ public class HttpResponseAuditDataTest {
 		responseAuditData.setHeaders(headers);
 		String response = "test response";
 		responseAuditData.setResponse(response);
+		String testAttachment = "test attachment";
+		List<String> attachmentTextList = new LinkedList<>();
+		attachmentTextList.add(testAttachment);
+		responseAuditData.setAttachmentTextList(attachmentTextList);
 		assertTrue(responseAuditData.toString().equals("HttpResponseAuditData{headers=" + ReflectionToStringBuilder.toString(headers)
 		+ ", uri='" + "', response='" + response + "', attachmentTextList='" + responseAuditData.getAttachmentTextList()
 		+ "'}"));
@@ -27,6 +33,8 @@ public class HttpResponseAuditDataTest {
 	public void toStringWithNullHeadersTest() {
 		HttpResponseAuditData responseAuditData = new HttpResponseAuditData();
 		responseAuditData.setHeaders(null);
+		responseAuditData.setResponse(null);
+		responseAuditData.setAttachmentTextList(null);
 		assertTrue(responseAuditData.toString()
 				.equals("HttpResponseAuditData{headers=, uri='', response='', attachmentTextList='null'}"));
 	}

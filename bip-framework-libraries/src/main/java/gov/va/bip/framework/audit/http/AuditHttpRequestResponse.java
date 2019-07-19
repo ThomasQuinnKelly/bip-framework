@@ -128,7 +128,7 @@ public class AuditHttpRequestResponse {
 				requestAuditData.setRequest(null);
 			} else if ((contentType != null)
 					&& (contentType.toLowerCase(Locale.ENGLISH).startsWith(MediaType.APPLICATION_OCTET_STREAM_VALUE))) {
-				LinkedList<String> linkedList = new LinkedList<String>();
+				LinkedList<String> linkedList = new LinkedList<>();
 				for (Object eachRequest : requests) {
 					if (eachRequest instanceof Resource) {
 						Resource resource = (Resource) eachRequest;
@@ -169,7 +169,7 @@ public class AuditHttpRequestResponse {
 					try {
 						inputstream = part.getInputStream();
 						multipartHeaders
-						.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesToString(inputstream));
+								.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesToString(inputstream));
 					} finally {
 						BaseAsyncAudit.closeInputStreamIfRequired(inputstream);
 					}
@@ -260,23 +260,23 @@ public class AuditHttpRequestResponse {
 			}
 
 			String contentType = httpServletResponse.getContentType();
-			if((contentType != null) && contentType.toLowerCase().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
+			if ((contentType != null) && contentType.equalsIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
-				LinkedList<String> linkedList = new LinkedList<String>();
+				LinkedList<String> linkedList = new LinkedList<>();
 				try {
 					linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
 				} catch (IOException e) {
 					LOGGER.error("Could not read Http Response", e);
 				} finally {
-					try {
-						responseWrapper.copyBodyToResponse();
-					} catch (IOException e) {
-						LOGGER.error("Could not continue copying the response", e);
-						throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
-								HttpStatus.INTERNAL_SERVER_ERROR, "");
-					}
 					BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
+				}
+				try {
+					responseWrapper.copyBodyToResponse();
+				} catch (IOException ioe) {
+					LOGGER.error("Could not continue copying the response", ioe);
+					throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
+							HttpStatus.INTERNAL_SERVER_ERROR, "");
 				}
 				responseAuditData.setAttachmentTextList(linkedList);
 			}

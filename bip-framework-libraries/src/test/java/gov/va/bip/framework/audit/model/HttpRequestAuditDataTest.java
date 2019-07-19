@@ -28,9 +28,10 @@ public class HttpRequestAuditDataTest {
 	}
 
 	@Test
-	public void toStringWithNullHeadersTest() {
+	public void toStringWithNullHeadersAndRequestTest() {
 		HttpRequestAuditData httpRequestAuditData = new HttpRequestAuditData();
 		httpRequestAuditData.setHeaders(null);
+		httpRequestAuditData.setRequest(null);
 		assertTrue(httpRequestAuditData.toString()
 				.equals("HttpRequestAuditData{headers=, uri='null', method='null', request='[]', attachmentList='null'}"));
 	}
