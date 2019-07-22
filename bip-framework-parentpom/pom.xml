@@ -23,7 +23,6 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
 		<!-- TODO DEPRECATED ... -->
-		<sca-maven-plugin.version>18.20</sca-maven-plugin.version>
 		<fortify-build-utils.version>1.2</fortify-build-utils.version>
 		<fortify.scanEnabled>true</fortify.scanEnabled>
 		<fortify.jre64>true</fortify.jre64>
@@ -312,7 +311,8 @@
 		<plugins>
 			<!-- TODO DEPRECATED ... -->
 			<plugin>
-				<groupId>com.hpe.security.fortify.maven.plugin</groupId>
+				<!-- fortify 18.20: groupId changed from "com.hpe.security.fortify.maven.plugin" to "com.fortify.sca.plugins.maven" -->
+				<groupId>com.fortify.sca.plugins.maven</groupId>
 				<artifactId>sca-maven-plugin</artifactId>
 				<version>${sca-maven-plugin.version}</version>
 				<configuration>
