@@ -22,6 +22,21 @@
 			STS / Eclipse version would also solve the issue. -->
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
+		<!-- TODO DEPRECATED ... -->
+		<sca-maven-plugin.version>18.20</sca-maven-plugin.version>
+		<fortify-build-utils.version>1.2</fortify-build-utils.version>
+		<fortify.scanEnabled>true</fortify.scanEnabled>
+		<fortify.jre64>true</fortify.jre64>
+		<fortify.debug>false</fortify.debug>
+		<fortify.maxHeap>1024m</fortify.maxHeap>
+		<fortify.maxPermGen>512m</fortify.maxPermGen>
+		<settings.file.location>${user.home}/.m2/settings.xml</settings.file.location>
+		<fortify.upload>false</fortify.upload> <!-- pass as -D from build server where upload is desired -->
+		<fortify.token>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.token>
+		<fortify.url>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.url>
+		<!-- ... deprecated -->
+
+
 		<!-- Configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -295,6 +310,26 @@
 			</resource>
 		</resources>
 		<plugins>
+			<!-- TODO DEPRECATED ... -->
+			<plugin>
+				<groupId>com.hpe.security.fortify.maven.plugin</groupId>
+				<artifactId>sca-maven-plugin</artifactId>
+				<version>${sca-maven-plugin.version}</version>
+				<configuration>
+					<scanEnabled>${fortify.scanEnabled}</scanEnabled>
+					<projectName>${project.artifactId}</projectName>
+					<projectVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</projectVersion>
+					<upload>${fortify.upload}</upload>
+					<f360Url>${fortify.url}</f360Url>
+					<f360AuthToken>${fortify.token}</f360AuthToken>
+					<jre64>${fortify.jre64}</jre64>
+					<debug>${fortify.debug}</debug>
+					<maxHeap>${fortify.maxHeap}</maxHeap>
+					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
+				</configuration>
+			</plugin>
+			<!-- ... deprecated -->
+
 			<!-- repackages jar and war plugins so they can be executed with command 
 				line -->
 			<plugin>
@@ -372,7 +407,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<skipTests>${skipTests}</skipTests>
 				</configuration>
@@ -633,6 +667,89 @@
 		</pluginManagement>
 	</build>
 	<profiles>
+		<!-- TODO DEPRECATED ... -->
+		<profile>
+			<id>fortify</id>
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 
+				are run using the sourceanalyzer and FPRUtility commandline applications 
+				for now, so Fortify SCA will need to be installed before running -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>fortify-scan</id>
+								<configuration>
+									<target>
+										<property name="dir.scripts" value="target/antscripts" />
+										<property name="fortify.util.version" value="${fortify-build-utils.version}" />
+										<property name="fortify.util.jar.path"
+											value="${gov.va.vetservices.fortify-build-utils:fortify-build-utils:jar}" />
+										<property name="settings.file.location" value="${settings.file.location}" />
+
+										<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
+
+										<echo
+											message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+										<echo message="Version: ${fortify.util.version}" />
+										<echo message="File name: ${fortify.util.jar.filename}" />
+										<echo message="Clean ${dir.scripts}" />
+										<delete dir="${dir.scripts}" />
+										<mkdir dir="${dir.scripts}" />
+										<copy todir="${dir.scripts}" flatten="true" overwrite="true"
+											file="${fortify.util.jar.path}" />
+
+										<unzip src="${dir.scripts}/${fortify.util.jar.filename}"
+											dest="${dir.scripts}" failOnEmptyArchive="true">
+											<mapper type="flatten" />
+											<patternset>
+												<include name="**/**/*.xml" />
+											</patternset>
+										</unzip>
+
+										<property name="local.ant.lib" value="target/antlib" />
+										<mkdir dir="${local.ant.lib}" />
+										<get
+											src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
+											dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true"
+											skipexisting="true" />
+										<fail
+											message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
+											<condition>
+												<not>
+													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar"
+														algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb"
+														verifyproperty="checksum.matches" />
+												</not>
+											</condition>
+										</fail>
+
+										<echo message="Running antfile ${dir.scripts}/fortify.xml" />
+										<ant antfile="${dir.scripts}/fortify.xml">
+											<property name="mvn.project.settings" value="${settings.file.location}" />
+										</ant>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
+					<artifactId>fortify-build-utils</artifactId>
+					<version>1.2</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<!-- ... deprecated -->
+	
 		<profile>
 			<id>docker-jar-project</id>
 			<activation>
