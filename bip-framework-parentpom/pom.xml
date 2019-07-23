@@ -863,6 +863,7 @@
 				<dependency>
 					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
 					<artifactId>fortify-build-utils</artifactId>
+					<version>${fortify-build-utils.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
