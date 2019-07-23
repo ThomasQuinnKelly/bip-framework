@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>gov.va.bip.framework</groupId>
 		<artifactId>bip-framework-parentpom</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>2.0.1</version>
 		<relativePath>../bip-framework-parentpom</relativePath>
 	</parent>
 
