@@ -132,19 +132,23 @@ public class AuditHttpRequestResponse {
 				for (Object eachRequest : requests) {
 					if (eachRequest instanceof Resource) {
 						Resource resource = (Resource) eachRequest;
-						InputStream in = null;
-						try {
-							in = resource.getInputStream();
-							linkedList.add(BaseAsyncAudit.convertBytesToString(in));
-						} catch (IOException e) {
-							LOGGER.error("Could not read Http Request", e);
-						} finally {
-							BaseAsyncAudit.closeInputStreamIfRequired(in);
-						}
+						add1KStringFromResource(linkedList, resource);
 					}
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
+			}
+		}
+
+		private void add1KStringFromResource(final LinkedList<String> linkedList, final Resource resource) {
+			InputStream in = null;
+			try {
+				in = resource.getInputStream();
+				linkedList.add(BaseAsyncAudit.convertBytesToString(in));
+			} catch (IOException e) {
+				LOGGER.error("Could not read Http Request", e);
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(in);
 			}
 		}
 
@@ -263,24 +267,33 @@ public class AuditHttpRequestResponse {
 			if ((contentType != null) && contentType.equalsIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
-				LinkedList<String> linkedList = new LinkedList<>();
-				try {
-					linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
-				} catch (IOException e) {
-					LOGGER.error("Could not read Http Response", e);
-				} finally {
-					BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
-				}
-				try {
-					responseWrapper.copyBodyToResponse();
-				} catch (IOException ioe) {
-					LOGGER.error("Could not continue copying the response", ioe);
-					throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR, "");
-				}
+				final LinkedList<String> linkedList = add1KByteString(byteStream);
+				forwardDataInBodyToResponse(responseWrapper);
 				responseAuditData.setAttachmentTextList(linkedList);
 			}
 			responseAuditData.setHeaders(headers);
+		}
+
+		private void forwardDataInBodyToResponse(final ContentCachingResponseWrapper responseWrapper) {
+			try {
+				responseWrapper.copyBodyToResponse();
+			} catch (IOException ioe) {
+				LOGGER.error("Could not continue copying the response", ioe);
+				throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
+						HttpStatus.INTERNAL_SERVER_ERROR, "");
+			}
+		}
+
+		private LinkedList<String> add1KByteString(final ByteArrayInputStream byteStream) {
+			LinkedList<String> linkedList = new LinkedList<>();
+			try {
+				linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
+			} catch (IOException e) {
+				LOGGER.error("Could not read Http Response", e);
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
+			}
+			return linkedList;
 		}
 	}
 

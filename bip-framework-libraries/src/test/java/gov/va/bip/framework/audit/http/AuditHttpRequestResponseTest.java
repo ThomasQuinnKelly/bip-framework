@@ -2,6 +2,7 @@ package gov.va.bip.framework.audit.http;
 
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,9 +29,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
+import gov.va.bip.framework.exception.BipRuntimeException;
 
 public class AuditHttpRequestResponseTest {
 
@@ -91,4 +94,45 @@ public class AuditHttpRequestResponseTest {
 				"getHttpResponseAuditData", httpServletResponse, responseAuditData);
 		verify(responseAuditData, times(1)).setHeaders(any());
 	}
+
+	@Test
+	public void getHttpResponseAuditDataTestWithOctetStream() {
+		AuditHttpRequestResponse auditHttpRequestResponse = new AuditHttpRequestResponse();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+		HttpResponseAuditData responseAuditData = mock(HttpResponseAuditData.class);
+		Collection<String> enumeration = new ArrayList<String>();
+		enumeration.add(HttpHeaders.CONTENT_TYPE);
+		when(httpServletResponse.getHeaderNames()).thenReturn(enumeration);
+		when(httpServletResponse.getContentType()).thenReturn(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletResponse(), "getHttpResponseAuditData",
+				httpServletResponse, responseAuditData);
+		verify(responseAuditData, times(1)).setHeaders(any());
+	}
+
+	@Test
+	public void add1KStringFromResourceTest_Exception() {
+		AuditHttpRequestResponse auditHttpRequestResponse = new AuditHttpRequestResponse();
+		Resource mockResource = mock(Resource.class);
+		try {
+			when(mockResource.getInputStream()).thenThrow(new IOException());
+		} catch (IOException e) {
+			fail("Exception could not be triggered to test exception code");
+		}
+		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletRequest(),
+				"add1KStringFromResource", new LinkedList<String>(), mockResource);
+	}
+
+	@Test(expected = BipRuntimeException.class)
+	public void forwardDataInBodyToResponseTest_Exception() {
+		AuditHttpRequestResponse auditHttpRequestResponse = new AuditHttpRequestResponse();
+		ContentCachingResponseWrapper mockResponseWrapper = mock(ContentCachingResponseWrapper.class);
+		try {
+			doThrow(new IOException()).when(mockResponseWrapper).copyBodyToResponse();
+		} catch (IOException e) {
+			fail("Exception could not be triggered to test exception code");
+		}
+		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletResponse(), "forwardDataInBodyToResponse",
+				mockResponseWrapper);
+	}
+
 }
