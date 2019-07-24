@@ -12,7 +12,7 @@
 	<groupId>gov.va.bip.framework</groupId>
 	<artifactId>bip-framework-parentpom</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>2.0.3-SNAPSHOT</version>
 	<name>${project.artifactId}</name>
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
@@ -874,7 +874,8 @@
 				<dependency>
 					<groupId>gov.va.vetservices.fortify-build-utils</groupId>
 					<artifactId>fortify-build-utils</artifactId>
-					<version>1.2</version>
+					<version>${fortify-build-utils.version}</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
