@@ -7,16 +7,15 @@ For information regarding recommended development patterns for developing servic
 # Project Breakdown & Links
 
 1. bip-framework-reactor: This is the root reactor project (you are in that repo now). This project forms the aggregate of modules that make up the complete framework, and manages the Fortify scans.
-	- The reactor POM **must not** have a `<parent>` tag, or Fortify scans will fail. This is due to an issue in Fortify's sca-maven-plugin.
-	- A "fortify-sca" profile is included in this POM to manage the fortify scans for the project as a whole.
+	- a maven profile, and a `./fortify.sh` script to run Fortify
+	- a local-dev folder with docker images to run in the spring "local-int" (docker) mode, and with tools to simplify SwA code review submissions.
 
 2. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
-	- A "fortify-sca" profile is included in this POM for any child modules (in the framework itself, and for any inheriting service applications) to manage the fortify scans for the individual modules in the overall project.
+	- Makes BIP Framework the parent POM for your projects
 
 3. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
 
 4. [bip-framework-libraries](bip-framework-libraries/README.md): Common BIP capabilities for the services to implement consistent behavior.
-
 
 5. [bip-framework-shared](bip-framework-shared/README.md): This project contains utilities and functional helpers that can be shared freely with any java project. Presently used by `bip-framework-libraries` and `bip-framework-test-lib` for shared utility
 
