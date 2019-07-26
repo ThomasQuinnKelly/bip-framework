@@ -747,7 +747,7 @@
 	
 		<!--
 			The fortify-sca profile runs the aggregate scan for all modules.
-			If a project believes that the fortify-sca profile requires ANY changes,
+			If a project team believes that the fortify-sca profile requires ANY changes,
 			please consult with the BIP Framework development team.
 			Base Fortify requirements for all project modules are declared in bip-framework-parentpom.
 		-->
@@ -762,7 +762,6 @@
 				<skipITs>true</skipITs>
 				<skipPerfTests>true</skipPerfTests>
 				<fortify.bind.phase>initialize</fortify.bind.phase>
-				<fortify.inherit>false</fortify.inherit>
 			</properties>
 			<build>
 				<pluginManagement>
@@ -779,7 +778,6 @@
 						<groupId>com.fortify.sca.plugins.maven</groupId>
 						<artifactId>sca-maven-plugin</artifactId>
 						<version>${sca-maven-plugin.version}</version>
-						<inherited>${fortify.inherit}</inherited>
 						<executions>
 							<execution>
 								<id>fortify-sca-clean</id>
@@ -804,8 +802,6 @@
 									<aggregate>true</aggregate>
 									<debug>true</debug>
 									<verbose>true</verbose>
-									<!-- exclude inttest and perftest, as they don't go to prod -->
-									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*</excludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -819,8 +815,6 @@
 									<aggregate>true</aggregate>
 									<debug>true</debug>
 									<verbose>true</verbose>
-									<!-- exclude inttest and perftest, as they don't go to prod -->
-									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*</excludes>
 								</configuration>
 							</execution>
 						</executions>

@@ -7,8 +7,8 @@ For information regarding recommended development patterns for developing servic
 # Project Breakdown & Links
 
 1. bip-framework-reactor: This is the root reactor project (you are in that repo now). This project forms the aggregate of modules that make up the complete framework, and manages the Fortify scans.
-	- a maven profile, and a `./fortify.sh` script to run Fortify
-	- a local-dev folder with docker images to run in the spring "local-int" (docker) mode, and with tools to simplify SwA code review submissions.
+	- a maven profile, and a `./fortify.sh` script to run Fortify - this script also documents the unique requirements for running fortify against the framework.
+	- a local-dev folder with docker images to run in the spring "local-int" (docker) mode, and with tools to simplify SwA Code Review submissions.
 
 2. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
 	- Makes BIP Framework the parent POM for your projects
