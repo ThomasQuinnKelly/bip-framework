@@ -153,7 +153,7 @@ public class AuditableAnnotationAspectTest {
 		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
 		try {
 			aspect.auditAnnotationBefore(joinPoint);
-			verify(mockAppender, Mockito.times(6)).doAppend(captorLoggingEvent.capture());
+			verify(mockAppender, Mockito.times(5)).doAppend(captorLoggingEvent.capture());
 			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 			assertNotNull(loggingEvents);
 			assertTrue(loggingEvents.size() > 0);

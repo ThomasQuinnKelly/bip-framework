@@ -1,7 +1,13 @@
 package gov.va.bip.framework.audit;
 
+import static gov.va.bip.framework.audit.BaseAsyncAudit.NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -17,6 +23,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import gov.va.bip.framework.audit.model.HttpRequestAuditData;
+import gov.va.bip.framework.audit.model.HttpResponseAuditData;
+import gov.va.bip.framework.audit.model.RequestAuditData;
+import gov.va.bip.framework.audit.model.ResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
@@ -60,6 +70,25 @@ public class AuditLogSerializer implements Serializable {
 	public void asyncAuditRequestResponseData(final AuditEventData auditEventData, final AuditableData auditData,
 			final Class<?> auditDataClass, final MessageSeverity messageSeverity, final Throwable t) {
 
+		List<Object> objectList = null;
+
+		try {
+			if ((auditData instanceof RequestAuditData) && !(auditData instanceof HttpRequestAuditData)) {
+				objectList = ((RequestAuditData) auditData).getRequest();
+				List<Object> newObjectList = restrictObjectsToSetByteLimit(objectList);
+				((RequestAuditData) auditData).setRequest(newObjectList);
+			} else if ((auditData instanceof ResponseAuditData) && !(auditData instanceof HttpResponseAuditData)) {
+				objectList = new LinkedList<>();
+				objectList.add(((ResponseAuditData) auditData).getResponse());
+				List<Object> newObjectList = restrictObjectsToSetByteLimit(objectList);
+				((ResponseAuditData) auditData).setResponse(newObjectList.get(0));
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Audit Logging failed as the objects to be logged could not be restricted to set limit of "
+					+ NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT + " bytes", ex);
+			return;
+		}
+
 		String auditDetails = null;
 		if (auditData != null) {
 			try {
@@ -94,6 +123,30 @@ public class AuditLogSerializer implements Serializable {
 		} else {
 			AuditLogger.info(auditEventData, auditDetails);
 		}
+	}
+
+	private List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) throws Exception {
+		List<Object> newObjectList = new LinkedList<>();
+		for (Object object : objectList) {
+			try {
+				byte[] bytesAfterLimiting = null;
+				ByteArrayOutputStream bo = new ByteArrayOutputStream();
+				ObjectOutputStream so = new ObjectOutputStream(bo);
+				so.writeObject(object);
+				if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
+					bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+					bo.write(bytesAfterLimiting);
+					newObjectList.add(bytesAfterLimiting);
+				} else {
+					newObjectList.add(object);
+				}
+				so.flush();
+			} catch (Exception ex) {
+				LOGGER.error("Error occurred while trying to get object size by converting the object into a stream!", ex);
+				throw ex;
+			}
+		}
+		return newObjectList;
 	}
 
 	/**

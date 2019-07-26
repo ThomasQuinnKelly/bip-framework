@@ -37,7 +37,7 @@ public class BaseAsyncAudit {
 	private static final String INTERNAL_EXCEPTION_PREFIX = "Error ServiceMessage: ";
 
 	/** How many bytes of an uploaded file will be read for inclusion in the audit record */
-	public static final int NUMBER_OF_BYTES = 1024;
+	public static final int NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT = 1024;
 
 	@Autowired
 	AuditLogSerializer auditLogSerializer;
@@ -81,8 +81,6 @@ public class BaseAsyncAudit {
 			requestAuditData.setRequest(request);
 		}
 
-		LOGGER.debug("RequestAuditData: {}", requestAuditData.toString());
-
 		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, HttpRequestAuditData.class,
 				severity, t);
 	}
@@ -118,7 +116,7 @@ public class BaseAsyncAudit {
 	public static String convertBytesToString(final InputStream in) throws IOException {
 		int offset = 0;
 		int bytesRead = 0;
-		final byte[] data = new byte[NUMBER_OF_BYTES];
+		final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
 		while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {
 			offset += bytesRead;
 			if (offset >= data.length) {
@@ -154,7 +152,7 @@ public class BaseAsyncAudit {
 	 * @param throwable the exception that was thrown
 	 */
 	public void handleInternalExceptionAndRethrowApplicationExceptions(final String adviceName, final String attemptingTo,
-			final AuditEventData auditEventData, MessageKeys key, final Throwable throwable) {
+			final AuditEventData auditEventData, final MessageKeys key, final Throwable throwable) {
 
 		try {
 			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);
