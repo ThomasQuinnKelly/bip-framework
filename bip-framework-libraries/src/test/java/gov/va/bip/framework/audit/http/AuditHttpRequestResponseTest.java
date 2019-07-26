@@ -110,7 +110,7 @@ public class AuditHttpRequestResponseTest {
 	}
 
 	@Test
-	public void add1KStringFromResourceTest_Exception() {
+	public void addStringOfSetSizeFromResource_Exception() {
 		AuditHttpRequestResponse auditHttpRequestResponse = new AuditHttpRequestResponse();
 		Resource mockResource = mock(Resource.class);
 		try {
@@ -119,7 +119,7 @@ public class AuditHttpRequestResponseTest {
 			fail("Exception could not be triggered to test exception code");
 		}
 		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletRequest(),
-				"add1KStringFromResource", new LinkedList<String>(), mockResource);
+				"addStringOfSetSizeFromResource", new LinkedList<String>(), mockResource);
 	}
 
 	@Test(expected = BipRuntimeException.class)

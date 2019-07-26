@@ -132,7 +132,7 @@ public class AuditHttpRequestResponse {
 				for (Object eachRequest : requests) {
 					if (eachRequest instanceof Resource) {
 						Resource resource = (Resource) eachRequest;
-						add1KStringFromResource(linkedList, resource);
+						addStringOfSetSizeFromResource(linkedList, resource);
 					}
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
@@ -140,11 +140,11 @@ public class AuditHttpRequestResponse {
 			}
 		}
 
-		private void add1KStringFromResource(final LinkedList<String> linkedList, final Resource resource) {
+		private void addStringOfSetSizeFromResource(final LinkedList<String> linkedList, final Resource resource) {
 			InputStream in = null;
 			try {
 				in = resource.getInputStream();
-				linkedList.add(BaseAsyncAudit.convertBytesToString(in));
+				linkedList.add(BaseAsyncAudit.convertBytesOfSetSizeToString(in));
 			} catch (IOException e) {
 				LOGGER.error("Could not read Http Request", e);
 			} finally {
@@ -173,7 +173,7 @@ public class AuditHttpRequestResponse {
 					try {
 						inputstream = part.getInputStream();
 						multipartHeaders
-								.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesToString(inputstream));
+						.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesOfSetSizeToString(inputstream));
 					} finally {
 						BaseAsyncAudit.closeInputStreamIfRequired(inputstream);
 					}
@@ -267,11 +267,23 @@ public class AuditHttpRequestResponse {
 			if ((contentType != null) && contentType.equalsIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
 				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
-				final LinkedList<String> linkedList = add1KByteString(byteStream);
+				final LinkedList<String> linkedList = addStringOfSetSize(byteStream);
 				forwardDataInBodyToResponse(responseWrapper);
 				responseAuditData.setAttachmentTextList(linkedList);
 			}
 			responseAuditData.setHeaders(headers);
+		}
+		
+		private LinkedList<String> addStringOfSetSize(final ByteArrayInputStream byteStream) {
+			LinkedList<String> linkedList = new LinkedList<>();
+			try {
+				linkedList.add(BaseAsyncAudit.convertBytesOfSetSizeToString(byteStream));
+			} catch (IOException e) {
+				LOGGER.error("Could not read Http Response", e);
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
+			}
+			return linkedList;
 		}
 
 		private void forwardDataInBodyToResponse(final ContentCachingResponseWrapper responseWrapper) {
@@ -284,17 +296,6 @@ public class AuditHttpRequestResponse {
 			}
 		}
 
-		private LinkedList<String> add1KByteString(final ByteArrayInputStream byteStream) {
-			LinkedList<String> linkedList = new LinkedList<>();
-			try {
-				linkedList.add(BaseAsyncAudit.convertBytesToString(byteStream));
-			} catch (IOException e) {
-				LOGGER.error("Could not read Http Response", e);
-			} finally {
-				BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
-			}
-			return linkedList;
-		}
 	}
 
 	/**

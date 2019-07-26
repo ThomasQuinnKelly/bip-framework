@@ -113,7 +113,7 @@ public class BaseAsyncAudit {
 	 * @return the string
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static String convertBytesToString(final InputStream in) throws IOException {
+	public static String convertBytesOfSetSizeToString(final InputStream in) throws IOException {
 		int offset = 0;
 		int bytesRead = 0;
 		final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
