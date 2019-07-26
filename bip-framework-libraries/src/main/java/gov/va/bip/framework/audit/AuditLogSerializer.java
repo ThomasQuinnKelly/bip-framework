@@ -3,6 +3,7 @@ package gov.va.bip.framework.audit;
 import static gov.va.bip.framework.audit.BaseAsyncAudit.NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -75,15 +76,17 @@ public class AuditLogSerializer implements Serializable {
 		try {
 			if ((auditData instanceof RequestAuditData) && !(auditData instanceof HttpRequestAuditData)) {
 				objectList = ((RequestAuditData) auditData).getRequest();
-				List<Object> newObjectList = restrictObjectsToSetByteLimit(objectList);
+				List<Object> newObjectList;
+				newObjectList = restrictObjectsToSetByteLimit(objectList);
 				((RequestAuditData) auditData).setRequest(newObjectList);
 			} else if ((auditData instanceof ResponseAuditData) && !(auditData instanceof HttpResponseAuditData)) {
 				objectList = new LinkedList<>();
 				objectList.add(((ResponseAuditData) auditData).getResponse());
-				List<Object> newObjectList = restrictObjectsToSetByteLimit(objectList);
+				List<Object> newObjectList;
+				newObjectList = restrictObjectsToSetByteLimit(objectList);
 				((ResponseAuditData) auditData).setResponse(newObjectList.get(0));
 			}
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			LOGGER.error("Audit Logging failed as the objects to be logged could not be restricted to set limit of "
 					+ NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT + " bytes", ex);
 			return;
@@ -125,26 +128,21 @@ public class AuditLogSerializer implements Serializable {
 		}
 	}
 
-	private List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) throws Exception {
+	private List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) throws IOException {
 		List<Object> newObjectList = new LinkedList<>();
 		for (Object object : objectList) {
-			try {
-				byte[] bytesAfterLimiting = null;
-				ByteArrayOutputStream bo = new ByteArrayOutputStream();
-				ObjectOutputStream so = new ObjectOutputStream(bo);
-				so.writeObject(object);
-				if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
-					bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
-					bo.write(bytesAfterLimiting);
-					newObjectList.add(bytesAfterLimiting);
-				} else {
-					newObjectList.add(object);
-				}
-				so.flush();
-			} catch (Exception ex) {
-				LOGGER.error("Error occurred while trying to get object size by converting the object into a stream!", ex);
-				throw ex;
+			byte[] bytesAfterLimiting = null;
+			ByteArrayOutputStream bo = new ByteArrayOutputStream();
+			ObjectOutputStream so = new ObjectOutputStream(bo);
+			so.writeObject(object);
+			if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
+				bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+				bo.write(bytesAfterLimiting);
+				newObjectList.add(bytesAfterLimiting);
+			} else {
+				newObjectList.add(object);
 			}
+			so.flush();
 		}
 		return newObjectList;
 	}
