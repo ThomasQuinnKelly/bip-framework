@@ -97,7 +97,8 @@ public class AuditHttpRequestResponse {
 				getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
 			}
 
-			baseAsyncAudit.writeRequestAuditLog(requests, requestAuditData, auditEventData, MessageSeverity.INFO, null);
+			baseAsyncAudit.writeRequestAuditLog(requests, requestAuditData, auditEventData, MessageSeverity.INFO, null,
+					HttpRequestAuditData.class);
 		}
 
 		/**
@@ -273,7 +274,7 @@ public class AuditHttpRequestResponse {
 			}
 			responseAuditData.setHeaders(headers);
 		}
-		
+
 		private LinkedList<String> addStringOfSetSize(final ByteArrayInputStream byteStream) {
 			LinkedList<String> linkedList = new LinkedList<>();
 			try {

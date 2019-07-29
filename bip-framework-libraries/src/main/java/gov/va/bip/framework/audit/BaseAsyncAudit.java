@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.audit.model.ResponseAuditData;
@@ -76,12 +75,12 @@ public class BaseAsyncAudit {
 	 * @param t - a throwable, if relevant (may be {@code null})
 	 */
 	public void writeRequestAuditLog(final List<Object> request, final RequestAuditData requestAuditData,
-			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t) {
+			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
 		if (request != null) {
 			requestAuditData.setRequest(request);
 		}
 
-		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, HttpRequestAuditData.class,
+		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, auditDataclass,
 				severity, t);
 	}
 
