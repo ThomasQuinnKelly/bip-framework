@@ -1,29 +1,20 @@
 package gov.va.bip.framework.audit;
 
-import static gov.va.bip.framework.audit.BaseAsyncAudit.NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,7 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
-import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
@@ -188,38 +178,4 @@ public class AuditLogSerializerTest {
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testAsyncAuditRequestResponseData_catchBlock() {
-		RequestAuditData auditData = new RequestAuditData();
-		List<Object> request = new LinkedList<>();
-		request.add(mock(HttpServletRequest.class));
-		auditData.setRequest(request);
-		Class<?> auditDataClass = String.class;
-		auditLogSerializer.asyncAuditRequestResponseData(auditEventData, auditData, auditDataClass, MessageSeverity.INFO,
-				new Exception());
-		verify(mockAppender, times(1)).doAppend(captorLoggingEvent.capture());
-		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
-		Assert.assertTrue(loggingEvents.get(0).getMessage()
-				.startsWith("Audit Logging failed as the objects to be logged could not be restricted to set limit of "));
-		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void restrictObjectsToSetByteLimit_largefile() {
-		List<Object> request = new LinkedList<>();
-		String file1Mb = "/testFiles/1MbFile.txt";
-		URL url = this.getClass().getResource(file1Mb);
-		try {
-			request.add(IOUtils.toByteArray(url.openStream()));
-		} catch (IOException e1) {
-			fail("failed to read file data");
-		}
-		List<Object> returnList =
-				(List<Object>) ReflectionTestUtils.invokeMethod(auditLogSerializer, "restrictObjectsToSetByteLimit", request);
-		assertTrue(returnList.get(0) instanceof byte[]);
-		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
-
-	}
 }
