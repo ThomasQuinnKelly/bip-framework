@@ -1,14 +1,21 @@
 package gov.va.bip.framework.audit;
 
+import static gov.va.bip.framework.audit.BaseAsyncAudit.NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.assertj.core.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -30,6 +37,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import gov.va.bip.framework.audit.model.RequestAuditData;
+import gov.va.bip.framework.audit.model.ResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
@@ -136,7 +145,7 @@ public class AuditLogSerializer implements Serializable {
 	private class AuditSimpleBeanObjectFilter extends SimpleBeanPropertyFilter {
 		private final BipLogger LOGGER = BipLoggerFactory.getLogger(AuditSimpleBeanObjectFilter.class);
 
-		private final String[] EXCLUDE_FIELDS = new String[] { "logger"};
+		private final String[] EXCLUDE_FIELDS = new String[] { "logger", "LOGGER" };
 
 		@Override
 		public void serializeAsField(final Object pojo, final JsonGenerator jgen, final SerializerProvider provider,
@@ -147,7 +156,8 @@ public class AuditLogSerializer implements Serializable {
 				}
 				super.serializeAsField(pojo, jgen, provider, writer);
 			} catch (final Exception e) {
-				LOGGER.error(e.getMessage());
+				LOGGER.error("Exception thrown from AuditSimpleBeanObjectFilter for serializeAsField", e);
+				throw e;
 			}
 		}
 
@@ -159,21 +169,39 @@ public class AuditLogSerializer implements Serializable {
 		 * @param writer
 		 *            the writer
 		 * @return the boolean
+		 * @throws IOException
 		 */
-		private boolean canSerializeField(final Object pojo, final PropertyWriter writer) {
+		private boolean canSerializeField(final Object pojo, final PropertyWriter writer) throws IOException {
 
 			boolean foundField = true;
 			final String fieldName = writer.getFullName().getSimpleName();
 			for (int i = 0; foundField && i < EXCLUDE_FIELDS.length; i++) {
 				foundField = !fieldName.equalsIgnoreCase(EXCLUDE_FIELDS[i]);
 			}
-			LOGGER.debug("==============================");
-			LOGGER.debug("Field Name: {}", fieldName);
-			LOGGER.debug("Type: {}", writer.getType());
-			LOGGER.debug("Type: {}", writer.getType().getClass());
-			LOGGER.debug("Type.isPrimitive(): {}", writer.getType().isPrimitive());
-			LOGGER.debug("Type.isArrayType(): {}", writer.getType().isArrayType());
-			LOGGER.debug("==============================");
+
+			if (fieldName.equals("request") || fieldName.equals("response")) {
+				LOGGER.trace("==============================");
+				LOGGER.trace("Field Name: {}", fieldName);
+				LOGGER.trace("Type: {}", writer.getType());
+				LOGGER.trace("Type Class: {}", writer.getType().getClass());
+				LOGGER.trace("Type Raw Class: {}", writer.getType().getRawClass());
+				LOGGER.trace("==============================");
+				List<Object> objectList = null;
+				if (pojo != null && pojo instanceof RequestAuditData) {
+					List<Object> requestObjectList = ((RequestAuditData) pojo).getRequest();
+					if (requestObjectList != null && !requestObjectList.isEmpty()) {
+						objectList = restrictObjectsToSetByteLimit(requestObjectList);
+						((RequestAuditData) pojo).setRequest(objectList);
+					}
+				}
+				if (pojo != null && pojo instanceof ResponseAuditData) {
+					Object responseObject = ((ResponseAuditData) pojo).getResponse();
+					if (responseObject != null) {
+						objectList = restrictObjectsToSetByteLimit(Arrays.asList(responseObject));
+						((ResponseAuditData) pojo).setResponse(objectList);
+					}
+				}
+			}
 
 			if (!foundField) {
 				LOGGER.trace("Field [{}] is excluded", fieldName);
@@ -181,6 +209,44 @@ public class AuditLogSerializer implements Serializable {
 			}
 			return true;
 		}
+	}
+
+	/**
+	 * Restrict objects to set byte limit.
+	 *
+	 * @param objectList
+	 *            the object list
+	 * @return the list
+	 * @throws IOException
+	 */
+	private List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) throws IOException {
+		List<Object> newObjectList = new LinkedList<>();
+		for (Object object : objectList) {
+			LOGGER.trace("Object" + object);
+			LOGGER.trace("object.getClass():" + object.getClass());
+			LOGGER.trace("object.getClass().getSimpleName():" + object.getClass().getSimpleName());
+			if (object instanceof byte[]) {
+				byte[] bytesAfterLimiting = null;
+				try {
+					ByteArrayOutputStream bo = new ByteArrayOutputStream();
+					ObjectOutputStream so = new ObjectOutputStream(bo);
+					so.writeObject(object);
+					if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
+						bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+						bo.write(bytesAfterLimiting);
+						newObjectList.add(bytesAfterLimiting);
+					}
+					so.flush();
+				} catch (IOException e) {
+					LOGGER.error(
+							"IOException thrown from AuditSimpleBeanObjectFilter for restrictObjectsToSetByteLimit", e);
+					throw e;
+				}
+			} else {
+				newObjectList.add(object);
+			}
+		}
+		return newObjectList;
 	}
 
 	/**
