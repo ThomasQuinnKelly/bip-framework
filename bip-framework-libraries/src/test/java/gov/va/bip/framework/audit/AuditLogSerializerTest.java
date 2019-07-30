@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,11 +15,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +36,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ch.qos.logback.classic.Level;
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
@@ -42,7 +44,6 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
 
 @RunWith(SpringRunner.class)
-@Ignore
 public class AuditLogSerializerTest {
 
 	private static final String MESSAGE_STARTSWITH = "Error occurred on ClassCast or JSON processing, calling";
@@ -99,8 +100,9 @@ public class AuditLogSerializerTest {
 				MessageSeverity.INFO, null);
 		auditLogSerializer.asyncAuditRequestResponseData(auditEventData, responseAuditData, HttpResponseAuditData.class,
 				MessageSeverity.INFO, null);
-		verify(mockAppender, times(2)).doAppend(captorLoggingEvent.capture());
-		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+		verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
+		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents =
+				captorLoggingEvent.getAllValues().stream().filter(x -> x.getLevel() == Level.INFO).collect(Collectors.toList());
 		final String expectedRequest = String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString(
 				"{\"request\":[\"Request\"],\"headers\":{\"Header1\":\"Header1Value\"},\"uri\":\"/\",\"method\":\"GET\",\"attachmentTextList\":[\"attachment1\",\"attachment2\"]}"));
 		final String expectedResponse =

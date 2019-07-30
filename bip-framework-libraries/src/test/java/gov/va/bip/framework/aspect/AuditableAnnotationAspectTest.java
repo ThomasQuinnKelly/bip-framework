@@ -3,17 +3,16 @@ package gov.va.bip.framework.aspect;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +25,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import ch.qos.logback.classic.spi.LoggingEvent;
 import gov.va.bip.framework.audit.AuditEvents;
 import gov.va.bip.framework.audit.AuditLogSerializer;
 import gov.va.bip.framework.audit.BaseAsyncAudit;
@@ -35,7 +35,6 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
 public class AuditableAnnotationAspectTest {
 
 	private static final String TEST_STRING_ARGUMENTS = "Test_String1";
@@ -155,11 +154,13 @@ public class AuditableAnnotationAspectTest {
 		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
 		try {
 			aspect.auditAnnotationBefore(joinPoint);
-			verify(mockAppender, Mockito.times(5)).doAppend(captorLoggingEvent.capture());
+			verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
 			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 			assertNotNull(loggingEvents);
 			assertTrue(loggingEvents.size() > 0);
-			assertTrue(loggingEvents.get(loggingEvents.size() - 1).getMessage().contains(TEST_STRING_ARGUMENTS));
+			LoggingEvent event =
+					loggingEvents.stream().filter(x -> x.getFormattedMessage().contains(TEST_STRING_ARGUMENTS)).findAny().orElse(null);
+			assertNotNull(event);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail("Exception should not be thrown");
@@ -216,11 +217,12 @@ public class AuditableAnnotationAspectTest {
 		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
 		try {
 			aspect.auditAnnotationAfterReturning(joinPoint, new ProviderResponse());
-			verify(mockAppender, Mockito.times(7)).doAppend(captorLoggingEvent.capture());
+			verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
 			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 			assertNotNull(loggingEvents);
-			assertTrue(loggingEvents.size() > 0);
-			assertTrue(loggingEvents.get(loggingEvents.size() - 1).getMessage().contains("messages"));
+			LoggingEvent event =
+					loggingEvents.stream().filter(x -> x.getFormattedMessage().contains("messages")).findAny().orElse(null);
+			assertNotNull(event);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail("Exception should not be thrown");
@@ -281,12 +283,16 @@ public class AuditableAnnotationAspectTest {
 			} catch (Exception e) {
 				// never mind this, the advice re-throws the exception passed in
 			}
-			verify(mockAppender, Mockito.times(6)).doAppend(captorLoggingEvent.capture());
-			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+			verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
+			final List<LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 			assertNotNull(loggingEvents);
 			assertTrue(loggingEvents.size() > 0);
-			assertTrue(loggingEvents.get(loggingEvents.size() - 1).getMessage()
-					.contains("An exception occurred in " + this.getClass().getName()));
+			LoggingEvent event = loggingEvents.stream()
+					.filter(x -> x.getFormattedMessage().contains("An exception occurred in " + this.getClass().getName()))
+					.filter(x -> x.getFormattedMessage().contains(TESTS_EXCEPTION_MESSAGE))
+					.findAny()
+					.orElse(null);
+			assertNotNull(event);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail("Exception should not be thrown");
