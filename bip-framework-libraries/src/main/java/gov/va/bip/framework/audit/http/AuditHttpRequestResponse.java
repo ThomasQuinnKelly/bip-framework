@@ -97,7 +97,7 @@ public class AuditHttpRequestResponse {
 				getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
 			}
 
-			baseAsyncAudit.writeRequestAuditLog(requests, requestAuditData, auditEventData, MessageSeverity.INFO, null,
+			baseAsyncAudit.writeRequestAuditLog(requestAuditData, auditEventData, MessageSeverity.INFO, null,
 					HttpRequestAuditData.class);
 		}
 
@@ -138,6 +138,8 @@ public class AuditHttpRequestResponse {
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
+			} else {
+				requestAuditData.setRequest(requests);
 			}
 		}
 
@@ -160,7 +162,7 @@ public class AuditHttpRequestResponse {
 		 * @return List of the headers in key/value string format
 		 */
 		private List<String> getMultipartHeaders(final HttpServletRequest httpServletRequest) {
-			final List<String> multipartHeaders = new ArrayList<>();
+			final List<String> multipartHeaders = new LinkedList<>();
 			InputStream inputstream = null;
 			try {
 				for (final Part part : httpServletRequest.getParts()) {

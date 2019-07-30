@@ -2,8 +2,6 @@ package gov.va.bip.framework.audit;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.event.Level;
@@ -74,11 +72,8 @@ public class BaseAsyncAudit {
 	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
 	 * @param t - a throwable, if relevant (may be {@code null})
 	 */
-	public void writeRequestAuditLog(final List<Object> request, final RequestAuditData requestAuditData,
+	public void writeRequestAuditLog(final RequestAuditData requestAuditData,
 			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
-		if (request != null) {
-			requestAuditData.setRequest(request);
-		}
 
 		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, auditDataclass,
 				severity, t);

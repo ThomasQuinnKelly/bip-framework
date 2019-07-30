@@ -93,8 +93,11 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
 								StringUtils.isBlank(auditableAnnotation.auditClass()) ? className : auditableAnnotation.auditClass());
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());
+				
+				final RequestAuditData requestAuditData = new RequestAuditData();
+				requestAuditData.setRequest(request);
 
-				baseAsyncAudit.writeRequestAuditLog(request, new RequestAuditData(), auditEventData, MessageSeverity.INFO, null,
+				baseAsyncAudit.writeRequestAuditLog(requestAuditData, auditEventData, MessageSeverity.INFO, null,
 						RequestAuditData.class);
 			}
 		} catch (Exception e) { // NOSONAR intentionally broad catch

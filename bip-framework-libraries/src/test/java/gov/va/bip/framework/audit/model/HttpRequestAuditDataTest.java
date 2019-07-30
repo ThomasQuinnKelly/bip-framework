@@ -24,7 +24,7 @@ public class HttpRequestAuditDataTest {
 		assertTrue(httpRequestAuditData.toString()
 				.equals("HttpRequestAuditData{headers=" + ReflectionToStringBuilder.toString(headers) +
 						", uri='" + httpRequestAuditData.getUri() + "\'" + ", method='" + httpRequestAuditData.getMethod()
-						+ "', request='" + requestList + "', attachmentList='" + httpRequestAuditData.getAttachmentTextList() + "'}"));
+						+ "', request='" + requestList + "', attachmentTextList='" + httpRequestAuditData.getAttachmentTextList() + "'}"));
 	}
 
 	@Test
@@ -33,6 +33,6 @@ public class HttpRequestAuditDataTest {
 		httpRequestAuditData.setHeaders(null);
 		httpRequestAuditData.setRequest(null);
 		assertTrue(httpRequestAuditData.toString()
-				.equals("HttpRequestAuditData{headers=, uri='null', method='null', request='[]', attachmentList='null'}"));
+				.equals("HttpRequestAuditData{headers=, uri='null', method='null', request='[]', attachmentTextList='null'}"));
 	}
 }

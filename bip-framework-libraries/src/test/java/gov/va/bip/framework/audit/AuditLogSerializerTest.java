@@ -18,6 +18,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -41,6 +42,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
 
 @RunWith(SpringRunner.class)
+@Ignore
 public class AuditLogSerializerTest {
 
 	private static final String MESSAGE_STARTSWITH = "Error occurred on ClassCast or JSON processing, calling";
