@@ -198,7 +198,7 @@ public class AuditLogSerializer implements Serializable {
 					Object responseObject = ((ResponseAuditData) pojo).getResponse();
 					if (responseObject != null) {
 						objectList = restrictObjectsToSetByteLimit(Arrays.asList(responseObject));
-						((ResponseAuditData) pojo).setResponse(objectList);
+						((ResponseAuditData) pojo).setResponse(objectList.get(0));
 					}
 				}
 			}
