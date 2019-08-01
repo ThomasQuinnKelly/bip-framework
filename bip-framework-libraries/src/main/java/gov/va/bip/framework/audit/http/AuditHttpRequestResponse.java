@@ -237,13 +237,13 @@ public class AuditHttpRequestResponse {
 		public void writeHttpResponseAuditLog(final Object response, final AuditEventData auditEventData,
 				final MessageSeverity severity, final Throwable t) {
 
-			final HttpServletResponse httpServletReponse =
+			final HttpServletResponse httpServletResponse =
 					((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
 			final HttpResponseAuditData responseAuditData = new HttpResponseAuditData();
 
-			if (httpServletReponse != null) {
-				getHttpResponseAuditData(httpServletReponse, responseAuditData);
+			if (httpServletResponse != null) {
+				getHttpResponseAuditData(httpServletResponse, responseAuditData);
 			}
 
 			baseAsyncAudit.writeResponseAuditLog(response, responseAuditData, auditEventData, severity, t);

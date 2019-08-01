@@ -91,7 +91,8 @@ public class BaseAsyncAudit {
 	public void writeResponseAuditLog(final Object response, final ResponseAuditData responseAuditData,
 			final AuditEventData auditEventData,
 			final MessageSeverity severity, final Throwable t) {
-		if (response != null) {
+
+		if (responseAuditData!=null) {
 			responseAuditData.setResponse(response);
 		}
 
