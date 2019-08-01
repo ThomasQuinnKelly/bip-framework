@@ -161,7 +161,7 @@ public class ProviderHttpAspectTest extends AbstractBaseLogTester {
 			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
 			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
 			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
-			providerHttpAspect.afterreturningAuditAdvice(joinPoint, new ProviderResponse());
+			providerHttpAspect.afterreturningAuditAdvice(joinPoint, new ResponseEntity<ProviderResponse>(HttpStatus.OK));
 		} catch (final Throwable throwable) {
 			fail("Exception is not exceptecd");
 		}

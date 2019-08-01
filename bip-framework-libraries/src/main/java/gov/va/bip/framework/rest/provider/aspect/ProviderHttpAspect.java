@@ -25,9 +25,10 @@ import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 
 /**
- * This aspect performs Audit logging before and after the endpoint operation is executed.
- * Additionally, any exceptions thrown back to the endpoint operation will be intercepted
- * and converted to appropriate JSON object with a FATAL message.
+ * This aspect performs Audit logging before and after the endpoint operation is
+ * executed. Additionally, any exceptions thrown back to the endpoint operation
+ * will be intercepted and converted to appropriate JSON object with a FATAL
+ * message.
  *
  * @author akulkarni
  * @see gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts
@@ -40,8 +41,8 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	private static final String JOINPOINT_STRING = " joinpoint: ";
 
 	/**
-	 * Developers note: for thread safety, only static constants
-	 * or spring proxies can be put at class level.
+	 * Developers note: for thread safety, only static constants or spring
+	 * proxies can be put at class level.
 	 */
 
 	/** Class logger */
@@ -77,7 +78,8 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 		try {
 			Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
-			auditEventData = new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName());
+			auditEventData = new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(),
+					method.getDeclaringClass().getName());
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Request: {}", requestArgs);
@@ -86,10 +88,11 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 			}
 			super.auditServletRequest().writeHttpRequestAuditLog(requestArgs, auditEventData);
 
-		} catch (final Throwable throwable) { // NOSONAR intentionally catching throwable
-			LOGGER.error(this.getClass().getSimpleName() + " " + BEFORE_ADVICE + " while attempting " + ATTEMPTING_WRITE_REQUEST
-					+ ": " + throwable.getClass().getSimpleName() + " " + throwable.getMessage(),
-					throwable);
+		} catch (final Throwable throwable) { // NOSONAR intentionally catching
+												// throwable
+			LOGGER.error(this.getClass().getSimpleName() + " " + BEFORE_ADVICE + " while attempting "
+					+ ATTEMPTING_WRITE_REQUEST + ": " + throwable.getClass().getSimpleName() + " "
+					+ throwable.getMessage(), throwable);
 			handleInternalException(BEFORE_ADVICE, ATTEMPTING_WRITE_REQUEST, auditEventData, throwable);
 		} finally {
 			LOGGER.debug(BEFORE_ADVICE + FINISHED_STRING);
@@ -102,12 +105,11 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	 * @param joinPoint
 	 * @param responseToConsumer
 	 */
-	@AfterReturning(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())",
-			returning = "responseToConsumer")
-	public void afterreturningAuditAdvice(final JoinPoint joinPoint, final ProviderResponse responseToConsumer) {
+	@AfterReturning(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())", returning = "responseToConsumer")
+	public void afterreturningAuditAdvice(final JoinPoint joinPoint, final Object responseToConsumer) {
 		LOGGER.debug(AFTER_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 		LOGGER.debug(AFTER_ADVICE + " responseToConsumer: "
-				+ ReflectionToStringBuilder.toString(responseToConsumer, null, true, true, ProviderResponse.class));
+				+ ReflectionToStringBuilder.toString(responseToConsumer, null, true, true));
 
 		AuditEventData auditEventData = null;
 		ProviderResponse providerResponse = null;
@@ -116,16 +118,28 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 			if (responseToConsumer == null) {
 				providerResponse = new ProviderResponse();
 			} else {
-				providerResponse = responseToConsumer;
+				if (responseToConsumer instanceof ResponseEntity) {
+					ResponseEntity<?> response = (ResponseEntity<?>) responseToConsumer;
+					if (response.getBody() instanceof ProviderResponse) {
+						providerResponse = (ProviderResponse) response.getBody();
+					}
+				} else if (responseToConsumer instanceof ProviderResponse) {
+					providerResponse = (ProviderResponse) responseToConsumer;
+
+				}
 			}
 
 			Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
-			auditEventData = new AuditEventData(AuditEvents.API_REST_RESPONSE, method.getName(), method.getDeclaringClass().getName());
+			auditEventData = new AuditEventData(AuditEvents.API_REST_RESPONSE, method.getName(),
+					method.getDeclaringClass().getName());
 
-			super.auditServletResponse().writeHttpResponseAuditLog(providerResponse, auditEventData, MessageSeverity.INFO, null);
+			super.auditServletResponse().writeHttpResponseAuditLog(
+					providerResponse == null ? responseToConsumer : providerResponse, auditEventData,
+					MessageSeverity.INFO, null);
 
-		} catch (Throwable throwable) { // NOSONAR intentionally catching throwable
+		} catch (Throwable throwable) { // NOSONAR intentionally catching
+										// throwable
 			handleInternalException(AFTER_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, throwable);
 		} finally {
 			LOGGER.debug(AFTER_ADVICE + FINISHED_STRING);
@@ -133,15 +147,16 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	}
 
 	/**
-	 * Perform audit logging after application has thrown an exception.
-	 * Any exceptions thrown back to the endpoint operation will be intercepted
-	 * by this advice, and converted to appropriate JSON object with FATAL message.
+	 * Perform audit logging after application has thrown an exception. Any
+	 * exceptions thrown back to the endpoint operation will be intercepted by
+	 * this advice, and converted to appropriate JSON object with FATAL message.
 	 *
-	 * @param joinPoint the intersection for the pointcut
-	 * @param throwable the exception thrown by the application code
+	 * @param joinPoint
+	 *            the intersection for the pointcut
+	 * @param throwable
+	 *            the exception thrown by the application code
 	 */
-	@AfterThrowing(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())",
-			throwing = "throwable")
+	@AfterThrowing(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())", throwing = "throwable")
 	public ResponseEntity<ProviderResponse> afterThrowingAdvice(final JoinPoint joinPoint, final Throwable throwable) {
 		LOGGER.debug(AFTER_THROWING_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
 		LOGGER.debug(AFTER_THROWING_ADVICE + " throwable: {}" + throwable);
@@ -158,13 +173,16 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 			} else {
 				MessageKeys key = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION;
 				response.addMessage(MessageSeverity.ERROR, key.getKey(),
-						key.getMessage(throwable.getClass().getSimpleName(), throwable.getMessage()), HttpStatus.BAD_REQUEST);
+						key.getMessage(throwable.getClass().getSimpleName(), throwable.getMessage()),
+						HttpStatus.BAD_REQUEST);
 			}
 
-			auditServletResponse().writeHttpResponseAuditLog(response, auditEventData, MessageSeverity.ERROR, throwable);
+			auditServletResponse().writeHttpResponseAuditLog(response, auditEventData, MessageSeverity.ERROR,
+					throwable);
 
 		} catch (Throwable t) { // NOSONAR intentionally catching throwable
-			providerResponse = handleInternalException(AFTER_THROWING_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, t);
+			providerResponse = handleInternalException(AFTER_THROWING_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData,
+					t);
 		} finally {
 			LOGGER.debug(AFTER_THROWING_ADVICE + FINISHED_STRING);
 		}
