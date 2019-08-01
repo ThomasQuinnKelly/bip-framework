@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -48,7 +45,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ch.qos.logback.classic.Level;
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
-import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
@@ -191,23 +187,24 @@ public class AuditLogSerializerTest {
 		Assert.assertTrue(loggingEvents.get(0).getMessage().startsWith("Error test"));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
 	}
-//
-//	@SuppressWarnings("unchecked")
-//	@Test
-//	public void restrictObjectsToSetByteLimit_largefile() {
-//		List<Object> request = new LinkedList<>();
-//		String file1Mb = "/testFiles/1MbFile.txt";
-//		URL url = this.getClass().getResource(file1Mb);
-//		try {
-//			request.add(IOUtils.toByteArray(url.openStream()));
-//		} catch (IOException e1) {
-//			fail("failed to read file data");
-//		}
-//		List<Object> returnList =
-//				(List<Object>) ReflectionTestUtils.invokeMethod(auditLogSerializer, "restrictObjectsToSetByteLimit", request);
-//		assertTrue(returnList.get(0) instanceof byte[]);
-//		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
-//
-//	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void restrictObjectsToSetByteLimit_largefile() {
+		List<Object> request = new LinkedList<>();
+		String file1Mb = "/testFiles/1MbFile.txt";
+		URL url = this.getClass().getResource(file1Mb);
+		try {
+			request.add(IOUtils.toByteArray(url.openStream()));
+		} catch (IOException e1) {
+			fail("failed to read file data");
+		}
+		// Class filterClass = AuditLogSerializer.class.getDeclaredClasses()[0].set newInstance()
+		List<Object> returnList =
+				(List<Object>) ReflectionTestUtils.invokeMethod(auditLogSerializer, "restrictObjectsToSetByteLimit", request);
+		assertTrue(returnList.get(0) instanceof byte[]);
+		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
+
+	}
 
 }
