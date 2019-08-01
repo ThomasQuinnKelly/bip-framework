@@ -2,6 +2,7 @@ package gov.va.bip.framework.audit.http;
 
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,7 +52,7 @@ public class AuditHttpRequestResponseTest {
 		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletRequest(),
 				"getHttpRequestAuditData", httpServletRequest, requestAuditData, null);
 		verify(requestAuditData, times(1)).setAttachmentTextList(any());
-		verify(requestAuditData, times(1)).setRequest(any());
+		verify(requestAuditData, atLeastOnce()).setRequest(any());
 	}
 
 	@Test
@@ -78,7 +79,7 @@ public class AuditHttpRequestResponseTest {
 		ReflectionTestUtils.invokeMethod(auditHttpRequestResponse.new AuditHttpServletRequest(), "getHttpRequestAuditData",
 				httpServletRequest, requestAuditData, requests);
 		verify(requestAuditData, times(1)).setAttachmentTextList(any());
-		verify(requestAuditData, times(1)).setRequest(any());
+		verify(requestAuditData, atLeastOnce()).setRequest(any());
 	}
 
 	@Test

@@ -116,7 +116,8 @@ public class AuditHttpRequestResponse {
 			requestAuditData.setHeaders(headers);
 			requestAuditData.setUri(httpServletRequest.getRequestURI());
 			requestAuditData.setMethod(httpServletRequest.getMethod());
-
+			requestAuditData.setRequest(requests);
+			
 			final String contentType = httpServletRequest.getContentType();
 
 			LOGGER.debug("Content Type: {}", Sanitizer.stripXss(contentType));
@@ -138,8 +139,6 @@ public class AuditHttpRequestResponse {
 				}
 				requestAuditData.setAttachmentTextList(linkedList);
 				requestAuditData.setRequest(null);
-			} else {
-				requestAuditData.setRequest(requests);
 			}
 		}
 
