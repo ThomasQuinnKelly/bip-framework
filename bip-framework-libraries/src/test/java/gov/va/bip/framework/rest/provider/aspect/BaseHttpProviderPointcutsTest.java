@@ -68,6 +68,14 @@ public class BaseHttpProviderPointcutsTest {
 		BaseHttpProviderPointcuts.restController();
 	}
 
+	/**
+	 * Test of publicResourceDownloadRestMethod method, of class BaseHttpProviderPointcuts.
+	 */
+	@Test
+	public void testPublicResourceDownloadRestMethod() {
+		BaseHttpProviderPointcuts.publicResourceDownloadRestMethod();
+	}
+
 
 	public Method myMethod() throws NoSuchMethodException {
 		return getClass().getDeclaredMethod("someMethod");

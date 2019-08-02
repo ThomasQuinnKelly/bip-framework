@@ -38,19 +38,19 @@ import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
 public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 	/** The Constant LOGGER. */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(AuditableAnnotationAspect.class);
-	
+
 	/** The Constant AUDIT_DEBUG_PREFIX_METHOD. */
 	private static final String AUDIT_DEBUG_PREFIX_METHOD = "Audit Annotated Method: {}";
-	
+
 	/** The Constant AUDIT_DEBUG_PREFIX_CLASS. */
 	private static final String AUDIT_DEBUG_PREFIX_CLASS = "Audit Annotated Class: {}";
 
 	/** The Constant AUDIT_DEBUG_PREFIX_ANNOTATION. */
 	private static final String AUDIT_DEBUG_PREFIX_ANNOTATION = "Auditable Annotation: {}";
-	
+
 	/** The Constant AUDIT_DEBUG_PREFIX_EVENT. */
 	private static final String AUDIT_DEBUG_PREFIX_EVENT = "AuditEventData: {}";
-	
+
 	/** The Constant AUDIT_ERROR_PREFIX_EXCEPTION. */
 	private static final String AUDIT_ERROR_PREFIX_EXCEPTION = "Could not audit event due to unexpected exception.";
 
@@ -93,8 +93,12 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
 								StringUtils.isBlank(auditableAnnotation.auditClass()) ? className : auditableAnnotation.auditClass());
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());
+				
+				final RequestAuditData requestAuditData = new RequestAuditData();
+				requestAuditData.setRequest(request);
 
-				baseAsyncAudit.writeRequestAuditLog(request, new RequestAuditData(), auditEventData, MessageSeverity.INFO, null);
+				baseAsyncAudit.writeRequestAuditLog(requestAuditData, auditEventData, MessageSeverity.INFO, null,
+						RequestAuditData.class);
 			}
 		} catch (Exception e) { // NOSONAR intentionally broad catch
 			baseAsyncAudit.handleInternalExceptionAndRethrowApplicationExceptions("auditAnnotationBefore",
@@ -174,7 +178,7 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 			if (auditableAnnotation != null) {
 				String auditedClass = StringUtils.isBlank(auditableAnnotation.auditClass())
 						? className
-						: auditableAnnotation.auditClass();
+								: auditableAnnotation.auditClass();
 				auditEventData =
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(), auditedClass);
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());

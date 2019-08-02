@@ -2,8 +2,6 @@ package gov.va.bip.framework.audit;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.event.Level;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.audit.model.ResponseAuditData;
@@ -37,7 +34,7 @@ public class BaseAsyncAudit {
 	private static final String INTERNAL_EXCEPTION_PREFIX = "Error ServiceMessage: ";
 
 	/** How many bytes of an uploaded file will be read for inclusion in the audit record */
-	public static final int NUMBER_OF_BYTES = 1024;
+	public static final int NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT = 1024;
 
 	@Autowired
 	AuditLogSerializer auditLogSerializer;
@@ -75,15 +72,10 @@ public class BaseAsyncAudit {
 	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
 	 * @param t - a throwable, if relevant (may be {@code null})
 	 */
-	public void writeRequestAuditLog(final List<Object> request, final RequestAuditData requestAuditData,
-			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t) {
-		if (request != null) {
-			requestAuditData.setRequest(request);
-		}
+	public void writeRequestAuditLog(final RequestAuditData requestAuditData,
+			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
 
-		LOGGER.debug("RequestAuditData: {}", requestAuditData.toString());
-
-		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, HttpRequestAuditData.class,
+		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, requestAuditData, auditDataclass,
 				severity, t);
 	}
 
@@ -99,7 +91,8 @@ public class BaseAsyncAudit {
 	public void writeResponseAuditLog(final Object response, final ResponseAuditData responseAuditData,
 			final AuditEventData auditEventData,
 			final MessageSeverity severity, final Throwable t) {
-		if (response != null) {
+
+		if (responseAuditData!=null) {
 			responseAuditData.setResponse(response);
 		}
 
@@ -115,10 +108,10 @@ public class BaseAsyncAudit {
 	 * @return the string
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static String convertBytesToString(final InputStream in) throws IOException {
+	public static String convertBytesOfSetSizeToString(final InputStream in) throws IOException {
 		int offset = 0;
 		int bytesRead = 0;
-		final byte[] data = new byte[NUMBER_OF_BYTES];
+		final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
 		while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {
 			offset += bytesRead;
 			if (offset >= data.length) {
@@ -154,7 +147,7 @@ public class BaseAsyncAudit {
 	 * @param throwable the exception that was thrown
 	 */
 	public void handleInternalExceptionAndRethrowApplicationExceptions(final String adviceName, final String attemptingTo,
-			final AuditEventData auditEventData, MessageKeys key, final Throwable throwable) {
+			final AuditEventData auditEventData, final MessageKeys key, final Throwable throwable) {
 
 		try {
 			LOGGER.error(key.getMessage(adviceName, attemptingTo), throwable);

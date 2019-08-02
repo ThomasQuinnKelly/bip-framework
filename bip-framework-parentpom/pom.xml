@@ -86,6 +86,7 @@
 
 		<!-- application plugins -->
 		<spring-cloud-dependencies.version>Greenwich.SR2</spring-cloud-dependencies.version>
+		<io-zipkin-brave-bom.version>5.6.6</io-zipkin-brave-bom.version>
 		<jjwt.version>0.9.1</jjwt.version>
 		<wss4j.version>1.6.19</wss4j.version>
 		<el-impl.version>2.2</el-impl.version>
@@ -170,6 +171,16 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- h2-console stopped working after updating from Spring Cloud Greenwich.SR1 
+				to SR2 There is a bug in Brave fixed in 5.6.6 https://github.com/openzipkin/brave/pull/933 
+				Most likely Greenwich.SR3 or later release would fix this issue -->
+			<dependency>
+				<groupId>io.zipkin.brave</groupId>
+				<artifactId>brave-bom</artifactId>
+				<version>${io-zipkin-brave-bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
