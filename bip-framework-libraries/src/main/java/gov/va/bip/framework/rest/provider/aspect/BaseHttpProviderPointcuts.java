@@ -49,6 +49,22 @@ public class BaseHttpProviderPointcuts extends AuditHttpRequestResponse {
 	}
 
 	/**
+	 * This point cut selects REST endpoint operations that are of interest to external consumers. Those are operations that...
+	 * <ol>
+	 * <li>are in a rest controller class (see the {@link #restController()} pointcut)
+	 * <li>that are public in scope
+	 * <li>where the method returns {@code org.springframework.core.io.Resource+} or
+	 * {@code org.springframework.http.ResponseEntity<org.springframework.core.io.Resource+>}
+	 * </ol>
+	 */
+	@Pointcut("restController() && ("
+			+ "execution(public org.springframework.http.ResponseEntity<org.springframework.core.io.Resource+> *(..))"
+			+ " || execution(public org.springframework.core.io.Resource+ *(..))" + ")")
+	protected static final void publicResourceDownloadRestMethod() {
+		// Do nothing.
+	}
+
+	/**
 	 * This point cut selects code (e.g. methods) that ...
 	 * <ol>
 	 * <li>are annotated with gov.va.bip.framework.audit.annotation.Auditable

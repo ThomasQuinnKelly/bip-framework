@@ -161,7 +161,53 @@ public class ProviderHttpAspectTest extends AbstractBaseLogTester {
 			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
 			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
 			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
+			providerHttpAspect.afterreturningAuditAdvice(joinPoint, new ResponseEntity<ProviderResponse>(HttpStatus.OK));
+		} catch (final Throwable throwable) {
+			fail("Exception is not exceptecd");
+		}
+	}
+
+	@Test
+	public void testAfterreturningAuditAdvice_withProviderResponseBody() {
+		super.getAppender().clear();
+
+		providerHttpAspect = new ProviderHttpAspect();
+		try {
+			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
+			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
+			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
+			providerHttpAspect.afterreturningAuditAdvice(joinPoint,
+					new ResponseEntity<ProviderResponse>(new ProviderResponse(), HttpStatus.OK));
+		} catch (final Throwable throwable) {
+			fail("Exception is not exceptecd");
+		}
+	}
+
+	@Test
+	public void testAfterreturningAuditAdvice_withProviderResponseReturnType() {
+		super.getAppender().clear();
+
+		providerHttpAspect = new ProviderHttpAspect();
+		try {
+			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
+			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
+			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
 			providerHttpAspect.afterreturningAuditAdvice(joinPoint, new ProviderResponse());
+		} catch (final Throwable throwable) {
+			fail("Exception is not exceptecd");
+		}
+	}
+
+	@Test
+	public void testAfterreturningAuditAdvice_withNullReturned() {
+		super.getAppender().clear();
+
+		providerHttpAspect = new ProviderHttpAspect();
+		try {
+			Mockito.lenient().when(joinPoint.getSignature()).thenReturn(mockSignature);
+			Mockito.lenient().when(mockSignature.getMethod()).thenReturn(myMethod());
+			Mockito.lenient().when(joinPoint.getTarget()).thenReturn(new TestClass());
+			providerHttpAspect.afterreturningAuditAdvice(joinPoint, null);
 		} catch (final Throwable throwable) {
 			fail("Exception is not exceptecd");
 		}
