@@ -145,7 +145,7 @@ public class AuditLogSerializer implements Serializable {
 	 * The Class AuditSimpleBeanObjectFilter.
 	 */
 	@JsonFilter("beanObjectFilter")
-	private class AuditSimpleBeanObjectFilter extends SimpleBeanPropertyFilter {
+	private static class AuditSimpleBeanObjectFilter extends SimpleBeanPropertyFilter {
 
 		@Override
 		public void serializeAsField(final Object pojo, final JsonGenerator jgen, final SerializerProvider provider,
@@ -157,98 +157,98 @@ public class AuditLogSerializer implements Serializable {
 
 			super.serializeAsField(pojo, jgen, provider, writer);
 		}
-	}
 
-	/**
-	 * Can serialize field?
-	 *
-	 * @param pojo the pojo
-	 * @param writer the writer
-	 * @return the boolean
-	 * @throws IOException
-	 */
-	private static boolean canSerializeField(final Object pojo, final PropertyWriter writer) {
+		/**
+		 * Can serialize field?
+		 *
+		 * @param pojo the pojo
+		 * @param writer the writer
+		 * @return the boolean
+		 * @throws IOException
+		 */
+		private static boolean canSerializeField(final Object pojo, final PropertyWriter writer) {
 
-		boolean foundField = true;
-		final String fieldName = writer.getFullName().getSimpleName();
-		for (int i = 0; foundField && (i < EXCLUDE_FIELDS.length); i++) {
-			foundField = !fieldName.equalsIgnoreCase(EXCLUDE_FIELDS[i]);
-		}
-
-		verifyRequestResponse(pojo, writer, fieldName);
-
-		if (!foundField) {
-			LOGGER_AUDIT_FILTER.trace("Field [{}] is excluded", fieldName);
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Verify request response.
-	 *
-	 * @param pojo the pojo
-	 * @param writer the writer
-	 * @param fieldName the field name
-	 */
-	private static void verifyRequestResponse(final Object pojo, final PropertyWriter writer, final String fieldName) {
-		if (fieldName.equals("request") || fieldName.equals("response")) {
-			LOGGER_AUDIT_FILTER.trace("==============================");
-			LOGGER_AUDIT_FILTER.trace("Field Name: {}", fieldName);
-			LOGGER_AUDIT_FILTER.trace("Type: {}", writer.getType());
-			LOGGER_AUDIT_FILTER.trace("Type Class: {}", writer.getType().getClass());
-			LOGGER_AUDIT_FILTER.trace("Type Raw Class: {}", writer.getType().getRawClass());
-			LOGGER_AUDIT_FILTER.trace("==============================");
-			List<Object> objectList = null;
-			if ((pojo != null) && (pojo instanceof RequestAuditData)) {
-				List<Object> requestObjectList = ((RequestAuditData) pojo).getRequest();
-				if ((requestObjectList != null) && !requestObjectList.isEmpty()) {
-					objectList = restrictObjectsToSetByteLimit(requestObjectList);
-					((RequestAuditData) pojo).setRequest(objectList);
-				}
+			boolean foundField = true;
+			final String fieldName = writer.getFullName().getSimpleName();
+			for (int i = 0; foundField && (i < EXCLUDE_FIELDS.length); i++) {
+				foundField = !fieldName.equalsIgnoreCase(EXCLUDE_FIELDS[i]);
 			}
-			if ((pojo != null) && (pojo instanceof ResponseAuditData)) {
-				Object responseObject = ((ResponseAuditData) pojo).getResponse();
-				if (responseObject != null) {
-					objectList = restrictObjectsToSetByteLimit(Arrays.asList(responseObject));
-					((ResponseAuditData) pojo).setResponse(objectList.get(0));
-				}
-			}
-		}
-	}
 
-	/**
-	 * Restrict objects to set byte limit.
-	 *
-	 * @param objectList the object list
-	 * @return the list
-	 * @throws IOException
-	 */
-	private static List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) {
-		List<Object> newObjectList = new LinkedList<>();
-		for (Object object : objectList) {
-			if (object instanceof byte[]) {
-				byte[] bytesAfterLimiting = null;
-				try {
-					ByteArrayOutputStream bo = new ByteArrayOutputStream();
-					ObjectOutputStream so = new ObjectOutputStream(bo);
-					so.writeObject(object);
-					if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
-						bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
-						bo.write(bytesAfterLimiting);
-						newObjectList.add(bytesAfterLimiting);
+			verifyRequestResponse(pojo, writer, fieldName);
+
+			if (!foundField) {
+				LOGGER_AUDIT_FILTER.trace("Field [{}] is excluded", fieldName);
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * Verify request response.
+		 *
+		 * @param pojo the pojo
+		 * @param writer the writer
+		 * @param fieldName the field name
+		 */
+		private static void verifyRequestResponse(final Object pojo, final PropertyWriter writer, final String fieldName) {
+			if (fieldName.equals("request") || fieldName.equals("response")) {
+				LOGGER_AUDIT_FILTER.trace("==============================");
+				LOGGER_AUDIT_FILTER.trace("Field Name: {}", fieldName);
+				LOGGER_AUDIT_FILTER.trace("Type: {}", writer.getType());
+				LOGGER_AUDIT_FILTER.trace("Type Class: {}", writer.getType().getClass());
+				LOGGER_AUDIT_FILTER.trace("Type Raw Class: {}", writer.getType().getRawClass());
+				LOGGER_AUDIT_FILTER.trace("==============================");
+				List<Object> objectList = null;
+				if ((pojo != null) && (pojo instanceof RequestAuditData)) {
+					List<Object> requestObjectList = ((RequestAuditData) pojo).getRequest();
+					if ((requestObjectList != null) && !requestObjectList.isEmpty()) {
+						objectList = restrictObjectsToSetByteLimit(requestObjectList);
+						((RequestAuditData) pojo).setRequest(objectList);
 					}
-					so.flush();
-				} catch (IOException e) {
-					LOGGER_AUDIT_FILTER.error(
-							"IOException thrown from AuditSimpleBeanObjectFilter for restrictObjectsToSetByteLimit", e);
-					return objectList;
 				}
-			} else {
-				newObjectList.add(object);
+				if ((pojo != null) && (pojo instanceof ResponseAuditData)) {
+					Object responseObject = ((ResponseAuditData) pojo).getResponse();
+					if (responseObject != null) {
+						objectList = restrictObjectsToSetByteLimit(Arrays.asList(responseObject));
+						((ResponseAuditData) pojo).setResponse(objectList.get(0));
+					}
+				}
 			}
 		}
-		return newObjectList;
+
+		/**
+		 * Restrict objects to set byte limit.
+		 *
+		 * @param objectList the object list
+		 * @return the list
+		 * @throws IOException
+		 */
+		private static List<Object> restrictObjectsToSetByteLimit(final List<Object> objectList) {
+			List<Object> newObjectList = new LinkedList<>();
+			for (Object object : objectList) {
+				if (object instanceof byte[]) {
+					byte[] bytesAfterLimiting = null;
+					try {
+						ByteArrayOutputStream bo = new ByteArrayOutputStream();
+						ObjectOutputStream so = new ObjectOutputStream(bo);
+						so.writeObject(object);
+						if (bo.size() > NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT) {
+							bytesAfterLimiting = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+							bo.write(bytesAfterLimiting);
+							newObjectList.add(bytesAfterLimiting);
+						}
+						so.flush();
+					} catch (IOException e) {
+						LOGGER_AUDIT_FILTER
+								.error("IOException thrown from AuditSimpleBeanObjectFilter for restrictObjectsToSetByteLimit", e);
+						return objectList;
+					}
+				} else {
+					newObjectList.add(object);
+				}
+			}
+			return newObjectList;
+		}
 	}
 
 	/**
