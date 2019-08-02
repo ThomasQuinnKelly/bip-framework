@@ -89,7 +89,7 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 			super.auditServletRequest().writeHttpRequestAuditLog(requestArgs, auditEventData);
 
 		} catch (final Throwable throwable) { // NOSONAR intentionally catching
-												// throwable
+			// throwable
 			LOGGER.error(this.getClass().getSimpleName() + " " + BEFORE_ADVICE + " while attempting "
 					+ ATTEMPTING_WRITE_REQUEST + ": " + throwable.getClass().getSimpleName() + " "
 					+ throwable.getMessage(), throwable);
@@ -108,8 +108,12 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 	@AfterReturning(pointcut = "!auditableAnnotation() && (publicServiceResponseRestMethod() || publicResourceDownloadRestMethod())", returning = "responseToConsumer")
 	public void afterreturningAuditAdvice(final JoinPoint joinPoint, final Object responseToConsumer) {
 		LOGGER.debug(AFTER_ADVICE + JOINPOINT_STRING + joinPoint.toLongString());
-		LOGGER.debug(AFTER_ADVICE + " responseToConsumer: "
-				+ ReflectionToStringBuilder.toString(responseToConsumer, null, true, true));
+		if (responseToConsumer != null) {
+			LOGGER.debug(
+					AFTER_ADVICE + " responseToConsumer: " + ReflectionToStringBuilder.toString(responseToConsumer, null, true, true));
+		} else {
+			LOGGER.debug(AFTER_ADVICE + " responseToConsumer: null");
+		}
 
 		AuditEventData auditEventData = null;
 		ProviderResponse providerResponse = null;
@@ -136,10 +140,10 @@ public class ProviderHttpAspect extends BaseHttpProviderPointcuts {
 
 			super.auditServletResponse().writeHttpResponseAuditLog(
 					providerResponse == null ? responseToConsumer : providerResponse, auditEventData,
-					MessageSeverity.INFO, null);
+							MessageSeverity.INFO, null);
 
 		} catch (Throwable throwable) { // NOSONAR intentionally catching
-										// throwable
+			// throwable
 			handleInternalException(AFTER_ADVICE, ATTEMPTING_WRITE_RESPONSE, auditEventData, throwable);
 		} finally {
 			LOGGER.debug(AFTER_ADVICE + FINISHED_STRING);
