@@ -231,7 +231,5 @@ public class AuditLogSerializerTest {
 
 		assertTrue(returnList.get(0) instanceof byte[]);
 		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
-
 	}
-
 }
