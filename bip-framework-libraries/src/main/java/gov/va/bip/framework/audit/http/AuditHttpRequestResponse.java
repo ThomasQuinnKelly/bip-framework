@@ -1,10 +1,13 @@
 package gov.va.bip.framework.audit.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,12 +18,14 @@ import javax.servlet.http.Part;
 
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditLogger;
@@ -80,7 +85,7 @@ public class AuditHttpRequestResponse {
 		 * @param request - the request object
 		 * @param auditEventData - the audit meta-data for the event
 		 */
-		public void writeHttpRequestAuditLog(final List<Object> request, final AuditEventData auditEventData) {
+		public void writeHttpRequestAuditLog(final List<Object> requests, final AuditEventData auditEventData) {
 
 			LOGGER.debug("RequestContextHolder.getRequestAttributes() {}", RequestContextHolder.getRequestAttributes());
 
@@ -89,10 +94,11 @@ public class AuditHttpRequestResponse {
 			final HttpServletRequest httpServletRequest =
 					((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			if (httpServletRequest != null) {
-				getHttpRequestAuditData(httpServletRequest, requestAuditData);
+				getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
 			}
 
-			baseAsyncAudit.writeRequestAuditLog(request, requestAuditData, auditEventData, MessageSeverity.INFO, null);
+			baseAsyncAudit.writeRequestAuditLog(requestAuditData, auditEventData, MessageSeverity.INFO, null,
+					HttpRequestAuditData.class);
 		}
 
 		/**
@@ -102,7 +108,7 @@ public class AuditHttpRequestResponse {
 		 * @param requestAuditData the audit data object
 		 */
 		private void getHttpRequestAuditData(final HttpServletRequest httpServletRequest,
-				final HttpRequestAuditData requestAuditData) {
+				final HttpRequestAuditData requestAuditData, final List<Object> requests) {
 
 			ArrayList<String> listOfHeaderNames = Collections.list(httpServletRequest.getHeaderNames());
 			final Map<String, String> headers = populateRequestHeadersMap(httpServletRequest, listOfHeaderNames);
@@ -110,7 +116,8 @@ public class AuditHttpRequestResponse {
 			requestAuditData.setHeaders(headers);
 			requestAuditData.setUri(httpServletRequest.getRequestURI());
 			requestAuditData.setMethod(httpServletRequest.getMethod());
-
+			requestAuditData.setRequest(requests);
+			
 			final String contentType = httpServletRequest.getContentType();
 
 			LOGGER.debug("Content Type: {}", Sanitizer.stripXss(contentType));
@@ -121,6 +128,29 @@ public class AuditHttpRequestResponse {
 				final List<String> attachmentTextList = getMultipartHeaders(httpServletRequest);
 				requestAuditData.setAttachmentTextList(attachmentTextList);
 				requestAuditData.setRequest(null);
+			} else if ((contentType != null)
+					&& (contentType.toLowerCase(Locale.ENGLISH).startsWith(MediaType.APPLICATION_OCTET_STREAM_VALUE))) {
+				LinkedList<String> linkedList = new LinkedList<>();
+				for (Object eachRequest : requests) {
+					if (eachRequest instanceof Resource) {
+						Resource resource = (Resource) eachRequest;
+						addStringOfSetSizeFromResource(linkedList, resource);
+					}
+				}
+				requestAuditData.setAttachmentTextList(linkedList);
+				requestAuditData.setRequest(null);
+			}
+		}
+
+		private void addStringOfSetSizeFromResource(final LinkedList<String> linkedList, final Resource resource) {
+			InputStream in = null;
+			try {
+				in = resource.getInputStream();
+				linkedList.add(BaseAsyncAudit.convertBytesOfSetSizeToString(in));
+			} catch (IOException e) {
+				LOGGER.error("Could not read Http Request", e);
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(in);
 			}
 		}
 
@@ -131,7 +161,7 @@ public class AuditHttpRequestResponse {
 		 * @return List of the headers in key/value string format
 		 */
 		private List<String> getMultipartHeaders(final HttpServletRequest httpServletRequest) {
-			final List<String> multipartHeaders = new ArrayList<>();
+			final List<String> multipartHeaders = new LinkedList<>();
 			InputStream inputstream = null;
 			try {
 				for (final Part part : httpServletRequest.getParts()) {
@@ -145,7 +175,7 @@ public class AuditHttpRequestResponse {
 					try {
 						inputstream = part.getInputStream();
 						multipartHeaders
-								.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesToString(inputstream));
+						.add(partHeaders.toString() + ", " + BaseAsyncAudit.convertBytesOfSetSizeToString(inputstream));
 					} finally {
 						BaseAsyncAudit.closeInputStreamIfRequired(inputstream);
 					}
@@ -206,13 +236,13 @@ public class AuditHttpRequestResponse {
 		public void writeHttpResponseAuditLog(final Object response, final AuditEventData auditEventData,
 				final MessageSeverity severity, final Throwable t) {
 
-			final HttpServletResponse httpServletReponse =
+			final HttpServletResponse httpServletResponse =
 					((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
 			final HttpResponseAuditData responseAuditData = new HttpResponseAuditData();
 
-			if (httpServletReponse != null) {
-				getHttpResponseAuditData(httpServletReponse, responseAuditData);
+			if (httpServletResponse != null) {
+				getHttpResponseAuditData(httpServletResponse, responseAuditData);
 			}
 
 			baseAsyncAudit.writeResponseAuditLog(response, responseAuditData, auditEventData, severity, t);
@@ -235,8 +265,39 @@ public class AuditHttpRequestResponse {
 				headers.put(headerName, value);
 			}
 
+			String contentType = httpServletResponse.getContentType();
+			if ((contentType != null) && contentType.equalsIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE)) {
+				ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
+				ByteArrayInputStream byteStream = new ByteArrayInputStream(responseWrapper.getContentAsByteArray());
+				final LinkedList<String> linkedList = addStringOfSetSize(byteStream);
+				forwardDataInBodyToResponse(responseWrapper);
+				responseAuditData.setAttachmentTextList(linkedList);
+			}
 			responseAuditData.setHeaders(headers);
 		}
+
+		private LinkedList<String> addStringOfSetSize(final ByteArrayInputStream byteStream) {
+			LinkedList<String> linkedList = new LinkedList<>();
+			try {
+				linkedList.add(BaseAsyncAudit.convertBytesOfSetSizeToString(byteStream));
+			} catch (IOException e) {
+				LOGGER.error("Could not read Http Response", e);
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
+			}
+			return linkedList;
+		}
+
+		private void forwardDataInBodyToResponse(final ContentCachingResponseWrapper responseWrapper) {
+			try {
+				responseWrapper.copyBodyToResponse();
+			} catch (IOException ioe) {
+				LOGGER.error("Could not continue copying the response", ioe);
+				throw new BipRuntimeException(MessageKeys.BIP_AUDIT_ASPECT_ERROR_UNEXPECTED, MessageSeverity.ERROR,
+						HttpStatus.INTERNAL_SERVER_ERROR, "");
+			}
+		}
+
 	}
 
 	/**

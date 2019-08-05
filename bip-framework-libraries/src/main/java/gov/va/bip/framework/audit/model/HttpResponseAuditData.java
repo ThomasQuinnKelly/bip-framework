@@ -1,5 +1,6 @@
 package gov.va.bip.framework.audit.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -18,6 +19,8 @@ public class HttpResponseAuditData extends ResponseAuditData {
 	/* A map of the http headers on the response. */
 	private Map<String, String> headers;
 
+	private List<String> attachmentTextList;
+
 	/**
 	 * Gets the http headers.
 	 *
@@ -25,6 +28,24 @@ public class HttpResponseAuditData extends ResponseAuditData {
 	 */
 	public Map<String, String> getHeaders() {
 		return headers;
+	}
+
+	/**
+	 * gets the attachmentTextList.
+	 *
+	 * @return the attachment text list
+	 */
+	public List<String> getAttachmentTextList() {
+		return attachmentTextList;
+	}
+
+	/**
+	 * sets the attachmentTextList.
+	 *
+	 * @param attachmentTextList
+	 */
+	public void setAttachmentTextList(final List<String> attachmentTextList) {
+		this.attachmentTextList = attachmentTextList;
 	}
 
 	/**
@@ -41,7 +62,8 @@ public class HttpResponseAuditData extends ResponseAuditData {
 	 */
 	@Override
 	public String toString() {
-		return "HttpResponseAuditData{" + "headers=" + (headers == null ? "" : ReflectionToStringBuilder.toString(headers)) + ", uri="
-				+ ", response=" + (getResponse() == null ? "" : getResponse().toString()) + '}';
+		return "HttpResponseAuditData{" + "headers=" + (headers == null ? "" : ReflectionToStringBuilder.toString(headers)) + ", uri='"
+				+ "', response='" + (getResponse() == null ? "" : getResponse().toString()) + "', attachmentTextList='"
+				+ attachmentTextList + "'}";
 	}
 }

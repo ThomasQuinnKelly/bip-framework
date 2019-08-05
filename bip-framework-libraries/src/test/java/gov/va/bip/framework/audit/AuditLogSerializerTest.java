@@ -4,17 +4,26 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,6 +43,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ch.qos.logback.classic.Level;
 import gov.va.bip.framework.audit.model.HttpRequestAuditData;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
@@ -44,6 +54,8 @@ import gov.va.bip.framework.messages.MessageSeverity;
 public class AuditLogSerializerTest {
 
 	private static final String MESSAGE_STARTSWITH = "Error occurred on ClassCast or JSON processing, calling";
+
+	private static final int NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT =1024;
 
 	@SuppressWarnings("rawtypes")
 	@Mock
@@ -97,8 +109,9 @@ public class AuditLogSerializerTest {
 				MessageSeverity.INFO, null);
 		auditLogSerializer.asyncAuditRequestResponseData(auditEventData, responseAuditData, HttpResponseAuditData.class,
 				MessageSeverity.INFO, null);
-		verify(mockAppender, times(2)).doAppend(captorLoggingEvent.capture());
-		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+		verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
+		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents =
+				captorLoggingEvent.getAllValues().stream().filter(x -> x.getLevel() == Level.INFO).collect(Collectors.toList());
 		final String expectedRequest = String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString(
 				"{\"request\":[\"Request\"],\"headers\":{\"Header1\":\"Header1Value\"},\"uri\":\"/\",\"method\":\"GET\",\"attachmentTextList\":[\"attachment1\",\"attachment2\"]}"));
 		final String expectedResponse =
@@ -176,5 +189,47 @@ public class AuditLogSerializerTest {
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
 		Assert.assertTrue(loggingEvents.get(0).getMessage().startsWith("Error test"));
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.ERROR));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void restrictObjectsToSetByteLimit_largefile()
+			throws InvocationTargetException, InstantiationException, IllegalAccessException {
+		List<Object> request = new LinkedList<>();
+		String file1Mb = "/testFiles/1MbFile.txt";
+		URL url = this.getClass().getResource(file1Mb);
+
+		try {
+			request.add(IOUtils.toByteArray(url.openStream()));
+		} catch (IOException e1) {
+			fail("failed to read file data");
+		}
+
+		Class<?> filterClass = Arrays.stream(AuditLogSerializer.class.getDeclaredClasses())
+				.filter(x -> x.getName().contains("AuditSimpleBeanObjectFilter")).findAny().get();
+		if (filterClass == null) {
+			fail("Could not found inner filterClass named AuditSimpleBeanObjectFilter");
+		}
+
+		Constructor<?> constructorToUse = null;
+		try {
+			constructorToUse = filterClass.getDeclaredConstructor();
+			constructorToUse.setAccessible(true);
+		} catch (NoSuchMethodException | SecurityException e1) {
+			fail("Constructors not found for the method");
+		}
+
+		List<Object> returnList = new LinkedList<>();
+		try {
+			returnList = (List<Object>) ReflectionTestUtils.invokeMethod(constructorToUse.newInstance(),
+					"restrictObjectsToSetByteLimit",
+					request);
+		} catch (IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+			fail("failed to invoke method for testing : " + e.getMessage());
+			throw e;
+		}
+
+		assertTrue(returnList.get(0) instanceof byte[]);
+		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
 	}
 }
