@@ -15,11 +15,21 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 
+/**
+ * Utility class for creating KeyStore objects from PEM format certificates.
+ * 
+ * @author jluck
+ *
+ */
 public class KeystoreUtils {
 
+	/** PEM Certificate Header */
     private static final String PEM_CERTIFICATE_PREFIX = "-----BEGIN CERTIFICATE-----";
+    /** PEM Certificate Footer */
     private static final String PEM_CERTIFICATE_SUFFIX = "-----END CERTIFICATE-----";
+    /** PEM Private Key Header */
     private static final String PRIVATE_KEY_PREFIX = "-----BEGIN PRIVATE KEY-----";
+    /** PEM Private Key Footer */
     private static final String PRIVATE_KEY_SUFFIX = "-----END PRIVATE KEY-----";
 
     
@@ -43,7 +53,7 @@ public class KeystoreUtils {
      * @throws CertificateException
      * @throws InvalidKeySpecException
      */
-    public static KeyStore createClientStore(String publicCert, String privateKey, String privateKeyPassword, String alias) throws 
+    public static KeyStore createKeyStore(String publicCert, String privateKey, String privateKeyPassword, String alias) throws 
     			KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException {
         //Create Certificate from PEM format string
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
@@ -67,6 +77,45 @@ public class KeystoreUtils {
         return clientStore;
 
     }
+    
+    /**
+     * Create a KeyStore for trusted certificates. The given certificate is added to the keystore as a trusted entry.
+     * @param alias for the keystore entry
+     * @param certificate to add to the keystore
+     * @return
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws IOException
+     */
+    public static KeyStore createTrustStore(String alias, String certificate) throws 
+    			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+    		
+    	
+    		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+    		trustStore.load(null, null);
+    		addTrustedCert(alias, certificate, trustStore);
+        
+    		return trustStore;
+    }
+    
+    /**
+     * Add the given certificate to the given KeyStore as a trusted entry.
+     * @param alias for the keystore entry
+     * @param certificate to add to the keystore
+     * @param trustStore to add the certificate to
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws IOException
+     */
+    public static void addTrustedCert(String alias, String certificate, KeyStore trustStore) throws 
+    			CertificateException, KeyStoreException, IOException {
+    	 	//Create Certificate from PEM format string
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        Certificate certX509 = parseCertificateString(certificate, certFactory);
+        trustStore.setCertificateEntry(alias, certX509);
+    }
+    
 
     /**
      * Convert a PEM format private key into a PrivateKey object
@@ -82,7 +131,7 @@ public class KeystoreUtils {
         byte[] decodedKey = Base64.getMimeDecoder().decode(base64DER);
 
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
-        return keyFactory.generatePrivate(keySpec);
+        return keyFactory.generatePrivate(keySpec);	
         
     }
 
