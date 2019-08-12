@@ -62,7 +62,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.AbstractBaseLogTester;
 import gov.va.bip.framework.exception.BipExceptionData;
@@ -74,6 +76,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -399,7 +402,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
 		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped message"), new HttpInputMessage() {
+				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped json parse exception message"), new HttpInputMessage() {
 
 					@Override
 					public HttpHeaders getHeaders() {
@@ -416,6 +419,14 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains("wrapped json parse exception message"));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
 	}
 
 	@Test
@@ -423,7 +434,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
 		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new JsonMappingException(null, "wrapped message"), new HttpInputMessage() {
+				new HttpMessageNotReadableException("test msg", new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
 
 					@Override
 					public HttpHeaders getHeaders() {
@@ -440,6 +451,14 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains("wrapped json mapping exception message"));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
 	}
 
 	@Test
