@@ -443,14 +443,14 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	private ResponseEntity<Object> jsonExceptionHandler(
 			final HttpMessageNotReadableException httpMessageNotReadableException) {
 		String jsonOriginalMessage = StringUtils.EMPTY;
-		if (httpMessageNotReadableException.getMostSpecificCause() instanceof JsonParseException) {
-			JsonParseException jpe = (JsonParseException) httpMessageNotReadableException.getMostSpecificCause();
+		final Throwable mostSpecificCause = httpMessageNotReadableException.getMostSpecificCause();
+		if (mostSpecificCause instanceof JsonParseException) {
+			JsonParseException jpe = (JsonParseException) mostSpecificCause;
 			jsonOriginalMessage = jpe.getOriginalMessage();
-		} else if (httpMessageNotReadableException.getMostSpecificCause() instanceof JsonMappingException) {
-			JsonMappingException jme = (JsonMappingException) httpMessageNotReadableException.getMostSpecificCause();
+		} else if (mostSpecificCause instanceof JsonMappingException) {
+			JsonMappingException jme = (JsonMappingException) mostSpecificCause;
 			jsonOriginalMessage = jme.getOriginalMessage();
 		}
-
 		if (!StringUtils.isEmpty(jsonOriginalMessage)) {
 			final ProviderResponse apiError = new ProviderResponse();
 			apiError.addMessage(MessageSeverity.ERROR, MessageKeys.NO_KEY.getKey(),
