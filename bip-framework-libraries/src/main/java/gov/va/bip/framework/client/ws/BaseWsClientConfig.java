@@ -240,7 +240,7 @@ public class BaseWsClientConfig {
 	 * @param marshaller the marshaller
 	 * @param unmarshaller the unmarshaller
 	 * @param keystore Client KeyStore for SSL connections
-	 * @param keystorePass the pass-word for the client ssl keystore
+	 * @param privateKeyPass the pass-word for the client ssl private key
 	 * @param truststore KeyStore object for trusted certificates
 	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @return
@@ -252,14 +252,12 @@ public class BaseWsClientConfig {
 			final Marshaller marshaller, // NOSONAR do NOT encapsulate params just to reduce the number
 			final Unmarshaller unmarshaller,// NOSONAR do NOT encapsulate params just to reduce the number
 			final KeyStore keystore, // NOSONAR do NOT encapsulate params just to reduce the number
-			final String keystorePass, // NOSONAR do NOT encapsulate params just to reduce the number
-			final KeyStore truststore, // NOSONAR do NOT encapsulate params just to reduce the number
-			final String truststorePass) { // NOSONAR do NOT encapsulate params just to reduce the number
+			final String privateKeyPass, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore truststore) { // NOSONAR do NOT encapsulate params just to reduce the number
 		
 		
 		return this.createSslWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller,
-				new HttpRequestInterceptor[] { null },
-				new HttpResponseInterceptor[] { null }, null, null, keystore, keystorePass, truststore, truststorePass);
+				null, keystore, privateKeyPass, truststore);
 	}
 
 	/**
@@ -300,6 +298,45 @@ public class BaseWsClientConfig {
 		return this.createSslWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller,
 				new HttpRequestInterceptor[] { null },
 				new HttpResponseInterceptor[] { null }, wsInterceptors, keystore, keystorePass, truststore, truststorePass);
+	}
+	
+	/**
+	 * Creates the ssl web service template using the default audit request/response interceptors and the provided web service
+	 * interceptors.
+	 * <p>
+	 * Auditing {@link AuditWsInterceptor} is added automatically.
+	 *
+	 * @param endpoint the endpoint
+	 * @param readTimeout the read timeout
+	 * @param connectionTimeout the connection timeout
+	 * @param marshaller the marshaller
+	 * @param unmarshaller the unmarshaller
+	 * @param wsInterceptors the ws interceptors
+	 * @param keystore SSL client KeyStoree
+	 * @param privateKeyPass the pass-word for the client ssl private key
+	 * @param truststore the SSL client TrustStore
+	 * @param truststorePass the pass-word for the client ssl truststore
+	 * @return the web service template
+	 * @throws KeyManagementException the key management exception
+	 * @throws UnrecoverableKeyException the unrecoverable key exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws CertificateException the certificate exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	protected final WebServiceTemplate createSslWebServiceTemplate( // NOSONAR do NOT encapsulate params just to reduce the number
+			final String endpoint, // NOSONAR do NOT encapsulate params just to reduce the number
+			final int readTimeout,// NOSONAR do NOT encapsulate params just to reduce the number
+			final int connectionTimeout, // NOSONAR do NOT encapsulate params just to reduce the number
+			final Marshaller marshaller, // NOSONAR do NOT encapsulate params just to reduce the number
+			final Unmarshaller unmarshaller,// NOSONAR do NOT encapsulate params just to reduce the number
+			final ClientInterceptor[] wsInterceptors, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore keystore, // NOSONAR do NOT encapsulate params just to reduce the number
+			final String privateKeyPass, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore truststore) { // NOSONAR do NOT encapsulate params just to reduce the number
+		return this.createSslWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller,
+				new HttpRequestInterceptor[] { null },
+				new HttpResponseInterceptor[] { null }, wsInterceptors, keystore, privateKeyPass, truststore);
 	}
 
 	/**
@@ -353,6 +390,57 @@ public class BaseWsClientConfig {
 				.createWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller, httpRequestInterceptors,
 						httpResponseInterceptors, wsInterceptors, axiomSoapMessageFactory, keystore, keystorePass, truststore,
 						truststorePass);
+	}
+	
+	/**
+	 * Creates the ssl web service template using the supplied http request/response interceptors and the provided web service
+	 * interceptors with axiom message factory
+	 *
+	 * {@link AuditWsInterceptor} to audit the request and response are added automatically to
+	 * the {@code wsInterceptors} array of {@link ClientInterceptor}s.
+	 * If the {@code wsInterceptors} array already has AuditWebserviceInterceptors at the beginning and the end
+	 * of the array, the array will be left untouched. Any other instances (e.g. in the middle of the array)
+	 * will be removed.
+	 *
+	 * @param endpoint the endpoint
+	 * @param readTimeout the read timeout
+	 * @param connectionTimeout the connection timeout
+	 * @param marshaller the marshaller
+	 * @param unmarshaller the unmarshaller
+	 * @param httpRequestInterceptors the http request interceptors
+	 * @param httpResponseInterceptors the http response interceptors
+	 * @param wsInterceptors the ws interceptors
+	 * @param keystore SSL client KeyStore
+	 * @param privateKeyPass the pass-word for the client ssl private key
+	 * @param truststore SSL client TrustStore
+	 * @param truststorePass the pass-word for the client ssl truststore
+	 * @return the web service template
+	 * @throws KeyManagementException the key management exception
+	 * @throws UnrecoverableKeyException the unrecoverable key exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws CertificateException the certificate exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	protected final WebServiceTemplate createSslWebServiceTemplate( // NOSONAR do NOT encapsulate params just to reduce the number
+			final String endpoint, // NOSONAR do NOT encapsulate params just to reduce the number
+			final int readTimeout, // NOSONAR do NOT encapsulate params just to reduce the number
+			final int connectionTimeout, // NOSONAR do NOT encapsulate params just to reduce the number
+			final Marshaller marshaller, // NOSONAR do NOT encapsulate params just to reduce the number
+			final Unmarshaller unmarshaller, // NOSONAR do NOT encapsulate params just to reduce the number
+			final HttpRequestInterceptor[] httpRequestInterceptors, // NOSONAR do NOT encapsulate params just to reduce the number
+			final HttpResponseInterceptor[] httpResponseInterceptors, // NOSONAR do NOT encapsulate params just to reduce the number
+			final ClientInterceptor[] wsInterceptors, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore keystore, // NOSONAR do NOT encapsulate params just to reduce the number
+			final String privateKeyPass, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore truststore) { // NOSONAR do NOT encapsulate params just to reduce the number
+
+		// create axiom message factory
+		final AxiomSoapMessageFactory axiomSoapMessageFactory = new AxiomSoapMessageFactory();
+
+		return this
+				.createSslWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller, httpRequestInterceptors,
+						httpResponseInterceptors, wsInterceptors, axiomSoapMessageFactory, keystore, privateKeyPass, truststore);
 	}
 
 	/**
@@ -465,7 +553,7 @@ public class BaseWsClientConfig {
 		}
 		
 		return createSslWebServiceTemplate(endpoint, readTimeout, connectionTimeout, marshaller, unmarshaller, httpRequestInterceptors,
-				httpResponseInterceptors, wsInterceptors, messageFactory, clientKS, keystorePass, trustKS, truststorePass);
+				httpResponseInterceptors, wsInterceptors, messageFactory, clientKS, keystorePass, trustKS);
 		
 	}
 	
@@ -490,9 +578,8 @@ public class BaseWsClientConfig {
 	 * @param wsInterceptors the ws interceptors
 	 * @param messageFactory webservice message factory
 	 * @param truststore the path to the client ssl truststore
-	 * @param truststorePass the pass-word for the client ssl truststore
 	 * @param keystore the path to the client ssl keystore
-	 * @param keystorePass the pass-word for the client ssl keystore
+	 * @param privateKeyPass the pass-word for the client ssl private key
 	 * @return the web service template
 	 * @throws KeyManagementException the key management exception
 	 * @throws UnrecoverableKeyException the unrecoverable key exception
@@ -512,9 +599,8 @@ public class BaseWsClientConfig {
 			final ClientInterceptor[] wsInterceptors, // NOSONAR do NOT encapsulate params just to reduce the number
 			final WebServiceMessageFactory messageFactory, // NOSONAR do NOT encapsulate params just to reduce the number
 			final KeyStore keystore, // NOSONAR do NOT encapsulate params just to reduce the number
-			final String keystorePass, // NOSONAR do NOT encapsulate params just to reduce the number
-			final KeyStore truststore, // NOSONAR do NOT encapsulate params just to reduce the number
-			final String truststorePass) { // NOSONAR do NOT encapsulate params just to reduce the number
+			final String privateKeyPass, // NOSONAR do NOT encapsulate params just to reduce the number
+			final KeyStore truststore) { // NOSONAR do NOT encapsulate params just to reduce the number
 		// configure the message sender
 		final HttpComponentsMessageSender messageSender = new HttpComponentsMessageSender();
 		messageSender.setReadTimeout(readTimeout);
@@ -533,7 +619,7 @@ public class BaseWsClientConfig {
 			}
 		}
 
-		addSslContext(httpClient, keystore, keystorePass, truststore, truststorePass);
+		addSslContext(httpClient, keystore, privateKeyPass, truststore);
 
 		LOGGER.debug("HttpClient Object : %s% {}", ReflectionToStringBuilder.toString(httpClient));
 		LOGGER.debug("Default Uri : %s% {}", endpoint);
@@ -569,7 +655,7 @@ public class BaseWsClientConfig {
 				KeyStore keystore = this.keyStore(keystoreResource, keystorePass.toCharArray());
 				KeyStore truststore = this.keyStore(truststoreResource, truststorePass.toCharArray());
 
-				addSslContext(httpClient, keystore, keystorePass, truststore, truststorePass);
+				addSslContext(httpClient, keystore, keystorePass, truststore);
 
 			} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
 				handleExceptions(e);
@@ -582,19 +668,18 @@ public class BaseWsClientConfig {
 	 *
 	 * @param httpClient the http client
 	 * @param keystore the keystore object
-	 * @param keystorePass the keystore pass
+	 * @param privateKeyPass the password for the client private key
 	 * @param truststore the truststore object
-	 * @param truststorePass the truststore pass
 	 */
 	protected void addSslContext(final HttpClientBuilder httpClient,
-			final KeyStore keystore, final String keystorePass, final KeyStore truststore, final String truststorePass) {
+			final KeyStore keystore, final String privateKeyPass, final KeyStore truststore) {
 
 		if ((keystore != null) && (truststore != null)) {
 			// Add SSL
 			try {
 				SSLContext sslContext =
 						SSLContextBuilder.create()
-								.loadKeyMaterial(keystore, keystorePass.toCharArray())
+								.loadKeyMaterial(keystore, privateKeyPass.toCharArray())
 								.loadTrustMaterial(truststore, null)
 								.build();
 				// use NoopHostnameVerifier to turn off host name verification

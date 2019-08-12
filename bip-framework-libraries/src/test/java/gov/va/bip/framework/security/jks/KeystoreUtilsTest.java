@@ -14,7 +14,7 @@ public class KeystoreUtilsTest {
 	
 	
 	/** Private Key in PEM format for testing */
-	final String PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\n" + 
+	public static final String PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\n" + 
 			"MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDvhdcxme9MYxs1\n" + 
 			"zQgA8KTt/7ol/uFL7OwNREYVhsR80TGgi0+D2RGFFHSYYRPxHSnY0n4k92ylN3SW\n" + 
 			"jNAfnULOj6VcfPGs6iK+8tcjevPZ+e8BshMBiMOpYxmYKjOluYAUuoDFkRhOiZF4\n" + 
@@ -45,7 +45,7 @@ public class KeystoreUtilsTest {
 			"";
 	
 	/** Public Certificate in PEM format for testing */
-	final String PUBLIC_CERT = "-----BEGIN CERTIFICATE-----\n" + 
+	public static final String PUBLIC_CERT = "-----BEGIN CERTIFICATE-----\n" + 
 			"MIIC1DCCAbwCCQDIf0EZWofP0jANBgkqhkiG9w0BAQsFADAsMQswCQYDVQQGEwJV\n" + 
 			"UzEdMBsGA1UEAwwUYmlwLXJlZmVyZW5jZS1wZXJzb24wHhcNMTkwODA2MTczNzU3\n" + 
 			"WhcNMjAwODA1MTczNzU3WjAsMQswCQYDVQQGEwJVUzEdMBsGA1UEAwwUYmlwLXJl\n" + 
