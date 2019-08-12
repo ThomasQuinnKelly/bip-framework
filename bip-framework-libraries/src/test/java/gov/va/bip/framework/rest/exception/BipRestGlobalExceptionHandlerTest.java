@@ -61,6 +61,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import gov.va.bip.framework.AbstractBaseLogTester;
 import gov.va.bip.framework.exception.BipExceptionData;
 import gov.va.bip.framework.exception.BipPartnerException;
@@ -373,6 +376,54 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 		HttpMessageNotReadableException ex =
 				new HttpMessageNotReadableException("test msg", new Exception("wrapped message"), new HttpInputMessage() {
+
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
+
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleHttpMessageNotReadableJsonParseExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotReadableException ex =
+				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped message"), new HttpInputMessage() {
+
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
+
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleHttpMessageNotReadableJsonMappingExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotReadableException ex =
+				new HttpMessageNotReadableException("test msg", new JsonMappingException(null, "wrapped message"), new HttpInputMessage() {
 
 					@Override
 					public HttpHeaders getHeaders() {

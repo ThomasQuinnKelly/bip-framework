@@ -31,6 +31,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
@@ -401,7 +403,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		if ((ex == null) || (ex.getConstraintViolations() == null)) {
 			return failSafeHandler();
 		} else {
-			MessageKey key = MessageKeys.BIP_GLBOAL_VALIDATOR_CONSTRAINT_VIOLATION;
+			MessageKey key = MessageKeys.BIP_GLOBAL_VALIDATOR_CONSTRAINT_VIOLATION;
 			for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
 				String[] params =
 						new String[] { violation.getRootBeanClass().getName(), violation.getPropertyPath().toString(),
@@ -415,21 +417,51 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	}
 
 	/**
-	 * Handle http message not readable exception.
+	 * Handle HTTP message not readable exception.
 	 *
-	 * @param req the req
-	 * @param httpMessageNotReadableException the http message not readable exception
+	 * @param req
+	 *            the req
+	 * @param httpMessageNotReadableException
+	 *            the http message not readable exception
 	 * @return the response entity
 	 */
 	@ExceptionHandler(value = HttpMessageNotReadableException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public final ResponseEntity<Object> handleHttpMessageNotReadableException(final HttpServletRequest req,
 			final HttpMessageNotReadableException httpMessageNotReadableException) {
-		return standardHandler(httpMessageNotReadableException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
-				HttpStatus.BAD_REQUEST);
+		return jsonExceptionHandler(httpMessageNotReadableException);
 	}
 
-	// 404
+	/**
+	 * JSON exception handler to support processing
+	 * HttpMessageNotReadableException.
+	 *
+	 * @param httpMessageNotReadableException
+	 *            the HTTP message not readable exception
+	 * @return the response entity
+	 */
+	private ResponseEntity<Object> jsonExceptionHandler(
+			final HttpMessageNotReadableException httpMessageNotReadableException) {
+		String jsonOriginalMessage = StringUtils.EMPTY;
+		if (httpMessageNotReadableException.getMostSpecificCause() instanceof JsonParseException) {
+			JsonParseException jpe = (JsonParseException) httpMessageNotReadableException.getMostSpecificCause();
+			jsonOriginalMessage = jpe.getOriginalMessage();
+		} else if (httpMessageNotReadableException.getMostSpecificCause() instanceof JsonMappingException) {
+			JsonMappingException jme = (JsonMappingException) httpMessageNotReadableException.getMostSpecificCause();
+			jsonOriginalMessage = jme.getOriginalMessage();
+		}
+
+		if (!StringUtils.isEmpty(jsonOriginalMessage)) {
+			final ProviderResponse apiError = new ProviderResponse();
+			apiError.addMessage(MessageSeverity.ERROR, MessageKeys.NO_KEY.getKey(),
+					jsonOriginalMessage, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
+
+		} else {
+			return standardHandler(httpMessageNotReadableException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
+					HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	/**
 	 * Handle no handler found exception.
