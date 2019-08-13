@@ -1,7 +1,9 @@
 package gov.va.bip.framework.security.jks;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -31,7 +33,18 @@ public class KeystoreUtils {
     private static final String PRIVATE_KEY_PREFIX = "-----BEGIN PRIVATE KEY-----";
     /** PEM Private Key Footer */
     private static final String PRIVATE_KEY_SUFFIX = "-----END PRIVATE KEY-----";
-
+    
+    /** System TrustStore Property */
+    private static final String SYS_TRUSTSTORE = "javax.net.ssl.trustStore";
+    /** System TrustStore Password Property */
+    private static final String SYS_TRUSTSTOREPASS = "javax.net.ssl.trustStorePassword";
+    /** System TrustStore Type */
+    private static final String SYS_TRUSTSTORETYPE = "javax.net.ssl.trustStoreType";
+    
+    /** Default System TrustStore */
+    private static final String SYS_TRUSTSTORE_DEFAULT = System.getProperty("java.home") + "/lib/security/cacerts";
+    /** Default System TrustStore Password */
+    private static final String SYS_TRUSTSTOREPASS_DEFAULT = "changeit";
     
     /**
 	 * Private constructor to prevent instantiation.
@@ -79,7 +92,7 @@ public class KeystoreUtils {
     }
     
     /**
-     * Create a KeyStore for trusted certificates. The given certificate is added to the keystore as a trusted entry.
+     * Create a KeyStore for trusted certificates based on the system truststore. The given certificate is added to the keystore as a trusted entry.
      * @param alias for the keystore entry
      * @param certificate to add to the keystore
      * @return
@@ -90,10 +103,31 @@ public class KeystoreUtils {
      */
     public static KeyStore createTrustStore(String alias, String certificate) throws 
     			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-    		
     	
-    		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-    		trustStore.load(null, null);
+    		return createTrustStore(alias, certificate, true);
+    }
+    
+    /**
+     * Create a KeyStore for trusted certificates. The given certificate is added to the keystore as a trusted entry.
+     * @param alias for the keystore entry
+     * @param certificate to add to the keystore
+     * @param loadSystemTrustStore should the returned KeyStore contain certificates from the system truststore?
+     * @return
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws IOException
+     */
+    public static KeyStore createTrustStore(String alias, String certificate, boolean loadSystemTrustStore) throws 
+    			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+    		
+    		KeyStore trustStore = KeyStore.getInstance(System.getProperty(SYS_TRUSTSTORETYPE, KeyStore.getDefaultType()));
+    		if (loadSystemTrustStore) {
+    			InputStream inputstream = new FileInputStream(System.getProperty(SYS_TRUSTSTORE, SYS_TRUSTSTORE_DEFAULT));
+    			trustStore.load(inputstream, System.getProperty(SYS_TRUSTSTOREPASS, SYS_TRUSTSTOREPASS_DEFAULT).toCharArray()); 
+    		} else {
+    			trustStore.load(null, null);
+    		}
     		addTrustedCert(alias, certificate, trustStore);
         
     		return trustStore;

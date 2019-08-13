@@ -134,6 +134,37 @@ public class KeystoreUtilsTest {
 		//Execute the method we want to test
 		KeyStore result = KeystoreUtils.createTrustStore(alias, PUBLIC_CERT);
 		
+		//Expect the KeyStore to contain more than a single entry, as it should contain the System CAs as well.
+		assertTrue("TrustStore does not contain System CAs", result.size() > 1);
+		
+		//Verify our alias is contained in the keystore
+		assertTrue(result.containsAlias(alias));
+		
+		//Verify our trusted certificate
+		Certificate resultCert = result.getCertificate(alias);
+		String encodedCert = "-----BEGIN CERTIFICATE-----" + Base64.getEncoder().encodeToString(resultCert.getEncoded()) + "-----END CERTIFICATE-----";
+		assertEquals(PUBLIC_CERT.replace("\n", ""), encodedCert);
+		
+		//Check to make sure this is a trusted certificate
+		Entry entry = result.getEntry(alias, null);
+		assertTrue(entry instanceof KeyStore.TrustedCertificateEntry);
+		
+	}
+	
+	/**
+	 * Test creation of trustd keystore. Expect that a keystore containing the given certificate is returned and that the certificate entry is marked as trusted.
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateTrustStore_NoSystemTrustStore() throws Exception {
+		final String alias = "test";
+		
+		//Execute the method we want to test
+		KeyStore result = KeystoreUtils.createTrustStore(alias, PUBLIC_CERT, false);
+		
+		//Expect the KeyStore to contain a single entry, as it should not contain the System CAs.
+		assertEquals("TrustStore does not contain System CAs", 1, result.size());
+		
 		//Verify our alias is contained in the keystore
 		assertTrue(result.containsAlias(alias));
 		
