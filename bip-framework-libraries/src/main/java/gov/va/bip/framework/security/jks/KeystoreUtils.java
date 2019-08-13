@@ -180,7 +180,7 @@ public class KeystoreUtils {
      * @throws IOException
      */
     private static Certificate parseCertificateString(String certificateString, CertificateFactory certFactory) 
-            throws CertificateException, KeyStoreException, IOException{
+            throws CertificateException, IOException{
     	
     		// strip off PEM markers, if any, so the certificate is in Base64-encoded DER format
         // (possibly with extraneous whitespace)
