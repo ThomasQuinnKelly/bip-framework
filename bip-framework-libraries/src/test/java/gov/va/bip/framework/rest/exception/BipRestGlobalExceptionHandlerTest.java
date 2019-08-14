@@ -45,6 +45,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -155,7 +156,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logInfoTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -171,7 +172,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logDebugTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -187,7 +188,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logWarnTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -393,7 +394,18 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 					}
 				});
 
-		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleHttpMessageNotWritableExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotWritableException ex =
+				new HttpMessageNotWritableException("test msg", new Exception("wrapped message"));
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
@@ -402,22 +414,23 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
 		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped json parse exception message"), new HttpInputMessage() {
+				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped json parse exception message"),
+						new HttpInputMessage() {
 
-					@Override
-					public HttpHeaders getHeaders() {
-						HttpHeaders headers = new HttpHeaders();
-						headers.setContentType(MediaType.TEXT_PLAIN);
-						return headers;
-					}
+							@Override
+							public HttpHeaders getHeaders() {
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.TEXT_PLAIN);
+								return headers;
+							}
 
-					@Override
-					public InputStream getBody() throws IOException {
-						return new ByteArrayInputStream("test body".getBytes());
-					}
-				});
+							@Override
+							public InputStream getBody() throws IOException {
+								return new ByteArrayInputStream("test body".getBytes());
+							}
+						});
 
-		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 		assertTrue(response.getBody() instanceof ProviderResponse);
 		try {
@@ -434,22 +447,23 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
 		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
+				new HttpMessageNotReadableException("test msg",
+						new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
 
-					@Override
-					public HttpHeaders getHeaders() {
-						HttpHeaders headers = new HttpHeaders();
-						headers.setContentType(MediaType.TEXT_PLAIN);
-						return headers;
-					}
+							@Override
+							public HttpHeaders getHeaders() {
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.TEXT_PLAIN);
+								return headers;
+							}
 
-					@Override
-					public InputStream getBody() throws IOException {
-						return new ByteArrayInputStream("test body".getBytes());
-					}
-				});
+							@Override
+							public InputStream getBody() throws IOException {
+								return new ByteArrayInputStream("test body".getBytes());
+							}
+						});
 
-		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 		assertTrue(response.getBody() instanceof ProviderResponse);
 		try {

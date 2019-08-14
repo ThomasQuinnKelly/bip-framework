@@ -17,7 +17,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -91,12 +91,12 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		 */
 		String causeClassname = (ex.getCause() == null
 				? null
-						: ex.getCause().getClass().getName() + ":");
+				: ex.getCause().getClass().getName() + ":");
 
 		/* Scrub any occurrances of cause classname from exception message */
 		String msg = (causeClassname != null && StringUtils.isNotBlank(ex.getMessage())
 				? ex.getMessage().replaceAll(causeClassname, "")
-						: ex.getMessage());
+				: ex.getMessage());
 
 		/* Final check for empty */
 		if (StringUtils.isBlank(msg)) {
@@ -421,15 +421,15 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 *
 	 * @param req
 	 *            the req
-	 * @param httpMessageNotReadableException
-	 *            the http message not readable exception
+	 * @param HttpMessageConversionException
+	 *            the http message not readable or writable exception
 	 * @return the response entity
 	 */
-	@ExceptionHandler(value = HttpMessageNotReadableException.class)
+	@ExceptionHandler(value = HttpMessageConversionException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public final ResponseEntity<Object> handleHttpMessageNotReadableException(final HttpServletRequest req,
-			final HttpMessageNotReadableException httpMessageNotReadableException) {
-		return jsonExceptionHandler(httpMessageNotReadableException);
+	public final ResponseEntity<Object> handleHttpMessageConversionException(final HttpServletRequest req,
+			final HttpMessageConversionException httpHttpMessageConversionException) {
+		return jsonExceptionHandler(httpHttpMessageConversionException);
 	}
 
 	/**
@@ -441,9 +441,9 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 * @return the response entity
 	 */
 	private ResponseEntity<Object> jsonExceptionHandler(
-			final HttpMessageNotReadableException httpMessageNotReadableException) {
+			final HttpMessageConversionException httpHttpMessageConversionException) {
 		String jsonOriginalMessage = StringUtils.EMPTY;
-		final Throwable mostSpecificCause = httpMessageNotReadableException.getMostSpecificCause();
+		final Throwable mostSpecificCause = httpHttpMessageConversionException.getMostSpecificCause();
 		if (mostSpecificCause instanceof JsonParseException) {
 			JsonParseException jpe = (JsonParseException) mostSpecificCause;
 			jsonOriginalMessage = jpe.getOriginalMessage();
@@ -458,7 +458,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 			return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 
 		} else {
-			return standardHandler(httpMessageNotReadableException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
+			return standardHandler(httpHttpMessageConversionException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
 					HttpStatus.BAD_REQUEST);
 		}
 	}
