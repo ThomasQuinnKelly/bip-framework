@@ -1,6 +1,5 @@
 package gov.va.bip.framework.audit;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +22,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.validation.Defense;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 
 /**
  * Performs simple audit logging on any type of request or response objects.
@@ -113,8 +113,10 @@ public class BaseAsyncAudit {
 	public static String convertBytesOfSetSizeToString(final InputStream in) {
 		int offset = 0;
 		int bytesRead = 0;
-		final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
-		if (in != null) {
+		if (in == null) {
+			return StringUtils.EMPTY;
+		} else {
+			final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
 			try {
 				while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {
 					offset += bytesRead;
@@ -122,20 +124,14 @@ public class BaseAsyncAudit {
 						break;
 					}
 				}
-			} catch (IOException e) {
+				return new String(data, 0, offset, StandardCharsets.UTF_8.name());
+			} catch (Exception e) {
 				LOGGER.warn("Problem reading byte from inputstream.", e);
+				return StringUtils.EMPTY;
 			} finally {
 				BaseAsyncAudit.closeInputStreamIfRequired(in);
 			}
-		} else {
-			return null;
 		}
-		try {
-			return new String(data, 0, offset, StandardCharsets.UTF_8.name());
-		} catch (final UnsupportedEncodingException e) {
-			LOGGER.warn("Problem constructing a new String from byte.", e);
-		}
-		return null;
 	}
 
 	/**
