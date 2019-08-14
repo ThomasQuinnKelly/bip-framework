@@ -17,7 +17,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -31,6 +31,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
@@ -89,12 +91,12 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		 */
 		String causeClassname = (ex.getCause() == null
 				? null
-						: ex.getCause().getClass().getName() + ":");
+				: ex.getCause().getClass().getName() + ":");
 
 		/* Scrub any occurrances of cause classname from exception message */
 		String msg = (causeClassname != null && StringUtils.isNotBlank(ex.getMessage())
 				? ex.getMessage().replaceAll(causeClassname, "")
-						: ex.getMessage());
+				: ex.getMessage());
 
 		/* Final check for empty */
 		if (StringUtils.isBlank(msg)) {
@@ -401,7 +403,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		if ((ex == null) || (ex.getConstraintViolations() == null)) {
 			return failSafeHandler();
 		} else {
-			MessageKey key = MessageKeys.BIP_GLBOAL_VALIDATOR_CONSTRAINT_VIOLATION;
+			MessageKey key = MessageKeys.BIP_GLOBAL_VALIDATOR_CONSTRAINT_VIOLATION;
 			for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
 				String[] params =
 						new String[] { violation.getRootBeanClass().getName(), violation.getPropertyPath().toString(),
@@ -415,21 +417,51 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	}
 
 	/**
-	 * Handle http message not readable exception.
+	 * Handle HTTP message not readable exception.
 	 *
-	 * @param req the req
-	 * @param httpMessageNotReadableException the http message not readable exception
+	 * @param req
+	 *            the req
+	 * @param HttpMessageConversionException
+	 *            the http message not readable or writable exception
 	 * @return the response entity
 	 */
-	@ExceptionHandler(value = HttpMessageNotReadableException.class)
+	@ExceptionHandler(value = HttpMessageConversionException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public final ResponseEntity<Object> handleHttpMessageNotReadableException(final HttpServletRequest req,
-			final HttpMessageNotReadableException httpMessageNotReadableException) {
-		return standardHandler(httpMessageNotReadableException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
-				HttpStatus.BAD_REQUEST);
+	public final ResponseEntity<Object> handleHttpMessageConversionException(final HttpServletRequest req,
+			final HttpMessageConversionException httpHttpMessageConversionException) {
+		return jsonExceptionHandler(httpHttpMessageConversionException);
 	}
 
-	// 404
+	/**
+	 * JSON exception handler to support processing
+	 * HttpMessageNotReadableException.
+	 *
+	 * @param httpMessageNotReadableException
+	 *            the HTTP message not readable exception
+	 * @return the response entity
+	 */
+	private ResponseEntity<Object> jsonExceptionHandler(
+			final HttpMessageConversionException httpHttpMessageConversionException) {
+		String jsonOriginalMessage = StringUtils.EMPTY;
+		final Throwable mostSpecificCause = httpHttpMessageConversionException.getMostSpecificCause();
+		if (mostSpecificCause instanceof JsonParseException) {
+			JsonParseException jpe = (JsonParseException) mostSpecificCause;
+			jsonOriginalMessage = jpe.getOriginalMessage();
+		} else if (mostSpecificCause instanceof JsonMappingException) {
+			JsonMappingException jme = (JsonMappingException) mostSpecificCause;
+			jsonOriginalMessage = jme.getOriginalMessage();
+		}
+		if (!StringUtils.isEmpty(jsonOriginalMessage)) {
+			final ProviderResponse apiError = new ProviderResponse();
+			apiError.addMessage(MessageSeverity.ERROR, MessageKeys.NO_KEY.getKey(),
+					jsonOriginalMessage, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
+
+		} else {
+			return standardHandler(httpHttpMessageConversionException, MessageKeys.NO_KEY, MessageSeverity.ERROR,
+					HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	/**
 	 * Handle no handler found exception.
