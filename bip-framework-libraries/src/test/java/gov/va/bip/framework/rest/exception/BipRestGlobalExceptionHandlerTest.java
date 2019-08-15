@@ -60,6 +60,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -473,6 +474,17 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		} catch (JsonProcessingException e) {
 			fail("Error processing the response body");
 		}
+	}
+	
+	@Test
+	public void handleMissingServletRequestPartExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		MissingServletRequestPartException ex =
+				new MissingServletRequestPartException("file");
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMissingServletRequestPartException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
 	@Test

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -430,6 +431,20 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	public final ResponseEntity<Object> handleHttpMessageConversionException(final HttpServletRequest req,
 			final HttpMessageConversionException httpHttpMessageConversionException) {
 		return jsonExceptionHandler(httpHttpMessageConversionException);
+	}
+	
+	/**
+	 * Handle MissingServletRequestPartException.
+	 *
+	 * @param req the req
+	 * @param ex the ex
+	 * @return the response entity
+	 */
+	@ExceptionHandler(value = MissingServletRequestPartException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public final ResponseEntity<Object> handleMissingServletRequestPartException(final HttpServletRequest req,
+			final MissingServletRequestPartException ex) {
+		return standardHandler(ex, MessageKeys.NO_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
 	}
 
 	/**
