@@ -1,7 +1,9 @@
 package gov.va.bip.framework.audit;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.event.Level;
@@ -20,6 +22,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.validation.Defense;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 
 /**
  * Performs simple audit logging on any type of request or response objects.
@@ -106,33 +109,42 @@ public class BaseAsyncAudit {
 	 *
 	 * @param in the input stream
 	 * @return the string
-	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static String convertBytesOfSetSizeToString(final InputStream in) throws IOException {
+	public static String convertBytesOfSetSizeToString(final InputStream in) {
 		int offset = 0;
 		int bytesRead = 0;
-		final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
-		while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {
-			offset += bytesRead;
-			if (offset >= data.length) {
-				break;
+		if (in == null) {
+			return StringUtils.EMPTY;
+		} else {
+			final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+			try {
+				while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {
+					offset += bytesRead;
+					if (offset >= data.length) {
+						break;
+					}
+				}
+				return new String(data, 0, offset, StandardCharsets.UTF_8.name());
+			} catch (Exception e) {
+				LOGGER.warn("Problem reading byte from inputstream.", e);
+				return StringUtils.EMPTY;
+			} finally {
+				BaseAsyncAudit.closeInputStreamIfRequired(in);
 			}
 		}
-		return new String(data, 0, offset, "UTF-8");
 	}
 
 	/**
 	 * Attempt to close an input stream.
 	 *
-	 * @param inputstream
-	 * @throws IOException
+	 * @param inputstream the inputstream
 	 */
 	public static void closeInputStreamIfRequired(final InputStream inputstream) {
 		if (inputstream != null) {
 			try {
 				inputstream.close();
-			} catch (Exception e) { // NOSONAR intentionally broad catch
-				LOGGER.debug("Problem closing input stream.", e);
+			} catch (final Exception e) { // NOSONAR intentionally broad catch
+				LOGGER.warn("Problem closing input stream.", e);
 			}
 		}
 	}
