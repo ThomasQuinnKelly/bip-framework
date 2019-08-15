@@ -2,7 +2,6 @@ package gov.va.bip.framework.test.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -75,7 +74,7 @@ public class PropertiesUtil {
 				properties = new Properties();
 				properties.load(input);
 				substitutePlaceholders(properties);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new BipTestLibRuntimeException("Could not load the properties file with URL : " + fileUrl, (Throwable) e);
 			}
