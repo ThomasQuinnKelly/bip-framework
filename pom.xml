@@ -23,7 +23,7 @@
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		
-		<sca-maven-plugin.version>18.20</sca-maven-plugin.version>
+		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
 		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
 		<ant-contrib.version>20020829</ant-contrib.version>
 	</properties>

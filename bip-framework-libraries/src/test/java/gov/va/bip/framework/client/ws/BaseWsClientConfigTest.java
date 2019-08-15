@@ -1,10 +1,10 @@
 package gov.va.bip.framework.client.ws;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.security.KeyStore;
 
 import javax.xml.soap.SOAPException;
 
@@ -30,11 +30,12 @@ import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
-import gov.va.bip.framework.client.ws.BaseWsClientConfig;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
 import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
+import gov.va.bip.framework.security.jks.KeystoreUtils;
+import gov.va.bip.framework.security.jks.KeystoreUtilsTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseWsClientConfigTest {
@@ -211,6 +212,48 @@ public class BaseWsClientConfigTest {
 	public void testHandleExceptions() {
 		BaseWsClientConfig test = new BaseWsClientConfig();
 		ReflectionTestUtils.invokeMethod(test, "handleExceptions", new Exception());
+	}
+	
+	@Test
+	public void testCreateWebServiceTemplate_FromKeyStore() throws Exception {
+		final String privateKeyPass = "";
+		final KeyStore keyStore = KeystoreUtils.createKeyStore(KeystoreUtilsTest.PUBLIC_CERT, KeystoreUtilsTest.PRIVATE_KEY, privateKeyPass, "test");
+		final KeyStore trustStore = KeystoreUtils.createTrustStore("ca", KeystoreUtilsTest.PUBLIC_CERT);
+		
+		BaseWsClientConfig config = new BaseWsClientConfig();
+		WebServiceTemplate result = config.createSslWebServiceTemplate(
+				"http://dummyservice/endpoint",
+				30,
+				30,
+				mockMarshaller,
+				mockUnmarshaller,
+				keyStore,
+				privateKeyPass,
+				trustStore);
+		assertNotNull(result);
+	}
+	
+	@Test
+	public void testCreateWebServiceTemplate_FromKeyStoreException() throws Exception {
+		final String privateKeyPass = "";
+		final KeyStore keyStore = KeystoreUtils.createKeyStore(KeystoreUtilsTest.PUBLIC_CERT, KeystoreUtilsTest.PRIVATE_KEY, privateKeyPass, "test");
+		final KeyStore trustStore = KeystoreUtils.createTrustStore("ca", KeystoreUtilsTest.PUBLIC_CERT);
+		
+		BaseWsClientConfig config = new BaseWsClientConfig();
+		try {
+			config.createSslWebServiceTemplate(
+					"http://dummyservice/endpoint",
+					30,
+					30,
+					mockMarshaller,
+					mockUnmarshaller,
+					keyStore,
+					"wrong password",
+					trustStore);
+			Assert.fail("BipRuntimeException should have been thrown");
+		} catch (BipPartnerRuntimeException e) {
+			assertNotNull(e);
+		}
 	}
 
 }

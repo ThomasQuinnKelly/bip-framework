@@ -2,8 +2,8 @@ package gov.va.bip.framework.test.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -57,17 +57,28 @@ public class PropertiesUtil {
 	 */
 	public static Properties readFile(final URL fileUrl) {
 		Properties properties = null;
-
-		try (InputStream input = new FileInputStream(new File(fileUrl.toURI()))) {
-			properties = new Properties();
-			properties.load(input);
-			substitutePlaceholders(properties);
-
-		} catch (IllegalArgumentException | IOException | URISyntaxException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new BipTestLibRuntimeException("Could not load the properties file with URL : " + fileUrl, (Throwable) e);
+		
+		if (fileUrl == null) {
+			LOGGER.warn("Property file resource URL is null. No properties file to load.");
+		} else {
+			URI fileUri = null;
+			try {
+				fileUri = fileUrl.toURI();
+			} catch (URISyntaxException e) {
+				LOGGER.error(e.getMessage(), e);
+				throw new BipTestLibRuntimeException("Could not return a java.net.URI equivalent to this URL: " + fileUrl, (Throwable) e);
+			}
+			
+			final File file = new File(fileUri);
+			try (InputStream input = new FileInputStream(file)) {
+				properties = new Properties();
+				properties.load(input);
+				substitutePlaceholders(properties);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+				throw new BipTestLibRuntimeException("Could not load the properties file with URL : " + fileUrl, (Throwable) e);
+			}
 		}
-
 		return properties;
 	}
 

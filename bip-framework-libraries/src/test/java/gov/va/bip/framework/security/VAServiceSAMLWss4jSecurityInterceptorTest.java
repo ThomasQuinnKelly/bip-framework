@@ -42,6 +42,7 @@ import gov.va.bip.framework.security.VAServiceSAMLWss4jSecurityInterceptor;
 public class VAServiceSAMLWss4jSecurityInterceptorTest {
 
 	private static final String SAML_FILE = "src/test/resources/encryption/EFolderService/SamlTokenEBN-UAT.xml";
+	private static final String SAML_STRING = "<saml2:Assertion xmlns:saml2='urn:oasis:names:tc:SAML:2.0:assertion' xmlns:xs='http://www.w3.org/2001/XMLSchema' ID='37dc18fa-3d5e-420f-96b5-745b5bb823f7' IssueInstant='2012-12-19T19:13:12.851Z' Version='2.0'></saml2:Assertion>";
 	private static final String NONEXISTENT_FILE = "someFileNameThatDoesNotExist.xml";
 
 	private static final String SOAP_MESSAGE_FILE = "src/test/resources/testFiles/security/soapMessageMustUnderstand.xml";
@@ -133,6 +134,24 @@ public class VAServiceSAMLWss4jSecurityInterceptorTest {
 	@Test
 	public void testGetSAMLAssertionAsElementWithValidFile() {
 		interceptor.setSamlFile(SAML_FILE);
+		try {
+			interceptor.afterPropertiesSet();
+		} catch (final Exception e) {
+			e.printStackTrace();
+			fail("Should not throw exception here.");
+		}
+
+		try {
+			interceptor.getSAMLAssertionAsElement();
+		} catch (final WSSecurityException e) {
+			e.printStackTrace();
+			fail("Should not throw exception here.");
+		}
+	}
+	
+	@Test
+	public void testGetSAMLAssertionAsElementWithValidTextFile() {
+		interceptor.setSamlFile(SAML_STRING);
 		try {
 			interceptor.afterPropertiesSet();
 		} catch (final Exception e) {
