@@ -1,7 +1,6 @@
 package gov.va.bip.framework.audit;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PostConstruct;
