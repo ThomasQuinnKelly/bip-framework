@@ -117,7 +117,7 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 
 		if (getSamlFile().endsWith(".xml")) {
 			try (InputStream input = new FileSystemResource(getSamlFile()).getInputStream()) {
-				clientAssertion = IOUtils.toString(input, StandardCharsets.UTF_8.name());
+				clientAssertion = IOUtils.toString(input, getUtfCharacterEncoding());
 			} catch (final Exception e) {
 				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
 						"Unable to read SAML assertion from XML file." + getSamlFile(), e);
@@ -125,7 +125,7 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 			}
 		} else {
 			try (InputStream input = new ByteArrayInputStream(getSamlFile().getBytes())) {
-				clientAssertion = IOUtils.toString(input, StandardCharsets.UTF_8.name());
+				clientAssertion = IOUtils.toString(input, getUtfCharacterEncoding());
 			} catch (final Exception e) {
 				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
 						"Unable to read SAML assertion for a string value." + getSamlFile(), e);
@@ -158,6 +158,10 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 		}
 
 		return retVal;
+	}
+
+	String getUtfCharacterEncoding() {
+		return StandardCharsets.UTF_8.name();
 	}
 
 	/**
