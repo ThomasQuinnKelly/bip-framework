@@ -160,6 +160,13 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 		return retVal;
 	}
 
+	/**
+	 * Gets the UTF character encoding.
+	 * 
+	 * preserve the visibility to package for negative unit test coverage
+	 *
+	 * @return the UTF character encoding
+	 */
 	String getUtfCharacterEncoding() {
 		return StandardCharsets.UTF_8.name();
 	}
