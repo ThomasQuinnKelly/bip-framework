@@ -110,11 +110,11 @@ public class BaseAsyncAudit {
 	 * @return the string
 	 */
 	public static String convertBytesOfSetSizeToString(final InputStream in) {
-		int offset = 0;
-		int bytesRead = 0;
 		if (in == null) {
 			return StringUtils.EMPTY;
 		} else {
+			int offset = 0;
+			int bytesRead = 0;
 			final byte[] data = new byte[NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
 			try {
 				while ((bytesRead = in.read(data, offset, data.length - offset)) != -1) {

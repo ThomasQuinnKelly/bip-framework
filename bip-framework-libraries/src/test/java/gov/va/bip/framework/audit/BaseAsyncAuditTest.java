@@ -6,13 +6,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class BaseAsyncAuditTest {
@@ -35,6 +35,14 @@ public class BaseAsyncAuditTest {
 			e.printStackTrace();
 			fail("Problem testing input stream closing");
 		}
+	}
+	
+	@Test
+	public void closeInputStreamIfRequiredFailureTest() throws IOException {
+		InputStream mockInputstream = mock(InputStream.class);
+		Mockito.doThrow(new IOException()).when(mockInputstream).close();
+		
+		BaseAsyncAudit.closeInputStreamIfRequired(mockInputstream);
 	}
 
 	@Test
@@ -63,6 +71,20 @@ public class BaseAsyncAuditTest {
 							+ "Aliquam sodales posuere elementum. Curabitur auctor, ipsum at gravida ultrices amet. Aliquam sodales posuere elementum", "UTF-8");
 			String convertedString = BaseAsyncAudit.convertBytesOfSetSizeToString(stubInputStream);
 			assertNotNull(convertedString);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("Problem testing convert bytes of set size to string");
+		}
+	}
+	
+	@Test
+	public void convertBytesOfSetSizeToStringExceptionTest() {
+		try {
+			InputStream mockInputstream = mock(InputStream.class);
+			byte[] data = new byte[BaseAsyncAudit.NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT];
+			Mockito.when(mockInputstream.read(data, 0, data.length)).thenThrow(IOException.class);
+			String convertedString = BaseAsyncAudit.convertBytesOfSetSizeToString(mockInputstream);
+			assertEquals("", convertedString);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("Problem testing convert bytes of set size to string");

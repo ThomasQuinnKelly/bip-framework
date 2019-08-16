@@ -85,6 +85,26 @@ public class PropertiesUtilTest {
 		properties = PropertiesUtil.readFile(new URL("file:/E@@:/Program Files/IBM/SDP/runtimes/base"));
 		assertThat(true, equalTo(properties == null));
 	}
+	
+	@Test
+	public void testreadFileNullUrl() {
+
+		Properties properties = null;
+		try {
+			properties = PropertiesUtil.readFile(null);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+		assertThat(true, equalTo(properties == null));
+	}
+	
+	@Test(expected = BipTestLibRuntimeException.class)
+	public void testreadFile_IllegalArgumentException() {
+		final URL urlConfigFile = PropertiesUtilTest.class.getClassLoader().getResource("badproperties.properties");
+		Properties properties = PropertiesUtil.readFile(urlConfigFile);
+		assertThat(true, equalTo(properties == null));
+	}
 
 
 }
