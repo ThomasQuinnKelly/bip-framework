@@ -16,6 +16,7 @@ import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.validation.Defense;
 import redis.embedded.RedisServer;
+import redis.embedded.exceptions.EmbeddedRedisException;
 
 /**
  * this class will start embedded redis, to be used for local envs. The profile embedded-redis needs to be added in order for this bean
@@ -85,12 +86,13 @@ public class BipEmbeddedRedisServer {
 			redisServer.start();
 		} catch (final Exception exc) {
 			LOGGER.warn("Not able to start embedded redis, most likely it's already running on the given port on this host!", exc);
-			throw new RuntimeException("Could not start REDIS", exc);
+			throw new EmbeddedRedisException("Could not start REDIS", exc);
 		}
 	}
 
 	/**
 	 * stop embedded redis server on context destroy
+	 * @throws IOException 
 	 */
 	@PreDestroy
 	public void stopRedis() {
@@ -104,7 +106,7 @@ public class BipEmbeddedRedisServer {
 			}
 		}
 		if (redisServer.isActive()) {
-			throw new RuntimeException("Could not stop REDIS on port " + redisServer.ports().toArray());
+			throw new EmbeddedRedisException("Could not stop REDIS on port " + redisServer.ports().toArray());
 		}
 	}
 }
