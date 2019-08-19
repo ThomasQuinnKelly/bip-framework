@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -11,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ws.security.WSSecurityException;
@@ -47,7 +49,7 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 	private static final String ERROR_SAML_ASSERTION = "Error while attempting to convert SAML assertion string to element.";
 
 	/** The saml file. */
-	private String samlFile;
+	private String samlFile = StringUtils.EMPTY;
 
 	/*
 	 * (non-Javadoc)
@@ -62,11 +64,11 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 
 		try {
 			Document doc = null;
-			
+
 			if (soapMessage != null && soapMessage.getDocument() != null) {
 				doc = soapMessage.getDocument();
 			}
-			
+
 			final WSSecHeader secHeader = new WSSecHeader();
 			LOGGER.info("doc before security header: "
 					+ ReflectionToStringBuilder.toString(doc == null ? "null" : doc, ToStringStyle.SHORT_PREFIX_STYLE, true, true,
@@ -92,7 +94,7 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 			if (soapMessage != null) {
 				soapMessage.setDocument(doc);
 			}
-			
+
 			LOGGER.info("SOAP message: "
 					+ ReflectionToStringBuilder.toString(soapMessage == null ? "null" : soapMessage, ToStringStyle.SHORT_PREFIX_STYLE, // NOSONAR
 							true, true, null));
@@ -113,15 +115,23 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 		Element retVal = null;
 		String clientAssertion = null;
 
-		try (InputStream input = getSamlFile().endsWith(".xml") ? new FileSystemResource(getSamlFile()).getInputStream()
-				: new ByteArrayInputStream(getSamlFile().getBytes())) {
-			clientAssertion = IOUtils.toString(input, "UTF-8");
-		} catch (final Exception e) {
-			LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
-					"Unable to read SAML assertion from file." + getSamlFile(), e);
-			return retVal;
+		if (getSamlFile().endsWith(".xml")) {
+			try (InputStream input = new FileSystemResource(getSamlFile()).getInputStream()) {
+				clientAssertion = IOUtils.toString(input, getUtfCharacterEncoding());
+			} catch (final Exception e) {
+				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
+						"Unable to read SAML assertion from XML file." + getSamlFile(), e);
+				return retVal;
+			}
+		} else {
+			try (InputStream input = new ByteArrayInputStream(getSamlFile().getBytes())) {
+				clientAssertion = IOUtils.toString(input, getUtfCharacterEncoding());
+			} catch (final Exception e) {
+				LOGGER.error(BipBanner.newBanner(BipConstants.INTERCEPTOR_EXCEPTION, Level.ERROR),
+						"Unable to read SAML assertion for a string value." + getSamlFile(), e);
+				return retVal;
+			}
 		}
-
 		try {
 			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setFeature("http://xml.org/sax/features/external-general-entities", false); 
@@ -148,6 +158,17 @@ public class VAServiceSAMLWss4jSecurityInterceptor extends Wss4jSecurityIntercep
 		}
 
 		return retVal;
+	}
+
+	/**
+	 * Gets the UTF character encoding.
+	 * 
+	 * preserve the visibility to package for negative unit test coverage
+	 *
+	 * @return the UTF character encoding
+	 */
+	String getUtfCharacterEncoding() {
+		return StandardCharsets.UTF_8.name();
 	}
 
 	/**

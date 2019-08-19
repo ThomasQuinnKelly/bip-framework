@@ -64,7 +64,7 @@ public enum MessageKeys implements MessageKey {
 	/** MethodArgumentTypeMismatchException; {0} = argument name; {1} = expected class name */
 	BIP_GLOBAL_REST_API_TYPE_MISMATCH("bip.framework.global.rest.api.type.mismatch", "API argument type could not be resolved."),
 	/** ConstraintViolationException; {0} = bean class name; {1} = property name; {2} = violation message */
-	BIP_GLBOAL_VALIDATOR_CONSTRAINT_VIOLATION("bip.framework.global.validator.constraint.violation",
+	BIP_GLOBAL_VALIDATOR_CONSTRAINT_VIOLATION("bip.framework.global.validator.constraint.violation",
 			"Validation constraint was violated."),
 
 	/** JAXB Marshaller configuration failed; no args */

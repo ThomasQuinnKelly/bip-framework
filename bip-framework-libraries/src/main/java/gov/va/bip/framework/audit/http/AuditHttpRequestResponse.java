@@ -280,8 +280,6 @@ public class AuditHttpRequestResponse {
 			LinkedList<String> linkedList = new LinkedList<>();
 			try {
 				linkedList.add(BaseAsyncAudit.convertBytesOfSetSizeToString(byteStream));
-			} catch (IOException e) {
-				LOGGER.error("Could not read Http Response", e);
 			} finally {
 				BaseAsyncAudit.closeInputStreamIfRequired(byteStream);
 			}

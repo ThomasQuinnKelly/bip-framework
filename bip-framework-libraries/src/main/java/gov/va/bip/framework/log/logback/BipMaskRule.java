@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-
 /**
  * A Logback rule with definition, to mask sensitive information in logs.
  * <p>

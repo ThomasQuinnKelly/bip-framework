@@ -45,6 +45,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,7 +60,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.AbstractBaseLogTester;
 import gov.va.bip.framework.exception.BipExceptionData;
@@ -71,6 +78,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -149,7 +157,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logInfoTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -165,7 +173,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logDebugTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -181,7 +189,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void logWarnTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-	InvocationTargetException {
+			InvocationTargetException {
 		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
 				MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
@@ -387,7 +395,95 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 					}
 				});
 
-		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageNotReadableException(req, ex);
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleHttpMessageNotWritableExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotWritableException ex =
+				new HttpMessageNotWritableException("test msg", new Exception("wrapped message"));
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+
+	@Test
+	public void handleHttpMessageNotReadableJsonParseExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotReadableException ex =
+				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped json parse exception message"),
+						new HttpInputMessage() {
+
+							@Override
+							public HttpHeaders getHeaders() {
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.TEXT_PLAIN);
+								return headers;
+							}
+
+							@Override
+							public InputStream getBody() throws IOException {
+								return new ByteArrayInputStream("test body".getBytes());
+							}
+						});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains("wrapped json parse exception message"));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
+	}
+
+	@Test
+	public void handleHttpMessageNotReadableJsonMappingExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		HttpMessageNotReadableException ex =
+				new HttpMessageNotReadableException("test msg",
+						new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
+
+							@Override
+							public HttpHeaders getHeaders() {
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.TEXT_PLAIN);
+								return headers;
+							}
+
+							@Override
+							public InputStream getBody() throws IOException {
+								return new ByteArrayInputStream("test body".getBytes());
+							}
+						});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains("wrapped json mapping exception message"));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
+	}
+	
+	@Test
+	public void handleMissingServletRequestPartExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		MissingServletRequestPartException ex =
+				new MissingServletRequestPartException("file");
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMissingServletRequestPartException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 

@@ -56,7 +56,7 @@
 
 		<!-- build pipeline plugins -->
 		<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
-		<sca-maven-plugin.version>18.20</sca-maven-plugin.version>
+		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.4</dockerfile-maven-plugin.version>
 
 		<!-- instrumentation plugins -->
@@ -632,7 +632,7 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- fortify 18.20: groupId changed from "com.hpe.security.fortify.maven.plugin" to "com.fortify.sca.plugins.maven" -->
+						<!-- fortify 19.1.0: groupId changed from "com.hpe.security.fortify.maven.plugin" to "com.fortify.sca.plugins.maven" -->
 						<groupId>com.fortify.sca.plugins.maven</groupId>
 						<artifactId>sca-maven-plugin</artifactId>
 						<version>${sca-maven-plugin.version}</version>
