@@ -47,9 +47,9 @@ public class BipEmbeddedRedisServer {
 	}
 
 	/**
-	 * Start embedded redis server on context load
+	 * Start embedded redis server on context load.
 	 *
-	 * @throws IOException
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@PostConstruct
 	public synchronized void startRedis() throws IOException {
@@ -91,8 +91,7 @@ public class BipEmbeddedRedisServer {
 	}
 
 	/**
-	 * stop embedded redis server on context destroy
-	 * @throws IOException 
+	 * stop embedded redis server on context destroy.
 	 */
 	@PreDestroy
 	public void stopRedis() {
