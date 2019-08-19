@@ -18,7 +18,6 @@ import java.util.Base64;
 
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
-
 /**
  * Utility class for creating KeyStore objects from PEM format certificates.
  * 
@@ -125,14 +124,8 @@ public class KeystoreUtils {
     		
     		KeyStore trustStore = KeyStore.getInstance(System.getProperty(SYS_TRUSTSTORETYPE, KeyStore.getDefaultType()));
     		if (loadSystemTrustStore) {
-    			InputStream inputstream = null;
-    	 		try {
-	    			inputstream = new FileInputStream(Sanitizer.safePath(System.getProperty(SYS_TRUSTSTORE, SYS_TRUSTSTORE_DEFAULT)));
+    	 		try(InputStream inputstream = new FileInputStream(Sanitizer.safePath(System.getProperty(SYS_TRUSTSTORE, SYS_TRUSTSTORE_DEFAULT)));) {
 	    			trustStore.load(inputstream, System.getProperty(SYS_TRUSTSTOREPASS, SYS_TRUSTSTOREPASS_DEFAULT).toCharArray()); 
-	    		} finally {
-	    			if (inputstream != null) {
-	    				inputstream.close();
-	    			}
 	    		}
     		} else {
     			trustStore.load(null, null);
