@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.validation.Defense;
-import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 
 /**
  * Performs simple audit logging on any type of request or response objects.
