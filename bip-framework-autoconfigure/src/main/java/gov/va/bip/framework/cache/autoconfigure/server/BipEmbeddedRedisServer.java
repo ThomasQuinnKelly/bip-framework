@@ -51,24 +51,33 @@ public class BipEmbeddedRedisServer {
 	 * @throws IOException
 	 */
 	@PostConstruct
-	public void startRedis() throws IOException {
+	public synchronized void startRedis() throws IOException {
 		Defense.notNull(properties, properties.getClass().getSimpleName() + " cannot be null");
 
-		if (properties.getPort() < 1) {
+		int portNumber = properties.getPort();
+
+		// if port is 0, use sockets to get a "random" port
+		if (portNumber < 1) {
 			ServerSocket ss = null;
 			try {
 				ss = ServerSocketFactory.getDefault().createServerSocket(0);
-				properties.setPort(ss.getLocalPort());
+				portNumber = ss.getLocalPort();
 			} finally {
 				if (ss != null) {
-					ss.close();
+					try {
+						ss.close();
+					} catch (Exception e) { // NOSONAR intentionally wide catch
+						// ignore
+					}
 				}
 			}
 		}
+
+		// start the server
 		LOGGER.info("Starting Embedded Redis. This embedded redis is only to be used in local enviroments");
-		LOGGER.info("Embedded redis starting on port {}", properties.getPort());
+		LOGGER.info("Embedded redis starting on port {}", portNumber);
 		try {
-			redisServer = RedisServer.builder().port(properties.getPort())
+			redisServer = RedisServer.builder().port(portNumber)
 					// .redisExecProvider(customRedisExec) //com.github.kstyrc (not com.orange.redis-embedded)
 					.setting("maxmemory 128M") // maxheap 128M
 					.setting("bind localhost") // force bind to localhost to avoid firewall pop-ups
@@ -76,6 +85,7 @@ public class BipEmbeddedRedisServer {
 			redisServer.start();
 		} catch (final Exception exc) {
 			LOGGER.warn("Not able to start embedded redis, most likely it's already running on the given port on this host!", exc);
+			throw new RuntimeException("Could not start REDIS", exc);
 		}
 	}
 
@@ -84,8 +94,17 @@ public class BipEmbeddedRedisServer {
 	 */
 	@PreDestroy
 	public void stopRedis() {
-		LOGGER.info("Shutting Down Embedded Redis", "This embedded redis is only to be used in local enviroments");
-		redisServer.stop();
+		LOGGER.info("Shutting Down Embedded Redis running on port {}", redisServer.ports().toArray());
+		try {
+			redisServer.stop();
+		} finally {
+			if (redisServer.isActive()) {
+				LOGGER.info("Redis did not shut down, trying again.");
+				redisServer.stop();
+			}
+		}
+		if (redisServer.isActive()) {
+			throw new RuntimeException("Could not stop REDIS on port " + redisServer.ports().toArray());
+		}
 	}
-
 }
