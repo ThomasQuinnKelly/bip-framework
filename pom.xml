@@ -24,6 +24,7 @@
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		
 		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
+		<fortify-merge-output-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-output-filepath>
 		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
 		<ant-contrib.version>20020829</ant-contrib.version>
 	</properties>
@@ -186,29 +187,29 @@
 												<fail message="File does not exist: ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr" />
 											</else>
 										</if>
-										<echo>+++ Checking file availability of ${project.basedir}/${project.artifactId}.fpr</echo>
+										<echo>+++ Checking file availability of ${fortify-merge-output-filepath}</echo>
 										<if>
-											<available file="${project.basedir}/${project.artifactId}.fpr" />
+											<available file="${fortify-merge-output-filepath}" />
 											<then>
-												<echo>+++ Found file: ${project.basedir}/${project.artifactId}.fpr</echo>
+												<echo>+++ Found file: ${fortify-merge-output-filepath}</echo>
 												<echo>+++ Executing Fortify merge operation with:</echo>
 												<echo>      FPRUtility -merge</echo>
 												<echo>        -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
-												<echo>        -source ${project.basedir}/${project.artifactId}.fpr</echo>
-												<echo>        -f ${project.basedir}/${project.artifactId}.fpr</echo>
+												<echo>        -source ${fortify-merge-output-filepath}</echo>
+												<echo>        -f ${fortify-merge-output-filepath}</echo>
 												<exec executable="FPRUtility">
 													<arg
-														line="-merge -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr -source ${project.basedir}/${project.artifactId}.fpr -f ${project.basedir}/${project.artifactId}.fpr" />
+														line="-merge -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr -source ${fortify-merge-output-filepath} -f ${fortify-merge-output-filepath}" />
 												</exec>
 											</then>
 											<else>
-												<echo>+++ Not-found file: ${project.basedir}/${project.artifactId}.fpr</echo>
+												<echo>+++ Not-found file: ${fortify-merge-output-filepath}</echo>
 												<echo>+++ Executing file copy with:</echo>
 												<echo>      copy</echo>
 												<echo>        ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
-												<echo>        ${project.basedir}/${project.artifactId}.fpr</echo>
+												<echo>        ${fortify-merge-output-filepath}</echo>
 												<copy file="${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr"
-													tofile="${project.basedir}/${project.artifactId}.fpr" />
+													tofile="${fortify-merge-output-filepath}" />
 											</else>
 										</if>
 									</tasks>
