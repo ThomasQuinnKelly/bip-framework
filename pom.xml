@@ -24,6 +24,7 @@
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		
 		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
+		<fortify-merge-input-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-input-filepath>
 		<fortify-merge-output-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-output-filepath>
 		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
 		<ant-contrib.version>20020829</ant-contrib.version>
@@ -187,23 +188,23 @@
 												<fail message="File does not exist: ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr" />
 											</else>
 										</if>
-										<echo>+++ Checking file availability of ${fortify-merge-output-filepath}</echo>
+										<echo>+++ Checking file availability of ${fortify-merge-input-filepath}</echo>
 										<if>
-											<available file="${fortify-merge-output-filepath}" />
+											<available file="${fortify-merge-input-filepath}" />
 											<then>
-												<echo>+++ Found file: ${fortify-merge-output-filepath}</echo>
+												<echo>+++ Found file: ${fortify-merge-input-filepath}</echo>
 												<echo>+++ Executing Fortify merge operation with:</echo>
 												<echo>      FPRUtility -merge</echo>
 												<echo>        -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
-												<echo>        -source ${fortify-merge-output-filepath}</echo>
+												<echo>        -source ${fortify-merge-input-filepath}</echo>
 												<echo>        -f ${fortify-merge-output-filepath}</echo>
 												<exec executable="FPRUtility">
 													<arg
-														line="-merge -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr -source ${fortify-merge-output-filepath} -f ${fortify-merge-output-filepath}" />
+														line="-merge -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr -source ${fortify-merge-input-filepath} -f ${fortify-merge-output-filepath}" />
 												</exec>
 											</then>
 											<else>
-												<echo>+++ Not-found file: ${fortify-merge-output-filepath}</echo>
+												<echo>+++ Not-found file: ${fortify-merge-input-filepath}</echo>
 												<echo>+++ Executing file copy with:</echo>
 												<echo>      copy</echo>
 												<echo>        ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
