@@ -70,7 +70,7 @@ if [ "$fortifyVersion" == "" ]; then
 	exit 2
 fi
 
-if [ doBuildFirst ]; then
+if [ $doBuildFirst ]; then
 	echo "* Project will be built before running Fortify"
 	echo "  Run './fortify -h' to see options."
 	read -p "  Press Enter to continue, Ctrl+C to abort: "
