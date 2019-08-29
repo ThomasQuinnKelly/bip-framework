@@ -277,6 +277,9 @@ public class ServiceValidationAspectTest {
 
 	public static class DomainResponseThrowingInstantiationException extends DomainResponse {
 
+		/** The Constant serialVersionUID. */
+		private static final long serialVersionUID = 1L;
+
 		public DomainResponseThrowingInstantiationException() throws InstantiationException {
 			throw new InstantiationException();
 		}
@@ -288,6 +291,9 @@ public class ServiceValidationAspectTest {
 	}
 
 	public static class DomainResponseThrowingIllegalAccessException extends DomainResponse {
+
+		/** The Constant serialVersionUID. */
+		private static final long serialVersionUID = 1L;
 
 		public DomainResponseThrowingIllegalAccessException() throws IllegalAccessException {
 			throw new IllegalAccessException();
