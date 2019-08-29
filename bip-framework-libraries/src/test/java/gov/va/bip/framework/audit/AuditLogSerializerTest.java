@@ -240,7 +240,6 @@ public class AuditLogSerializerTest {
 		assertTrue(((byte[]) returnList.get(0)).length == NUMBER_OF_BYTES_TO_LIMIT_AUDIT_LOGGED_OBJECT);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testAuditSimpleBeanObjectFilter_serializeAsField() {
 		Class<?> filterClass = Arrays.stream(AuditLogSerializer.class.getDeclaredClasses())
