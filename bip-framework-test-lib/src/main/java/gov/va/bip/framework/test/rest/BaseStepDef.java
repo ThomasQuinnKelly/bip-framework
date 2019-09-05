@@ -39,7 +39,8 @@ public class BaseStepDef {
 	protected Map<String, String> headerMap = null;
 
 	/**
-	 * Holds api response of Rest API call. This is usually json response string.
+	 * Holds api response of Rest API call. This is usually json response
+	 * string.
 	 */
 	protected String strResponse = null;
 
@@ -146,29 +147,36 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Delegates Multipart API call without bearer token to rest util.
-	 * 
-	 * @param strURL
-	 * @param fileName
-	 * @param submitPayloadPath
+	 * Delegates MultiPart API call without bearer token to rest util.
+	 *
+	 * @param serviceUrl
+	 *            the service URL
+	 * @param documentFileName
+	 *            the document file name
+	 * @param payLoadFileName
+	 *            the pay load file name
 	 */
-	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName,
-			final String submitPayloadPath) {
+	public void invokeAPIUsingPostWithMultiPart(final String serviceUrl, final String documentFileName,
+			final String payLoadFileName) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponseWithMultipart(strURL, fileName, submitPayloadPath);
+		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName, false, "");
 	}
 
 	/**
-	 * Delegates Multipart API call without bearer token to rest util.
-	 * 
-	 * @param strURL
-	 * @param fileName
-	 * @param submitPayloadPath
+	 * Delegates MultiPart API call without bearer token to rest util.
+	 *
+	 * @param serviceUrl
+	 *            the service URL
+	 * @param documentFileName
+	 *            the document file name
+	 * @param payLoadFileName
+	 *            the pay load file name
 	 */
-	public void invokeAPIUsingPostWithMultiPart(final String strURL, final String fileName,
-			final byte[] submitPayloadPath) {
+	public void invokeAPIUsingPostWithMultiPartRequestPart(final String serviceUrl, final String documentFileName,
+			final String payLoadFileName, final Boolean isPayloadRequestPart, final String payloadRequestPartKey) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponseWithMultipart(strURL, fileName, submitPayloadPath);
+		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName,
+				isPayloadRequestPart, payloadRequestPartKey);
 	}
 
 	/**
@@ -195,8 +203,8 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Invokes bearer token service to get token and sets as authorization key in
-	 * header map.
+	 * Invokes bearer token service to get token and sets as authorization key
+	 * in header map.
 	 */
 	private void setBearerToken() {
 		final String bearerToken = BearerTokenService.getInstance().getBearerToken();
@@ -213,9 +221,10 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Loads JSON property file that contains header values in to header map. Method
-	 * parameter user contains environment and user name delimited by -. The method
-	 * parses the environment and user name and loads JSON header file.
+	 * Loads JSON property file that contains header values in to header map.
+	 * Method parameter user contains environment and user name delimited by -.
+	 * The method parses the environment and user name and loads JSON header
+	 * file.
 	 *
 	 * @param user
 	 *            Contains the environment and user name delimited by - for eg:
@@ -250,7 +259,8 @@ public class BaseStepDef {
 	/**
 	 * Compares REST API call response with given string.
 	 *
-	 * @param strResFile the str res file
+	 * @param strResFile
+	 *            the str res file
 	 * @return true, if successful
 	 */
 	public boolean compareExpectedResponseWithActual(final String strResFile) {
@@ -276,14 +286,15 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Does an assertion per line. Reads the expected response file. Loops through
-	 * each of this file and does an assertion to see if it exists in the actual
-	 * service response.
+	 * Does an assertion per line. Reads the expected response file. Loops
+	 * through each of this file and does an assertion to see if it exists in
+	 * the actual service response.
 	 * 
-	 * If the actual response contains a lot of information that we can ignore, we
-	 * can just target the lines we are concern with.
+	 * If the actual response contains a lot of information that we can ignore,
+	 * we can just target the lines we are concern with.
 	 *
-	 * @param strResFile the response file string
+	 * @param strResFile
+	 *            the response file string
 	 * @return true, if successful
 	 */
 	public boolean compareExpectedResponseWithActualByRow(final String strResFile) {

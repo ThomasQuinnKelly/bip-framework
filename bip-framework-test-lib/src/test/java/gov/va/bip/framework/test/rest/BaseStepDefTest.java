@@ -7,7 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -201,37 +201,25 @@ public class BaseStepDefTest {
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 		subject.validateStatusCode(200);
 	}
+	
+	@Test
+	public void test_invokeAPIUsingPostWithMultiPartRequestPart_Success() {
+		// Overwrite header with multi part
+		Map<String, String> tblHeader = new HashMap<>();
+		tblHeader.put("Accept", "application/json");
+		tblHeader.put("Content-Type", "multipart/form-data");
+		subject.passHeaderInformation(tblHeader);
+		subject.invokeAPIUsingPostWithMultiPartRequestPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_TXT, Boolean.TRUE, "");
+		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
+		subject.validateStatusCode(200);
+	}
 
 	@Test
-	public void test_invokeAPIUsingPostWithMultiPart_InvalidFile_Failed() {
+	public void test_invokeAPIUsingPostWithMultiPart_NoPayload() {
 		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
 				"invalidpayload.txt");
-		assertNull(subject.strResponse);
-	}
-
-	@Test
-	public void test_invokeAPIUsingPostWithMultiPart_ByteArray_Success() {
-		// Overwrite header with multi part
-		Map<String, String> tblHeader = new HashMap<>();
-		tblHeader.put("Accept", "application/json");
-		tblHeader.put("Content-Type", "multipart/form-data");
-		subject.passHeaderInformation(tblHeader);
-		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
-				"HelloWorld".getBytes());
-		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
-	}
-
-	@Test
-	public void test_postResponseWithMultipart_ByteArray_InvalidPart_Failed() {
-		// Overwrite header with multi part
-		Map<String, String> tblHeader = new HashMap<>();
-		tblHeader.put("Accept", "application/json");
-		tblHeader.put("Content-Type", "multipart/form-data");
-		subject.passHeaderInformation(tblHeader);
-
-		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "invaliddocument.txt",
-				"HelloWorld".getBytes());
-		assertNull(subject.strResponse);
+		assertNotNull(subject.strResponse);
 	}
 
 	@Test
