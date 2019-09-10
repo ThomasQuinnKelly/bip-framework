@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,11 @@ import gov.va.bip.framework.test.util.RESTUtil;
  */
 
 public class BaseStepDef {
-	/**
-	 * Utility to handle Rest API calls
-	 */
+
+	/** Utility to handle Rest API calls. */
 	protected RESTUtil resUtil = null;
 
-	/**
-	 * Map that holds key value pair for http headers.
-	 */
+	/** Map that holds key value pair for HTTP headers. */
 	protected Map<String, String> headerMap = null;
 
 	/**
@@ -44,24 +42,18 @@ public class BaseStepDef {
 	 */
 	protected String strResponse = null;
 
-	/**
-	 * Utility for RESTConfigService to read REST API config
-	 */
+	/** Utility for RESTConfigService to read REST API config. */
 	protected RESTConfigService restConfig = null;
 
-	/**
-	 * Logger object
-	 */
+	/** Logger object. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepDef.class);
-	/**
-	 * Constants for JSON response
-	 */
+
+	/** Constants for JSON response. */
 	private static final String RESPONSE_PATH = "target/TestResults/Response/";
 
 	/**
-	 * Initialize services and utility
+	 * Initialize services and utility.
 	 */
-
 	public void initREST() {
 		resUtil = new RESTUtil();
 		restConfig = RESTConfigService.getInstance();
@@ -69,8 +61,9 @@ public class BaseStepDef {
 
 	/**
 	 * Stores key value pair from cucumber to a map.
-	 * 
+	 *
 	 * @param tblHeader
+	 *            the data table header
 	 */
 	public void passHeaderInformation(final Map<String, String> tblHeader) {
 		headerMap = new HashMap<>(tblHeader);
@@ -78,105 +71,126 @@ public class BaseStepDef {
 
 	/**
 	 * Sets the bearer token and delegates get API call to rest util.
-	 * 
-	 * @param strURL
+	 *
+	 * @param serviceUrl
+	 *            the service URL
 	 * @param isAuth
+	 *            the is auth
 	 */
-	public void invokeAPIUsingGet(final String strURL, final boolean isAuth) {
+	public void invokeAPIUsingGet(final String serviceUrl, final boolean isAuth) {
 		if (isAuth) {
 			setBearerToken();
 		}
-		invokeAPIUsingGet(strURL);
+		invokeAPIUsingGet(serviceUrl);
 	}
 
 	/**
 	 * Delegates get API call without bearer token to rest util.
 	 * 
-	 * @param strURL
+	 * @param serviceUrl
 	 */
 
-	public void invokeAPIUsingGet(final String strURL) {
+	public void invokeAPIUsingGet(final String serviceUrl) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.getResponse(strURL);
+		strResponse = resUtil.getResponse(serviceUrl);
 	}
 
 	/**
 	 * Sets the bearer token and delegates post API call to rest util.
-	 * 
-	 * @param strURL
+	 *
+	 * @param serviceUrl
+	 *            the service url
 	 * @param isAuth
+	 *            the is auth
 	 */
-	public void invokeAPIUsingPost(final String strURL, final boolean isAuth) {
+	public void invokeAPIUsingPost(final String serviceUrl, final boolean isAuth) {
 		if (isAuth) {
 			setBearerToken();
 		}
-		invokeAPIUsingPost(strURL);
+		invokeAPIUsingPost(serviceUrl);
 	}
 
 	/**
 	 * Delegates put API call without bearer token to rest util.
 	 * 
-	 * @param strURL
+	 * @param serviceUrl
 	 */
-	public void invokeAPIUsingPut(final String strURL) {
+	public void invokeAPIUsingPut(final String serviceUrl) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.putResponse(strURL);
+		strResponse = resUtil.putResponse(serviceUrl);
 	}
 
 	/**
 	 * Sets the bearer token and delegates put API call to rest util.
 	 * 
-	 * @param strURL
+	 * @param serviceUrl
 	 * @param isAuth
 	 */
-	public void invokeAPIUsingPut(final String strURL, final boolean isAuth) {
+	public void invokeAPIUsingPut(final String serviceUrl, final boolean isAuth) {
 		if (isAuth) {
 			setBearerToken();
 		}
-		invokeAPIUsingPut(strURL);
+		invokeAPIUsingPut(serviceUrl);
 	}
 
 	/**
 	 * Delegates post API call without bearer token to rest util.
 	 * 
-	 * @param strURL
+	 * @param serviceUrl
 	 */
-	public void invokeAPIUsingPost(final String strURL) {
+	public void invokeAPIUsingPost(final String serviceUrl) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponse(strURL);
+		strResponse = resUtil.postResponse(serviceUrl);
 	}
 
 	/**
-	 * Delegates MultiPart API call without bearer token to rest util.
-	 *
+	 * Delegates MultiPart API POST method call to an end point that consumes
+	 * "multipart/form-data". <br/>
+	 * <br/>
+	 * Document file to be copied under <b>src/resources/documents</b> directory
+	 * and Payload file under <b>src/resources/payload</b> directory of
+	 * *-inttest project <br/>
+	 * 
 	 * @param serviceUrl
-	 *            the service URL
+	 *            the service end point absolute URL
 	 * @param documentFileName
-	 *            the document file name
+	 *            the document file name to be uploaded
 	 * @param payLoadFileName
-	 *            the pay load file name
+	 *            the pay load file name for the uploaded document
 	 */
 	public void invokeAPIUsingPostWithMultiPart(final String serviceUrl, final String documentFileName,
 			final String payLoadFileName) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName, false, "");
+		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName, Boolean.FALSE,
+				StringUtils.EMPTY);
 	}
 
 	/**
-	 * Delegates MultiPart API call without bearer token to rest util.
+	 * Delegates MultiPart API POST method call to an end point that consumes
+	 * "multipart/form-data". Also supports passing boolean if payload part is
+	 * POJO/JSON along with the key name. If part key name isn't set, then the
+	 * library uses file name as the default key<br/>
+	 * <br/>
+	 * Document file to be copied under <b>src/resources/documents</b> directory
+	 * and Payload file under <b>src/resources/payload</b> directory of
+	 * *-inttest project <br/>
 	 *
 	 * @param serviceUrl
-	 *            the service URL
+	 *            the service end point absolute URL
 	 * @param documentFileName
-	 *            the document file name
+	 *            the document file name to be uploaded
 	 * @param payLoadFileName
-	 *            the pay load file name
+	 *            the pay load file name for the uploaded document
+	 * @param isPayloadPartPojo
+	 *            boolean to be set to TRUE if the payload is POJO/JSON
+	 * @param payloadPartKeyName
+	 *            the payload part key name to be set
 	 */
-	public void invokeAPIUsingPostWithMultiPartRequestPart(final String serviceUrl, final String documentFileName,
-			final String payLoadFileName, final Boolean isPayloadRequestPart, final String payloadRequestPartKey) {
+	public void invokeAPIUsingPostWithMultiPart(final String serviceUrl, final String documentFileName,
+			final String payLoadFileName, final Boolean isPayloadPartPojo, final String payloadPartKeyName) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName,
-				isPayloadRequestPart, payloadRequestPartKey);
+		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName, isPayloadPartPojo,
+				payloadPartKeyName);
 	}
 
 	/**

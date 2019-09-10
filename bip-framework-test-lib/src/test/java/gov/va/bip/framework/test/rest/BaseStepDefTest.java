@@ -203,13 +203,13 @@ public class BaseStepDefTest {
 	}
 	
 	@Test
-	public void test_invokeAPIUsingPostWithMultiPartRequestPart_Success() {
+	public void test_invokeAPIUsingPostWithMultiPartPayloadAsPojo_Success() {
 		// Overwrite header with multi part
 		Map<String, String> tblHeader = new HashMap<>();
 		tblHeader.put("Accept", "application/json");
 		tblHeader.put("Content-Type", "multipart/form-data");
 		subject.passHeaderInformation(tblHeader);
-		subject.invokeAPIUsingPostWithMultiPartRequestPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+		subject.invokeAPIUsingPostWithMultiPart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
 				SUBMIT_PAYLOAD_TXT, Boolean.TRUE, "");
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
 		subject.validateStatusCode(200);

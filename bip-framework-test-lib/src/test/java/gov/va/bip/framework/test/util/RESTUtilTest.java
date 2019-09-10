@@ -30,6 +30,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.google.common.net.HttpHeaders;
 
@@ -245,6 +247,22 @@ public class RESTUtilTest {
 		assertThat(true, equalTo(!response.isEmpty()));
 		restUtil.validateStatusCode(200);
 	}
+	
+	@Test
+	public void test_postResponseWithMultipartMultiValueMap_Success() {
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, body, null);
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartMultiValueMapMediaType_Success() {
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, body, MediaType.MULTIPART_FORM_DATA);
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
 
 	@Test
 	public void test_postResponseWithMultipart__mbfile_Success() {
@@ -255,7 +273,7 @@ public class RESTUtilTest {
 	}
 
 	@Test
-	public void test_postResponseWithMultipart_NoPayload() {
+	public void test_postResponseWithMultipart_InvalidPayload() {
 		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
 				"invalidpayload.txt", false, "");
 		assertNotNull(response);
