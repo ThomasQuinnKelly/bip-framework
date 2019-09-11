@@ -189,8 +189,8 @@ public class BaseStepDef {
 	public void invokeAPIUsingPostWithMultiPart(final String serviceUrl, final String documentFileName,
 			final String payLoadFileName, final Boolean isPayloadPartPojo, final String payloadPartKeyName) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName, isPayloadPartPojo,
-				payloadPartKeyName);
+		strResponse = resUtil.postResponseWithMultipart(serviceUrl, documentFileName, payLoadFileName,
+				isPayloadPartPojo, payloadPartKeyName);
 	}
 
 	/**
@@ -246,19 +246,23 @@ public class BaseStepDef {
 	 * @throws IOException
 	 */
 	public void setHeader(final String user) throws IOException {
+		LOGGER.debug("User: {}", user);
 		final Map<String, String> tblHeader = new HashMap<>();
 
-		final String[] values = user.split("-");
+		final String[] values = user.split("-", 2);
 
 		final String env = values[0];
 		final String userName = values[1];
 		final String url = "users/" + env + "/" + userName + ".properties";
+		LOGGER.debug("Users Properties File: {}", url);
 		final Properties properties = new Properties();
 		InputStream is = null;
 		try {
 			is = RESTConfigService.class.getClassLoader().getResourceAsStream(url);
 			properties.load(is);
 			for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
+				LOGGER.debug("Header Key: {}", entry.getKey());
+				LOGGER.debug("Header Value: {}", entry.getValue());
 				tblHeader.put((String) entry.getKey(), (String) entry.getValue());
 			}
 		} finally {
