@@ -308,6 +308,10 @@ public class RESTUtilTest {
 	
 	@Test
 	public void test_getResponse_PersonDocument() {
+		Map<String, String> mapHeader = new HashMap<String, String>();
+		mapHeader.put(HttpHeaders.AUTHORIZATION, "Bearer abcdef");
+		mapHeader.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+		restUtil.setUpRequest("janedoe.request", mapHeader);
 		String response = restUtil.getResponse(LOCALHOST_URL_PERSON_DOCUMENT);
 		assertThat(true, equalTo(!response.isEmpty()));
 		assertThat(true, equalTo(restUtil.getResponseHttpHeaders() != null));

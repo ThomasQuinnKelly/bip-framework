@@ -47,7 +47,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -95,16 +94,16 @@ public class RESTUtil {
 	/** API response status code. */
 	private int httpResponseCode;
 
-	/**Spring REST template object to invoke all API calls.*/
+	/** Spring REST template object to invoke all API calls. */
 	private RestTemplate restTemplate;
 
 	/** Spring rest template response http header. */
 	private HttpHeaders responseHttpHeaders;
-	
+
 	/** The tika. */
 	private Tika tika = new Tika();
 
-	/** Constructor to initialize objects.*/
+	/** Constructor to initialize objects. */
 	public RESTUtil() {
 		this.restTemplate = getRestTemplate();
 	}
@@ -228,10 +227,22 @@ public class RESTUtil {
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
-			ResponseEntity<String> response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
+			// HTTP response string
+			String strResponse = null;
+			// Http response as ResponseEntity
+			ResponseEntity<?> response = null;
+			if (request.getHeaders() != null
+					&& request.getHeaders().getAccept().contains(MediaType.APPLICATION_OCTET_STREAM)) {
+				LOGGER.debug("Request Accept Header contains {}", MediaType.APPLICATION_OCTET_STREAM);
+				response = restTemplate.exchange(serviceURL, httpMethod, request, byte[].class);
+				strResponse = new String((byte[]) response.getBody());
+			} else {
+				response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
+				strResponse = (String) response.getBody();
+			}
 			httpResponseCode = response.getStatusCodeValue();
 			responseHttpHeaders = response.getHeaders();
-			return response.getBody();
+			return strResponse;
 		} catch (HttpClientErrorException clientError) {
 			LOGGER.error("Http client exception is thrown{}", clientError);
 			LOGGER.error("Response Body {}", clientError.getResponseBodyAsString());
@@ -359,8 +370,7 @@ public class RESTUtil {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private void processMultipPartPayload(final String payLoadFileName, final MultiValueMap<String, Object> body,
-			final Boolean isPayloadPartPojo, final String payloadPartKeyName)
-					throws URISyntaxException, IOException {
+			final Boolean isPayloadPartPojo, final String payloadPartKeyName) throws URISyntaxException, IOException {
 		final URL payloadUrl = RESTUtil.class.getClassLoader()
 				.getResource(PAYLOAD_FOLDER_NAME + File.separator + payLoadFileName);
 		LOGGER.debug("Payload Url: {}", payloadUrl);
@@ -405,14 +415,13 @@ public class RESTUtil {
 	 */
 	private void processMultiPartPayloadRequestParam(final MultiValueMap<String, Object> body, final String contentType,
 			final String payloadFileString) throws IOException {
-		if (contentType != null && (MediaType.APPLICATION_JSON.equals(MediaType.valueOf(contentType))
-				|| MediaType.APPLICATION_JSON_UTF8.equals(MediaType.valueOf(contentType)))) {
+		if (contentType != null && MediaType.valueOf(contentType).includes(MediaType.APPLICATION_JSON)) {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(payloadFileString);
 			if (root != null) {
 				Map<String, String> jsonNodeMap = mapper.convertValue(root,
 						new TypeReference<HashMap<String, String>>() {
-				});
+						});
 				for (Map.Entry<String, String> entry : jsonNodeMap.entrySet()) {
 					final String requestParamkey = entry.getKey();
 					final String requestParamValue = entry.getValue();
@@ -453,7 +462,9 @@ public class RESTUtil {
 			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext,
 					NoopHostnameVerifier.INSTANCE);
 			HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-			ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
+					httpClient);
+			requestFactory.setBufferRequestBody(false);
 			apiTemplate.setRequestFactory(requestFactory);
 		} catch (Exception e) {
 			LOGGER.error("Issue with the certificate or password{}", e);
@@ -523,7 +534,7 @@ public class RESTUtil {
 	 */
 	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
 			final SSLContextBuilder sslContextBuilder)
-					throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
 			if (StringUtils.isBlank(password)) {

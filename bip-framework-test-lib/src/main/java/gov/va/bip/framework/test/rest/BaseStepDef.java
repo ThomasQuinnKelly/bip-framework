@@ -37,7 +37,7 @@ public class BaseStepDef {
 	protected Map<String, String> headerMap = null;
 
 	/**
-	 * Holds api response of Rest API call. This is usually json response
+	 * Holds API response of Rest API call. This is usually JSON response
 	 * string.
 	 */
 	protected String strResponse = null;
