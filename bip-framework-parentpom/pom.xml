@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.6.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath />
 	</parent>
 
 	<groupId>gov.va.bip.framework</groupId>
@@ -17,8 +18,8 @@
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
-		<!-- This version down-grade required to work around POM build errors in 
-			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest 
+		<!-- This version down-grade required to work around POM build errors in
+			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest
 			STS / Eclipse version would also solve the issue. -->
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
@@ -54,7 +55,7 @@
 		<lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
 		<templating-maven-plugin.version>1.0.0</templating-maven-plugin.version>
 
-		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl 
+		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl
 			are not compliant -->
 		<jaxb2-maven-plugin-codehaus.version>1.5</jaxb2-maven-plugin-codehaus.version>
 		<maven-jaxb2-plugin-jvnet.version>0.14.0</maven-jaxb2-plugin-jvnet.version>
@@ -81,7 +82,7 @@
 		<jmeter-maven-plugin.version>2.9.0</jmeter-maven-plugin.version>
 		<jmeter-maven-plugin.versionRange>[2.8.5,)</jmeter-maven-plugin.versionRange>
 		<testng.version>6.14.3</testng.version>
-		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x 
+		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x
 			version -->
 
 		<!-- application plugins -->
@@ -100,7 +101,7 @@
 		<commons-lang3.version>3.9</commons-lang3.version>
 		<jackson-databind.version>2.9.9</jackson-databind.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!-- 
+		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!--
 			5.3 to 6.1 -->
 		<janino-version>3.0.13</janino-version>
 		<logback-classic.version>1.2.3</logback-classic.version>
@@ -112,6 +113,24 @@
 		<!-- TEMPORARY TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
 		<github.global.server>github</github.global.server>
 
+		<!-- DATABASE related versions -->
+		<h2.version>1.4.199</h2.version>
+		<postgresql.version>42.2.6</postgresql.version>
+		<ojdbc6.version>11.2.0.4</ojdbc6.version><!-- also 11.1.0.7 -->
+		<ojdbc7.version>12.1.0.2</ojdbc7.version><!-- also 12.1.0.2 -->
+		<ojdbc8.version>12.2.0.1</ojdbc8.version><!-- also 18.1.0, 19.3 -->
+		<ojdbc10.version>19.3</ojdbc10.version>
+		<!-- Liquibase -->
+		<liquibase-core.version>${liquibase.version}</liquibase-core.version>
+		<liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
+		<!--
+			For liquibase-maven-plugin: versions derived from spring dependencies.
+			Required dependencies for various Liquibase Change operations, more may be needed.
+			THESE NEED TO BE ADJUSTED IF SPRING IS UPGRADED
+		-->
+		<validation-api.version>2.0.1.Final</validation-api.version>
+		<spring-core.version>5.1.8.RELEASE</spring-core.version>
+		<spring-data-jpa.version>2.1.9.RELEASE</spring-data-jpa.version>
 	</properties>
 
 	<repositories>
@@ -152,6 +171,30 @@
 			<name>BIP Nexus Repository</name>
 			<url>${repo.mirror}</url>
 		</pluginRepository>
+		<pluginRepository>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<layout>default</layout>
+		</pluginRepository>
+		<pluginRepository>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>spring-plugins</id>
+			<name>Spring Plugin Repo</name>
+			<url>http://repo.spring.io/plugins-release</url>
+			<layout>default</layout>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<distributionManagement>
@@ -174,8 +217,8 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- h2-console stopped working after updating from Spring Cloud Greenwich.SR1 
-				to SR2 There is a bug in Brave fixed in 5.6.6 https://github.com/openzipkin/brave/pull/933 
+			<!-- h2-console stopped working after updating from Spring Cloud Greenwich.SR1
+				to SR2 There is a bug in Brave fixed in 5.6.6 https://github.com/openzipkin/brave/pull/933
 				Most likely Greenwich.SR3 or later release would fix this issue -->
 			<dependency>
 				<groupId>io.zipkin.brave</groupId>
@@ -276,6 +319,72 @@
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapi.codegen.version}</version>
 			</dependency>
+
+			<!-- DATABASE related dependencies -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<scope>runtime</scope>
+				<version>${h2.version}</version> <!-- Need version >= 1.4.198 for row_number analytic -->
+			</dependency>
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+			</dependency>
+			<dependency>
+				<!-- TODO Oracle 11.1.x is on TRM Unapproved list -->
+				<!-- TODO Oracle 11.2.x is on TRM Divest schedule -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc6</artifactId>
+				<version>${ojdbc6.version}</version>
+			</dependency>
+			<dependency>
+				<!-- TODO Oracle 12.1.x is on TRM Divest schedule -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc7</artifactId>
+				<version>${ojdbc7.version}</version>
+			</dependency>
+			<dependency>
+				<!-- TODO Oracle 12.2.x is on TRM Divest schedule -->
+				<!-- Oracle 18.1.0 or 19.3 is TRM Approved -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc8</artifactId>
+				<version>${ojdbc8.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Oracle 19.3 is TRM Approved -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc10</artifactId>
+				<version>${ojdbc10.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-liquibase</artifactId>
+				<exclusions>
+					<exclusion>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.liquibase.ext</groupId>
+				<artifactId>liquibase-hibernate5</artifactId>
+				<version>${liquibase-hibernate5.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -306,7 +415,7 @@
 			</resource>
 		</resources>
 		<plugins>
-			<!-- repackages jar and war plugins so they can be executed with command 
+			<!-- repackages jar and war plugins so they can be executed with command
 				line -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -431,7 +540,7 @@
 							</resources>
 						</configuration>
 					</execution>
-					<!-- add the parsed version properties into the build environment for 
+					<!-- add the parsed version properties into the build environment for
 						usage as needed -->
 					<execution>
 						<phase>initialize</phase>
@@ -527,9 +636,9 @@
 			</plugin>
 		</plugins>
 		<pluginManagement>
-			<!-- NOTE: These plugins will be removed from future versions of the super 
+			<!-- NOTE: These plugins will be removed from future versions of the super
 				POM -->
-			<!-- They are kept for the moment as they are very unlikely to conflict 
+			<!-- They are kept for the moment as they are very unlikely to conflict
 				with lifecycle mappings (MNG-4453) -->
 			<plugins>
 				<plugin>
@@ -596,12 +705,12 @@
 						<skipTests>${skipPerfTests}</skipTests>
 						<!-- Enable JMeter reports -->
 						<generateReports>true</generateReports>
-						<!-- To simplify debugging, it is advisable to adapt the loglevel. 
+						<!-- To simplify debugging, it is advisable to adapt the loglevel.
 							The jmeter logs are written to the file jmeter.log. -->
 						<overrideRootLogLevel>DEBUG</overrideRootLogLevel>
-						<!-- By default, the console output during a jmeter test run is suppressed. 
-							We want to display the progress using the listener "Generate Summary Results" 
-							(which periodically prints stats to stdout). Therefore we have to make sure, 
+						<!-- By default, the console output during a jmeter test run is suppressed.
+							We want to display the progress using the listener "Generate Summary Results"
+							(which periodically prints stats to stdout). Therefore we have to make sure,
 							that the jmeter output is not suppressed. -->
 						<suppressJMeterOutput>false</suppressJMeterOutput>
 						<jmeterLogLevel>DEBUG</jmeterLogLevel>
@@ -611,7 +720,7 @@
 								<argument>-Djavax.net.ssl.keyStorePassword=${javax.net.ssl.keyStorePassword}</argument>
 							</arguments>
 						</jMeterProcessJVMSettings>
-						<!-- Configuration will fail build only if error rate is higher than 
+						<!-- Configuration will fail build only if error rate is higher than
 							1%. -->
 						<errorRateThresholdInPercent>1</errorRateThresholdInPercent>
 					</configuration>
@@ -639,6 +748,57 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<!-- DATABASE related plugins -->
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase-core.version}</version>
+					<!-- Required dependencies for various Change operations -->
+					<dependencies>
+						<dependency>
+							<groupId>org.liquibase.ext</groupId>
+							<artifactId>liquibase-hibernate5</artifactId>
+							<version>${liquibase-hibernate5.version}</version>
+							<exclusions>
+								<exclusion>
+									<groupId>org.liquibase</groupId>
+									<artifactId>liquibase-core</artifactId>
+								</exclusion>
+							</exclusions>
+						</dependency>
+						<dependency>
+							<groupId>javax.validation</groupId>
+							<artifactId>validation-api</artifactId>
+							<version>${validation-api.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-core</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-context</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-beans</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework.data</groupId>
+							<artifactId>spring-data-jpa</artifactId>
+							<version>${spring-data-jpa.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-core</artifactId>
+							<version>${hibernate.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -646,8 +806,8 @@
 		<!-- TODO DEPRECATED ... -->
 		<profile>
 			<id>fortify</id>
-			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 
-				are run using the sourceanalyzer and FPRUtility commandline applications 
+			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
+				are run using the sourceanalyzer and FPRUtility commandline applications
 				for now, so Fortify SCA will need to be installed before running -->
 			<properties>
 				<fortify-build-utils.version>1.2</fortify-build-utils.version>
@@ -697,18 +857,15 @@
 
 										<basename property="fortify.util.jar.filename" file="${fortify.util.jar.path}" />
 
-										<echo
-											message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
+										<echo message="Using the fortify-build-utils file path: ${fortify.util.jar.path}" />
 										<echo message="Version: ${fortify.util.version}" />
 										<echo message="File name: ${fortify.util.jar.filename}" />
 										<echo message="Clean ${dir.scripts}" />
 										<delete dir="${dir.scripts}" />
 										<mkdir dir="${dir.scripts}" />
-										<copy todir="${dir.scripts}" flatten="true" overwrite="true"
-											file="${fortify.util.jar.path}" />
+										<copy todir="${dir.scripts}" flatten="true" overwrite="true" file="${fortify.util.jar.path}" />
 
-										<unzip src="${dir.scripts}/${fortify.util.jar.filename}"
-											dest="${dir.scripts}" failOnEmptyArchive="true">
+										<unzip src="${dir.scripts}/${fortify.util.jar.filename}" dest="${dir.scripts}" failOnEmptyArchive="true">
 											<mapper type="flatten" />
 											<patternset>
 												<include name="**/**/*.xml" />
@@ -719,15 +876,14 @@
 										<mkdir dir="${local.ant.lib}" />
 										<get
 											src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar"
-											dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true"
-											skipexisting="true" />
+											dest="${local.ant.lib}/aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
 										<fail
-											message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
+											message="Checksum mismatch for 'target/antlib/aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload."
+										>
 											<condition>
 												<not>
-													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar"
-														algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb"
-														verifyproperty="checksum.matches" />
+													<checksum file="${local.ant.lib}/aether-ant-tasks-uber.jar" algorithm="SHA"
+														property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
 												</not>
 											</condition>
 										</fail>
@@ -756,7 +912,7 @@
 			</dependencies>
 		</profile>
 		<!-- ... deprecated -->
-	
+
 		<!--
 			The fortify-sca profile runs the aggregate scan for all modules.
 			If a project team believes that the fortify-sca profile requires ANY changes,
@@ -837,7 +993,7 @@
 		<profile>
 			<id>docker-jar-project</id>
 			<activation>
-				<file><!-- add a file named .docker-jar-project-marker to war projects 
+				<file><!-- add a file named .docker-jar-project-marker to war projects
 						to activate this profile -->
 					<exists>${basedir}/.docker-jar-project-marker</exists>
 				</file>
@@ -901,7 +1057,7 @@
 				<skipPerfTests>false</skipPerfTests>
 			</properties>
 		</profile>
-		<!-- Temporary Configuration to deploy libraries to MAVEN repository until 
+		<!-- Temporary Configuration to deploy libraries to MAVEN repository until
 			VA SOCKS Proxy Issue is resolved -->
 		<profile>
 			<id>local-deploy</id>
@@ -942,7 +1098,7 @@
 							<merge>true</merge>
 						</configuration>
 						<executions>
-							<!-- run site-maven-plugin's 'site' target as part of the build's 
+							<!-- run site-maven-plugin's 'site' target as part of the build's
 								normal 'deploy' phase -->
 							<execution>
 								<goals>
@@ -961,7 +1117,7 @@
 			<activation>
 				<!-- Profile is activated if openapi.yml exists -->
 				<file>
-					<!-- This path is also used in the framework parentpom. If this path 
+					<!-- This path is also used in the framework parentpom. If this path
 						changes, framework must also be updated. -->
 					<exists>${basedir}/src/main/resources/openapi/openapi.yml</exists>
 				</file>
@@ -1053,9 +1209,9 @@
 								</goals>
 								<configuration>
 									<target>
-										<copy
-											todir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui"
-											flatten="true" overwrite="true">
+										<copy todir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui" flatten="true"
+											overwrite="true"
+										>
 											<fileset
 												dir="${project.build.directory}/classes/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}" />
 										</copy>
@@ -1072,8 +1228,8 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<executions>
-							<!-- TODO for eclipse/m2e users: install the m2e connector 'buildhelper' 
-								by selecting 'Discover new m2e connectors' while hovering over the following 
+							<!-- TODO for eclipse/m2e users: install the m2e connector 'buildhelper'
+								by selecting 'Discover new m2e connectors' while hovering over the following
 								execution tag -->
 							<execution>
 								<id>add-generated-source</id>

@@ -648,18 +648,19 @@ public class BaseWsClientConfig {
 	 */
 	protected void addSslContext(final HttpClientBuilder httpClient,
 			final Resource keystoreResource, final String keystorePass, final Resource truststoreResource, final String truststorePass) {
-
-		if ((keystoreResource != null) && (truststoreResource != null)) {
-			// Add SSL
-			try {
-				KeyStore keystore = this.keyStore(keystoreResource, keystorePass.toCharArray());
-				KeyStore truststore = this.keyStore(truststoreResource, truststorePass.toCharArray());
-
-				addSslContext(httpClient, keystore, keystorePass, truststore);
-
-			} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
-				handleExceptions(e);
+		
+		KeyStore keystore = null;
+		KeyStore truststore = null;
+		try {
+			if (keystoreResource != null) {
+				keystore = this.keyStore(keystoreResource, keystorePass.toCharArray());
 			}
+			if (truststoreResource != null) {
+				truststore = this.keyStore(truststoreResource, truststorePass.toCharArray());
+			}
+			addSslContext(httpClient, keystore, keystorePass, truststore);
+		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
+			handleExceptions(e);
 		}
 	}
 	
@@ -674,14 +675,17 @@ public class BaseWsClientConfig {
 	protected void addSslContext(final HttpClientBuilder httpClient,
 			final KeyStore keystore, final String privateKeyPass, final KeyStore truststore) {
 
-		if ((keystore != null) && (truststore != null)) {
+		if ((keystore != null) || (truststore != null)) {
 			// Add SSL
 			try {
-				SSLContext sslContext =
-						SSLContextBuilder.create()
-								.loadKeyMaterial(keystore, privateKeyPass.toCharArray())
-								.loadTrustMaterial(truststore, null)
-								.build();
+				SSLContextBuilder sslContextBuilder = SSLContextBuilder.create();
+				if (keystore != null) {
+					sslContextBuilder.loadKeyMaterial(keystore, privateKeyPass.toCharArray());
+				}
+				if (truststore != null) {
+					sslContextBuilder.loadTrustMaterial(truststore, null);
+				}
+				SSLContext sslContext= sslContextBuilder.build();
 				// use NoopHostnameVerifier to turn off host name verification
 				SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 				httpClient.setSSLSocketFactory(csf);
