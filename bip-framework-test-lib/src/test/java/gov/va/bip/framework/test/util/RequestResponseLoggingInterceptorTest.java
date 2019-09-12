@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpResponse;
 
@@ -19,9 +20,6 @@ import ch.qos.logback.classic.Logger;
 
 
 public class RequestResponseLoggingInterceptorTest {
-	
-	/** The response mock. */
-	private ResponseMock responseMock = new ResponseMock();
 	
 	@Before
 	public void setUp() throws Exception {
@@ -47,8 +45,9 @@ public class RequestResponseLoggingInterceptorTest {
 	public void interceptWithMockAndBody() throws Exception {
 		final byte[] byteBody = "Foo".getBytes();
 		Request request = new Request();
+		RequestExecutionBinaryMockResponse response = new RequestExecutionBinaryMockResponse();
 		new RequestResponseLoggingInterceptor()
-                        .intercept(request, byteBody, new RequestExecutionMockResponse());
+                        .intercept(request, byteBody, response);
 	}
 
 	/**
@@ -97,10 +96,44 @@ public class RequestResponseLoggingInterceptorTest {
 	 */
 	private class RequestExecutionMockResponse implements ClientHttpRequestExecution {
 
+		/** The response mock. */
+		private ResponseMock responseMock = new ResponseMock();
+		
 		@Override
 		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws 
                         IOException {
 			return responseMock;
+		}
+
+	}
+	
+	/**
+	 * The Class RequestExecutionMockResponse.
+	 */
+	private class RequestExecutionBinaryMockResponse implements ClientHttpRequestExecution {
+
+		/** The response mock. */
+		private ResponseMock responseMock = new ResponseMock();
+		HttpHeaders httpHeaders = MockHttpHeaders.getMockOctetStream();
+		
+		@Override
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws 
+                        IOException {
+			this.responseMock.setHeaders(httpHeaders);
+			return this.responseMock;
+		}
+
+	}
+	
+	/**
+	 * The Class RequestExecutionMockResponse.
+	 */
+	private static class MockHttpHeaders {
+
+		public static HttpHeaders getMockOctetStream() {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+			return headers;
 		}
 
 	}
@@ -115,6 +148,7 @@ public class RequestResponseLoggingInterceptorTest {
 		private String statusText = "";
 
 		private HttpHeaders headers = new HttpHeaders();
+		
 
 		@Override
 		public HttpStatus getStatusCode() throws IOException {
@@ -143,6 +177,10 @@ public class RequestResponseLoggingInterceptorTest {
 
 		@Override
 		public void close() {
+		}
+		
+		public void setHeaders(HttpHeaders headers) {
+			 this.headers = headers;
 		}
 	}
 }
