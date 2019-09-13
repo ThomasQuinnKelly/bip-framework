@@ -1,5 +1,6 @@
 package gov.va.bip.framework.test.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -18,9 +19,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
-
 public class RequestResponseLoggingInterceptorTest {
-	
+
 	@Before
 	public void setUp() throws Exception {
 		Logger rootLogger = (Logger) LoggerFactory.getLogger(RequestResponseLoggingInterceptor.class);
@@ -30,24 +30,40 @@ public class RequestResponseLoggingInterceptorTest {
 	@Test
 	public void interceptWithNullResponse() throws Exception {
 		Request request = new Request();
-		new RequestResponseLoggingInterceptor()
-                        .intercept(request, null, new RequestExecutionNullResponse());
+		new RequestResponseLoggingInterceptor().intercept(request, null, new RequestExecutionNullResponse());
 	}
-	
+
 	@Test
 	public void interceptWithMock() throws Exception {
 		Request request = new Request();
-		new RequestResponseLoggingInterceptor()
-                        .intercept(request, null, new RequestExecutionMockResponse());
+		new RequestResponseLoggingInterceptor().intercept(request, null, new RequestExecutionMockResponse());
 	}
-	
+
+	@Test
+	public void interceptWithMockHeadersAndBody() throws Exception {
+		final byte[] byteBody = "Foo".getBytes();
+		RequestWithOctetStreamHeaders request = new RequestWithOctetStreamHeaders();
+		new RequestResponseLoggingInterceptor().intercept(request, byteBody, new RequestExecutionMockResponse());
+	}
+
 	@Test
 	public void interceptWithMockAndBody() throws Exception {
 		final byte[] byteBody = "Foo".getBytes();
 		Request request = new Request();
 		RequestExecutionBinaryMockResponse response = new RequestExecutionBinaryMockResponse();
-		new RequestResponseLoggingInterceptor()
-                        .intercept(request, byteBody, response);
+		new RequestResponseLoggingInterceptor().intercept(request, byteBody, response);
+	}
+
+	/**
+	 * The Class RequestWithOctetStreamHeaders.
+	 */
+	private class RequestWithOctetStreamHeaders extends Request implements HttpRequest {
+
+		@Override
+		public HttpHeaders getHeaders() {
+			return MockHttpHeaders.getMockAcceptOctetStream();
+		}
+
 	}
 
 	/**
@@ -84,13 +100,12 @@ public class RequestResponseLoggingInterceptorTest {
 	private class RequestExecutionNullResponse implements ClientHttpRequestExecution {
 
 		@Override
-		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws 
-                        IOException {
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
 			return null;
 		}
 
 	}
-	
+
 	/**
 	 * The Class RequestExecutionMockResponse.
 	 */
@@ -98,46 +113,55 @@ public class RequestResponseLoggingInterceptorTest {
 
 		/** The response mock. */
 		private ResponseMock responseMock = new ResponseMock();
-		
+
 		@Override
-		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws 
-                        IOException {
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
 			return responseMock;
 		}
 
 	}
-	
+
 	/**
-	 * The Class RequestExecutionMockResponse.
+	 * The Class RequestExecutionBinaryMockResponse.
 	 */
 	private class RequestExecutionBinaryMockResponse implements ClientHttpRequestExecution {
 
 		/** The response mock. */
-		private ResponseMock responseMock = new ResponseMock();
-		HttpHeaders httpHeaders = MockHttpHeaders.getMockOctetStream();
-		
+		private ResponseMockWithBody responseMockWithBody = new ResponseMockWithBody();
+		HttpHeaders mockAcceptOctetStream = MockHttpHeaders.getMockAcceptOctetStream();
+
 		@Override
-		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws 
-                        IOException {
-			this.responseMock.setHeaders(httpHeaders);
-			return this.responseMock;
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
+			this.responseMockWithBody.setHeaders(mockAcceptOctetStream);
+			return this.responseMockWithBody;
 		}
 
 	}
-	
+
 	/**
 	 * The Class RequestExecutionMockResponse.
 	 */
 	private static class MockHttpHeaders {
 
-		public static HttpHeaders getMockOctetStream() {
+		public static HttpHeaders getMockAcceptOctetStream() {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM_VALUE);
 			return headers;
 		}
 
 	}
-	
+
+	/**
+	 * The Class ResponseMockWithBody.
+	 */
+	private static class ResponseMockWithBody extends ResponseMock implements ClientHttpResponse {
+
+		@Override
+		public InputStream getBody() throws IOException {
+			return new ByteArrayInputStream("Foo".getBytes());
+		}
+	}
+
 	/**
 	 * The Class ResponseMock.
 	 */
@@ -148,7 +172,6 @@ public class RequestResponseLoggingInterceptorTest {
 		private String statusText = "";
 
 		private HttpHeaders headers = new HttpHeaders();
-		
 
 		@Override
 		public HttpStatus getStatusCode() throws IOException {
@@ -178,9 +201,9 @@ public class RequestResponseLoggingInterceptorTest {
 		@Override
 		public void close() {
 		}
-		
+
 		public void setHeaders(HttpHeaders headers) {
-			 this.headers = headers;
+			this.headers = headers;
 		}
 	}
 }
