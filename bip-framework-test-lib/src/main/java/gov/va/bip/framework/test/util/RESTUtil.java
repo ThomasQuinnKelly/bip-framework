@@ -227,22 +227,11 @@ public class RESTUtil {
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
-			// HTTP response string
-			String strResponse = null;
 			// Http response as ResponseEntity
-			ResponseEntity<?> response = null;
-			if (request.getHeaders() != null
-					&& request.getHeaders().getAccept().contains(MediaType.APPLICATION_OCTET_STREAM)) {
-				LOGGER.debug("Request Accept Header contains {}", MediaType.APPLICATION_OCTET_STREAM);
-				response = restTemplate.exchange(serviceURL, httpMethod, request, byte[].class);
-				strResponse = new String((byte[]) response.getBody());
-			} else {
-				response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
-				strResponse = (String) response.getBody();
-			}
+			ResponseEntity<String> response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
 			httpResponseCode = response.getStatusCodeValue();
 			responseHttpHeaders = response.getHeaders();
-			return strResponse;
+			return response.getBody();
 		} catch (HttpClientErrorException clientError) {
 			LOGGER.error("Http client exception is thrown{}", clientError);
 			LOGGER.error("Response Body {}", clientError.getResponseBodyAsString());

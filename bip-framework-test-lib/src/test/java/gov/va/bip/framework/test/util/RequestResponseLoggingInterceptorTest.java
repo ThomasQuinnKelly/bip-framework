@@ -45,12 +45,27 @@ public class RequestResponseLoggingInterceptorTest {
 		RequestWithOctetStreamHeaders request = new RequestWithOctetStreamHeaders();
 		new RequestResponseLoggingInterceptor().intercept(request, byteBody, new RequestExecutionMockResponse());
 	}
+	
+	@Test
+	public void interceptWithMockNullRequestHeadersAndBody() throws Exception {
+		final byte[] byteBody = "Foo".getBytes();
+		RequestWithNullHeaders request = new RequestWithNullHeaders();
+		new RequestResponseLoggingInterceptor().intercept(request, byteBody, new RequestExecutionMockResponse());
+	}
 
 	@Test
 	public void interceptWithMockAndBody() throws Exception {
 		final byte[] byteBody = "Foo".getBytes();
 		Request request = new Request();
 		RequestExecutionBinaryMockResponse response = new RequestExecutionBinaryMockResponse();
+		new RequestResponseLoggingInterceptor().intercept(request, byteBody, response);
+	}
+	
+	@Test
+	public void interceptWithMockNullResponseHeadersAndBody() throws Exception {
+		final byte[] byteBody = "Foo".getBytes();
+		Request request = new Request();
+		RequestExecutionMockResponseNullHeaders response = new RequestExecutionMockResponseNullHeaders();
 		new RequestResponseLoggingInterceptor().intercept(request, byteBody, response);
 	}
 
@@ -62,6 +77,18 @@ public class RequestResponseLoggingInterceptorTest {
 		@Override
 		public HttpHeaders getHeaders() {
 			return MockHttpHeaders.getMockAcceptOctetStream();
+		}
+
+	}
+	
+	/**
+	 * The Class RequestWithNullHeaders.
+	 */
+	private class RequestWithNullHeaders extends Request implements HttpRequest {
+
+		@Override
+		public HttpHeaders getHeaders() {
+			return null;
 		}
 
 	}
@@ -133,6 +160,23 @@ public class RequestResponseLoggingInterceptorTest {
 		@Override
 		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
 			this.responseMockWithBody.setHeaders(mockAcceptOctetStream);
+			return this.responseMockWithBody;
+		}
+
+	}
+	
+	/**
+	 * The Class RequestExecutionBinaryMockResponse.
+	 */
+	private class RequestExecutionMockResponseNullHeaders implements ClientHttpRequestExecution {
+
+		/** The response mock. */
+		private ResponseMockWithBody responseMockWithBody = new ResponseMockWithBody();
+		HttpHeaders mockNullHttpHeaders = null;
+
+		@Override
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
+			this.responseMockWithBody.setHeaders(mockNullHttpHeaders);
 			return this.responseMockWithBody;
 		}
 
