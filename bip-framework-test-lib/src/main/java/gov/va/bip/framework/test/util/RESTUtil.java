@@ -8,17 +8,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.ConnectionConfig;
@@ -33,15 +37,16 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -50,6 +55,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
@@ -64,57 +73,37 @@ import gov.va.bip.framework.test.service.RESTConfigService;
 
 public class RESTUtil {
 
-	/**
-	 * Constant for document folder name
-	 */
+	/** Constant for document folder name. */
 	private static final String DOCUMENTS_FOLDER_NAME = "documents";
 
-	/**
-	 * Constant for payload folder name
-	 */
+	/** Constant for payload folder name. */
 	private static final String PAYLOAD_FOLDER_NAME = "payload";
-
-	/**
-	 * Constant for submit folder name
-	 */
-	private static final String SUBMIT_PAYLOAD = "submitPayload";
 
 	/** The Constant COULD_NOT_FIND_PROPERTY_STRING. */
 	private static final String COULD_NOT_FIND_PROPERTY_STRING = "Could not find property : ";
 
-	/**
-	 * Logger
-	 */
+	/** Logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 
-	/**
-	 * stores request headers
-	 */
+	/** stores request headers. */
 	private MultiValueMap<String, String> requestHeaders = new LinkedMultiValueMap<>();
 
-	/**
-	 * Holds json that represents header info
-	 */
+	/** Holds json that represents header info. */
 	protected String jsonText = StringUtils.EMPTY;
 
-	/**
-	 * API response status code
-	 */
+	/** API response status code. */
 	private int httpResponseCode;
 
-	/**
-	 * Spring REST template object to invoke all API calls.
-	 */
+	/** Spring REST template object to invoke all API calls. */
 	private RestTemplate restTemplate;
 
-	/**
-	 * Spring rest template response http header
-	 */
+	/** Spring rest template response http header. */
 	private HttpHeaders responseHttpHeaders;
 
-	/**
-	 * Constructor to initialize objects.
-	 */
+	/** The tika. */
+	private Tika tika = new Tika();
+
+	/** Constructor to initialize objects. */
 	public RESTUtil() {
 		this.restTemplate = getRestTemplate();
 	}
@@ -224,7 +213,7 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Private method that is invoked by different http methods. It uses
+	 * Private method that is invoked by different HTTP methods. It uses
 	 * RESTTemplate generic exchange method for various HTTP methods such as
 	 * GET,POST,PUT,DELETE
 	 *
@@ -233,11 +222,12 @@ public class RESTUtil {
 	 * @param request
 	 *            the request
 	 * @param httpMethod
-	 *            the http method
-	 * @return the string
+	 *            the HTTP method
+	 * @return the server response string
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
 		try {
+			// Http response as ResponseEntity
 			ResponseEntity<String> response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
 			httpResponseCode = response.getStatusCodeValue();
 			responseHttpHeaders = response.getHeaders();
@@ -248,7 +238,7 @@ public class RESTUtil {
 			httpResponseCode = clientError.getRawStatusCode();
 			responseHttpHeaders = clientError.getResponseHeaders();
 			return clientError.getResponseBodyAsString();
-		} catch(HttpServerErrorException serverError) {
+		} catch (HttpServerErrorException serverError) {
 			LOGGER.error("Http server exception is thrown {}", serverError);
 			LOGGER.error("Response Body {}", serverError.getResponseBodyAsString());
 			httpResponseCode = serverError.getRawStatusCode();
@@ -258,32 +248,46 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a multipart method using REST Template API and
-	 * return response json object.
+	 * Invokes REST end point for a MultiPart method using REST Template API and
+	 * return response JSON object.
+	 * 
+	 * Delegates MultiPart API POST method call to an end point that consumes
+	 * "multipart/form-data". <br/>
+	 * <br/>
+	 * Document file to be copied under <b>src/resources/documents</b> directory
+	 * and Payload file under <b>src/resources/payload</b> directory of
+	 * *-inttest project <br/>
+	 * 
+	 * This method expects file names to include the extension, for example:
+	 * sample_file.txt or payload.json
 	 *
 	 * @param serviceURL
-	 *            the service URL
-	 * @param fileName
-	 *            the file name
-	 * @param submitPayloadPath
-	 *            the submit payload path
-	 * @return the string
+	 *            the Service End Point URL
+	 * @param documentFileName
+	 *            the MultiPart document upload file name
+	 * @param payLoadFileName
+	 *            the MultiPart document PayLoad file name
+	 * @param isPayloadPartPojo
+	 *            boolean to determine if the PayLoad is a POJO model
+	 * @param payloadPartKeyName
+	 *            the PayLoad request part key name
+	 * @return the response string
 	 */
 
-	public String postResponseWithMultipart(final String serviceURL, final String fileName,
-			final String submitPayloadPath) {
+	public String postResponseWithMultipart(final String serviceURL, final String documentFileName,
+			final String payLoadFileName, final Boolean isPayloadPartPojo, final String payloadPartKeyName) {
 		try {
-			final URL urlFilePath = RESTUtil.class.getClassLoader()
-					.getResource(DOCUMENTS_FOLDER_NAME + File.separator + fileName);
-			final URL urlSubmitPayload = RESTUtil.class.getClassLoader()
-					.getResource(PAYLOAD_FOLDER_NAME + File.separator + submitPayloadPath);
-			final File filePath = new File(urlFilePath.toURI());
-			final File filePathSubmitPayload = new File(urlSubmitPayload.toURI());
-			String submitPayload = FileUtils.readFileToString(filePathSubmitPayload, "UTF-8");
 			MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-			body.add("file", filePath);
-			body.add(SUBMIT_PAYLOAD, submitPayload);
-			return executeMultipartAPI(serviceURL, body);
+			if (StringUtils.isNotEmpty(documentFileName)) {
+				// Process Document Set Up
+				processMultiPartDocument(documentFileName, body);
+			}
+			if (StringUtils.isNotEmpty(payLoadFileName)) {
+				// Process PayLoad for the Document
+				processMultipPartPayload(payLoadFileName, body, isPayloadPartPojo, payloadPartKeyName);
+			}
+			// return the response
+			return postResponseWithMultipart(serviceURL, body, MediaType.MULTIPART_FORM_DATA);
 		} catch (final Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
 			return null;
@@ -291,49 +295,133 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Invokes REST end point for a multipart method using REST Template API and
-	 * return response json object.
+	 * Execute MultiPart API given the service absolute URL, MultiValueMap as
+	 * the body and MediaType for execution. For no media type set, defaults to
+	 * "multipart/form-data"
 	 *
 	 * @param serviceURL
-	 *            the service URL
-	 * @param fileName
-	 *            the file name
-	 * @param submitPayload
-	 *            the submit payload
-	 * @return the string
-	 */
-
-	public String postResponseWithMultipart(final String serviceURL, final String fileName,
-			final byte[] submitPayload) {
-		try {
-			final URL urlFilePath = RESTUtil.class.getClassLoader()
-					.getResource(DOCUMENTS_FOLDER_NAME + File.separator + fileName);
-			final File filePath = new File(urlFilePath.toURI());
-			MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-			body.add("file", filePath);
-			body.add(SUBMIT_PAYLOAD, submitPayload);
-			return executeMultipartAPI(serviceURL, body);
-		} catch (final Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
-			return null;
-		}
-
-	}
-
-	/**
-	 * Execute multipart API.
-	 *
-	 * @param serviceURL
-	 *            the service URL
+	 *            the Service Absolute URL
 	 * @param body
-	 *            the body
+	 *            the body of type MultiValueMap
+	 * @param mediaType
+	 *            the media type MediaType
 	 * @return the string
 	 */
-	private String executeMultipartAPI(final String serviceURL, final MultiValueMap<String, Object> body) {
+	public String postResponseWithMultipart(final String serviceURL, final MultiValueMap<String, Object> body,
+			final MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		headers.setContentType(mediaType == null ? MediaType.MULTIPART_FORM_DATA : mediaType);
 		HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
 		return executeAPI(serviceURL, request, HttpMethod.POST);
+	}
+
+	/**
+	 * Process MultiPart document.
+	 *
+	 * @param documentFileName
+	 *            the MultiPart document file name
+	 * @param body
+	 *            the body
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private void processMultiPartDocument(final String documentFileName, final MultiValueMap<String, Object> body)
+			throws IOException {
+
+		final URL documentUrl = RESTUtil.class.getClassLoader()
+				.getResource(DOCUMENTS_FOLDER_NAME + File.separator + documentFileName);
+		if (documentUrl != null) {
+			final byte[] readBytes = IOUtils.toByteArray(documentUrl);
+			ByteArrayResource resource = new ByteArrayResource(readBytes) {
+				@Override
+				public String getFilename() {
+					return FilenameUtils.getBaseName(documentUrl.getPath());
+				}
+			};
+			body.add("file", resource);
+		}
+	}
+
+	/**
+	 * Process MultiPart PayLoad.
+	 *
+	 * @param payLoadFileName
+	 *            the multi part pay load file name
+	 * @param body
+	 *            the body
+	 * @param isPayloadPartPojo
+	 *            boolean if payload request part as POJO/JSON
+	 * @param payloadRequestPartKey
+	 *            the payload request part key
+	 * @throws URISyntaxException
+	 *             the URI syntax exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private void processMultipPartPayload(final String payLoadFileName, final MultiValueMap<String, Object> body,
+			final Boolean isPayloadPartPojo, final String payloadPartKeyName) throws URISyntaxException, IOException {
+		final URL payloadUrl = RESTUtil.class.getClassLoader()
+				.getResource(PAYLOAD_FOLDER_NAME + File.separator + payLoadFileName);
+		LOGGER.debug("Payload Url: {}", payloadUrl);
+		if (payloadUrl != null) {
+			final File payloadFile = new File(payloadUrl.toURI());
+			LOGGER.debug("Payload File: {}", payloadFile);
+			final String payloadFileString = FileUtils.readFileToString(payloadFile, Charset.defaultCharset());
+			LOGGER.debug("Payload File Content: {}", payloadFileString);
+			if (payloadFileString != null) {
+				final String fileExtension = FilenameUtils.getExtension(payloadFile.getPath());
+				final String baseName = FilenameUtils.getBaseName(payloadFile.getName());
+				String contentType = tika.detect(payloadFile);
+				LOGGER.debug("Payload Mime Type {}", contentType);
+				LOGGER.debug("Payload File Extension {}", fileExtension);
+				if (isPayloadPartPojo) {
+					final String payloadKey = StringUtils.isNotEmpty(payloadPartKeyName) ? payloadPartKeyName
+							: baseName;
+					LOGGER.debug("Payload Key Name {}", payloadKey);
+					LOGGER.debug("Payload Value {}", payloadFileString);
+					HttpHeaders partHeaders = new HttpHeaders();
+					partHeaders.setContentType(MediaType.valueOf(contentType));
+					HttpEntity<Object> payloadPart = new HttpEntity<>(payloadFileString, partHeaders);
+					body.add(payloadKey, payloadPart);
+				} else {
+					processMultiPartPayloadRequestParam(body, contentType, payloadFileString);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Process multi part payload request param.
+	 *
+	 * @param body
+	 *            the body
+	 * @param payloadFile
+	 *            the payload file
+	 * @param payloadFileString
+	 *            the payload file string
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private void processMultiPartPayloadRequestParam(final MultiValueMap<String, Object> body, final String contentType,
+			final String payloadFileString) throws IOException {
+		if (contentType != null && MediaType.valueOf(contentType).includes(MediaType.APPLICATION_JSON)) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(payloadFileString);
+			if (root != null) {
+				Map<String, String> jsonNodeMap = mapper.convertValue(root,
+						new TypeReference<HashMap<String, String>>() {
+						});
+				for (Map.Entry<String, String> entry : jsonNodeMap.entrySet()) {
+					final String requestParamkey = entry.getKey();
+					final String requestParamValue = entry.getValue();
+					body.add(requestParamkey, requestParamValue);
+				}
+			}
+		} else {
+			LOGGER.warn(
+					"Payload file doesn't have extension as JSON, hence not setting as request parameters. Mime Type {}",
+					contentType);
+		}
 	}
 
 	/**
@@ -363,7 +451,9 @@ public class RESTUtil {
 			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext,
 					NoopHostnameVerifier.INSTANCE);
 			HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-			ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
+					httpClient);
+			requestFactory.setBufferRequestBody(false);
 			apiTemplate.setRequestFactory(requestFactory);
 		} catch (Exception e) {
 			LOGGER.error("Issue with the certificate or password{}", e);
@@ -433,7 +523,7 @@ public class RESTUtil {
 	 */
 	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
 			final SSLContextBuilder sslContextBuilder)
-					throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
 			if (StringUtils.isBlank(password)) {
