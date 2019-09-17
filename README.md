@@ -10,8 +10,8 @@ For information regarding recommended development patterns for developing servic
 	- a maven profile, and a `./fortify.sh` script to run Fortify - this script also documents the unique requirements for running fortify against the framework.
 	- a local-dev folder with docker images to run in the spring "local-int" (docker) mode, and with tools to simplify SwA Code Review submissions.
 
-2. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects.
-	- Makes BIP Framework the parent POM for your projects
+2. [bip-framework-parentpom](bip-framework-parentpom/README.md): Parent POM for spring boot and cloud enabled services. It provides common Maven configuration and dependencies for the suite of projects, and dependency management for capabilities (e.g. database management).
+	- Makes BIP Framework the parent for your projects
 
 3. [bip-framework-autoconfigure](bip-framework-autoconfigure/README.md): Shared auto-configuration for the services to enable the patterns for audit, cache, feign, rest, security, swagger, service, vault etc.
 
