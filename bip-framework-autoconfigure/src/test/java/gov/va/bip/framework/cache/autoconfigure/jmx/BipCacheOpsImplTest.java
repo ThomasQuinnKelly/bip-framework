@@ -109,7 +109,6 @@ public class BipCacheOpsImplTest {
 		try {
 			BipCacheOpsImpl bipCacheOpsImpl = new BipCacheOpsImpl();
 			RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-			ReflectionTestUtils.setField(redisCacheConfiguration, "ttl", null);
 			ReflectionTestUtils.setField(bipCacheOpsImpl, "redisCacheConfiguration", redisCacheConfiguration);
 			ReflectionTestUtils.setField(bipCacheOpsImpl, "redisCacheConfigurations", null);
 			RedisCacheManager mockCacheManager = mock(RedisCacheManager.class);
@@ -192,15 +191,12 @@ public class BipCacheOpsImplTest {
 		String cacheName = "cacheName1";
 		when(mockCacheManager.getCacheNames()).thenReturn(Arrays.asList(new String[] { cacheName }));
 		RedisCache mockCache = mock(RedisCache.class);
-		RedisCacheConfiguration mockConfig = mock(RedisCacheConfiguration.class);
-		when(mockCache.getCacheConfiguration()).thenReturn(mockConfig);
-		when(mockConfig.getTtl()).thenReturn(Duration.ofSeconds(1500L));
+		when(mockCache.getCacheConfiguration()).thenReturn(RedisCacheConfiguration.defaultCacheConfig());
 		when(mockCacheManager.isTransactionAware()).thenReturn(false);
 		when(mockCacheManager.getCache(cacheName)).thenReturn(mockCache);
-		RedisCacheConfiguration mockRedisCacheConfiguration = mock(RedisCacheConfiguration.class);
 
 		ReflectionTestUtils.setField(bipCacheOpsImpl, "cacheManager", mockCacheManager);
-		ReflectionTestUtils.setField(bipCacheOpsImpl, "redisCacheConfiguration", mockRedisCacheConfiguration);
+		ReflectionTestUtils.setField(bipCacheOpsImpl, "redisCacheConfiguration", RedisCacheConfiguration.defaultCacheConfig());
 
 		bipCacheOpsImpl.logCurrentCacheManagerFields();
 		String outString = outputCapture.toString();
@@ -208,20 +204,6 @@ public class BipCacheOpsImplTest {
 		assertTrue(outString.contains(PREFIX + "RedisCacheManager = "));
 		assertTrue(outString.contains(PREFIX + "RedisCacheConfiguration (immutable) = "));
 		assertTrue(outString.contains(PREFIX + "Caches = "));
-
-		verify(mockRedisCacheConfiguration, times(1)).getAllowCacheNullValues();
-		verify(mockRedisCacheConfiguration, times(1)).getKeySerializationPair();
-		verify(mockRedisCacheConfiguration, times(1)).getValueSerializationPair();
-		verify(mockRedisCacheConfiguration, times(1)).getConversionService();
-		verify(mockRedisCacheConfiguration, times(1)).usePrefix();
-
-		verify(mockCache, times(1)).getCacheConfiguration();
-		verify(mockConfig, times(1)).getAllowCacheNullValues();
-		verify(mockConfig, times(1)).getTtl();
-		verify(mockConfig, times(1)).getKeySerializationPair();
-		verify(mockConfig, times(1)).getValueSerializationPair();
-		verify(mockConfig, times(1)).getConversionService();
-		verify(mockConfig, times(1)).usePrefix();
 
 	}
 

@@ -96,17 +96,13 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 	@Override
 	public void logCacheConfigProperties() {
 		LOGGER.info(PREFIX + "Cache Configs in '" + (buildProperties == null ? NULL : buildProperties.getName()) + "'");
-		LOGGER.info(PREFIX + "Config for Default: [TTL=" + (redisCacheConfiguration.getTtl() == null
-				? NULL
-						: redisCacheConfiguration.getTtl().toMillis())
+		LOGGER.info(PREFIX + "Config for Default: [TTL=" + redisCacheConfiguration.getTtl().toMillis()
 				+ ";UsePrefix=" + redisCacheConfiguration.usePrefix()
 				+ ";AllowCacheNullValues=" + redisCacheConfiguration.getAllowCacheNullValues()
-				+ ";ConversionService=" + (redisCacheConfiguration.getConversionService() == null
-				? NULL
-						: redisCacheConfiguration.getConversionService().getClass().getName()));
+				+ ";ConversionService=" + redisCacheConfiguration.getConversionService().getClass().getName());
 		logRedisCacheConfig();
-		if ((cacheManager == null) || (cacheManager.getCacheNames() == null)) {
-			LOGGER.info(PREFIX + "Cache names in CacheManager: null");
+		if (cacheManager == null) {
+			LOGGER.info(PREFIX + "CacheManager: null");
 		} else if (cacheManager.getCacheNames().isEmpty()) {
 			LOGGER.info(PREFIX + "Cache names in CacheManager: empty");
 		} else {
@@ -124,12 +120,10 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 			for (Map.Entry<String, RedisCacheConfiguration> entry : redisCacheConfigurations.entrySet()) {
 				RedisCacheConfiguration config = entry.getValue();
 				String msg = PREFIX + "Config for [key=" + entry.getKey() + "[KeyPrefix=" + config.getKeyPrefixFor(entry.getKey())
-				+ ";TTL=" + (config.getTtl() == null ? NULL : config.getTtl().toMillis())
+				+ ";TTL=" + config.getTtl().toMillis()
 				+ ";UsePrefix=" + config.usePrefix()
 				+ ";AllowCacheNullValues=" + config.getAllowCacheNullValues()
-				+ ";ConversionService=" + (config.getConversionService() == null
-				? NULL
-						: config.getConversionService().getClass().getName())
+				+ ";ConversionService=" + config.getConversionService().getClass().getName()
 				+ "]]; ";
 				LOGGER.info(msg);
 			}
@@ -174,13 +168,11 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 
 			JedisClientConfiguration jcc = redisConnectionFactory.getClientConfiguration();
 			LOGGER.info(PREFIX + "JedisClientConfiguration = " + jcc);
-			if (jcc != null) {
-				LOGGER.info(PREFIX + "    clientName = " + jcc.getClientName());
-				LOGGER.info(PREFIX + "    connectTimeout = " + jcc.getConnectTimeout().toMillis());
-				LOGGER.info(PREFIX + "    hostnameVerifier = " + jcc.getHostnameVerifier());
-				LOGGER.info(PREFIX + "    poolConfig = " + (jcc.getPoolConfig().isPresent() ? jcc.getPoolConfig().getClass() : NULL));
-				LOGGER.info(PREFIX + "    readTimeout = " + jcc.getReadTimeout().toMillis());
-			}
+			LOGGER.info(PREFIX + "    clientName = " + jcc.getClientName());
+			LOGGER.info(PREFIX + "    connectTimeout = " + jcc.getConnectTimeout().toMillis());
+			LOGGER.info(PREFIX + "    hostnameVerifier = " + jcc.getHostnameVerifier());
+			LOGGER.info(PREFIX + "    poolConfig = " + (jcc.getPoolConfig().isPresent() ? jcc.getPoolConfig().getClass() : NULL));
+			LOGGER.info(PREFIX + "    readTimeout = " + jcc.getReadTimeout().toMillis());
 
 			@SuppressWarnings("unchecked")
 			GenericObjectPoolConfig<JedisPoolConfig> gopc = redisConnectionFactory.getPoolConfig();
@@ -226,21 +218,15 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 			LOGGER.info(PREFIX + "RedisCacheConfiguration (immutable) = " + redisCacheConfiguration);
 			if (redisCacheConfiguration != null) {
 				LOGGER.info(PREFIX + "    allowCacheNullValues = " + redisCacheConfiguration.getAllowCacheNullValues());
-				LOGGER.info(PREFIX + "    keySerializationPair = " + (redisCacheConfiguration.getKeySerializationPair() == null
-						? NULL
-								: redisCacheConfiguration.getKeySerializationPair().getClass()));
+				LOGGER.info(PREFIX + "    keySerializationPair = " + redisCacheConfiguration.getKeySerializationPair().getClass());
 				LOGGER.info(PREFIX + "    valueSerializationPair = "
-						+ (redisCacheConfiguration.getValueSerializationPair() == null
-						? NULL
-								: redisCacheConfiguration.getValueSerializationPair().getClass()));
-				LOGGER.info(PREFIX + "    conversionService = " + (redisCacheConfiguration.getConversionService() == null
-						? NULL
-								: redisCacheConfiguration.getConversionService().getClass()));
+						+ redisCacheConfiguration.getValueSerializationPair().getClass());
+				LOGGER.info(PREFIX + "    conversionService = " + redisCacheConfiguration.getConversionService().getClass());
 				LOGGER.info(PREFIX + "    usePrefix = " + redisCacheConfiguration.usePrefix());
 			}
 
 			Collection<String> cacheNames = cacheManager.getCacheNames();
-			LOGGER.info(PREFIX + "Caches = " + (cacheNames == null ? "null" : cacheNames.getClass()));
+			LOGGER.info(PREFIX + "Caches = " + cacheNames.getClass());
 			logInfoForAllCacheNames(cacheNames);
 		} catch (Exception e) {
 			LOGGER.error("While logging CacheManager field values", e);
@@ -257,15 +243,9 @@ public class BipCacheOpsImpl implements BipCacheOpsMBean {
 				RedisCacheConfiguration config = cache.getCacheConfiguration();
 				LOGGER.info(PREFIX + "        allowCacheNullValues = " + config.getAllowCacheNullValues());
 				LOGGER.info(PREFIX + "        ttl = " + config.getTtl().toMillis());
-				LOGGER.info(PREFIX + "        keySerializationPair = " + (config.getKeySerializationPair() == null
-						? NULL
-								: config.getKeySerializationPair().getClass()));
-				LOGGER.info(PREFIX + "        valueSerializationPair = " + (config.getValueSerializationPair() == null
-						? NULL
-								: config.getValueSerializationPair().getClass()));
-				LOGGER.info(PREFIX + "        conversionService = " + (config.getConversionService() == null
-						? NULL
-								: config.getConversionService().getClass()));
+				LOGGER.info(PREFIX + "        keySerializationPair = " + config.getKeySerializationPair().getClass());
+				LOGGER.info(PREFIX + "        valueSerializationPair = " + config.getValueSerializationPair().getClass());
+				LOGGER.info(PREFIX + "        conversionService = " + config.getConversionService().getClass());
 				LOGGER.info(PREFIX + "        usePrefix = " + config.usePrefix());
 			}
 		}
