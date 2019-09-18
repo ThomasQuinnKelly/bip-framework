@@ -199,14 +199,14 @@ public class AuditLogSerializer implements Serializable {
 				LOGGER_AUDIT_FILTER.trace("Type Raw Class: {}", writer.getType().getRawClass());
 				LOGGER_AUDIT_FILTER.trace("==============================");
 				List<Object> objectList = null;
-				if ((pojo != null) && (pojo instanceof RequestAuditData)) {
+				if (pojo instanceof RequestAuditData) {
 					List<Object> requestObjectList = ((RequestAuditData) pojo).getRequest();
 					if ((requestObjectList != null) && !requestObjectList.isEmpty()) {
 						objectList = restrictObjectsToSetByteLimit(requestObjectList);
 						((RequestAuditData) pojo).setRequest(objectList);
 					}
 				}
-				if ((pojo != null) && (pojo instanceof ResponseAuditData)) {
+				if (pojo instanceof ResponseAuditData) {
 					Object responseObject = ((ResponseAuditData) pojo).getResponse();
 					if (responseObject != null) {
 						objectList = restrictObjectsToSetByteLimit(Arrays.asList(responseObject));

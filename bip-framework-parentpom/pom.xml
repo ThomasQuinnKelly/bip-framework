@@ -333,20 +333,20 @@
 				<version>${postgresql.version}</version>
 			</dependency>
 			<dependency>
-				<!-- TODO Oracle 11.1.x is on TRM Unapproved list -->
-				<!-- TODO Oracle 11.2.x is on TRM Divest schedule -->
+				<!-- Oracle 11.1.x is on TRM Unapproved list -->
+				<!-- Oracle 11.2.x is on TRM Divest schedule -->
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc6</artifactId>
 				<version>${ojdbc6.version}</version>
 			</dependency>
 			<dependency>
-				<!-- TODO Oracle 12.1.x is on TRM Divest schedule -->
+				<!-- Oracle 12.1.x is on TRM Divest schedule -->
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc7</artifactId>
 				<version>${ojdbc7.version}</version>
 			</dependency>
 			<dependency>
-				<!-- TODO Oracle 12.2.x is on TRM Divest schedule -->
+				<!-- Oracle 12.2.x is on TRM Divest schedule -->
 				<!-- Oracle 18.1.0 or 19.3 is TRM Approved -->
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc8</artifactId>
@@ -803,7 +803,7 @@
 		</pluginManagement>
 	</build>
 	<profiles>
-		<!-- TODO DEPRECATED ... -->
+		<!-- DEPRECATED ... -->
 		<profile>
 			<id>fortify</id>
 			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans
@@ -1228,7 +1228,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<executions>
-							<!-- TODO for eclipse/m2e users: install the m2e connector 'buildhelper'
+							<!-- For eclipse/m2e users: install the m2e connector 'buildhelper'
 								by selecting 'Discover new m2e connectors' while hovering over the following
 								execution tag -->
 							<execution>

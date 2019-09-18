@@ -60,12 +60,12 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 		LOGGER.debug("URI         : {}", request.getURI());
 		LOGGER.debug("Method      : {}", request.getMethod());
 		LOGGER.debug("Headers     : {}", request.getHeaders());
-		if ((body != null) && LOGGER.isDebugEnabled()) {
-			if (request.getHeaders() != null && (request.getHeaders().getAccept()
+		if (body != null && LOGGER.isDebugEnabled()) {
+			if (request.getHeaders().getAccept()
 					.contains(MediaType.APPLICATION_OCTET_STREAM)
 					|| (request.getHeaders().getContentType() != null && (request.getHeaders().getContentType()
 							.includes(MediaType.APPLICATION_OCTET_STREAM)
-							|| request.getHeaders().getContentType().includes(MediaType.MULTIPART_FORM_DATA))))) {
+							|| request.getHeaders().getContentType().includes(MediaType.MULTIPART_FORM_DATA)))) {
 				String strByteStream = copyLimitBodyBytes(new ByteArrayInputStream(body));
 				LOGGER.debug("Request of type binary. Limit bytes to: {} Byte String: {}",
 						NO_OF_BYTES_TO_LIMIT_LOG_OBJECT, strByteStream);
@@ -91,12 +91,12 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
 			LOGGER.debug("Status code  : {}", response.getStatusCode());
 			LOGGER.debug("Status text  : {}", response.getStatusText());
 			LOGGER.debug("Headers      : {}", response.getHeaders());
-			if ((response.getBody() != null) && LOGGER.isDebugEnabled()) {
-				if (response.getHeaders() != null && (response.getHeaders().getAccept()
+			if (LOGGER.isDebugEnabled()) {
+				if (response.getHeaders().getAccept()
 						.contains(MediaType.APPLICATION_OCTET_STREAM)
 						|| (response.getHeaders().getContentType() != null && (response.getHeaders().getContentType()
 								.includes(MediaType.APPLICATION_OCTET_STREAM)
-								|| response.getHeaders().getContentType().includes(MediaType.MULTIPART_FORM_DATA))))) {
+								|| response.getHeaders().getContentType().includes(MediaType.MULTIPART_FORM_DATA)))) {
 					String strByteStream = copyLimitBodyBytes(response.getBody());
 					LOGGER.debug("Response of type binary. Limit bytes to: {} Byte String: {}",
 							NO_OF_BYTES_TO_LIMIT_LOG_OBJECT, strByteStream);
