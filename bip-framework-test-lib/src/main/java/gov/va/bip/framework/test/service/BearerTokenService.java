@@ -94,7 +94,7 @@ public class BearerTokenService {
 		if (StringUtils.isBlank(baseUrl) || StringUtils.isBlank(tokenUrl)) {
 			String propertyNotFound = StringUtils.isBlank(baseUrl) ? BASE_URL_PROPERTY_KEY : "";
 			if (StringUtils.isBlank(tokenUrl)) {
-				if (propertyNotFound != "") {
+				if (StringUtils.isNotBlank(propertyNotFound)) {
 					propertyNotFound = propertyNotFound + ", ";
 				}
 				propertyNotFound = propertyNotFound + TOKEN_URL_PROPERTY_KEY;

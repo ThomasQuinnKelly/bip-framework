@@ -1,6 +1,8 @@
 package gov.va.bip.framework.client.ws;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
@@ -254,6 +257,48 @@ public class BaseWsClientConfigTest {
 		} catch (BipPartnerRuntimeException e) {
 			assertNotNull(e);
 		}
+	}
+	
+	/**
+	 * Test the use case where both a client KeyStore and custom TrustStore are provided.
+	 * Expect that both KeyStores are populated in the configured SSLContext object.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void addSslContext_KeyStoreResource() throws Exception {
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		
+		BaseWsClientConfig config = new BaseWsClientConfig();
+		config.addSslContext(httpClientBuilder, KEYSTORE, KEYSTORE_PASS, TRUSTSTORE, TRUSTSTORE_PASS);
+	}
+	
+	/**
+	 * Test the use case where only custom TrustStore are provided.
+	 * Expect that the custom TrustStore is populated in the configured SSLContext object.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void addSslContext_NoClientKeyStoreResource() throws Exception {
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		
+		BaseWsClientConfig config = new BaseWsClientConfig();
+		config.addSslContext(httpClientBuilder, null, null, TRUSTSTORE, TRUSTSTORE_PASS);
+	}
+	
+	/**
+	 * Test the use case where only a client KeyStore are provided.
+	 * Expect that the client KeyStore is populated in the configured SSLContext object.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void addSslContext_NoTrustStoreResource() throws Exception {
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		
+		BaseWsClientConfig config = new BaseWsClientConfig();
+		config.addSslContext(httpClientBuilder, KEYSTORE, KEYSTORE_PASS, null, null);
 	}
 
 }

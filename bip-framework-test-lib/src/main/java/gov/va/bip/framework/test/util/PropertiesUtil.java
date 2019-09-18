@@ -65,8 +65,7 @@ public class PropertiesUtil {
 			try {
 				fileUri = fileUrl.toURI();
 			} catch (URISyntaxException e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new BipTestLibRuntimeException("Could not return a java.net.URI equivalent to this URL: " + fileUrl, (Throwable) e);
+				throw new BipTestLibRuntimeException("Could not return a java.net.URI equivalent to this URL: " + fileUrl, e);
 			}
 			
 			final File file = new File(fileUri);
@@ -75,8 +74,7 @@ public class PropertiesUtil {
 				properties.load(input);
 				substitutePlaceholders(properties);
 			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new BipTestLibRuntimeException("Could not load the properties file with URL : " + fileUrl, (Throwable) e);
+				throw new BipTestLibRuntimeException("Could not load the properties file with URL : " + fileUrl, e);
 			}
 		}
 		return properties;

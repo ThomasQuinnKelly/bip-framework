@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -49,6 +51,20 @@ public class BasicErrorController implements ErrorController {
 	/** The error attributes. */
 	@Autowired(required = false)
 	private ErrorAttributes errorAttributes;
+	
+	/**
+	 * Handle error.
+	 *
+	 * @param webRequest
+	 *            the web request
+	 * @param response
+	 *            the response
+	 * @return the response entity
+	 */
+	@PostMapping(value = "/error")
+	public ResponseEntity<ProviderResponse> handleErrorPost(WebRequest webRequest, HttpServletResponse response) {
+		return handleError(webRequest, response);
+	}
 
 	/**
 	 * Handle error.
@@ -59,7 +75,7 @@ public class BasicErrorController implements ErrorController {
 	 *            the response
 	 * @return the response entity
 	 */
-	@RequestMapping(value = "/error")
+	@GetMapping(value = "/error")
 	public ResponseEntity<ProviderResponse> handleError(WebRequest webRequest, HttpServletResponse response) {
 		HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		String message = MessageKeys.BIP_GLOBAL_GENERAL_EXCEPTION.getMessage();
@@ -95,8 +111,24 @@ public class BasicErrorController implements ErrorController {
 	 *
 	 * @return the CsrfToken being returned
 	 */
-	@RequestMapping("/csrf")
+	@GetMapping("/csrf")
 	public CsrfToken csrf() {
+		return null;
+		// logic to return the CSRF token:
+		// return null since no CSRF token is required
+	}
+	
+	/**
+	 * Respond to CSRF protection token and return null since CSRF is disabled
+	 * in BIP framework. This solution is chosen because disabling CSRF is not
+	 * currently being supported in SwaggerUI as given in
+	 * 
+	 * https://github.com/springfox/springfox/pull/2639
+	 *
+	 * @return the CsrfToken being returned
+	 */
+	@PostMapping("/csrf")
+	public CsrfToken csrfPost() {
 		return null;
 		// logic to return the CSRF token:
 		// return null since no CSRF token is required

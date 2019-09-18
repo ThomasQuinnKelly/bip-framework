@@ -100,6 +100,25 @@
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<!-- TEMPORARY TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
 		<github.global.server>github</github.global.server>
+		
+		<!-- DATABASE related versions -->
+		<h2.version>1.4.199</h2.version>
+		<postgresql.version>42.2.6</postgresql.version>
+		<ojdbc6.version>11.2.0.4</ojdbc6.version><!-- also 11.1.0.7 -->
+		<ojdbc7.version>12.1.0.2</ojdbc7.version><!-- also 12.1.0.2 -->
+		<ojdbc8.version>12.2.0.1</ojdbc8.version><!-- also 18.1.0, 19.3 -->
+		<ojdbc10.version>19.3</ojdbc10.version>
+		<!-- Liquibase -->
+		<liquibase-core.version>${liquibase.version}</liquibase-core.version>
+		<liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
+		<!--
+			For liquibase-maven-plugin: versions derived from spring dependencies.
+			Required dependencies for various Liquibase Change operations, more may be needed.
+			THESE NEED TO BE ADJUSTED IF SPRING IS UPGRADED
+		-->
+		<validation-api.version>2.0.1.Final</validation-api.version>
+		<spring-core.version>5.1.4.RELEASE</spring-core.version>
+		<spring-data-jpa.version>2.1.4.RELEASE</spring-data-jpa.version>
 
 	</properties>
 
@@ -140,6 +159,30 @@
 			<id>nexus3</id>
 			<name>BIP Nexus Repository</name>
 			<url>${repo.mirror}</url>
+		</pluginRepository>
+		<pluginRepository>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<layout>default</layout>
+		</pluginRepository>
+		<pluginRepository>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>spring-plugins</id>
+			<name>Spring Plugin Repo</name>
+			<url>http://repo.spring.io/plugins-release</url>
+			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -243,6 +286,72 @@
 				<artifactId>micrometer-registry-prometheus</artifactId>
 				<version>${micrometer.version}</version>
 				<scope>runtime</scope>
+			</dependency>
+			
+			<!-- DATABASE related dependencies -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<scope>runtime</scope>
+				<version>${h2.version}</version> <!-- Need version >= 1.4.198 for row_number analytic -->
+			</dependency>
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Oracle 11.1.x is on TRM Unapproved list -->
+				<!-- Oracle 11.2.x is on TRM Divest schedule -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc6</artifactId>
+				<version>${ojdbc6.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Oracle 12.1.x is on TRM Divest schedule -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc7</artifactId>
+				<version>${ojdbc7.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Oracle 12.2.x is on TRM Divest schedule -->
+				<!-- Oracle 18.1.0 or 19.3 is TRM Approved -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc8</artifactId>
+				<version>${ojdbc8.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Oracle 19.3 is TRM Approved -->
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc10</artifactId>
+				<version>${ojdbc10.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-liquibase</artifactId>
+				<exclusions>
+					<exclusion>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.liquibase.ext</groupId>
+				<artifactId>liquibase-hibernate5</artifactId>
+				<version>${liquibase-hibernate5.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -607,11 +716,62 @@
 						</execution>
 					</executions>
 				</plugin>
+				
+				<!-- DATABASE related plugins -->
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase-core.version}</version>
+					<!-- Required dependencies for various Change operations -->
+					<dependencies>
+						<dependency>
+							<groupId>org.liquibase.ext</groupId>
+							<artifactId>liquibase-hibernate5</artifactId>
+							<version>${liquibase-hibernate5.version}</version>
+							<exclusions>
+								<exclusion>
+									<groupId>org.liquibase</groupId>
+									<artifactId>liquibase-core</artifactId>
+								</exclusion>
+							</exclusions>
+						</dependency>
+						<dependency>
+							<groupId>javax.validation</groupId>
+							<artifactId>validation-api</artifactId>
+							<version>${validation-api.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-core</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-context</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-beans</artifactId>
+							<version>${spring-core.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.springframework.data</groupId>
+							<artifactId>spring-data-jpa</artifactId>
+							<version>${spring-data-jpa.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-core</artifactId>
+							<version>${hibernate.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 	<profiles>
-		<!-- TODO DEPRECATED ... -->
+		<!-- DEPRECATED ... -->
 		<profile>
 			<id>fortify</id>
 			<!-- Antrun plugin that runs fortify scans via ant. The fortify scans 

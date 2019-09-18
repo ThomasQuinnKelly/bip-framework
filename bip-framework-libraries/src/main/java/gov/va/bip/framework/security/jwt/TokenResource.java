@@ -4,9 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.va.bip.framework.security.model.Person;
@@ -41,7 +40,7 @@ public class TokenResource implements SwaggerResponseMessages {
 	@Value("${bip.framework.security.jwt.validation.required-parameters:}")
 	private String[] jwtTokenRequiredParameterList;
 
-	@RequestMapping(value = "/token", method = RequestMethod.POST, consumes = { "application/json" })
+	@PostMapping(value = "/token", consumes = { "application/json" })
 	@ApiOperation(value = API_OPERATION_VALUE, notes = API_OPERATION_NOTES)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = MESSAGE_200), @ApiResponse(code = 400, message = MESSAGE_400),
 			@ApiResponse(code = 500, message = MESSAGE_500) })

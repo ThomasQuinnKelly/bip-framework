@@ -8,7 +8,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
@@ -24,13 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.google.common.net.HttpHeaders;
 
@@ -47,6 +48,8 @@ public class RESTUtilTest {
 	private static final String LOCALHOST_URL_PERSON_DOCUMENT = "http://localhost:9999/person/pid/document";
 	private static final String LOCALHOST_MULTIPART_URL_PERSON = "http://localhost:9999/multipart/person";
 	private static final String SUBMIT_PAYLOAD_TXT = "submitpayload.txt";
+	private static final String SUBMIT_PAYLOAD_JSON = "submitpayload.json";
+	private static final String SUBMIT_PAYLOAD_NO_EXT = "submitpayload";
 
 	@BeforeClass
 	public static void setup() {
@@ -216,7 +219,47 @@ public class RESTUtilTest {
 	@Test
 	public void test_postResponseWithMultipart_Success() {
 		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
-				SUBMIT_PAYLOAD_TXT);
+				SUBMIT_PAYLOAD_TXT, false, "");
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartPayloadRequestPart_Success() {
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_JSON, true, "");
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartPayloadRequestParam_Success() {
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_JSON, false, "");
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartPayloadRequestParamNoExtension_Success() {
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
+				SUBMIT_PAYLOAD_NO_EXT, false, "");
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartMultiValueMap_Success() {
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, body, null);
+		assertThat(true, equalTo(!response.isEmpty()));
+		restUtil.validateStatusCode(200);
+	}
+	
+	@Test
+	public void test_postResponseWithMultipartMultiValueMapMediaType_Success() {
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, body, MediaType.MULTIPART_FORM_DATA);
 		assertThat(true, equalTo(!response.isEmpty()));
 		restUtil.validateStatusCode(200);
 	}
@@ -224,41 +267,16 @@ public class RESTUtilTest {
 	@Test
 	public void test_postResponseWithMultipart__mbfile_Success() {
 		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "IS_25mb.txt",
-				SUBMIT_PAYLOAD_TXT);
+				SUBMIT_PAYLOAD_TXT, false, "");
 		assertThat(true, equalTo(!response.isEmpty()));
 		restUtil.validateStatusCode(200);
 	}
 
 	@Test
-	public void test_postResponseWithMultipart_InvalidFile_Failed() {
+	public void test_postResponseWithMultipart_InvalidPayload() {
 		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
-				"invalidpayload.txt");
-		assertNull(response);
-	}
-
-	@Test
-	public void test_postResponseWithMultipart_ByteArray_Success() {
-		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "document.txt",
-				"HelloWorld".getBytes());
-		assertThat(true, equalTo(!response.isEmpty()));
-	}
-
-	@Test
-	public void test_postResponseWithMultipart_ByteArray__mbFileSuccess() throws IOException, URISyntaxException {
-		final URL urlSubmitPayload = RESTUtilTest.class.getClassLoader()
-				.getResource("payload" + "/" + SUBMIT_PAYLOAD_TXT);
-		final File filePathSubmitPayload = new File(urlSubmitPayload.toURI());
-		String submitPayload = FileUtils.readFileToString(filePathSubmitPayload, "UTF-8");
-		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON, "IS_25mb.txt",
-				submitPayload.getBytes());
-		assertThat(true, equalTo(!response.isEmpty()));
-	}
-
-	@Test
-	public void test_postResponseWithMultipart_ByteArray_InvalidPart_Failed() {
-		String response = restUtil.postResponseWithMultipart(LOCALHOST_MULTIPART_URL_PERSON,
-				"invaliddocument.txt", "HelloWorld".getBytes());
-		assertNull(response);
+				"invalidpayload.txt", false, "");
+		assertNotNull(response);
 	}
 
 	@Test
@@ -290,6 +308,10 @@ public class RESTUtilTest {
 	
 	@Test
 	public void test_getResponse_PersonDocument() {
+		Map<String, String> mapHeader = new HashMap<String, String>();
+		mapHeader.put(HttpHeaders.AUTHORIZATION, "Bearer abcdef");
+		mapHeader.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+		restUtil.setUpRequest("janedoe.request", mapHeader);
 		String response = restUtil.getResponse(LOCALHOST_URL_PERSON_DOCUMENT);
 		assertThat(true, equalTo(!response.isEmpty()));
 		assertThat(true, equalTo(restUtil.getResponseHttpHeaders() != null));

@@ -57,7 +57,7 @@ public class BasicErrorControllerTest {
 		this.mockMvc.perform(post("/error")
 				.with(new RequestPostProcessor() { 
 					@Override
-					public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+					public MockHttpServletRequest postProcessRequest(final MockHttpServletRequest request) {
 						request.setAttribute("message", "Unexpected Error Occured");
 						return request;
 					}})

@@ -16,6 +16,10 @@
 	<properties>
 		<!-- 3rd party versions -->
 		<dom4j.version>2.1.1</dom4j.version>
+		<commons-text.version>1.6</commons-text.version>
+		<wiremock.version>2.21.0</wiremock.version>
+		<!-- file type detection and conversion -->
+		<tika.version>1.22</tika.version>
 	</properties>
 
 	<dependencies>
@@ -103,7 +107,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.6</version>
+			<version>${commons-text.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -113,12 +117,17 @@
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock</artifactId>
-			<version>2.21.0</version>
+			<version>${wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>${tika.version}</version>
 		</dependency>
 	</dependencies>
 
