@@ -93,9 +93,8 @@ public class AuditHttpRequestResponse {
 
 			final HttpServletRequest httpServletRequest =
 					((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-			if (httpServletRequest != null) {
-				getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
-			}
+
+			getHttpRequestAuditData(httpServletRequest, requestAuditData, requests);
 
 			baseAsyncAudit.writeRequestAuditLog(requestAuditData, auditEventData, MessageSeverity.INFO, null,
 					HttpRequestAuditData.class);

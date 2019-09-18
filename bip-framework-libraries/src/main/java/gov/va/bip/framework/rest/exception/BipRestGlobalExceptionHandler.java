@@ -293,7 +293,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 			final MethodArgumentNotValidException ex) {
 
 		final ProviderResponse apiError = new ProviderResponse();
-		if ((ex == null) || (ex.getBindingResult() == null)) {
+		if (ex == null) {
 			return failSafeHandler();
 		} else {
 			MessageKey key = MessageKeys.BIP_GLOBAL_VALIDATOR_METHOD_ARGUMENT_NOT_VALID;

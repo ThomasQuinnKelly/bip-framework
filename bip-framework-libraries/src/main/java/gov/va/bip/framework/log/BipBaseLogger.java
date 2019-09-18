@@ -185,7 +185,7 @@ public class BipBaseLogger {
 				toLength = new StringBuilder(word + SPACE); // start a new string
 
 				// if it is the last word then adding to the list is still pending
-				alreadyAdded = (originalWord == words[words.length - 1] ? false : true);
+				alreadyAdded = (originalWord.equals(words[words.length - 1]) ? Boolean.FALSE : Boolean.TRUE);
 			} else {
 				toLength.append(word + SPACE);
 				alreadyAdded = false;

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -456,7 +457,6 @@ public class RESTUtil {
 			requestFactory.setBufferRequestBody(false);
 			apiTemplate.setRequestFactory(requestFactory);
 		} catch (Exception e) {
-			LOGGER.error("Issue with the certificate or password{}", e);
 			throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
 		}
 		apiTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
@@ -592,7 +592,7 @@ public class RESTUtil {
 					final HttpContext context) {
 				LOGGER.info("Retry request, execution count: {}, exception: {}", executionCount, exception);
 				if (exception instanceof org.apache.http.NoHttpResponseException) {
-					LOGGER.warn("No response from server on " + executionCount + " call");
+					LOGGER.warn("No response from server on {} call", executionCount);
 					return true;
 				}
 				return super.retryRequest(exception, executionCount, context);
@@ -619,7 +619,7 @@ public class RESTUtil {
 				LOGGER.error("Requested File Doesn't Exist: response/{}", filename);
 			} else {
 				final File strFilePath = new File(urlFilePath.toURI());
-				strExpectedResponse = FileUtils.readFileToString(strFilePath, "ASCII");
+				strExpectedResponse = FileUtils.readFileToString(strFilePath, StandardCharsets.US_ASCII);
 			}
 		} catch (URISyntaxException | IOException ex) {
 			LOGGER.error(ex.getMessage(), ex);

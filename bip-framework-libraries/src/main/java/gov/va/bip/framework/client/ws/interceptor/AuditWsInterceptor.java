@@ -1,6 +1,7 @@
 package gov.va.bip.framework.client.ws.interceptor;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.ws.WebServiceMessage;
@@ -119,7 +120,7 @@ public class AuditWsInterceptor implements ClientInterceptor {
 		ByteArrayTransportOutputStream byteArrayTransportOutputStream = new ByteArrayTransportOutputStream();
 		webServiceMessage.writeTo(byteArrayTransportOutputStream);
 
-		return new String(byteArrayTransportOutputStream.toByteArray(), "ISO-8859-1");
+		return new String(byteArrayTransportOutputStream.toByteArray(), StandardCharsets.ISO_8859_1);
 	}
 
 	/**

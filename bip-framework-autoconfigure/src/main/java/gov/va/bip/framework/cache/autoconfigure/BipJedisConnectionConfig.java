@@ -90,12 +90,11 @@ public class BipJedisConnectionConfig {
 					(JedisConnectionFactory) applicationContext.getBean(REDIS_CONNECTION_FACTORY_BEAN_NAME);
 
 			// block on the context, so that in-process executions are not interrupted
-			if (jedisConnectionFactory != null) {
-				synchronized (applicationContext) {
-					// automatically calls any destroy method on the bean
-					jedisConnectionFactory.destroy();
-				}
+			synchronized (applicationContext) {
+				// automatically calls any destroy method on the bean
+				jedisConnectionFactory.destroy();
 			}
+
 			LOGGER.debug(REDIS_CONNECTION_FACTORY_BEAN_NAME + " destroyed.");
 		}
 	}
