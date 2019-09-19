@@ -121,7 +121,8 @@
 		<ojdbc8.version>12.2.0.1</ojdbc8.version><!-- also 18.1.0, 19.3 -->
 		<ojdbc10.version>19.3</ojdbc10.version>
 		<!-- Liquibase -->
-		<liquibase-core.version>${liquibase.version}</liquibase-core.version>
+		<!-- replaced value ${liquibase.version} with evaluated version to fix release cut -->
+		<liquibase-core.version>3.6.2</liquibase-core.version>
 		<liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
 		<!--
 			For liquibase-maven-plugin: versions derived from spring dependencies.
