@@ -358,21 +358,10 @@
 				<artifactId>ojdbc10</artifactId>
 				<version>${ojdbc10.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
 				<version>${liquibase-core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-liquibase</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-core</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.liquibase.ext</groupId>
