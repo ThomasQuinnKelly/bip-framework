@@ -3,9 +3,10 @@
   <groupId>gov.va.bip.framework</groupId>
   <artifactId>bip-framework-autoconfigure</artifactId>
   <versioning>
+    <release>2.0.4</release>
     <versions>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>2.0.4</version>
     </versions>
-    <lastUpdated>20190626160307</lastUpdated>
+    <lastUpdated>20190919182824</lastUpdated>
   </versioning>
 </metadata>
