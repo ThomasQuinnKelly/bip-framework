@@ -121,8 +121,7 @@
 		<ojdbc8.version>12.2.0.1</ojdbc8.version><!-- also 18.1.0, 19.3 -->
 		<ojdbc10.version>19.3</ojdbc10.version>
 		<!-- Liquibase -->
-		<!-- replaced value ${liquibase.version} with evaluated version to fix release cut -->
-		<liquibase-core.version>3.6.2</liquibase-core.version>
+		<liquibase-core.version>${liquibase.version}</liquibase-core.version>
 		<liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
 		<!--
 			For liquibase-maven-plugin: versions derived from spring dependencies.
@@ -359,21 +358,10 @@
 				<artifactId>ojdbc10</artifactId>
 				<version>${ojdbc10.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
 				<version>${liquibase-core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-liquibase</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-core</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.liquibase.ext</groupId>
