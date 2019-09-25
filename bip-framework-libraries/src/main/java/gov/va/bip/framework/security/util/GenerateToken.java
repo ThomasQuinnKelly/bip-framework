@@ -98,6 +98,7 @@ public class GenerateToken {
 				.claim("assuranceLevel", person.getAssuranceLevel())
 				.claim("email", person.getEmail())
 				.claim("correlationIds", person.getCorrelationIds())
+				.claim("samlToken", person.getSamlToken())
 				.signWith(signatureAlgorithm, signingKey).compact();
 	}
 

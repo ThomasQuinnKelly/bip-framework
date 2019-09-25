@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.security.PersonTraits;
 import gov.va.bip.framework.security.jwt.correlation.CorrelationIdsParser;
 import io.jsonwebtoken.Claims;
@@ -16,6 +18,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
  * Parse the encrypted JWT
  */
 public class JwtParser {
+	static final BipLogger LOGGER = BipLoggerFactory.getLogger(JwtParser.class);
+
+	/** number of milliseconds in a second */
+	private static final double NUMBER_OF_MILLIS_N_A_SECOND = 1000.0;
+
 	/** The spring configurable properties used for authentication */
 	private JwtAuthenticationProperties jwtAuthenticationProperties;
 
@@ -32,8 +39,10 @@ public class JwtParser {
 	 * Decrypts the JWT and attempts to construct a PersonTraits object from it.
 	 * If correlation id parsing fails, {@code null} is returned.
 	 *
-	 * @param token the encrypted JWT
-	 * @return PersonTraits, or {@code null} if some issue with the correlation ids
+	 * @param token
+	 *            the encrypted JWT
+	 * @return PersonTraits, or {@code null} if some issue with the correlation
+	 *         ids
 	 */
 	public PersonTraits parseJwt(final String token) {
 		Claims claims = null;
@@ -45,19 +54,28 @@ public class JwtParser {
 		Key signingKey = new SecretKeySpec(jwtAuthenticationProperties.getSecret().getBytes(StandardCharsets.UTF_8),
 				signatureAlgorithm.getJcaName());
 
-		claims = Jwts.parser().setSigningKey(signingKey).requireIssuer(jwtAuthenticationProperties.getIssuer()).parseClaimsJws(token)
-				.getBody();
+		long startTime = System.currentTimeMillis();
+
+		claims = Jwts.parser().setSigningKey(signingKey).requireIssuer(jwtAuthenticationProperties.getIssuer())
+				.parseClaimsJws(token).getBody();
+
+		final long elapsedTime = System.currentTimeMillis() - startTime;
+
+		LOGGER.info("Time elapsed to parse JWT token {}{}{}", "[", elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND,
+				" secs]");
 
 		return getPersonFrom(claims);
 
 	}
 
 	/**
-	 * Attempts to produce a PersonTraits object from the correlation ids.
-	 * If correlation id parsing fails, {@code null} is returned.
+	 * Attempts to produce a PersonTraits object from the correlation ids. If
+	 * correlation id parsing fails, {@code null} is returned.
 	 *
-	 * @param claims - the JWT contents
-	 * @return PersonTraits, or {@code null} if some issue with the correlation ids
+	 * @param claims
+	 *            - the JWT contents
+	 * @return PersonTraits, or {@code null} if some issue with the correlation
+	 *         ids
 	 */
 	@SuppressWarnings("unchecked")
 	private PersonTraits getPersonFrom(final Claims claims) {
@@ -73,12 +91,14 @@ public class JwtParser {
 		personTraits.setAssuranceLevel(claims.get("assuranceLevel", Integer.class));
 		personTraits.setEmail(claims.get("email", String.class));
 		personTraits.setTokenId(claims.get("jti", String.class));
+		personTraits.setSamlToken(claims.get("samlToken", String.class));
 
 		try {
 			List<String> list = (List<String>) claims.get("correlationIds");
 			CorrelationIdsParser.parseCorrelationIds(list, personTraits);
 
-		} catch (Exception e) { // NOSONAR intentionally wide, errors are already logged
+		} catch (Exception e) { // NOSONAR intentionally wide, errors are
+								// already logged
 			// if there is any detected issue with the correlation ids
 			personTraits = null;
 		}

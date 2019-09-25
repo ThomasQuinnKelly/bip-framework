@@ -46,6 +46,9 @@ public abstract class AbstractPersonTraitsObject extends User {
 					+ "\"912444689^SS\"\n"
 					+ "]")
 	private List<String> correlationIds;
+	
+	@ApiModelProperty(value = "The person's SAML token which MUST be Base64 Encoded XML", example = "")
+	private String samlToken;
 
 	public AbstractPersonTraitsObject(final String username, final String password,
 			final Collection<? extends GrantedAuthority> authorities) {
@@ -182,6 +185,14 @@ public abstract class AbstractPersonTraitsObject extends User {
 
 	public String getUser() {
 		return getFirstName() + " " + getLastName();
+	}
+	
+	public String getSamlToken() {
+		return samlToken;
+	}
+
+	public void setSamlToken(final String samlToken) {
+		this.samlToken = samlToken;
 	}
 
 	public boolean hasFirstName() {
