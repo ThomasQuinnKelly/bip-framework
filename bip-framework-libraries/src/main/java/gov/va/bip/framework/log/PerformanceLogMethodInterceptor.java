@@ -21,7 +21,7 @@ import org.aopalliance.intercept.MethodInvocation;
 public class PerformanceLogMethodInterceptor implements MethodInterceptor {
 
 	/** number of milliseconds in a second */
-	private static final int NUMBER_OF_MILLIS_N_A_SECOND = 1000;
+	private static final double NUMBER_OF_MILLIS_N_A_SECOND = 1000.0;
 
 	/** the default warning threshold */
 	public static final Integer DEFAULT_WARNING_THRESHHOLD = Integer.valueOf(1500);
@@ -84,14 +84,14 @@ public class PerformanceLogMethodInterceptor implements MethodInterceptor {
 		// log exit performance timing at the warning, info or debug level
 		if (elapsedTime > warningThreshold) {
 			methodLog.warn(PERFORMANCE_WARNING_RESPONSE_FOR + OPEN_BRACKET + callingClassAndMethod + IN_ELAPSED_TIME + elapsedTime
-					/ NUMBER_OF_MILLIS_N_A_SECOND + DOT + elapsedTime % NUMBER_OF_MILLIS_N_A_SECOND + SECS + CLOSE_BRACKET
+					/ NUMBER_OF_MILLIS_N_A_SECOND + SECS + CLOSE_BRACKET
 					+ " is slower than configured threshold of [" + warningThreshold + CLOSE_BRACKET + MILLIS);
 		} else if (methodLog.isDebugEnabled()) {
 			methodLog.debug(EXIT + OPEN_BRACKET + callingClassAndMethod + IN_ELAPSED_TIME + elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND
-					+ DOT + elapsedTime % NUMBER_OF_MILLIS_N_A_SECOND + SECS + CLOSE_BRACKET);
+					+ SECS + CLOSE_BRACKET);
 		} else if (methodLog.isInfoEnabled()) {
 			methodLog.info(EXIT + OPEN_BRACKET + callingClassAndMethod + IN_ELAPSED_TIME + elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND
-					+ DOT + elapsedTime % NUMBER_OF_MILLIS_N_A_SECOND + SECS + CLOSE_BRACKET);
+					+ SECS + CLOSE_BRACKET);
 		}
 
 		return retVal;
