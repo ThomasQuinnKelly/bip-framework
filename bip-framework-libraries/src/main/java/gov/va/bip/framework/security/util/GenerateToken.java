@@ -98,7 +98,7 @@ public class GenerateToken {
 				.claim("assuranceLevel", person.getAssuranceLevel())
 				.claim("email", person.getEmail())
 				.claim("correlationIds", person.getCorrelationIds())
-				.claim("samlToken", person.getSamlToken())
+				.claim("appToken", person.getAppToken())
 				.signWith(signatureAlgorithm, signingKey).compact();
 	}
 
@@ -114,6 +114,7 @@ public class GenerateToken {
 		personTraits.setGender(person.getGender());
 		personTraits.setAssuranceLevel(person.getAssuranceLevel());
 		personTraits.setEmail(person.getEmail());
+		personTraits.setAppToken(person.getAppToken());
 
 		return personTraits;
 	}
@@ -133,6 +134,7 @@ public class GenerateToken {
 		final List<String> strArray = Arrays.asList("77779102^NI^200M^USVHA^P", "912444689^PI^200BRLS^USVBA^A",
 				"6666345^PI^200CORP^USVBA^A", "1105051936^NI^200DOD^USDOD^A", "912444689^SS");
 		person.setCorrelationIds(strArray);
+		person.setAppToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9");
 		return person;
 	}
 }

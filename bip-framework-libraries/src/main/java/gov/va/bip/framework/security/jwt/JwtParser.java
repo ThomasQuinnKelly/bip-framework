@@ -91,7 +91,7 @@ public class JwtParser {
 		personTraits.setAssuranceLevel(claims.get("assuranceLevel", Integer.class));
 		personTraits.setEmail(claims.get("email", String.class));
 		personTraits.setTokenId(claims.get("jti", String.class));
-		personTraits.setSamlToken(claims.get("samlToken", String.class));
+		personTraits.setAppToken(claims.get("appToken", String.class));
 
 		try {
 			List<String> list = (List<String>) claims.get("correlationIds");
