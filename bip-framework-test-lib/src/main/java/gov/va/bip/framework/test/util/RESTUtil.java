@@ -194,7 +194,7 @@ public class RESTUtil {
 
 	public String putResponse(final String serviceURL) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(headers);
+		HttpEntity<?> request = new HttpEntity<>(jsonText, headers);
 		return executeAPI(serviceURL, request, HttpMethod.PUT);
 	}
 
@@ -209,7 +209,7 @@ public class RESTUtil {
 
 	public String deleteResponse(final String serviceURL) {
 		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(headers);
+		HttpEntity<?> request = new HttpEntity<>(jsonText, headers);
 		return executeAPI(serviceURL, request, HttpMethod.DELETE);
 	}
 
