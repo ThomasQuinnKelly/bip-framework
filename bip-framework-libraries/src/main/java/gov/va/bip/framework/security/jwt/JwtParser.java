@@ -61,7 +61,7 @@ public class JwtParser {
 
 		final long elapsedTime = System.currentTimeMillis() - startTime;
 
-		LOGGER.info("Time elapsed to parse JWT token {}{}{}", "[", elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND,
+		LOGGER.debug("Time elapsed to parse JWT token {}{}{}", "[", elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND,
 				" secs]");
 
 		return getPersonFrom(claims);
