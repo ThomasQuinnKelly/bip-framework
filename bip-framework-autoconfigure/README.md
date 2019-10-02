@@ -132,12 +132,12 @@ public class BipRestAutoConfiguration {
     }
     @Bean
     public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
-        …
+        ...
     }
     @Bean
     @ConditionalOnMissingBean
     public RestClientTemplate restClientTemplate() {
-        …
+        ...
     }
     @Bean
     @ConditionalOnMissingBean

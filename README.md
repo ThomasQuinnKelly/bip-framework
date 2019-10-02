@@ -99,14 +99,14 @@ Update your local `~/.m2/settings.xml` as shown below. Replace values between `{
 						<!--
 						For value tag below:
 							Step 1: Base64-encode your username and Github access token together
-                in the form: {{username}}:{{access_token}}
+								in the form: {{username}}:{{access_token}}
 								Example: encode the string "myGithubUsername:ab123983245sldfkjsw398r7"
 							Step 2: Add the encoded string to the value tag in the form of
 								"Basic {{encoded-string}}"
 								Example: <value>Basic YXJtaXvB4F5ghTE2OGYwNmExMWM2NDdhYjWExZjQ1N2FhNGJiMjE=</value>
-            Base64 encoders:
-              https://www.freeformatter.com/base64-encoder.html
-              https://www.base64encode.org/
+						Base64 encoders:
+							https://www.freeformatter.com/base64-encoder.html
+							https://www.base64encode.org/
 						-->
 						<value>Basic {{base64 encoded content}}</value>
 					</property>
