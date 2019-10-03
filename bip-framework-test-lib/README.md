@@ -7,26 +7,26 @@ BIP Test library is customized to support testing the RESTful Service applicatio
 Spring rest template is included via the `spring-web` dependency.
 
 ```xml
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-web</artifactId>
+<groupId>org.springframework</groupId>
+<artifactId>spring-web</artifactId>
 ```
 
-Cucmber is included via the `cucumber-java8` dependency. It is a library that makes it easier to write and execute parameterized test.
+Cucmber is included via the `cucumber-java8` dependency. It is a library that makes it easier to write and execute parameterized tests.
 
 ```xml
-	   <groupId>info.cukes</groupId>
-	   <artifactId>cucumber-java8</artifactId>
+<groupId>info.cukes</groupId>
+<artifactId>cucumber-java8</artifactId>
 ```
 
 ## How to add BIP Test Library dependencies
 Add the dependency to the POM file in your `project-name-inttest` project.
 
 ```xml
-	<dependency>
-		<groupId>gov.va.bip.framework</groupId>
-		<artifactId>bip-framework-test-lib</artifactId>
-		<version><!-- add the appropriate version --></version>
-	</dependency>
+<dependency>
+	<groupId>gov.va.bip.framework</groupId>
+	<artifactId>bip-framework-test-lib</artifactId>
+	<version><!-- add the appropriate version --></version>
+</dependency>
 ```
 
 ## Overview of the packages
