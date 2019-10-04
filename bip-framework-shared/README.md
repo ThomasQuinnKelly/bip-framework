@@ -4,8 +4,7 @@ This page documents the purpose and capabilities of **BIP Framework Libraries** 
 
 This project contains utilities and functional helpers that can be shared freely with any java project. 
 * Sanitizer
-... more to come
-
+* ... more to come
 
 ## Shared library principles
 The shared library is intended to:
@@ -17,11 +16,11 @@ The shared library is intended to:
 Add the dependency in the application project's POM file.
 
 ```xml
-    <dependency>
-        <groupId>gov.va.bip.framework</groupId>
-        <artifactId>bip-framework-shared</artifactId>
-        <version><!-- add the appropriate version --></version>
-    </dependency>
+<dependency>
+    <groupId>gov.va.bip.framework</groupId>
+    <artifactId>bip-framework-shared</artifactId>
+    <version><!-- add the appropriate version --></version>
+</dependency>
 ```
 
 ## Class Diagrams
