@@ -46,7 +46,7 @@ public abstract class AbstractPersonTraitsObject extends User {
 					+ "\"912444689^SS\"\n"
 					+ "]")
 	private List<String> correlationIds;
-	@ApiModelProperty(value = "The application's custom token passed from the consumer", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9")
+	@ApiModelProperty(value = "The application's custom token passed as any String from consumers to the API services", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9")
 	private String appToken;
 
 	public AbstractPersonTraitsObject(final String username, final String password,
