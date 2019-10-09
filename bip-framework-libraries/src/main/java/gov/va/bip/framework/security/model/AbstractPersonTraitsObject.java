@@ -46,6 +46,8 @@ public abstract class AbstractPersonTraitsObject extends User {
 					+ "\"912444689^SS\"\n"
 					+ "]")
 	private List<String> correlationIds;
+	@ApiModelProperty(value = "The application's custom token passed as any String from consumers to the API services", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9")
+	private String appToken;
 
 	public AbstractPersonTraitsObject(final String username, final String password,
 			final Collection<? extends GrantedAuthority> authorities) {
@@ -182,6 +184,14 @@ public abstract class AbstractPersonTraitsObject extends User {
 
 	public String getUser() {
 		return getFirstName() + " " + getLastName();
+	}
+	
+	public String getAppToken() {
+		return appToken;
+	}
+
+	public void setAppToken(final String appToken) {
+		this.appToken = appToken;
 	}
 
 	public boolean hasFirstName() {
