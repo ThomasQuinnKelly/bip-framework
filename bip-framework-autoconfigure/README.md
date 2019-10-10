@@ -14,7 +14,7 @@ The framework-supplied appender can be referenced in service [`logback-spring.xm
 
 ```xml
 <include resource="gov/va/bip/framework/starter/logger/bip-framework-logback-starter.xml" />
-    <appender-ref ref="BIP_FRAMEWORK_ASYNC_CONSOLE_APPENDER" />
+<appender-ref ref="BIP_FRAMEWORK_ASYNC_CONSOLE_APPENDER" />
 ```
 
 ## gov.va.bip.framework.audit.autoconfigure:
@@ -22,16 +22,16 @@ The framework-supplied appender can be referenced in service [`logback-spring.xm
 Audit auto-configuration that provides the serializer bean and enables async execution.
 
 ```java
-    @Configuration
-    @EnableAsync
-    public class BipAuditAutoConfiguration {
+@Configuration
+@EnableAsync
+public class BipAuditAutoConfiguration {
 
-            @Bean
-            @ConditionalOnMissingBean
-            public AuditLogSerializer auditLogSerializer() {
-                return new AuditLogSerializer();
-            }
+    @Bean
+    @ConditionalOnMissingBean
+    public AuditLogSerializer auditLogSerializer() {
+        return new AuditLogSerializer();
     }
+}
 ```
 
 ## gov.va.bip.framework.cache.autoconfigure:
@@ -49,28 +49,28 @@ Any properties that do not appear in the appropriate hierarchy will be silently 
 Auto-configuration is declared as below. Beans created in this class refer to the other classes found in the package.
 
 ```java
-    @Configuration
-    @AutoConfigureAfter(CacheAutoConfiguration.class)
-    @EnableCaching
-    /* @Import to participate in the auto configure bootstrap process */
-    @Import({ BipCachesConfig.class, BipJedisConnectionConfig.class })
-    @ConditionalOnProperty(name = BipCacheAutoConfiguration.CONDITIONAL_SPRING_REDIS,
-		havingValue = BipCacheAutoConfiguration.CACHE_SERVER_TYPE)
-    @EnableMBeanExport(defaultDomain = "gov.va.bip", registration = RegistrationPolicy.FAIL_ON_EXISTING)
-    public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
-         /** Domain under which JMX beans are exposed */
-	    public static final String JMX_DOMAIN = "gov.va.bip";
-	    /** ConditionalOnProperty property name */
-	    public static final String CONDITIONAL_SPRING_REDIS = "spring.cache.type";
-	    /** The cache server type */
-	    public static final String CACHE_SERVER_TYPE = "redis";
-        
-        /** Refresh order for JedisConnectionFactory must be lower than for CacheManager */
-	    static final int REFRESH_ORDER_CONNECTION_FACTORY = 1;
-	    /** Refresh order for CacheManager must be higher than for JedisConnectionFactory */
-	    static final int REFRESH_ORDER_CACHES = 10;
+@Configuration
+@AutoConfigureAfter(CacheAutoConfiguration.class)
+@EnableCaching
+/* @Import to participate in the auto configure bootstrap process */
+@Import({ BipCachesConfig.class, BipJedisConnectionConfig.class })
+@ConditionalOnProperty(name = BipCacheAutoConfiguration.CONDITIONAL_SPRING_REDIS,
+    havingValue = BipCacheAutoConfiguration.CACHE_SERVER_TYPE)
+@EnableMBeanExport(defaultDomain = "gov.va.bip", registration = RegistrationPolicy.FAIL_ON_EXISTING)
+public class BipCacheAutoConfiguration extends CachingConfigurerSupport {
+    /** Domain under which JMX beans are exposed */
+    public static final String JMX_DOMAIN = "gov.va.bip";
+    /** ConditionalOnProperty property name */
+    public static final String CONDITIONAL_SPRING_REDIS = "spring.cache.type";
+    /** The cache server type */
+    public static final String CACHE_SERVER_TYPE = "redis";
+    
+    /** Refresh order for JedisConnectionFactory must be lower than for CacheManager */
+    static final int REFRESH_ORDER_CONNECTION_FACTORY = 1;
+    /** Refresh order for CacheManager must be higher than for JedisConnectionFactory */
+    static final int REFRESH_ORDER_CACHES = 10;
     ...
-    }
+}
 ```
 
 Developers needing to clear the cache for local testing purposes have a tool available, as outlined in [Clearing the Redis Cache](https://github.ec.va.gov/EPMO/bip-reference-person/tree/master/local-dev#clearing-the-redis-cache)
@@ -84,9 +84,9 @@ Feign client auto-configuration creates a number of beans to support RESTful cli
 
 ```java
 @Configuration
-        public class BipFeignAutoConfiguration {
-        ...
-        }
+public class BipFeignAutoConfiguration {
+    ...
+}
 ```
 
 ## gov.va.bip.framework.hystrix.autoconfigure:
@@ -94,11 +94,11 @@ Feign client auto-configuration creates a number of beans to support RESTful cli
 Hystrix auto-configuration sets up Hystrix with the THREAD strategy. The configuration copies RequestAttributes from ThreadLocal to Hystrix threads in the `RequestAttributeAwareCallableWrapper` bean. This is done to make sure the necessary request information is available on the Hystrix thread.
 
 ```java
-    @Configuration
-    @ConditionalOnProperty(value = "hystrix.wrappers.enabled", matchIfMissing = true)
-    public class HystrixContextAutoConfiguration {
+@Configuration
+@ConditionalOnProperty(value = "hystrix.wrappers.enabled", matchIfMissing = true)
+public class HystrixContextAutoConfiguration {
     ...
-    }
+}
 ```
 
 ## gov.va.bip.framework.rest.autoconfigure:
@@ -112,39 +112,39 @@ REST auto-configuration creates beans to enable a number of capabilities related
 - `RestProviderTimerAspect` logs performance data using `PerformanceLoggingAspect`.
 
 ```java
-        @Configuration
-        public class BipRestAutoConfiguration {
+@Configuration
+public class BipRestAutoConfiguration {
 
-            @Bean
-            @ConditionalOnMissingBean
-            public ProviderHttpAspect providerHttpAspect() {
-                return new ProviderHttpAspect();
-            }
-            @Bean
-            @ConditionalOnMissingBean
-            public BipRestGlobalExceptionHandler bipRestGlobalExceptionHandler() {
-                return new BipRestGlobalExceptionHandler();
-            }
-            @Bean
-            @ConditionalOnMissingBean
-            public RestProviderTimerAspect restProviderTimerAspect() {
-                return new RestProviderTimerAspect();
-            }
-            @Bean
-            public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
-                …
-            }
-            @Bean
-            @ConditionalOnMissingBean
-            public RestClientTemplate restClientTemplate() {
-                …
-            }
-            @Bean
-            @ConditionalOnMissingBean
-            public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor() {
-                return new TokenClientHttpRequestInterceptor();
-            }
-        }
+    @Bean
+    @ConditionalOnMissingBean
+    public ProviderHttpAspect providerHttpAspect() {
+        return new ProviderHttpAspect();
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public BipRestGlobalExceptionHandler bipRestGlobalExceptionHandler() {
+        return new BipRestGlobalExceptionHandler();
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public RestProviderTimerAspect restProviderTimerAspect() {
+        return new RestProviderTimerAspect();
+    }
+    @Bean
+    public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
+        ...
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public RestClientTemplate restClientTemplate() {
+        ...
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor() {
+        return new TokenClientHttpRequestInterceptor();
+    }
+}
 ```
 
 ## gov.va.bip.framework.security.autoconfigure:
@@ -154,13 +154,13 @@ Security auto-configuration creates beans for the security framework using JWT.
 - `JwtWebSecurityConfigurerAdapter` provides configuration for JWT security processing and provides configuration like filters need to be used to Authenticate, URL's to be processed etc.
 
 ```java
-    @Configuration
-    @ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", matchIfMissing = true)
-    @Order(JwtAuthenticationProperties.AUTH_ORDER)
-    protected static class JwtWebSecurityConfigurerAdapter
-            extends WebSecurityConfigurerAdapter {
+@Configuration
+@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", matchIfMissing = true)
+@Order(JwtAuthenticationProperties.AUTH_ORDER)
+protected static class JwtWebSecurityConfigurerAdapter
+        extends WebSecurityConfigurerAdapter {
     ...
-    }
+}
 ```
 
 - `JwtWebSecurityConfigurerAdapter` defines beans below and their respective uses: a. AuthenticationEntryPoint - Returns an error message when a request does not authenticate.
@@ -175,11 +175,11 @@ Security auto-configuration creates beans for the security framework using JWT.
 
 ```java
 @Bean
-        @ConditionalOnMissingBean
-        @ConditionalOnExpression("${bip.framework.security.jwt.enabled:true} && ${bip.framework.security.jwt.generate.enabled:true}")
-        public TokenResource tokenResource() {
-        ...
-        }
+@ConditionalOnMissingBean
+@ConditionalOnExpression("${bip.framework.security.jwt.enabled:true} && ${bip.framework.security.jwt.generate.enabled:true}")
+public TokenResource tokenResource() {
+    ...
+}
 ```
 
 ## gov.va.bip.framework.service.autoconfigure:
@@ -195,10 +195,10 @@ Service auto-configuration configures beans that get used in service application
   - Validators called by this aspect should extend `gov.va.bip.framework.validation.AbstractStandardValidator` or similar implementation.
 
 ```java
-        @Configuration
-        public class BipServiceAutoConfiguration {
-        ...
-        }
+@Configuration
+public class BipServiceAutoConfiguration {
+    ...
+}
 ```
 
 ## gov.va.bip.framework.swagger.autoconfigure:
@@ -222,10 +222,10 @@ Validator auto-configuration enables the standard JSR 303 validator (useful for 
 
 ```java
 @Configuration
-    @AutoConfigureBefore(MessageSourceAutoConfiguration.class)
-    public class BipValidatorAutoConfiguration {
+@AutoConfigureBefore(MessageSourceAutoConfiguration.class)
+public class BipValidatorAutoConfiguration {
     ...
-    }
+}
 ```
 
 ## gov.va.bip.framework.vault.bootstrap.autoconfigure:
@@ -234,12 +234,12 @@ Vault starter and bootstrap auto-configuration to bootstrap the Vault PropertySo
 
 ```java
 @Configuration
-    @AutoConfigureOrder(1)
-    @ConditionalOnProperty(prefix = "spring.cloud.vault.consul", name = "enabled", matchIfMissing = false)
-    public class VaultForConsulBootstrapConfiguration implements ApplicationContextAware,
-        InitializingBean {
+@AutoConfigureOrder(1)
+@ConditionalOnProperty(prefix = "spring.cloud.vault.consul", name = "enabled", matchIfMissing = false)
+public class VaultForConsulBootstrapConfiguration implements ApplicationContextAware,
+    InitializingBean {
     ...
-    }
+}
 ```
 
 # How to add dependencies in your maven pom.xml?
@@ -248,10 +248,10 @@ Standard maven dependency configuration.
 
 ```xml
 <dependency>
-        <groupId>gov.va.bip.framework</groupId>
-        <artifactId>bip-framework-autoconfigure</artifactId>
-        <version><latest version></version>
-    </dependency>
+    <groupId>gov.va.bip.framework</groupId>
+    <artifactId>bip-framework-autoconfigure</artifactId>
+    <version><latest version></version>
+</dependency>
 ```
 
 # Class Diagrams
