@@ -4,6 +4,8 @@ To run spring boot application and spring cloud enabled services on the BIP Plat
 
 For information regarding recommended development patterns for developing service applications, and the purpose and usage of capabilities that are provided by the BIP Framework, see the [bip-reference-person README.md](https://github.ec.va.gov/EPMO/bip-reference-person).
 
+For information on framework release notes, see the [BIP Framework Release Notes](https://github.ec.va.gov/EPMO/bip-framework/wiki/Framework-Release-Notes)
+
 # Project Breakdown & Links
 
 1. [bip-framework-reactor](https://github.ec.va.gov/EPMO/bip-framework): This is the root reactor project (you are in that repo now). This project forms the aggregate of modules that make up the complete framework, and manages the Fortify scans.
