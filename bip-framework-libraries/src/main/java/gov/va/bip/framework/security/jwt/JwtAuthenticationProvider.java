@@ -52,15 +52,15 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
 		final String token = authenticationToken.getToken();// pass this for verification
 
 		final PersonTraits person = parser.parseJwt(token);
-		
-		if (!isPersonTraitsValid(person, jwtTokenRequiredParameterList)) {
-			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID_REQ_PARAM_MISSING,
-					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, Arrays.toString(jwtTokenRequiredParameterList));
-		}
-		
+
 		if (person == null) {
 			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID,
 					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+		}
+
+		if (!isPersonTraitsValid(person, jwtTokenRequiredParameterList)) {
+			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID_REQ_PARAM_MISSING,
+					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, Arrays.toString(jwtTokenRequiredParameterList));
 		}
 		return person;
 	}
