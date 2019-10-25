@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.HttpMessageConverter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,10 +54,20 @@ public class BaseStepDef {
 	private static final String RESPONSE_PATH = "target/TestResults/Response/";
 
 	/**
-	 * Initialize services and utility.
+	 * Initialize RESTUtil and RESTConfigService instance
 	 */
 	public void initREST() {
-		resUtil = new RESTUtil();
+		initREST(null);
+	}
+	
+	/**
+	 * Initialize RESTUtil with custom HttpMessageConverter 
+	 * and RESTConfigService instance
+	 *
+	 * @param converters the converters
+	 */
+	public void initREST(List<HttpMessageConverter<?>> converters) {
+		resUtil = new RESTUtil(converters);
 		restConfig = RESTConfigService.getInstance();
 	}
 

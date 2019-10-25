@@ -79,7 +79,7 @@ public class BearerTokenService {
 		final Map<String, String> headerMap = new HashMap<>();
 		headerMap.put("Accept", ContentType.APPLICATION_JSON.getMimeType());
 		headerMap.put("Content-Type", ContentType.APPLICATION_JSON.getMimeType());
-		RESTUtil restUtility = new RESTUtil();
+		RESTUtil restUtility = new RESTUtil(null);
 		restUtility.setUpRequest(headerFile, headerMap);
 		return restUtility.postResponse(baseUrl + tokenUrl);
 	}

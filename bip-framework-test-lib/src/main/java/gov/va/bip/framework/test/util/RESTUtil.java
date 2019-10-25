@@ -17,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -104,9 +105,13 @@ public class RESTUtil {
 	/** The tika. */
 	private Tika tika = new Tika();
 
-	/** Constructor to initialize objects. */
-	public RESTUtil() {
-		this.restTemplate = getRestTemplate();
+	/**
+	 *  Constructor to initialize objects.
+	 *
+	 * @param convertersToBeAdded List of HttpMessageConverter
+	 */
+	public RESTUtil(final List<HttpMessageConverter<?>> convertersToBeAdded) {
+		this.restTemplate = getRestTemplate(convertersToBeAdded);
 	}
 
 	/**
@@ -411,7 +416,7 @@ public class RESTUtil {
 			if (root != null) {
 				Map<String, String> jsonNodeMap = mapper.convertValue(root,
 						new TypeReference<HashMap<String, String>>() {
-						});
+				});
 				for (Map.Entry<String, String> entry : jsonNodeMap.entrySet()) {
 					final String requestParamkey = entry.getKey();
 					final String requestParamValue = entry.getValue();
@@ -429,10 +434,11 @@ public class RESTUtil {
 	 * Loads the KeyStore and password in to rest Template API so all the API's
 	 * are SSL enabled.
 	 *
+	 * @param convertersToBeAdded the converters to be added
 	 * @return the rest template
 	 */
 
-	private RestTemplate getRestTemplate() {
+	private RestTemplate getRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded) {
 		// Create a new instance of the {@link RestTemplate} using default
 		// settings.
 		RestTemplate apiTemplate = new RestTemplate();
@@ -463,11 +469,24 @@ public class RESTUtil {
 		apiTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		apiTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
 
-		for (HttpMessageConverter<?> converter : apiTemplate.getMessageConverters()) {
-			if (converter instanceof StringHttpMessageConverter) {
-				((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
+		List<HttpMessageConverter<?>> existingConverters = apiTemplate.getMessageConverters();
+
+		for (HttpMessageConverter<?> existingConverter : existingConverters) {
+			LOGGER.debug("Existing HttpMessageConverter {}", existingConverter);
+			if (existingConverter instanceof StringHttpMessageConverter) {
+				((StringHttpMessageConverter) existingConverter).setWriteAcceptCharset(false);
+			}
+
+		}
+		if (convertersToBeAdded !=null) {
+			for (HttpMessageConverter<?> converterToBeAdded : convertersToBeAdded) {
+				if (!existingConverters.contains(converterToBeAdded)) {
+					LOGGER.debug("HttpMessageConverter Added {}", converterToBeAdded);
+					existingConverters.add(converterToBeAdded);
+				}
 			}
 		}
+
 		return apiTemplate;
 	}
 
@@ -523,7 +542,7 @@ public class RESTUtil {
 	 */
 	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
 			final SSLContextBuilder sslContextBuilder)
-			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+					throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 		if (StringUtils.isNotBlank(pathToTrustStore)) {
 			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
 			if (StringUtils.isBlank(password)) {
