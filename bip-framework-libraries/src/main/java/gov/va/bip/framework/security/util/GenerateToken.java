@@ -78,8 +78,8 @@ public class GenerateToken {
 		}
 
 		if (!isPersonTraitsValid(personTraits, jwtTokenRequiredParameterList)) {
-			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID,
-					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID_REQ_PARAM_MISSING,
+					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, Arrays.toString(jwtTokenRequiredParameterList));
 		}
 
 		return Jwts.builder()

@@ -2,6 +2,7 @@ package gov.va.bip.framework.security.jwt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +52,13 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
 		final String token = authenticationToken.getToken();// pass this for verification
 
 		final PersonTraits person = parser.parseJwt(token);
-		if ((person == null) || !isPersonTraitsValid(person, jwtTokenRequiredParameterList)) {
+		
+		if (!isPersonTraitsValid(person, jwtTokenRequiredParameterList)) {
+			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID_REQ_PARAM_MISSING,
+					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, Arrays.toString(jwtTokenRequiredParameterList));
+		}
+		
+		if (person == null) {
 			throw new JwtAuthenticationException(MessageKeys.BIP_SECURITY_TOKEN_INVALID,
 					MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
 		}
@@ -66,6 +73,10 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
 		boolean isValid = true;
 		for (String parameter : jwtTokenRequiredParameterList) {
 			isValid = checkIfEachParameterIsValid(person, parameter);
+			// check if the parameter is invalid and return immediately
+			if(!isValid) {
+				return isValid;
+			}
 		}
 
 		return isValid;
