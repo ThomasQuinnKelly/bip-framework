@@ -249,10 +249,9 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	 * @return the response entity
 	 */
 	@ExceptionHandler(value = JwtAuthenticationException.class)
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public final ResponseEntity<Object> handleJwtAuthenticationException(final HttpServletRequest req,
 			final JwtAuthenticationException ex) {
-		return standardHandler(ex, HttpStatus.BAD_REQUEST);
+		return standardHandler(ex, ex.getExceptionData().getStatus());
 	}
 
 	/**
