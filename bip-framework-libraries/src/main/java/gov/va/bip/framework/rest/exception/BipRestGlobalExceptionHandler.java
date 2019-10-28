@@ -49,6 +49,7 @@ import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
 import gov.va.bip.framework.util.HttpHeadersUtil;
 
@@ -238,6 +239,19 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	public final ResponseEntity<Object> handleBipPartnerRuntimeException(final HttpServletRequest req,
 			final BipPartnerRuntimeException ex) {
 		return standardHandler(ex, HttpStatus.BAD_REQUEST);
+	}
+	
+	/**
+	 * Handle JwtAuthenticationException.
+	 *
+	 * @param req the req
+	 * @param ex the ex
+	 * @return the response entity
+	 */
+	@ExceptionHandler(value = JwtAuthenticationException.class)
+	public final ResponseEntity<Object> handleJwtAuthenticationException(final HttpServletRequest req,
+			final JwtAuthenticationException ex) {
+		return standardHandler(ex, ex.getExceptionData().getStatus());
 	}
 
 	/**

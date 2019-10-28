@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.bip.framework.security.PersonTraits;
 import gov.va.bip.framework.security.config.BipSecurityTestConfig;
@@ -52,8 +53,9 @@ public class JwtAuthenticationProviderTest {
 		final Person person = new Person();
 		person.setFirstName("john");
 		person.setLastName("doe");
-		person.setCorrelationIds(Arrays.asList(new String[] { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
-				"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" }));
+		person.setCorrelationIds(
+				Arrays.asList(new String[] { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+						"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" }));
 		final String token = tokenResource.getToken(person);
 
 		final JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
@@ -69,8 +71,9 @@ public class JwtAuthenticationProviderTest {
 		final Person person = new Person();
 		person.setFirstName("john");
 		person.setLastName("doe");
-		person.setCorrelationIds(Arrays.asList(new String[] { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
-				"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" }));
+		person.setCorrelationIds(
+				Arrays.asList(new String[] { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+						"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" }));
 		final String token = tokenResource.getToken(person);
 
 		final JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
@@ -102,18 +105,21 @@ public class JwtAuthenticationProviderTest {
 	}
 
 	/**
-	 * Test of method that validates PersonTraits in the Jwt token, of class JwtAuthenticationProvider.
+	 * Test of method that validates PersonTraits in the Jwt token, of class
+	 * JwtAuthenticationProvider.
 	 */
 	@Test
 	public void testIsPersonTraitsValid() {
 		PersonTraits person = new PersonTraits();
 		person.setFirstName("string");
 		assertTrue(JwtAuthenticationProvider.isPersonTraitsValid(person, new String[] { "firstName" }));
-		assertFalse(JwtAuthenticationProvider.isPersonTraitsValid(person, new String[] { "firstName", "assuranceLevel" }));
+		assertFalse(
+				JwtAuthenticationProvider.isPersonTraitsValid(person, new String[] { "firstName", "assuranceLevel" }));
 	}
 
 	/**
-	 * Test of method that validates PersonTraits in the Jwt token, of class JwtAuthenticationProvider.
+	 * Test of method that validates PersonTraits in the Jwt token, of class
+	 * JwtAuthenticationProvider.
 	 */
 	@Test
 	public void testIsPersonTraitsValidInvocationException() {
@@ -124,12 +130,37 @@ public class JwtAuthenticationProviderTest {
 	}
 
 	/**
-	 * Test of method that validates PersonTraits in the Jwt token, of class JwtAuthenticationProvider.
+	 * Test of method that validates PersonTraits in the Jwt token, of class
+	 * JwtAuthenticationProvider.
 	 */
 	@Test
 	public void testIsPersonTraitsValidWithInvalidJwtParameter() {
 		PersonTraits person = new PersonTraits();
 		person.setFirstName("string");
 		assertFalse(JwtAuthenticationProvider.isPersonTraitsValid(person, new String[] { "testText" }));
+	}
+
+	/**
+	 * Test of retrieveUser method for JwtAuthenticationException, of class
+	 * JwtAuthenticationProvider.
+	 */
+	@Test(expected = JwtAuthenticationException.class)
+	public void testRetrieveUserWithReqParamException() {
+		final String username = "jdoe";
+		final Person person = new Person();
+		person.setFirstName("john");
+		person.setLastName("doe");
+		person.setCorrelationIds(
+				Arrays.asList(new String[] { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+						"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" }));
+		final String token = tokenResource.getToken(person);
+
+		final JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
+		final JwtParser parser = new JwtParser(jwtAuthenticationProperties);
+		final JwtAuthenticationProvider instance = new JwtAuthenticationProvider(parser);
+		String[] jwtTokenRequiredParameterList = { "middleName" };
+		ReflectionTestUtils.setField(instance, "jwtTokenRequiredParameterList", jwtTokenRequiredParameterList);
+		final UserDetails result = instance.retrieveUser(username, authentication);
+		assertNotNull(result);
 	}
 }
