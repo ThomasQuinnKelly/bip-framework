@@ -79,6 +79,7 @@ import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -599,6 +600,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		BipPartnerException ex = new BipPartnerException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
 		ResponseEntity<Object> response =
 				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleBipPartnerCheckedException", req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+	}
+	
+	@Test
+	public void handleJwtAuthenticationExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+		JwtAuthenticationException ex = new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response =
+				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleJwtAuthenticationException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 

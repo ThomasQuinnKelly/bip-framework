@@ -77,6 +77,8 @@ public enum MessageKeys implements MessageKey {
 
 	/** JWT token is invalid; no args */
 	BIP_SECURITY_TOKEN_INVALID("bip.framework.security.token.invalid", "Invalid Token."),
+	BIP_SECURITY_TOKEN_INVALID_REQ_PARAM_MISSING("bip.framework.security.token.invalid.req.param.missing",
+			"Invalid Token. Parameter(s) Missing. Required JWT parameters configured {0}"),
 	/** JWT token cannot be blank; no args */
 	BIP_SECURITY_TOKEN_BLANK("bip.framework.security.token.blank", "No JWT Token in Header."),
 	/**
