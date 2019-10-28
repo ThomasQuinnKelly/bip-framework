@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,11 @@ public class BaseStepDef {
 	 */
 	protected String strResponse = null;
 
+	/**
+	 * Holds API response of Rest API call. This is usually Object response.
+	 */
+	protected Object objResponse = null;
+
 	/** Utility for RESTConfigService to read REST API config. */
 	protected RESTConfigService restConfig = null;
 
@@ -54,20 +60,21 @@ public class BaseStepDef {
 	private static final String RESPONSE_PATH = "target/TestResults/Response/";
 
 	/**
-	 * Initialize RESTUtil and RESTConfigService instance
+	 * Initialize RESTUtil and RESTConfigService instances
 	 */
 	public void initREST() {
-		initREST(null);
+		initREST(new ArrayList<>());
 	}
-	
+
 	/**
-	 * Initialize RESTUtil with custom HttpMessageConverter 
-	 * and RESTConfigService instance
+	 * Initialize RESTUtil with custom HttpMessageConverter and
+	 * RESTConfigService instance
 	 *
-	 * @param converters the converters
+	 * @param messageConverters
+	 *            the HttpMessageConverter
 	 */
-	public void initREST(List<HttpMessageConverter<?>> converters) {
-		resUtil = new RESTUtil(converters);
+	public void initREST(List<HttpMessageConverter<?>> messageConverters) {
+		resUtil = new RESTUtil(messageConverters);
 		restConfig = RESTConfigService.getInstance();
 	}
 
@@ -82,12 +89,29 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Sets the bearer token and delegates get API call to rest util.
+	 * Delegates GET API call without bearer token to rest utility method.
+	 * 
+	 * This method populates String API response
+	 * 
+	 * @param serviceUrl
+	 *            the service URL
+	 */
+
+	public void invokeAPIUsingGet(final String serviceUrl) {
+		resUtil.setUpRequest(headerMap);
+		strResponse = resUtil.getResponse(serviceUrl);
+	}
+
+	/**
+	 * Sets the bearer token and delegates GET API call to rest utility method.
+	 * 
+	 * This method populates String API response
 	 *
 	 * @param serviceUrl
 	 *            the service URL
 	 * @param isAuth
-	 *            the is auth
+	 *            boolean if set to TRUE would invoke bearer token service to
+	 *            get token and sets Authorization key in header map
 	 */
 	public void invokeAPIUsingGet(final String serviceUrl, final boolean isAuth) {
 		if (isAuth) {
@@ -97,23 +121,70 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Delegates get API call without bearer token to rest util.
+	 * Delegates GET API call without bearer token to rest utility method.
 	 * 
+	 * This method populates Object API response
+	 *
+	 * @param <T>
+	 *            the generic type
 	 * @param serviceUrl
+	 *            the service URL
+	 * @param responseType
+	 *            the response type
 	 */
 
-	public void invokeAPIUsingGet(final String serviceUrl) {
+	public <T extends Object> void invokeAPIUsingGet(final String serviceUrl, final Class<T> responseType) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.getResponse(serviceUrl);
+		objResponse = resUtil.getResponse(serviceUrl, responseType);
 	}
 
 	/**
-	 * Sets the bearer token and delegates post API call to rest util.
+	 * Sets the bearer token and delegates GET API call to rest utility method.
+	 * 
+	 * This method populates Object API response
 	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param serviceUrl
+	 *            the service URL
+	 * @param isAuth
+	 *            boolean if set to TRUE would invoke bearer token service to
+	 *            get token and sets Authorization key in header map
+	 * @param responseType
+	 *            the response type
+	 */
+
+	public <T extends Object> void invokeAPIUsingGet(final String serviceUrl, final boolean isAuth,
+			final Class<T> responseType) {
+		if (isAuth) {
+			setBearerToken();
+		}
+		invokeAPIUsingGet(serviceUrl, responseType);
+	}
+
+	/**
+	 * Delegates POST API call without bearer token to rest utility method.
+	 * 
+	 * This method populates String API response
+	 *
+	 * @param serviceUrl
+	 *            the service URL
+	 */
+	public void invokeAPIUsingPost(final String serviceUrl) {
+		resUtil.setUpRequest(headerMap);
+		strResponse = resUtil.postResponse(serviceUrl);
+	}
+
+	/**
+	 * Sets the bearer token and delegates post API call to rest utility method.
+	 *
+	 * This method populates String API response
+	 * 
 	 * @param serviceUrl
 	 *            the service url
 	 * @param isAuth
-	 *            the is auth
+	 *            boolean if set to TRUE would invoke bearer token service to
+	 *            get token and sets Authorization key in header map
 	 */
 	public void invokeAPIUsingPost(final String serviceUrl, final boolean isAuth) {
 		if (isAuth) {
@@ -123,36 +194,43 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Delegates put API call without bearer token to rest util.
+	 * Delegates post API call without bearer token to rest utility method.
 	 * 
+	 * This method populates Object API response
+	 *
+	 * @param <T>
+	 *            the generic type
 	 * @param serviceUrl
+	 *            the service url
+	 * @param responseType
+	 *            the response type
 	 */
-	public void invokeAPIUsingPut(final String serviceUrl) {
+	public <T extends Object> void invokeAPIUsingPost(final String serviceUrl, final Class<T> responseType) {
 		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.putResponse(serviceUrl);
+		objResponse = resUtil.postResponse(serviceUrl, responseType);
 	}
 
 	/**
-	 * Sets the bearer token and delegates put API call to rest util.
+	 * Sets the bearer token and delegates post API call to rest utility method.
+	 *
+	 * This method populates Object API response
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param serviceUrl
+	 *            the service url
 	 * @param isAuth
+	 *            boolean if set to TRUE would invoke bearer token service to
+	 *            get token and sets Authorization key in header map
+	 * @param responseType
+	 *            the response type
 	 */
-	public void invokeAPIUsingPut(final String serviceUrl, final boolean isAuth) {
+	public <T extends Object> void invokeAPIUsingPost(final String serviceUrl, final boolean isAuth,
+			final Class<T> responseType) {
 		if (isAuth) {
 			setBearerToken();
 		}
-		invokeAPIUsingPut(serviceUrl);
-	}
-
-	/**
-	 * Delegates post API call without bearer token to rest util.
-	 * 
-	 * @param serviceUrl
-	 */
-	public void invokeAPIUsingPost(final String serviceUrl) {
-		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.postResponse(serviceUrl);
+		invokeAPIUsingPost(serviceUrl, responseType);
 	}
 
 	/**
@@ -206,26 +284,64 @@ public class BaseStepDef {
 	}
 
 	/**
-	 * Sets the bearer token and delegates delete API call to rest util.
+	 * Delegates PUT API call without bearer token to rest utility method.
 	 * 
-	 * @param strURL
+	 * This method populates String API response
+	 * 
+	 * @param serviceUrl
+	 */
+	public void invokeAPIUsingPut(final String serviceUrl) {
+		resUtil.setUpRequest(headerMap);
+		strResponse = resUtil.putResponse(serviceUrl);
+	}
+
+	/**
+	 * Sets the bearer token and delegates PUT API call to rest utility method.
+	 *
+	 * This method populates String API response
+	 * 
+	 * @param serviceUrl
+	 *            the service URL
 	 * @param isAuth
+	 *            boolean if set to TRUE would invoke bearer token service to
+	 *            get token and sets Authorization key in header map
+	 */
+	public void invokeAPIUsingPut(final String serviceUrl, final boolean isAuth) {
+		if (isAuth) {
+			setBearerToken();
+		}
+		invokeAPIUsingPut(serviceUrl);
+	}
+
+	/**
+	 * Delegates DELETE API call without bearer token to rest utility method.
+	 * 
+	 * This method populates String API response
+	 *
+	 * @param strURL
+	 *            the str URL
+	 */
+	public void invokeAPIUsingDelete(final String strURL) {
+		resUtil.setUpRequest(headerMap);
+		strResponse = resUtil.deleteResponse(strURL);
+	}
+
+	/**
+	 * Sets the bearer token and delegates DELETE API call to rest utility
+	 * method.
+	 * 
+	 * This method populates String API response
+	 *
+	 * @param strURL
+	 *            the str URL
+	 * @param isAuth
+	 *            the is auth
 	 */
 	public void invokeAPIUsingDelete(final String strURL, final boolean isAuth) {
 		if (isAuth) {
 			setBearerToken();
 		}
 		invokeAPIUsingDelete(strURL);
-	}
-
-	/**
-	 * Delegates delete API call without bearer token to rest util.
-	 * 
-	 * @param strURL
-	 */
-	public void invokeAPIUsingDelete(final String strURL) {
-		resUtil.setUpRequest(headerMap);
-		strResponse = resUtil.deleteResponse(strURL);
 	}
 
 	/**
@@ -239,8 +355,9 @@ public class BaseStepDef {
 
 	/**
 	 * Validates the status code.
-	 * 
+	 *
 	 * @param intStatusCode
+	 *            the status code
 	 */
 	public void validateStatusCode(final int intStatusCode) {
 		resUtil.validateStatusCode(intStatusCode);
@@ -307,7 +424,7 @@ public class BaseStepDef {
 			isMatch = prettyStrResponseJson.contains(prettyStrExpectedResponse);
 			Assert.assertEquals(
 					"Actual and expected response are not equal -" + "Actual Response" + prettyStrResponseJson
-							+ "\n Expected Response" + prettyStrExpectedResponse,
+					+ "\n Expected Response" + prettyStrExpectedResponse,
 					prettyStrResponseJson, prettyStrExpectedResponse);
 		} catch (final IOException ioe) {
 			LOGGER.error(ioe.getMessage(), ioe);
@@ -341,8 +458,9 @@ public class BaseStepDef {
 
 	/**
 	 * Writes the response to the target folder.
-	 * 
+	 *
 	 * @param scenario
+	 *            the scenario
 	 */
 	public void postProcess(final Scenario scenario) {
 		String strResponseFile = null;

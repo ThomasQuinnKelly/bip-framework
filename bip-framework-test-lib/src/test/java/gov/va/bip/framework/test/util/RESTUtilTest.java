@@ -21,14 +21,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.iterators.EmptyListIterator;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,23 +33,19 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceRegionHttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.lang.Nullable;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.google.common.net.HttpHeaders;
 
-import cucumber.deps.com.thoughtworks.xstream.mapper.Mapper.Null;
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 import gov.va.bip.framework.test.service.RESTConfigService;
 import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 
 public class RESTUtilTest {
 
-	RESTUtil restUtil = new RESTUtil(null);
+	RESTUtil restUtil = new RESTUtil(new ArrayList<>());
 	private static final String URL_PERSON = "/person";
 	private static final String URL_PERSON_DOCUMENT = "/person/pid/document";
 	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
@@ -171,7 +164,7 @@ public class RESTUtilTest {
 				ResourceRegionHttpMessageConverter resourceConverter = new ResourceRegionHttpMessageConverter();
 			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 			messageConverters.add(resourceConverter);
-			ReflectionTestUtils.invokeMethod(new RESTUtil(null), "getRestTemplate", messageConverters);
+			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>()), "getRestTemplate", messageConverters);
 			// reset the field instance and prop fields
 			instanceOfRESTConfigService.set(null,null);
 			ReflectionTestUtils.setField(config, "prop", null);
