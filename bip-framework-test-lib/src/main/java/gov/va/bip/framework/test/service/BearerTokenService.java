@@ -1,5 +1,6 @@
 package gov.va.bip.framework.test.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public class BearerTokenService {
 		final Map<String, String> headerMap = new HashMap<>();
 		headerMap.put("Accept", ContentType.APPLICATION_JSON.getMimeType());
 		headerMap.put("Content-Type", ContentType.APPLICATION_JSON.getMimeType());
-		RESTUtil restUtility = new RESTUtil();
+		RESTUtil restUtility = new RESTUtil(new ArrayList<>());
 		restUtility.setUpRequest(headerFile, headerMap);
 		return restUtility.postResponse(baseUrl + tokenUrl);
 	}

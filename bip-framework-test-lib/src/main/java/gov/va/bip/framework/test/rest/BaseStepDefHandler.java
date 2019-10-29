@@ -46,12 +46,21 @@ public class BaseStepDefHandler extends BaseStepDef {
 	}
 
 	/**
-	 * Getter for returning API call response.
+	 * Getter for returning API call response as string.
 	 *
 	 * @return the str response
 	 */
 	public String getStrResponse() {
 		return strResponse;
+	}
+
+	/**
+	 * Getter for returning API call response as object.
+	 *
+	 * @return the object response
+	 */
+	public Object getObjResponse() {
+		return objResponse;
 	}
 
 	/**
