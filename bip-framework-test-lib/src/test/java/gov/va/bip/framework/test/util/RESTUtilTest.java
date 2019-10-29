@@ -161,9 +161,8 @@ public class RESTUtilTest {
 			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
 			instanceOfRESTConfigService.setAccessible(true);
 			instanceOfRESTConfigService.set(null, config);
-				ResourceRegionHttpMessageConverter resourceConverter = new ResourceRegionHttpMessageConverter();
 			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-			messageConverters.add(resourceConverter);
+			messageConverters.add(new ResourceRegionHttpMessageConverter());
 			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>()), "getRestTemplate", messageConverters);
 			// reset the field instance and prop fields
 			instanceOfRESTConfigService.set(null,null);
