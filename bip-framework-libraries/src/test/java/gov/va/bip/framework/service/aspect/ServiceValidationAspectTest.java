@@ -112,7 +112,8 @@ public class ServiceValidationAspectTest {
 			ReflectionTestUtils.invokeMethod(aspect, "callPostValidationBasedOnDomainResponse", proceedingJoinPoint, domainResponse,
 					method);
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getCause() instanceof NullPointerException);
+			e.printStackTrace();
+			fail("BipRuntimeException should not be thrown when validator class does not exist.");
 		}
 	}
 
@@ -216,7 +217,8 @@ public class ServiceValidationAspectTest {
 			e.printStackTrace();
 			fail("unable to invoke method named testMethod");
 		} catch (BipRuntimeException e) {
-			assertTrue(e.getMessage().startsWith("Could not find or instantiate class "));
+			e.printStackTrace();
+			fail("BipRuntimeException should not be thrown when validator class does not exist.");
 		}
 	}
 
@@ -234,20 +236,23 @@ public class ServiceValidationAspectTest {
 		}
 	}
 
-	@Test(expected = BipRuntimeException.class)
+	@Test
 	public final void testValidateRequest() {
 		LinkedList<ServiceMessage> messages = new LinkedList<ServiceMessage>();
 		Method testMethod = null;
 		try {
 			testMethod = this.getClass().getMethod("testMethod", String.class);
+			ReflectionTestUtils.invokeMethod(aspect, "validateRequest", new DomainResponse(), messages, testMethod);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			fail("unable to find method named testMethod");
 		} catch (SecurityException e) {
 			e.printStackTrace();
 			fail("unable to find method named testMethod");
+		} catch (BipRuntimeException e) {
+			e.printStackTrace();
+			fail("BipRuntimeException should not be thrown when validator class does not exist.");
 		}
-		ReflectionTestUtils.invokeMethod(aspect, "validateRequest", new DomainResponse(), messages, testMethod);
 	}
 
 	@Test

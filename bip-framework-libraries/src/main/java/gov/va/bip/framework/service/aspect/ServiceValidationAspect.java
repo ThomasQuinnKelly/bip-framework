@@ -213,7 +213,9 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 	/**
 	 * Locate the {@link Validator} for the request object, and if it exists,
-	 * invoke the {@link Validator#getValidatedType()} method.
+	 * invoke the {@link Validator#getValidatedType()} method. If the
+	 * Validator does not exist, a warning is logged and validation
+	 * will be skipped.
 	 * <p>
 	 * Validator implementations <b>must</b> exist in a validators package
 	 * under the package in which {@code object} exists.
@@ -229,17 +231,15 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 		Class<?> validatorClass = this.resolveValidatorClass(object);
 
-		if (validatorClass == null) {
-			handleValidatorInstantiationExceptions(validatorClass,
-					new NullPointerException("No validator available for object of type " + object.getClass().getName()), object);
-		}
+		//validation is skipped if validatorClass is null
+		if (validatorClass != null) {
+			// invoke the validator - no supplemental objects
+			try {
+				invokeValidator(object, messages, callingMethod, validatorClass);
 
-		// invoke the validator - no supplemental objects
-		try {
-			invokeValidator(object, messages, callingMethod, validatorClass);
-
-		} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
-			handleValidatorInstantiationExceptions(validatorClass, e, object);
+			} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
+				handleValidatorInstantiationExceptions(validatorClass, e, object);
+			}
 		}
 	}
 
@@ -263,7 +263,9 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 	/**
 	 * Locate the {@link Validator} for the object, and if it exists,
-	 * invoke the {@link Validator#getValidatedType()} method.
+	 * invoke the {@link Validator#getValidatedType()} method. If the
+	 * Validator does not exist, a warning is logged and validation
+	 * will be skipped.
 	 * <p>
 	 * Validator implementations <b>must</b> exist in a validators package
 	 * under the package in which {@code object} exists.
@@ -281,17 +283,15 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 
 		Class<?> validatorClass = this.resolveValidatorClass(object);
 
-		if (validatorClass == null) {
-			handleValidatorInstantiationExceptions(validatorClass,
-					new NullPointerException("No validator available for object of type " + object.getClass().getName()), object);
-		}
+		//validation is skipped if validatorClass is null
+		if (validatorClass != null) {
+			// invoke the validator, sned request objects as well
+			try {
+				invokeValidator(object, messages, callingMethod, validatorClass, requestObjects);
 
-		// invoke the validator, sned request objects as well
-		try {
-			invokeValidator(object, messages, callingMethod, validatorClass, requestObjects);
-
-		} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
-			handleValidatorInstantiationExceptions(validatorClass, e, object);
+			} catch (InstantiationException | IllegalAccessException | NullPointerException e) {
+				handleValidatorInstantiationExceptions(validatorClass, e, object);
+			}
 		}
 	}
 
@@ -315,7 +315,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 			validatorClass = Class.forName(qualifiedValidatorName);
 		} catch (ClassNotFoundException e) {
 			// no validator, return without error
-			LOGGER.error("Could not find validator class " + qualifiedValidatorName
+			LOGGER.warn("Could not find validator class " + qualifiedValidatorName
 					+ " - skipping validation for object " + ReflectionToStringBuilder.toString(object), e);
 		}
 
