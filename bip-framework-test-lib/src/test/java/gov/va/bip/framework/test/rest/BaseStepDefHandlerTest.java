@@ -69,7 +69,18 @@ public class BaseStepDefHandlerTest {
 	@Test
 	public void test_getResponse_Success() {
 		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON);
-		assertThat(true, equalTo(!subject.getStrResponse().isEmpty()));
+		assertThat(true, equalTo(
+		    !subject.getStrResponse().isEmpty() ||
+            subject.getObjResponse() != null
+        ));
+	}
+	
+	@Test
+	public void test_getObjResponse_Success() {
+		subject.invokeAPIUsingGet(LOCALHOST_URL_PERSON);
+		assertThat(true, equalTo(
+            subject.getObjResponse() == null
+        ));
 	}
 
 }
