@@ -17,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -104,9 +105,14 @@ public class RESTUtil {
 	/** The tika. */
 	private Tika tika = new Tika();
 
-	/** Constructor to initialize objects. */
-	public RESTUtil() {
-		this.restTemplate = getRestTemplate();
+	/**
+	 * Constructor to initialize objects.
+	 *
+	 * @param convertersToBeAdded
+	 *            List of HttpMessageConverter
+	 */
+	public RESTUtil(final List<HttpMessageConverter<?>> convertersToBeAdded) {
+		this.restTemplate = getRestTemplate(convertersToBeAdded);
 	}
 
 	/**
@@ -163,9 +169,25 @@ public class RESTUtil {
 	 * @return the response
 	 */
 	public String getResponse(final String serviceURL) {
-		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(headers);
+		HttpEntity<?> request = getHttpRequestEntity(false);
 		return executeAPI(serviceURL, request, HttpMethod.GET);
+	}
+
+	/**
+	 * Invokes REST end point for a GET method using REST Template API and
+	 * returns responses as generic object.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param serviceURL
+	 *            the service URL
+	 * @param responseType
+	 *            the response type
+	 * @return the response
+	 */
+	public <T extends Object> T getResponse(final String serviceURL, final Class<T> responseType) {
+		HttpEntity<?> request = getHttpRequestEntity(false);
+		return executeAPI(serviceURL, request, HttpMethod.GET, responseType);
 	}
 
 	/**
@@ -178,9 +200,25 @@ public class RESTUtil {
 	 */
 
 	public String postResponse(final String serviceURL) {
-		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(jsonText, headers);
+		HttpEntity<?> request = getHttpRequestEntity(true);
 		return executeAPI(serviceURL, request, HttpMethod.POST);
+	}
+
+	/**
+	 * Invokes REST end point for a POST method using REST Template API and
+	 * returns response as generic object.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param serviceURL
+	 *            the service URL
+	 * @param responseType
+	 *            the response type
+	 * @return the t
+	 */
+	public <T extends Object> T postResponse(final String serviceURL, final Class<T> responseType) {
+		HttpEntity<?> request = getHttpRequestEntity(true);
+		return executeAPI(serviceURL, request, HttpMethod.POST, responseType);
 	}
 
 	/**
@@ -193,8 +231,7 @@ public class RESTUtil {
 	 */
 
 	public String putResponse(final String serviceURL) {
-		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(jsonText, headers);
+		HttpEntity<?> request = getHttpRequestEntity(true);
 		return executeAPI(serviceURL, request, HttpMethod.PUT);
 	}
 
@@ -208,9 +245,26 @@ public class RESTUtil {
 	 */
 
 	public String deleteResponse(final String serviceURL) {
-		HttpHeaders headers = new HttpHeaders(requestHeaders);
-		HttpEntity<?> request = new HttpEntity<>(jsonText, headers);
+		HttpEntity<?> request = getHttpRequestEntity(true);
 		return executeAPI(serviceURL, request, HttpMethod.DELETE);
+	}
+
+	/**
+	 * Gets the HTTP request entity.
+	 *
+	 * @param includeBody
+	 *            boolean to include the entity body
+	 * @return the HTTP request entity
+	 */
+	private HttpEntity<?> getHttpRequestEntity(boolean includeBody) {
+		HttpHeaders headers = new HttpHeaders(requestHeaders);
+		HttpEntity<?> request = null;
+		if (includeBody) {
+			request = new HttpEntity<>(jsonText, headers);
+		} else {
+			request = new HttpEntity<>(headers);
+		}
+		return request;
 	}
 
 	/**
@@ -221,15 +275,38 @@ public class RESTUtil {
 	 * @param serviceURL
 	 *            the service URL
 	 * @param request
-	 *            the request
+	 *            the entity (headers and/or body) to write to the request
 	 * @param httpMethod
 	 *            the HTTP method
 	 * @return the server response string
 	 */
 	private String executeAPI(final String serviceURL, final HttpEntity<?> request, final HttpMethod httpMethod) {
+		return executeAPI(serviceURL, request, httpMethod, String.class);
+	}
+
+	/**
+	 * Private method that is invoked by different HTTP methods. It uses
+	 * RESTTemplate generic exchange method for various HTTP methods such as
+	 * GET,POST,PUT,DELETE. Method p
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param serviceURL
+	 *            the service URL
+	 * @param request
+	 *            the entity (headers and/or body) to write to the request
+	 * @param httpMethod
+	 *            the HTTP method (GET, POST, etc)
+	 * @param responseType
+	 *            the class type of the return value
+	 * @return the t
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends Object> T executeAPI(final String serviceURL, final HttpEntity<?> request,
+			final HttpMethod httpMethod, final Class<T> responseType) {
 		try {
 			// Http response as ResponseEntity
-			ResponseEntity<String> response = restTemplate.exchange(serviceURL, httpMethod, request, String.class);
+			ResponseEntity<T> response = restTemplate.exchange(serviceURL, httpMethod, request, responseType);
 			httpResponseCode = response.getStatusCodeValue();
 			responseHttpHeaders = response.getHeaders();
 			return response.getBody();
@@ -238,13 +315,21 @@ public class RESTUtil {
 			LOGGER.error("Response Body {}", clientError.getResponseBodyAsString());
 			httpResponseCode = clientError.getRawStatusCode();
 			responseHttpHeaders = clientError.getResponseHeaders();
-			return clientError.getResponseBodyAsString();
+			if (responseType == String.class) {
+				return (T) clientError.getResponseBodyAsString();
+			} else {
+				return null;
+			}
 		} catch (HttpServerErrorException serverError) {
 			LOGGER.error("Http server exception is thrown {}", serverError);
 			LOGGER.error("Response Body {}", serverError.getResponseBodyAsString());
 			httpResponseCode = serverError.getRawStatusCode();
 			responseHttpHeaders = serverError.getResponseHeaders();
-			return serverError.getResponseBodyAsString();
+			if (responseType == String.class) {
+				return (T) serverError.getResponseBodyAsString();
+			} else {
+				return null;
+			}
 		}
 	}
 
@@ -429,10 +514,12 @@ public class RESTUtil {
 	 * Loads the KeyStore and password in to rest Template API so all the API's
 	 * are SSL enabled.
 	 *
+	 * @param convertersToBeAdded
+	 *            the converters to be added
 	 * @return the rest template
 	 */
 
-	private RestTemplate getRestTemplate() {
+	private RestTemplate getRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded) {
 		// Create a new instance of the {@link RestTemplate} using default
 		// settings.
 		RestTemplate apiTemplate = new RestTemplate();
@@ -463,11 +550,24 @@ public class RESTUtil {
 		apiTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		apiTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
 
-		for (HttpMessageConverter<?> converter : apiTemplate.getMessageConverters()) {
-			if (converter instanceof StringHttpMessageConverter) {
-				((StringHttpMessageConverter) converter).setWriteAcceptCharset(false);
+		List<HttpMessageConverter<?>> existingConverters = apiTemplate.getMessageConverters();
+
+		for (HttpMessageConverter<?> existingConverter : existingConverters) {
+			LOGGER.debug("Existing HttpMessageConverter {}", existingConverter);
+			if (existingConverter instanceof StringHttpMessageConverter) {
+				((StringHttpMessageConverter) existingConverter).setWriteAcceptCharset(false);
+			}
+
+		}
+		if (convertersToBeAdded != null) {
+			for (HttpMessageConverter<?> converterToBeAdded : convertersToBeAdded) {
+				if (!existingConverters.contains(converterToBeAdded)) {
+					LOGGER.debug("HttpMessageConverter Added {}", converterToBeAdded);
+					existingConverters.add(converterToBeAdded);
+				}
 			}
 		}
+
 		return apiTemplate;
 	}
 

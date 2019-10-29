@@ -20,7 +20,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,6 +31,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceRegionHttpMessageConverter;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -41,7 +45,7 @@ import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 
 public class RESTUtilTest {
 
-	RESTUtil restUtil = new RESTUtil();
+	RESTUtil restUtil = new RESTUtil(new ArrayList<>());
 	private static final String URL_PERSON = "/person";
 	private static final String URL_PERSON_DOCUMENT = "/person/pid/document";
 	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
@@ -157,7 +161,9 @@ public class RESTUtilTest {
 			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
 			instanceOfRESTConfigService.setAccessible(true);
 			instanceOfRESTConfigService.set(null, config);
-			ReflectionTestUtils.invokeMethod(new RESTUtil(), "getRestTemplate");
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+			messageConverters.add(new ResourceRegionHttpMessageConverter());
+			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>()), "getRestTemplate", messageConverters);
 			// reset the field instance and prop fields
 			instanceOfRESTConfigService.set(null,null);
 			ReflectionTestUtils.setField(config, "prop", null);

@@ -32,6 +32,7 @@ public class BaseStepDefTest {
 
 	private static final String LOCALHOST_URL_PERSON = "http://localhost:9999/person";
 	private static final String LOCALHOST_MULTIPART_URL_PERSON = "http://localhost:9999/multipart/person";
+	private static final String LOCALHOST_BINARY_URL_PERSON = "http://localhost:9999/binary/person";
 	private static final String SUBMIT_PAYLOAD_TXT = "submitpayload.txt";
 
 	@BeforeClass
@@ -62,10 +63,13 @@ public class BaseStepDefTest {
 	public static void setupStub() {
 		addGetPersonStub();
 		addPostPersonStub();
+		addPostPersonBinaryStub();
 		addDeletePersonStub();
 		addPutPersonStub();
 		addPostBearerStub();
-		addPostMultiPart();
+		addPostPersonMultiPartStub();
+		addPostPersonBinaryStub();
+		addGetPersonBinaryStub();
 	}
 
 	private static void addGetPersonStub() {
@@ -93,9 +97,19 @@ public class BaseStepDefTest {
 				.willReturn(aResponse().withStatus(200).withBodyFile("bearer/post-bearer-response.txt")));
 	}
 
-	private static void addPostMultiPart() {
+	private static void addPostPersonMultiPartStub() {
 		WireMockServerInstance.getWiremockserver().stubFor(post(urlEqualTo("/multipart/person"))
 				.willReturn(aResponse().withStatus(200).withBodyFile("json/post-multipart-person-response.json")));
+	}
+	
+	private static void addPostPersonBinaryStub() {
+		WireMockServerInstance.getWiremockserver().stubFor(post(urlEqualTo("/binary/person"))
+				.willReturn(aResponse().withStatus(200).withBody(new byte[] { 1, 2, 3, 4 })));
+	}
+	
+	private static void addGetPersonBinaryStub() {
+		WireMockServerInstance.getWiremockserver().stubFor(get(urlEqualTo("/binary/person"))
+				.willReturn(aResponse().withStatus(200).withBody(new byte[] { 1, 2, 3, 4 })));
 	}
 
 	@Test
@@ -156,6 +170,50 @@ public class BaseStepDefTest {
 			fail("Exception not expected!");
 		}
 		assertThat(true, equalTo(!subject.strResponse.isEmpty()));
+	}
+	
+	@Test
+	public void test_invokeAPIUsingPost_Success_GenericResponse() {
+		try {
+			subject.invokeAPIUsingPost(LOCALHOST_BINARY_URL_PERSON, byte[].class);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+		assertNotNull(subject.objResponse);
+	}
+	
+	@Test
+	public void test_invokeAPIUsingPost_WithBearerToken_Success_GenericResponse() {
+		try {
+			subject.invokeAPIUsingPost(LOCALHOST_BINARY_URL_PERSON, true, byte[].class);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+		assertNotNull(subject.objResponse);
+	}
+	
+	@Test
+	public void test_invokeAPIUsingGet_Success_GenericResponse() {
+		try {
+			subject.invokeAPIUsingGet(LOCALHOST_BINARY_URL_PERSON, byte[].class);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+		assertNotNull(subject.objResponse);
+	}
+	
+	@Test
+	public void test_invokeAPIUsingGet_WithBearerToken_Success_GenericResponse() {
+		try {
+			subject.invokeAPIUsingGet(LOCALHOST_BINARY_URL_PERSON, true, byte[].class);
+		} catch (BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+		assertNotNull(subject.objResponse);
 	}
 
 	@Test
