@@ -1,7 +1,10 @@
 package gov.va.bip.framework.test.rest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.converter.HttpMessageConverter;
 
 import gov.va.bip.framework.test.service.RESTConfigService;
 import gov.va.bip.framework.test.util.RESTUtil;
@@ -13,10 +16,21 @@ import gov.va.bip.framework.test.util.RESTUtil;
  */
 public class BaseStepDefHandler extends BaseStepDef {
 	/**
-	 * Constructor that calls init method of base class
+	 * Constructor that calls initREST method of base class
 	 */
 	public BaseStepDefHandler() {
 		initREST();
+	}
+
+	/**
+	 * Constructor that calls initREST method of base class
+	 * with custom HttpMessageConverter
+	 *
+	 * @param messageConverters
+	 *            the message converters
+	 */
+	public BaseStepDefHandler(List<HttpMessageConverter<?>> messageConverters) {
+		initREST(messageConverters);
 	}
 
 	/**
