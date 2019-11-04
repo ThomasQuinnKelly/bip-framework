@@ -138,7 +138,6 @@ public class RESTConfigService {
 			value = instance.prop.getProperty(pName);
 		}
 		LOGGER.debug("Property Name: {}", pName);
-		LOGGER.debug("Property Value: {}", value);
 		return value;
 	}
 
