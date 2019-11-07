@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,6 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.bip.framework.security.PersonTraits;
 import gov.va.bip.framework.security.config.BipSecurityTestConfig;
+import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
 import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
 import gov.va.bip.framework.security.util.GenerateToken;
 
@@ -117,6 +119,62 @@ public class JwtAuthenticationFilterTest {
 		} catch (final Exception e) {
 			verify(response, times(1)).getOutputStream();
 		}
+	}
+	
+	@Test
+	public void testInvalidTokenAndCommenceException() {
+		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
+		final HttpServletResponse response = mock(HttpServletResponse.class);
+		final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = Mockito.spy(JwtAuthenticationEntryPoint.class);
+		request.addHeader("Authorization", "Bearers " + GenerateToken.generateJwt());
+
+		final JwtAuthenticationFilter filter =
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+		
+		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
+
+		try {
+			filter.attemptAuthentication(request, response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testJwtMalformedAndCommenceException() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
+		final HttpServletResponse response = mock(HttpServletResponse.class);
+		final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = Mockito.spy(JwtAuthenticationEntryPoint.class);
+		final String content = "{\n" + "  \"participantID\": 0,\n" + "  \"ssn\": \"string\"\n" + "}";
+		request.setContent(content.getBytes());
+		request.addHeader("Authorization", "Bearer malformedToken");
+
+		final JwtAuthenticationFilter filter =
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+		
+		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
+		
+		final Authentication result = filter.attemptAuthentication(request, response);
+		Assert.assertTrue(result == null);
+	}
+	
+	@Test
+	public void testTamperedAndCommenceException() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
+		final HttpServletResponse response = mock(HttpServletResponse.class);
+		final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = Mockito.spy(JwtAuthenticationEntryPoint.class);
+		final String content = "{\n" + "  \"participantID\": 0,\n" + "  \"ssn\": \"string\"\n" + "}";
+		request.setContent(content.getBytes());
+		request.addHeader("Authorization", "Bearer " + GenerateToken.generateJwt() + "s");
+
+		final JwtAuthenticationFilter filter =
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+
+		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
+		
+		final Authentication result = filter.attemptAuthentication(request, response);
+		Assert.assertTrue(result == null);
 	}
 
 	@Test

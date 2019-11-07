@@ -11,8 +11,7 @@ import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 
-import com.fasterxml.jackson.core.util.BufferRecyclers;
-
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
 /**
@@ -288,7 +287,7 @@ public class BipBaseLogger {
 	 */
 	private String safeMessage(final String message) {
 		return message == null ? ""
-				: String.valueOf(BufferRecyclers.getJsonStringEncoder()
+				: String.valueOf(JsonStringEncoder.getInstance()
 						.quoteAsString(Sanitizer.stripXss(message)));
 	}
 
