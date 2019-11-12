@@ -87,6 +87,7 @@
 
 		<!-- application plugins -->
 		<spring-cloud-dependencies.version>Hoxton.RC1</spring-cloud-dependencies.version>
+		<resilience4j.springboot2.version>1.1.0</resilience4j.springboot2.version>
 		<io-zipkin-brave-bom.version>5.6.6</io-zipkin-brave-bom.version>
 		<jjwt.version>0.9.1</jjwt.version>
 		<wss4j.version>1.6.19</wss4j.version>
@@ -319,7 +320,12 @@
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapi.codegen.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-spring-boot2</artifactId>
+				<version>${resilience4j.springboot2.version}</version>
+			</dependency>
+		
 			<!-- DATABASE related dependencies -->
 			<dependency>
 				<groupId>com.h2database</groupId>
