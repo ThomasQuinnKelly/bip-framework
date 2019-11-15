@@ -85,7 +85,7 @@ public class BipFeignAutoConfiguration {
 	 */
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	@ConditionalOnProperty(name = "feign.hystrix.enabled", matchIfMissing = true)
+	@ConditionalOnProperty(name = "feign.hystrix.enabled", matchIfMissing = false)
 	public Feign.Builder feignBuilder() {
 		int connTimeoutValue = 0;
 		try {
