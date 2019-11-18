@@ -44,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -119,10 +119,10 @@ public class AuditLogSerializerTest {
 		verify(mockAppender, atLeastOnce()).doAppend(captorLoggingEvent.capture());
 		final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents =
 				captorLoggingEvent.getAllValues().stream().filter(x -> x.getLevel() == Level.INFO).collect(Collectors.toList());
-		final String expectedRequest = String.valueOf(JsonStringEncoder.getInstance().quoteAsString(
+		final String expectedRequest = String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString(
 				"{\"request\":[\"Request\"],\"headers\":{\"Header1\":\"Header1Value\"},\"uri\":\"/\",\"method\":\"GET\",\"attachmentTextList\":[\"attachment1\",\"attachment2\"]}"));
 		final String expectedResponse =
-				String.valueOf(JsonStringEncoder.getInstance().quoteAsString("{\"response\":\"Response\"}"));
+				String.valueOf(BufferRecyclers.getJsonStringEncoder().quoteAsString("{\"response\":\"Response\"}"));
 		assertEquals(expectedRequest, loggingEvents.get(0).getMessage());
 		assertThat(loggingEvents.get(0).getLevel(), is(ch.qos.logback.classic.Level.INFO));
 		assertEquals(expectedResponse, loggingEvents.get(1).getMessage());

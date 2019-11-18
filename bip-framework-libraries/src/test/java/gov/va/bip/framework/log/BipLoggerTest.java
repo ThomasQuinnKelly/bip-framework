@@ -29,7 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.github.lalyos.jfiglet.FigletFont;
 
 import gov.va.bip.framework.AbstractBaseLogTester;
@@ -41,7 +41,6 @@ import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 
-@SuppressWarnings("deprecation")
 @RunWith(SpringRunner.class)
 public class BipLoggerTest extends AbstractBaseLogTester {
 
@@ -104,7 +103,7 @@ public class BipLoggerTest extends AbstractBaseLogTester {
 		final String outString = outputCapture.toString();
 
 		if (banner != null) {
-			String expected = String.valueOf(JsonStringEncoder.getInstance()
+			String expected = String.valueOf(BufferRecyclers.getJsonStringEncoder()
 					.quoteAsString(FigletFont.convertOneLine(BipBanner.FONT_FILE, level.name() + ": " + banner.getBannerText())));
 			Assert.assertTrue(StringUtils.contains(StringUtils.normalizeSpace(outString), StringUtils.normalizeSpace(expected)));
 		}
