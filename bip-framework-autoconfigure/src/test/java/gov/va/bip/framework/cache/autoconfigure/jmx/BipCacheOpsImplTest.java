@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -42,7 +42,7 @@ public class BipCacheOpsImplTest {
 
 	/** The output capture. */
 	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
+	public OutputCapture outputCapture = new OutputCapture();
 
 	@SuppressWarnings("rawtypes")
 	@Mock

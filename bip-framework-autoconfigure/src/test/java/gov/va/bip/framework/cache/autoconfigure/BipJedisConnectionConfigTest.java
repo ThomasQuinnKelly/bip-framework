@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -41,7 +41,7 @@ public class BipJedisConnectionConfigTest {
 
 	/** The output capture. */
 	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
+	public OutputCapture outputCapture = new OutputCapture();
 
 	// Captor is genericised with ch.qos.logback.classic.spi.LoggingEvent
 	@Captor

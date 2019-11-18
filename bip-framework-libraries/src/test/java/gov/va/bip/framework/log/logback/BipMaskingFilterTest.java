@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ReflectionUtils;
 
@@ -26,7 +26,7 @@ public class BipMaskingFilterTest {
 	Logger logger = LoggerFactory.getLogger(BipMaskingFilterTest.class);
 
 	@Rule
-	public OutputCaptureRule capture = new OutputCaptureRule();
+	public OutputCapture capture = new OutputCapture();
 
 	@Test
 	public final void testEvaluate_NoMasking() {

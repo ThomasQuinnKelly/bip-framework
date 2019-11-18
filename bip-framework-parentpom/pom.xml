@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.1.RELEASE</version>
+		<version>2.1.10.RELEASE</version>
 		<relativePath />
 	</parent>
 
@@ -86,10 +86,9 @@
 			version -->
 
 		<!-- application plugins -->
-		<spring-cloud-dependencies.version>Hoxton.RC1</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>Greenwich.SR3</spring-cloud-dependencies.version>
 		<resilience4j.springboot2.version>1.1.0</resilience4j.springboot2.version>
 		<resilience4j.feign.version>1.1.0</resilience4j.feign.version>
-		<io-zipkin-brave-bom.version>5.6.6</io-zipkin-brave-bom.version>
 		<jjwt.version>0.9.1</jjwt.version>
 		<wss4j.version>1.6.19</wss4j.version>
 		<el-impl.version>2.2</el-impl.version>
@@ -131,8 +130,8 @@
 			THESE NEED TO BE ADJUSTED IF SPRING IS UPGRADED
 		-->
 		<validation-api.version>2.0.1.Final</validation-api.version>
-		<spring-core.version>5.2.1.RELEASE</spring-core.version>
-		<spring-data-jpa.version>2.2.1.RELEASE</spring-data-jpa.version>
+		<spring-core.version>5.1.11.RELEASE</spring-core.version>
+		<spring-data-jpa.version>2.1.12.RELEASE</spring-data-jpa.version>
 	</properties>
 
 	<repositories>
@@ -216,16 +215,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- h2-console stopped working after updating from Spring Cloud Greenwich.SR1
-				to SR2 There is a bug in Brave fixed in 5.6.6 https://github.com/openzipkin/brave/pull/933
-				Most likely Greenwich.SR3 or later release would fix this issue -->
-			<dependency>
-				<groupId>io.zipkin.brave</groupId>
-				<artifactId>brave-bom</artifactId>
-				<version>${io-zipkin-brave-bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

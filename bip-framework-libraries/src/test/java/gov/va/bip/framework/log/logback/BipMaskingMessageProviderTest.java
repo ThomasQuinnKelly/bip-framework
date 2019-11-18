@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.rule.OutputCapture;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -15,7 +15,7 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 public class BipMaskingMessageProviderTest {
 
 	@Rule
-	public OutputCaptureRule capture = new OutputCaptureRule();
+	public OutputCapture capture = new OutputCapture();
 
 	private static final BipLogger logger = BipLoggerFactory.getLogger(BipMaskingMessageProviderTest.class);
 
