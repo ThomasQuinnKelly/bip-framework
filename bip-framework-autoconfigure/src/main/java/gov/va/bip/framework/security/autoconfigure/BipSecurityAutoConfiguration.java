@@ -99,7 +99,7 @@ public class BipSecurityAutoConfiguration {
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 		@Override
-		public void configure(WebSecurity web) throws Exception {
+		public void configure(WebSecurity web) {
 			web.ignoring().antMatchers(jwtAuthenticationProperties.getFilterProcessUrls());
 		}
 
@@ -117,7 +117,7 @@ public class BipSecurityAutoConfiguration {
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 		@Override
-		public void configure(WebSecurity web) throws Exception {
+		public void configure(WebSecurity web) {
 			web.ignoring().antMatchers(jwtAuthenticationProperties.getExcludeUrls());
 		}
 

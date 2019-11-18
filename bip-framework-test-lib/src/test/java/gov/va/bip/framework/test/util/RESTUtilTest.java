@@ -177,7 +177,7 @@ public class RESTUtilTest {
 	@Test
 	public void test_getResponse_WithRetry() {
 		String response = restUtil.getResponse("http://localhost:9999/urldoesnotexits");
-		assertThat(true, equalTo(!response.isEmpty()));
+		assertThat(true, equalTo(response.isEmpty()));
 	}
 
 	@Test
