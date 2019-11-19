@@ -37,15 +37,15 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 
 /**
- * Configure springboot starter for the platform.
- * Similar to {@code UsernamePasswordAuthenticationFilter}
+ * Configure springboot starter for the platform. Similar to
+ * {@code UsernamePasswordAuthenticationFilter}
  */
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private static final BipLogger LOG = BipLoggerFactory.getLogger(JwtAuthenticationFilter.class);
-	
+
 	private JwtAuthenticationProperties jwtAuthenticationProperties;
-	
+
 	@Autowired
 	private AuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -70,13 +70,18 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
+			throws IOException {
 		String token = request.getHeader(jwtAuthenticationProperties.getHeader());
 		if (token == null || !token.startsWith("Bearer ")) {
 			MessageKeys key = MessageKeys.BIP_SECURITY_TOKEN_BLANK;
 			LOG.error(key.getMessage());
-			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
-			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR,
+					HttpStatus.BAD_REQUEST);
+			try {
+				jwtAuthenticationEntryPoint.commence(request, response, authException);
+			} catch (Exception ce1) {
+				LOG.error(ce1.getMessage());
+			}
 			return null;
 		}
 
@@ -88,15 +93,25 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
 			String[] params = new String[] { TOKEN_TAMPERED, token, se.getClass().getSimpleName(), se.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, se);
-			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, se, params);
-			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR,
+					HttpStatus.BAD_REQUEST, se, params);
+			try {
+				jwtAuthenticationEntryPoint.commence(request, response, authException);
+			} catch (Exception ce2) {
+				LOG.error(ce2.getMessage());
+			}
 			return null;
 		} catch (MalformedJwtException ex) {
 			MessageKey key = MessageKeys.BIP_SECURITY_TOKEN_BROKEN;
 			String[] params = new String[] { TOKEN_MALFORMED, token, ex.getClass().getSimpleName(), ex.getMessage() };
 			writeAuditForJwtTokenErrors(key.getMessage(params), request, ex);
-			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, ex, params);
-			jwtAuthenticationEntryPoint.commence(request, response, authException);
+			JwtAuthenticationException authException = new JwtAuthenticationException(key, MessageSeverity.ERROR,
+					HttpStatus.BAD_REQUEST, ex, params);
+			try {
+				jwtAuthenticationEntryPoint.commence(request, response, authException);
+			} catch (Exception ce3) {
+				LOG.error(ce3.getMessage());
+			}
 			return null;
 		}
 	}
@@ -104,8 +119,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	/**
 	 * Audit any errors.
 	 *
-	 * @param cause - cause
-	 * @param request - original request
+	 * @param cause
+	 *            - cause
+	 * @param request
+	 *            - original request
 	 */
 	private void writeAuditForJwtTokenErrors(final String cause, final HttpServletRequest request, final Throwable t) {
 		String message = "";
@@ -116,17 +133,18 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		}
 
 		String data = cause.concat(" Request: ").concat(message);
-		AuditEventData auditData =
-				new AuditEventData(AuditEvents.SECURITY, "attemptAuthentication", JwtAuthenticationFilter.class.getName());
+		AuditEventData auditData = new AuditEventData(AuditEvents.SECURITY, "attemptAuthentication",
+				JwtAuthenticationFilter.class.getName());
 		AuditLogger.error(auditData, data, t);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter#successfulAuthentication(javax.servlet.
-	 * http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain,
+	 * @see org.springframework.security.web.authentication.
+	 * AbstractAuthenticationProcessingFilter#successfulAuthentication(javax.
+	 * servlet. http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * javax.servlet.FilterChain,
 	 * org.springframework.security.core.Authentication)
 	 */
 	@Override
@@ -140,9 +158,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter#unsuccessfulAuthentication(javax.servlet.
-	 * http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
+	 * @see org.springframework.security.web.authentication.
+	 * AbstractAuthenticationProcessingFilter#unsuccessfulAuthentication(javax.
+	 * servlet. http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * org.springframework.security.core.AuthenticationException)
 	 */
 	@Override
 	public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
