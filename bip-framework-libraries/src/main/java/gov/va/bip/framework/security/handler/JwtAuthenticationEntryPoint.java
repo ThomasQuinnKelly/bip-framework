@@ -3,7 +3,6 @@ package gov.va.bip.framework.security.handler;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,8 +43,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		ObjectMapper mapper = new ObjectMapper();
-		ServletOutputStream output = response.getOutputStream();
-		mapper.writeValue(output, body);
-		output.println(mapper.toString());
+		mapper.writeValue(response.getOutputStream(), body);
+		response.getOutputStream().println(mapper.toString());
 	}
 }
