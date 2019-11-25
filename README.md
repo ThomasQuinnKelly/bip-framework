@@ -44,7 +44,9 @@ This will bring the framework source code to your local machine.
 
 2. Navigate to the `bip-framework` folder, and run:
 
-`mvn clean install -U`
+`mvn clean install -U` 
+   
+ `-U means force update of snapshot dependencies. Release dependencies can't be updated this way.`
 
 This will build all the libraries with versions as configured in `pom.xml` files.
 
