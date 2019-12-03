@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.2.RELEASE</version>
+		<version>2.1.10.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -18,6 +18,11 @@
 	<description>Parent POM for BIP Application Framework - Spring Boot and Cloud Enabled</description>
 
 	<properties>
+		<!-- This version down-grade required to work around POM build errors in
+			older versions of STS / Eclipse with spring-boot 2.1.5. Upgrading to latest
+			STS / Eclipse version would also solve the issue. -->
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+		
 		<!-- Configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -49,6 +54,9 @@
 		<!-- build plugins -->
 		<lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
 		<templating-maven-plugin.version>1.0.0</templating-maven-plugin.version>
+		
+		<!-- WARNING cannot upgrade jaxb2-maven-plugin to 2.x because partner xsd+wsdl
+			are not compliant -->
 		<jaxb2-maven-plugin-codehaus.version>1.5</jaxb2-maven-plugin-codehaus.version>
 		<maven-jaxb2-plugin-jvnet.version>0.14.0</maven-jaxb2-plugin-jvnet.version>
 		<krasa-jaxb-tools.version>1.5</krasa-jaxb-tools.version>
@@ -66,36 +74,39 @@
 		<!-- testing - unit / integration / performance -->
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
-		<mockito-core.version>2.24.5</mockito-core.version>
+		<mockito-core.version>2.28.2</mockito-core.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-		<surefire-junit47.version>2.22.0</surefire-junit47.version>
-		<maven-cucumber-reporting.version>4.4.0</maven-cucumber-reporting.version>
-		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<jmeter-maven-plugin.version>2.8.5</jmeter-maven-plugin.version>
-		<jmeter-maven-plugin.versionRange>[2.8.5,)</jmeter-maven-plugin.versionRange>
+		<surefire-junit47.version>3.0.0-M3</surefire-junit47.version>
+		<maven-cucumber-reporting.version>4.7.0</maven-cucumber-reporting.version>
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<jmeter-maven-plugin.version>2.9.0</jmeter-maven-plugin.version>
+		<jmeter-maven-plugin.versionRange>[2.9.0,)</jmeter-maven-plugin.versionRange>
 		<testng.version>6.14.3</testng.version>
-		<cucumber.version>1.2.5</cucumber.version>
-		<rest-assured.version>3.3.0</rest-assured.version>
+		<cucumber.version>1.2.5</cucumber.version><!-- look into upgrade to 4.x
+			version -->
 
 		<!-- application plugins -->
-		<spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>Greenwich.SR3</spring-cloud-dependencies.version>
+		<resilience4j.springboot2.version>1.1.0</resilience4j.springboot2.version>
+		<resilience4j.feign.version>1.1.0</resilience4j.feign.version>
 		<jjwt.version>0.9.1</jjwt.version>
-		<wss4j.version>1.6.18</wss4j.version>
+		<wss4j.version>1.6.19</wss4j.version>
 		<el-impl.version>2.2</el-impl.version>
 		<axiom-impl.version>1.2.22</axiom-impl.version>
 		<swagger-annotations.version>1.5.22</swagger-annotations.version>
 		<springfox.version>2.9.2</springfox.version>
 		<fest-assert.version>2.0M10</fest-assert.version>
 		<commons-io.version>2.6</commons-io.version>
-		<commons-lang3.version>3.8.1</commons-lang3.version>
-		<jackson-databind.version>2.9.8</jackson-databind.version>
+		<commons-lang3.version>3.9</commons-lang3.version>
+		<jackson-databind.version>2.9.9</jackson-databind.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<logstash-logback-encoder.version>5.3</logstash-logback-encoder.version>
-		<janino-version>3.0.12</janino-version>
+		<logstash-logback-encoder.version>6.1</logstash-logback-encoder.version><!--
+			5.3 to 6.1 -->
+		<janino-version>3.0.13</janino-version>
 		<logback-classic.version>1.2.3</logback-classic.version>
 		<embedded-redis.version>0.6</embedded-redis.version>
 		<jfiglet.version>0.0.8</jfiglet.version>
-		<httpclient.version>4.5.7</httpclient.version>
+		<httpclient.version>4.5.9</httpclient.version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<!-- TEMPORARY TO BE REMOVED ONCE NEXUS REPO IS AVAILABLE -->
@@ -117,8 +128,8 @@
 			THESE NEED TO BE ADJUSTED IF SPRING IS UPGRADED
 		-->
 		<validation-api.version>2.0.1.Final</validation-api.version>
-		<spring-core.version>5.1.4.RELEASE</spring-core.version>
-		<spring-data-jpa.version>2.1.4.RELEASE</spring-data-jpa.version>
+		<spring-core.version>5.1.11.RELEASE</spring-core.version>
+		<spring-data-jpa.version>2.1.12.RELEASE</spring-data-jpa.version>
 
 	</properties>
 
@@ -286,6 +297,16 @@
 				<artifactId>micrometer-registry-prometheus</artifactId>
 				<version>${micrometer.version}</version>
 				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-spring-boot2</artifactId>
+				<version>${resilience4j.springboot2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-feign</artifactId>
+				<version>${resilience4j.feign.version}</version>
 			</dependency>
 			
 			<!-- DATABASE related dependencies -->

@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -88,7 +89,7 @@ public class BaseStepDefTest {
 	}
 
 	private static void addPutPersonStub() {
-		WireMockServerInstance.getWiremockserver().stubFor(post(urlEqualTo("/person"))
+		WireMockServerInstance.getWiremockserver().stubFor(put(urlEqualTo("/person"))
 				.willReturn(aResponse().withStatus(200).withBodyFile("json/post-person-response.json")));
 	}
 

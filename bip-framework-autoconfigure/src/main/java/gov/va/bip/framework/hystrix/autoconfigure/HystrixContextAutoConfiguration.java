@@ -50,7 +50,7 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
  * @see HystrixContextAwareConcurrencyStrategy
  */
 @Configuration
-@ConditionalOnProperty(value = "hystrix.wrappers.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "hystrix.wrappers.enabled", matchIfMissing = false)
 public class HystrixContextAutoConfiguration {
 
 	@Autowired(required = false)
