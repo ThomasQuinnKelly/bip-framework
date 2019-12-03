@@ -4,8 +4,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +23,7 @@ import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
 import gov.va.bip.framework.security.jwt.JwtParser;
 import gov.va.bip.framework.security.model.Person;
 import gov.va.bip.framework.security.util.GenerateToken;
+import io.jsonwebtoken.SignatureException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)
@@ -76,6 +81,54 @@ public class JwtParserTest {
 		assertNotNull(personTraits.getEmail());
 		assertTrue("validemail@testdomain.com".equals(personTraits.getEmail()));
 		assertNotNull(personTraits.getUser());
+	}
+	
+	@Test
+	public void parseJwtTestNoPair() {
+		JwtParser jwtParserNoPair = new JwtParser(new JwtAuthenticationProperties());
+		PersonTraits personTraits = jwtParserNoPair.parseJwt(token);
+		assertNotNull(personTraits.getUser());
+	}
+	
+	@Test
+	public void parseJwtTestEmptyPair() {
+		JwtAuthenticationProperties jwtJwtAuthPropertiesEmptyPair = new JwtAuthenticationProperties();
+		jwtJwtAuthPropertiesEmptyPair.setKeyPairs(Collections.emptyList());
+		JwtParser jwtParserNoPair = new JwtParser(jwtJwtAuthPropertiesEmptyPair);
+		PersonTraits personTraits = jwtParserNoPair.parseJwt(token);
+		assertNotNull(personTraits.getUser());
+	}
+	
+	@Test
+	public void parseJwtTestWithValidPair() {
+		JwtAuthenticationProperties jwtAuthPropertiesWithPair = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret","Vets.gov"));
+		jwtAuthPropertiesWithPair.setKeyPairs(listKeyPairs);
+		JwtParser jwtParserWithPair = new JwtParser(jwtAuthPropertiesWithPair);
+		PersonTraits personTraits = jwtParserWithPair.parseJwt(token);
+		assertNotNull(personTraits.getUser());
+	}
+	
+	@Test(expected = SignatureException.class)
+	public void parseJwtTestWithInvalidPair() {
+		JwtAuthenticationProperties jwtAuthPropertiesWithPair = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret1","Vets.gov"));
+		jwtAuthPropertiesWithPair.setKeyPairs(listKeyPairs);
+		JwtParser jwtParserWithPair = new JwtParser(jwtAuthPropertiesWithPair);
+		jwtParserWithPair.parseJwt(token);
+	}
+	
+	@Test
+	public void parseJwtTestWithInvalidValidPair() {
+		JwtAuthenticationProperties jwtAuthPropertiesWithPair = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret1","Vets.gov"));
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret","Vets.gov"));
+		jwtAuthPropertiesWithPair.setKeyPairs(listKeyPairs);
+		JwtParser jwtParserWithPair = new JwtParser(jwtAuthPropertiesWithPair);
+		jwtParserWithPair.parseJwt(token);
 	}
 
 }
