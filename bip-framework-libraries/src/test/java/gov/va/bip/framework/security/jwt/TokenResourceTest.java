@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -24,10 +24,10 @@ import gov.va.bip.framework.security.model.Person;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)
+@DirtiesContext
 public class TokenResourceTest {
 
 	@Autowired
-	@InjectMocks
 	TokenResource tokenResource;
 
 	@Spy
