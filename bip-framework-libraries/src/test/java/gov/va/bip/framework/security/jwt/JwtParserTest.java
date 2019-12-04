@@ -13,30 +13,19 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.security.config.BipSecurityTestConfig;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
-import gov.va.bip.framework.security.jwt.JwtParser;
 import gov.va.bip.framework.security.model.Person;
 import gov.va.bip.framework.security.util.GenerateToken;
 import io.jsonwebtoken.SignatureException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = BipSecurityTestConfig.class)
-@DirtiesContext
 public class JwtParserTest {
 
 	private static final Date BIRTH_DATE = Calendar.getInstance().getTime();
 
 	private String token;
-
-	@Autowired
-	private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 	private JwtParser jwtParser;
 
@@ -44,6 +33,7 @@ public class JwtParserTest {
 
 	@Before
 	public void setup() {
+		JwtAuthenticationProperties jwtAuthenticationProperties = new JwtAuthenticationProperties();
 		jwtParser = new JwtParser(jwtAuthenticationProperties);
 		Person person = new Person();
 		person.setFirstName("FN");
@@ -94,9 +84,9 @@ public class JwtParserTest {
 	
 	@Test
 	public void parseJwtTestEmptyPair() {
-		JwtAuthenticationProperties jwtJwtAuthPropertiesEmptyPair = new JwtAuthenticationProperties();
-		jwtJwtAuthPropertiesEmptyPair.setKeyPairs(Collections.emptyList());
-		JwtParser jwtParserNoPair = new JwtParser(jwtJwtAuthPropertiesEmptyPair);
+		JwtAuthenticationProperties jwtAuthPropertiesEmptyPair = new JwtAuthenticationProperties();
+		jwtAuthPropertiesEmptyPair.setKeyPairs(Collections.emptyList());
+		JwtParser jwtParserNoPair = new JwtParser(jwtAuthPropertiesEmptyPair);
 		PersonTraits personTraits = jwtParserNoPair.parseJwt(token);
 		assertNotNull(personTraits.getUser());
 	}
