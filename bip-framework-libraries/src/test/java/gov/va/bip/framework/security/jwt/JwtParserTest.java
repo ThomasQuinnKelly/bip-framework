@@ -120,7 +120,8 @@ public class JwtParserTest {
 		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret","Vets.gov"));
 		jwtAuthPropertiesWithPair.setKeyPairs(listKeyPairs);
 		JwtParser jwtParserWithPair = new JwtParser(jwtAuthPropertiesWithPair);
-		jwtParserWithPair.parseJwt(token);
+		PersonTraits personTraits = jwtParserWithPair.parseJwt(token);
+		assertNotNull(personTraits.getUser());
 	}
 
 }

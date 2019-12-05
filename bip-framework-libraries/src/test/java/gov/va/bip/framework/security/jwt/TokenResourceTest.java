@@ -40,6 +40,8 @@ public class TokenResourceTest {
 	
 	/**
 	 * Test of getToken method, of class TokenResource.
+	 * 
+	 * To test JwtKeyPairs with valid secret and issuer
 	 */
 	@Test
 	public void testGetTokenValidJwtKeyPair() {
@@ -62,12 +64,86 @@ public class TokenResourceTest {
 	
 	/**
 	 * Test of getToken method, of class TokenResource.
+	 * 
+	 * To test JwtKeyPairs as null
 	 */
 	@Test
-	public void testGetTokenEmptyJwtKeyPair() {
+	public void testGetTokenNullJwtKeyPair() {
 		TokenResource tokenResource = new TokenResource();
 		JwtAuthenticationProperties jwtAuthenticationProperties = new JwtAuthenticationProperties();
 		jwtAuthenticationProperties.setKeyPairs(null);
+		Person person = new Person();
+		person.setFirstName("john");
+		person.setLastName("doe");
+		String[] arrayOfCorrelationIds = { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+				"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" };
+		person.setCorrelationIds(Arrays.asList(arrayOfCorrelationIds));
+		ReflectionTestUtils.setField(tokenResource, "jwtAuthenticationProperties", jwtAuthenticationProperties);
+		String result = tokenResource.getToken(person);
+		assertTrue(result.length() > 0);
+
+	}
+	
+	/**
+	 * Test of getToken method, of class TokenResource.
+	 * 
+	 * To test JwtKeyPairs with null element in the key pair
+	 */
+	@Test
+	public void testGetTokenNullElementJwtKeyPair() {
+		TokenResource tokenResource = new TokenResource();
+		JwtAuthenticationProperties jwtAuthenticationProperties = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(null);
+		jwtAuthenticationProperties.setKeyPairs(listKeyPairs);
+		Person person = new Person();
+		person.setFirstName("john");
+		person.setLastName("doe");
+		String[] arrayOfCorrelationIds = { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+				"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" };
+		person.setCorrelationIds(Arrays.asList(arrayOfCorrelationIds));
+		ReflectionTestUtils.setField(tokenResource, "jwtAuthenticationProperties", jwtAuthenticationProperties);
+		String result = tokenResource.getToken(person);
+		assertTrue(result.length() > 0);
+
+	}
+	
+	/**
+	 * Test of getToken method, of class TokenResource.
+	 * 
+	 * To test JwtKeyPairs with null secret and valid issuer
+	 */
+	@Test
+	public void testGetTokenNullSecretJwtKeyPair() {
+		TokenResource tokenResource = new TokenResource();
+		JwtAuthenticationProperties jwtAuthenticationProperties = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs(null,"Vets.gov"));
+		jwtAuthenticationProperties.setKeyPairs(listKeyPairs);
+		Person person = new Person();
+		person.setFirstName("john");
+		person.setLastName("doe");
+		String[] arrayOfCorrelationIds = { "1012832469V956223^NI^200M^USVHA^P", "796046489^PI^200BRLS^USVBA^A",
+				"600071516^PI^200CORP^USVBA^A", "1040626995^NI^200DOD^USDOD^A", "796046489^SS" };
+		person.setCorrelationIds(Arrays.asList(arrayOfCorrelationIds));
+		ReflectionTestUtils.setField(tokenResource, "jwtAuthenticationProperties", jwtAuthenticationProperties);
+		String result = tokenResource.getToken(person);
+		assertTrue(result.length() > 0);
+
+	}
+	
+	/**
+	 * Test of getToken method, of class TokenResource.
+	 * 
+	 * To test JwtKeyPairs with valid secret and null issuer
+	 */
+	@Test
+	public void testGetTokenNullIssuerJwtKeyPair() {
+		TokenResource tokenResource = new TokenResource();
+		JwtAuthenticationProperties jwtAuthenticationProperties = new JwtAuthenticationProperties();
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret",null));
+		jwtAuthenticationProperties.setKeyPairs(listKeyPairs);
 		Person person = new Person();
 		person.setFirstName("john");
 		person.setLastName("doe");
