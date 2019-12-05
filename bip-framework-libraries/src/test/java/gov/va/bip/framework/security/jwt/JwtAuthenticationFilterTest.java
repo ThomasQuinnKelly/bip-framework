@@ -45,7 +45,9 @@ public class JwtAuthenticationFilterTest {
 	public void testNormalOperation() throws Exception {
 		/* MAKE SURE PROPERTIES ARE CORRECT */
 		final String secret = "secret";
+		final String issuer = "Vets.gov";
 		properties.setSecret(secret);
+		properties.setIssuer(issuer);
 		properties.setFilterProcessUrls(new String[] { "/**" });
 		properties.setExcludeUrls(new String[] { "/v2/api-docs/**", "/configuration/ui/**", "/swagger-resources/**",
 				"/configuration/security/**", "/swagger-ui.html", "/webjars/**", "/**/token", "/**/swagger/error-keys.html" });

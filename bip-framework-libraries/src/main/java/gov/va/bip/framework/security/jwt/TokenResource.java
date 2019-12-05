@@ -1,5 +1,7 @@
 package gov.va.bip.framework.security.jwt;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties.JwtKeyPairs;
 import gov.va.bip.framework.security.model.Person;
 import gov.va.bip.framework.security.util.GenerateToken;
 import gov.va.bip.framework.swagger.SwaggerResponseMessages;
@@ -40,18 +43,23 @@ public class TokenResource implements SwaggerResponseMessages {
 	@Value("${bip.framework.security.jwt.validation.required-parameters:}")
 	private String[] jwtTokenRequiredParameterList;
 
-	@PostMapping(value = { "/token", "/api/{v?.*}/token" }, consumes = {
-			MediaType.ALL_VALUE }, produces = { MediaType.ALL_VALUE })
+	@PostMapping(value = { "/token", "/api/{v?.*}/token" }, consumes = { MediaType.ALL_VALUE }, produces = {
+			MediaType.ALL_VALUE })
 	@ApiOperation(value = API_OPERATION_VALUE, notes = API_OPERATION_NOTES)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = MESSAGE_200),
 			@ApiResponse(code = 400, message = MESSAGE_400), @ApiResponse(code = 500, message = MESSAGE_500) })
 	public String getToken(
 			@ApiParam(value = API_PARAM_GETTOKEN_PERSON, required = true) @RequestBody final Person person) {
-		// @ApiModel(description="Identity information for the authenticated
-		// user.")
-		return GenerateToken.generateJwt(person, jwtAuthenticationProperties.getExpireInSeconds(),
-				jwtAuthenticationProperties.getSecret(), jwtAuthenticationProperties.getIssuer(),
-				jwtTokenRequiredParameterList);
+		final List<JwtKeyPairs> jwtKeyPairs = jwtAuthenticationProperties.getKeyPairs();
+		if (jwtKeyPairs != null && !jwtKeyPairs.isEmpty() && jwtKeyPairs.get(0) != null
+				&& jwtKeyPairs.get(0).getSecret() != null && jwtKeyPairs.get(0).getIssuer() != null) {
+			return GenerateToken.generateJwt(person, jwtAuthenticationProperties.getExpireInSeconds(),
+					jwtKeyPairs.get(0).getSecret(), jwtKeyPairs.get(0).getIssuer(), jwtTokenRequiredParameterList);
+		} else {
+			return GenerateToken.generateJwt(person, jwtAuthenticationProperties.getExpireInSeconds(),
+					jwtAuthenticationProperties.getSecret(), jwtAuthenticationProperties.getIssuer(),
+					jwtTokenRequiredParameterList);
+		}
 	}
 
 	/**

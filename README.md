@@ -6,6 +6,9 @@ For information regarding recommended development patterns for developing servic
 
 For information on framework release notes, see the [BIP Framework Release Notes](https://github.ec.va.gov/EPMO/bip-framework/wiki/Framework-Release-Notes)
 
+# Prequisites
+The bip-framework requires JDK8 and Maven 3.6 or higher.
+
 # Project Breakdown & Links
 
 1. [bip-framework-reactor](https://github.ec.va.gov/EPMO/bip-framework): This is the root reactor project (you are in that repo now). This project forms the aggregate of modules that make up the complete framework, and manages the Fortify scans.
@@ -41,7 +44,9 @@ This will bring the framework source code to your local machine.
 
 2. Navigate to the `bip-framework` folder, and run:
 
-`mvn clean install`
+`mvn clean install -U` 
+   
+ `-U means force update of snapshot dependencies. Release dependencies can't be updated this way.`
 
 This will build all the libraries with versions as configured in `pom.xml` files.
 
