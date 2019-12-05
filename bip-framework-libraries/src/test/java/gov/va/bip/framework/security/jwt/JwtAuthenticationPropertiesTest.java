@@ -3,6 +3,10 @@ package gov.va.bip.framework.security.jwt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.va.bip.framework.security.config.BipSecurityTestConfig;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)
@@ -111,8 +114,8 @@ public class JwtAuthenticationPropertiesTest {
 	@Test
 	public void testSetIssuer() {
 		String issuer = "Issuer2.gov";
-		jwtAuthenticationProperties.setSecret(issuer);
-		assertTrue(issuer.equals(jwtAuthenticationProperties.getSecret()));
+		jwtAuthenticationProperties.setIssuer(issuer);
+		assertTrue(issuer.equals(jwtAuthenticationProperties.getIssuer()));
 	}
 
 	/**
@@ -154,6 +157,19 @@ public class JwtAuthenticationPropertiesTest {
 		String[] excludeUrls = { "http://localhost:8762/api/bip-reference-person/swagger-ui.html" };
 		jwtAuthenticationProperties.setExcludeUrls(excludeUrls);
 		assertTrue(jwtAuthenticationProperties.getExcludeUrls().length > 0);
+	}
+	
+	/**
+	 * Test of setSecret method, of class JwtAuthenticationProperties.
+	 */
+	@Test
+	public void testSetJwtKeyPairs() {
+		List<JwtAuthenticationProperties.JwtKeyPairs> listKeyPairs = new ArrayList<JwtAuthenticationProperties.JwtKeyPairs>();
+		listKeyPairs.add(new JwtAuthenticationProperties.JwtKeyPairs("secret1","issuer1"));
+		jwtAuthenticationProperties.setKeyPairs(listKeyPairs);
+		assertTrue("secret1".equals(jwtAuthenticationProperties.getKeyPairs().get(0).getSecret()));
+		assertTrue("issuer1".equals(jwtAuthenticationProperties.getKeyPairs().get(0).getIssuer()));
+		jwtAuthenticationProperties.setKeyPairs(Collections.emptyList());
 	}
 
 }

@@ -6,9 +6,12 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.lang3.StringUtils;
+
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.security.PersonTraits;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties.JwtKeyPairs;
 import gov.va.bip.framework.security.jwt.correlation.CorrelationIdsParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +30,7 @@ public class JwtParser {
 	private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 	/**
-	 * Parse the JWT json into its component values
+	 * Parse the JWT JSON into its component values
 	 *
 	 * @param properties
 	 */
@@ -45,27 +48,84 @@ public class JwtParser {
 	 *         ids
 	 */
 	public PersonTraits parseJwt(final String token) {
-		Claims claims = null;
-
-		// The JWT signature algorithm we will be using to sign the token
-		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-		// We will sign our JWT with our ApiKey secret
-		Key signingKey = new SecretKeySpec(jwtAuthenticationProperties.getSecret().getBytes(StandardCharsets.UTF_8),
-				signatureAlgorithm.getJcaName());
 
 		long startTime = System.currentTimeMillis();
 
-		claims = Jwts.parser().setSigningKey(signingKey).requireIssuer(jwtAuthenticationProperties.getIssuer())
-				.parseClaimsJws(token).getBody();
+		// New feature to support multiple consumers
+		Claims claims = parseJwtKeyPairs(token);
+
+		// Old feature to support single consumer
+		if (claims == null && StringUtils.isNotBlank(jwtAuthenticationProperties.getIssuer())
+				&& StringUtils.isNotBlank(jwtAuthenticationProperties.getSecret())) {
+			// We will sign our JWT with our ApiKey secret
+			final Key signingKey = createSigningKey(jwtAuthenticationProperties.getSecret());
+
+			claims = Jwts.parser().setSigningKey(signingKey).requireIssuer(jwtAuthenticationProperties.getIssuer())
+					.parseClaimsJws(token).getBody();
+		}
 
 		final long elapsedTime = System.currentTimeMillis() - startTime;
 
 		LOGGER.debug("Time elapsed to parse JWT token {}{}{}", "[", elapsedTime / NUMBER_OF_MILLIS_N_A_SECOND,
 				" secs]");
 
-		return getPersonFrom(claims);
+		if (claims != null) {
+			return getPersonFrom(claims);
+		} else {
+			return null;
+		}
+	}
 
+	/**
+	 * Parses the JWT key pairs.
+	 *
+	 * @param token
+	 *            the token
+	 * @param claims
+	 *            the claims
+	 * @return the claims
+	 */
+	private Claims parseJwtKeyPairs(final String token) {
+		
+		Claims claims = null;
+		final List<JwtKeyPairs> jwtKeyPairs = jwtAuthenticationProperties.getKeyPairs();
+		if (jwtKeyPairs != null && !jwtKeyPairs.isEmpty()) {
+			for (int i = 0; i < jwtKeyPairs.size(); i++) {
+				final JwtKeyPairs jwtKeyPair = jwtKeyPairs.get(i);
+				// We will sign our JWT with our ApiKey secret
+				Key signingKey = createSigningKey(jwtKeyPair.getSecret());
+				try {
+					claims = Jwts.parser().setSigningKey(signingKey).requireIssuer(jwtKeyPair.getIssuer())
+							.parseClaimsJws(token).getBody();
+					LOGGER.debug("claims {}", claims);
+				} catch (final Exception e) {
+					LOGGER.error("Exception parsing JWT token {}", e);
+					if (i == jwtKeyPairs.size() - 1) {
+						LOGGER.error("Rethrowing Error");
+						throw e;
+					} else {
+						LOGGER.warn("Trying next JWT Key Pair");
+					}
+				} // end catch
+				if (claims != null) {
+					break;
+				}
+			}
+		}
+		return claims;
+	}
+
+	/**
+	 * Creates the signing key.
+	 *
+	 * @param secret
+	 *            the secret
+	 * @return the key
+	 */
+	private Key createSigningKey(final String secret) {
+		// The JWT signature algorithm we will be using to sign the token
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		return new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), signatureAlgorithm.getJcaName());
 	}
 
 	/**
@@ -97,8 +157,8 @@ public class JwtParser {
 			List<String> list = (List<String>) claims.get("correlationIds");
 			CorrelationIdsParser.parseCorrelationIds(list, personTraits);
 
-		} catch (Exception e) { // NOSONAR intentionally wide, errors are
-								// already logged
+		} catch (final Exception e) { // NOSONAR intentionally wide, errors are
+			// already logged
 			// if there is any detected issue with the correlation ids
 			personTraits = null;
 		}
