@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>bip-framework-reactor</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<groupId>gov.va.bip.framework</groupId>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
