@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
+import gov.va.bip.framework.exception.BipException;
 import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.exception.BipPartnerException;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
@@ -472,6 +473,7 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 	private ResponseEntity<Object> jsonExceptionHandler(
 			final HttpMessageConversionException httpHttpMessageConversionException) {
 		String jsonOriginalMessage = StringUtils.EMPTY;
+		String messageKey = MessageKeys.NO_KEY.getKey();
 		final Throwable mostSpecificCause = httpHttpMessageConversionException.getMostSpecificCause();
 		if (mostSpecificCause instanceof JsonParseException) {
 			JsonParseException jpe = (JsonParseException) mostSpecificCause;
@@ -479,10 +481,19 @@ public class BipRestGlobalExceptionHandler extends BaseHttpProviderPointcuts {
 		} else if (mostSpecificCause instanceof JsonMappingException) {
 			JsonMappingException jme = (JsonMappingException) mostSpecificCause;
 			jsonOriginalMessage = jme.getOriginalMessage();
+		} else if (mostSpecificCause instanceof BipRuntimeException) {
+			BipRuntimeException bipRuntimeException = (BipRuntimeException) mostSpecificCause;
+			messageKey = bipRuntimeException.getExceptionData().getKey();
+			jsonOriginalMessage = bipRuntimeException.getMessage();
+		} else if (mostSpecificCause instanceof BipException) {
+			BipException bipException = (BipException) mostSpecificCause;
+			messageKey = bipException.getExceptionData().getKey();
+			jsonOriginalMessage = bipException.getMessage();
 		}
+		
 		if (!StringUtils.isEmpty(jsonOriginalMessage)) {
 			final ProviderResponse apiError = new ProviderResponse();
-			apiError.addMessage(MessageSeverity.ERROR, MessageKeys.NO_KEY.getKey(),
+			apiError.addMessage(MessageSeverity.ERROR, messageKey,
 					jsonOriginalMessage, HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<>(apiError, HttpHeadersUtil.buildHttpHeadersForError(), HttpStatus.BAD_REQUEST);
 
