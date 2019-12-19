@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
+import gov.va.bip.framework.audit.model.MessageAuditData;
 import gov.va.bip.framework.audit.model.RequestAuditData;
 import gov.va.bip.framework.audit.model.ResponseAuditData;
 import gov.va.bip.framework.constants.BipConstants;
@@ -63,6 +64,22 @@ public class BaseAsyncAudit {
 	 */
 	public AuditLogSerializer getAsyncLogger() {
 		return auditLogSerializer;
+	}
+	
+	/**
+	 * Write any kind of message object list to the audit logs.
+	 *
+	 * @param request - the list of request objects
+	 * @param messageAuditData - the {@link AuditableData} container to put the message in
+	 * @param auditEventData - the audit meta-data for the event
+	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
+	 * @param t - a throwable, if relevant (may be {@code null})
+	 */
+	public void writeMessageAuditLog(final MessageAuditData messageAuditData,
+			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
+
+		getAsyncLogger().asyncAuditRequestResponseData(auditEventData, messageAuditData, auditDataclass,
+				severity, t);
 	}
 
 	/**
