@@ -64,11 +64,13 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.va.bip.framework.AbstractBaseLogTester;
+import gov.va.bip.framework.exception.BipException;
 import gov.va.bip.framework.exception.BipExceptionData;
 import gov.va.bip.framework.exception.BipPartnerException;
 import gov.va.bip.framework.exception.BipPartnerRuntimeException;
@@ -81,6 +83,7 @@ import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
 import gov.va.bip.framework.shared.sanitize.SanitizerException;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration
@@ -140,16 +143,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void logSeverityNullTest()
-			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
-				MessageSeverity.class, HttpStatus.class, String[].class);
+	public void logSeverityNullTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class,
+				MessageKey.class, MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
 
 		/* debug, null severity, status */
-		logMethod.invoke(bipRestGlobalExceptionHandler,
-				new Exception(TEST_MESSAGE), TEST_KEY, (MessageSeverity) null, HttpStatus.ACCEPTED, params);
+		logMethod.invoke(bipRestGlobalExceptionHandler, new Exception(TEST_MESSAGE), TEST_KEY, (MessageSeverity) null,
+				HttpStatus.ACCEPTED, params);
 		verify(mockAppender).doAppend(captorLoggingEvent.capture());
 		ch.qos.logback.classic.spi.LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 		assertTrue("INFO".equals(loggingEvent.getLevel().toString()));
@@ -157,15 +159,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void logInfoTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
-				MessageSeverity.class, HttpStatus.class, String[].class);
+	public void logInfoTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class,
+				MessageKey.class, MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
 
 		/* info, severity, status */
-		logMethod.invoke(bipRestGlobalExceptionHandler,
-				new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.INFO, HttpStatus.ACCEPTED, params);
+		logMethod.invoke(bipRestGlobalExceptionHandler, new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.INFO,
+				HttpStatus.ACCEPTED, params);
 		verify(mockAppender).doAppend(captorLoggingEvent.capture());
 		ch.qos.logback.classic.spi.LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 		assertTrue("INFO".equals(loggingEvent.getLevel().toString()));
@@ -173,15 +175,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void logDebugTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
-				MessageSeverity.class, HttpStatus.class, String[].class);
+	public void logDebugTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class,
+				MessageKey.class, MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
 
 		/* info, severity, status */
-		logMethod.invoke(bipRestGlobalExceptionHandler,
-				new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.DEBUG, HttpStatus.ACCEPTED, params);
+		logMethod.invoke(bipRestGlobalExceptionHandler, new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.DEBUG,
+				HttpStatus.ACCEPTED, params);
 		verify(mockAppender).doAppend(captorLoggingEvent.capture());
 		ch.qos.logback.classic.spi.LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 		assertTrue("DEBUG".equals(loggingEvent.getLevel().toString()));
@@ -189,15 +191,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void logWarnTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
-				MessageSeverity.class, HttpStatus.class, String[].class);
+	public void logWarnTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class,
+				MessageKey.class, MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
 
 		/* warn, severity, status */
-		logMethod.invoke(bipRestGlobalExceptionHandler,
-				new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.WARN, HttpStatus.ACCEPTED, params);
+		logMethod.invoke(bipRestGlobalExceptionHandler, new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.WARN,
+				HttpStatus.ACCEPTED, params);
 		verify(mockAppender).doAppend(captorLoggingEvent.capture());
 		ch.qos.logback.classic.spi.LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 		assertTrue("WARN".equals(loggingEvent.getLevel().toString()));
@@ -205,16 +207,15 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void logErrorNoStatusTest()
-			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class, MessageKey.class,
-				MessageSeverity.class, HttpStatus.class, String[].class);
+	public void logErrorNoStatusTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		Method logMethod = bipRestGlobalExceptionHandler.getClass().getDeclaredMethod("log", Exception.class,
+				MessageKey.class, MessageSeverity.class, HttpStatus.class, String[].class);
 		logMethod.setAccessible(true);
 
 		/* error, severity, no status */
-		logMethod.invoke(bipRestGlobalExceptionHandler,
-				new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.ERROR, HttpStatus.ACCEPTED, params);
+		logMethod.invoke(bipRestGlobalExceptionHandler, new Exception(TEST_MESSAGE), TEST_KEY, MessageSeverity.ERROR,
+				HttpStatus.ACCEPTED, params);
 		verify(mockAppender).doAppend(captorLoggingEvent.capture());
 		ch.qos.logback.classic.spi.LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 		assertTrue("ERROR".equals(loggingEvent.getLevel().toString()));
@@ -223,7 +224,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	@Test
 	public void deriveMessageTests() {
 		// null exception
-		String returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", (Exception) null);
+		String returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage",
+				(Exception) null);
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 
 		// exception without cause
@@ -237,23 +239,26 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 		// exception with message; cause that has a message
 		Exception cause = new IllegalStateException(TEST_MESSAGE);
-		returnValue =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(TEST_MESSAGE, cause));
+		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage",
+				new Exception(TEST_MESSAGE, cause));
 		assertTrue(returnValue.contains(TEST_MESSAGE));
 
 		// exception with blank space message; cause that has a message
 		cause = new IllegalStateException(TEST_MESSAGE);
-		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception("  ", cause));
+		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage",
+				new Exception("  ", cause));
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 
 		// exception without message; cause that has a message
 		cause = new IllegalStateException(TEST_MESSAGE);
-		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(cause));
+		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage",
+				new Exception(cause));
 		assertTrue(returnValue.contains(TEST_MESSAGE));
 
 		// exception without message; cause that does not have a message
 		cause = new IllegalStateException("");
-		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage", new Exception(cause));
+		returnValue = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "deriveMessage",
+				new Exception(cause));
 		assertTrue(returnValue.contains(BipRestGlobalExceptionHandler.NO_EXCEPTION_MESSAGE));
 	}
 
@@ -275,8 +280,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		MethodArgumentNotValidException ex = new MethodArgumentNotValidException(parameter, bindingResult);
 
 		List<FieldError> fieldErrors = new LinkedList<>();
-		FieldError fe = new FieldError("test object name", "test field", "test rejected value", true, new String[] { "test code" },
-				new Object[] { "test argument" }, "test default message");
+		FieldError fe = new FieldError("test object name", "test field", "test rejected value", true,
+				new String[] { "test code" }, new Object[] { "test argument" }, "test default message");
 		fieldErrors.add(fe);
 
 		when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
@@ -287,9 +292,10 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		objectErrors.add(oe);
 
 		when(bindingResult.getGlobalErrors()).thenReturn(objectErrors);
-		AnnotationConfigApplicationContext annotationConfigApplicationContext =
-				new AnnotationConfigApplicationContext(TestConfigurationForAuditHttpServletResponseBean.class);
-		BipRestGlobalExceptionHandler brgeh = annotationConfigApplicationContext.getBean(BipRestGlobalExceptionHandler.class);
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(
+				TestConfigurationForAuditHttpServletResponseBean.class);
+		BipRestGlobalExceptionHandler brgeh = annotationConfigApplicationContext
+				.getBean(BipRestGlobalExceptionHandler.class);
 
 		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
@@ -338,8 +344,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		} catch (SecurityException e) {
 			fail("Error mocking the parameter");
 		}
-		MethodArgumentTypeMismatchException ex = new MethodArgumentTypeMismatchException("test value", String.class, "test name",
-				parameter, new Exception("test wrapped message"));
+		MethodArgumentTypeMismatchException ex = new MethodArgumentTypeMismatchException("test value", String.class,
+				"test name", parameter, new Exception("test wrapped message"));
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMethodArgumentTypeMismatch(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
@@ -349,8 +355,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated dummyObject =
-				new BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated();
+		BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated dummyObject = new BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated();
 		dummyObject.dummyField = "";
 
 		Set<? extends ConstraintViolation<?>> constaintViolations = validator.validate(dummyObject, Default.class);
@@ -365,8 +370,7 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated dummyObject =
-				new BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated();
+		BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated dummyObject = new BipRestGlobalExceptionHandlerTest.DummyObjectToBeValidated();
 		dummyObject.dummyField = "";
 
 		Set<? extends ConstraintViolation<?>> constaintViolations = validator.validate(dummyObject, Default.class);
@@ -380,8 +384,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	public void handleHttpMessageNotReadableExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
-		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new Exception("wrapped message"), new HttpInputMessage() {
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("test msg",
+				new Exception("wrapped message"), new HttpInputMessage() {
 
 					@Override
 					public HttpHeaders getHeaders() {
@@ -404,8 +408,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	public void handleHttpMessageNotWritableExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
-		HttpMessageNotWritableException ex =
-				new HttpMessageNotWritableException("test msg", new Exception("wrapped message"));
+		HttpMessageNotWritableException ex = new HttpMessageNotWritableException("test msg",
+				new Exception("wrapped message"));
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
@@ -415,22 +419,21 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	public void handleHttpMessageNotReadableJsonParseExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
-		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg", new JsonParseException(null, "wrapped json parse exception message"),
-						new HttpInputMessage() {
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("test msg",
+				new JsonParseException(null, "wrapped json parse exception message"), new HttpInputMessage() {
 
-							@Override
-							public HttpHeaders getHeaders() {
-								HttpHeaders headers = new HttpHeaders();
-								headers.setContentType(MediaType.TEXT_PLAIN);
-								return headers;
-							}
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
 
-							@Override
-							public InputStream getBody() throws IOException {
-								return new ByteArrayInputStream("test body".getBytes());
-							}
-						});
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
@@ -448,22 +451,21 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	public void handleHttpMessageNotReadableJsonMappingExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
-		HttpMessageNotReadableException ex =
-				new HttpMessageNotReadableException("test msg",
-						new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("test msg",
+				new JsonMappingException(null, "wrapped json mapping exception message"), new HttpInputMessage() {
 
-							@Override
-							public HttpHeaders getHeaders() {
-								HttpHeaders headers = new HttpHeaders();
-								headers.setContentType(MediaType.TEXT_PLAIN);
-								return headers;
-							}
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
 
-							@Override
-							public InputStream getBody() throws IOException {
-								return new ByteArrayInputStream("test body".getBytes());
-							}
-						});
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
 
 		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
@@ -476,15 +478,87 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 			fail("Error processing the response body");
 		}
 	}
+
+	@Test
+	public void handleBipRuntimeExceptionJsonMappingExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		BipRuntimeException bipRuntimeException = new BipRuntimeException(MessageKeys.NO_KEY, MessageSeverity.ERROR,
+				HttpStatus.BAD_REQUEST, StringUtils.EMPTY);
+
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("test msg", JsonMappingException
+				.from(mock(JsonParser.class), "wrapped json mapping exception message", bipRuntimeException),
+				new HttpInputMessage() {
+
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
+
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains(MessageKeys.NO_KEY.getMessage(StringUtils.EMPTY)));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
+	}
 	
+	@Test
+	public void handleBipExceptionJsonMappingExceptionTest() {
+		HttpServletRequest req = mock(HttpServletRequest.class);
+
+		BipException bipException = new BipException(MessageKeys.NO_KEY, MessageSeverity.ERROR,
+				HttpStatus.BAD_REQUEST, StringUtils.EMPTY);
+
+		HttpMessageNotReadableException ex = new HttpMessageNotReadableException("test msg", JsonMappingException
+				.from(mock(JsonParser.class), "wrapped json mapping exception message", bipException),
+				new HttpInputMessage() {
+
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;
+					}
+
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("test body".getBytes());
+					}
+				});
+
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleHttpMessageConversionException(req, ex);
+		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+		assertTrue(response.getBody() instanceof ProviderResponse);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String responseBody = objectMapper.writeValueAsString(response.getBody());
+			assertTrue(responseBody.contains(MessageKeys.NO_KEY.getMessage(StringUtils.EMPTY)));
+		} catch (JsonProcessingException e) {
+			fail("Error processing the response body");
+		}
+	}
+
 	@Test
 	public void handleMissingServletRequestPartExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 
-		MissingServletRequestPartException ex =
-				new MissingServletRequestPartException("file");
+		MissingServletRequestPartException ex = new MissingServletRequestPartException("file");
 
-		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMissingServletRequestPartException(req, ex);
+		ResponseEntity<Object> response = bipRestGlobalExceptionHandler.handleMissingServletRequestPartException(req,
+				ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
@@ -495,8 +569,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		headers.setContentType(MediaType.TEXT_PLAIN);
 		NoHandlerFoundException ex = new NoHandlerFoundException("test msg", "wrapped message", headers);
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleNoHandlerFoundException", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleNoHandlerFoundException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.NOT_FOUND));
 	}
 
@@ -506,10 +580,11 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.TEXT_PLAIN);
 		List<String> suppotedMethods = Arrays.asList(new String[] { "GET" });
-		HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("test method name", suppotedMethods);
+		HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("test method name",
+				suppotedMethods);
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleHttpRequestMethodNotSupported", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleHttpRequestMethodNotSupported", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.METHOD_NOT_ALLOWED));
 	}
 
@@ -521,10 +596,11 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		Arrays.asList(new String[] { "supported method1" });
 		List<MediaType> supportedMediatypes = new LinkedList<>();
 		supportedMediatypes.add(MediaType.TEXT_HTML);
-		HttpMediaTypeNotSupportedException ex = new HttpMediaTypeNotSupportedException(MediaType.TEXT_PLAIN, supportedMediatypes);
+		HttpMediaTypeNotSupportedException ex = new HttpMediaTypeNotSupportedException(MediaType.TEXT_PLAIN,
+				supportedMediatypes);
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleHttpMediaTypeNotSupported", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleHttpMediaTypeNotSupported", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
 	}
 
@@ -533,8 +609,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		SanitizerException ex = new SanitizerException("test", new Exception("test exception"));
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleSanitizerException", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleSanitizerException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
@@ -543,8 +619,8 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		BipRuntimeException ex = new BipRuntimeException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleBipRuntimeException", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleBipRuntimeException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
@@ -559,38 +635,42 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 
 	@Test
 	public void failSafeHandlerTest() {
-		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "failSafeHandler");
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"failSafeHandler");
 		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	@Test
 	public void standardHandlerWithNullExceptionTest() {
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "standardHandler", null, HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"standardHandler", null, HttpStatus.BAD_REQUEST);
 		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	@Test
 	public void standardHandlerWithNullMessagekeyTest()
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		BipRuntimeException ex = new BipRuntimeException(MessageKeys.NO_KEY, MessageSeverity.DEBUG, HttpStatus.BAD_REQUEST);
+		BipRuntimeException ex = new BipRuntimeException(MessageKeys.NO_KEY, MessageSeverity.DEBUG,
+				HttpStatus.BAD_REQUEST);
 		Field exceptionData = ex.getClass().getDeclaredField("exceptionData");
 		exceptionData.setAccessible(true);
-		exceptionData.set(ex, new BipExceptionData((MessageKey) null, ((BipExceptionData) exceptionData.get(ex)).getSeverity(),
-				((BipExceptionData) exceptionData.get(ex)).getStatus(), ((BipExceptionData) exceptionData.get(ex)).getParams()));
+		exceptionData.set(ex,
+				new BipExceptionData((MessageKey) null, ((BipExceptionData) exceptionData.get(ex)).getSeverity(),
+						((BipExceptionData) exceptionData.get(ex)).getStatus(),
+						((BipExceptionData) exceptionData.get(ex)).getParams()));
 
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "standardHandler", ex, HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"standardHandler", ex, HttpStatus.BAD_REQUEST);
 		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	@Test
 	public void handleBipPartnerRuntimeExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
-		BipPartnerRuntimeException ex =
-				new BipPartnerRuntimeException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleBipPartnerRuntimeException", req, ex);
+		BipPartnerRuntimeException ex = new BipPartnerRuntimeException(TEST_KEY, MessageSeverity.ERROR,
+				HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleBipPartnerRuntimeException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
@@ -598,33 +678,32 @@ public class BipRestGlobalExceptionHandlerTest extends AbstractBaseLogTester {
 	public void handleBipPartnerCheckedExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		BipPartnerException ex = new BipPartnerException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleBipPartnerCheckedException", req, ex);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleBipPartnerCheckedException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
-	
+
 	@Test
 	public void handleJwtAuthenticationExceptionTest() {
 		HttpServletRequest req = mock(HttpServletRequest.class);
-		JwtAuthenticationException ex = new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR, HttpStatus.BAD_REQUEST);
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "handleJwtAuthenticationException", req, ex);
+		JwtAuthenticationException ex = new JwtAuthenticationException(TEST_KEY, MessageSeverity.ERROR,
+				HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"handleJwtAuthenticationException", req, ex);
 		assertTrue(response.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 	}
 
 	@Test
 	public void standardHandlerWithWarnTest() {
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "standardHandler", new Exception(),
-						TEST_KEY, MessageSeverity.WARN, HttpStatus.OK, null);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"standardHandler", new Exception(), TEST_KEY, MessageSeverity.WARN, HttpStatus.OK, null);
 		assertTrue(response.getStatusCode().equals(HttpStatus.OK));
 	}
 
 	@Test
 	public void standardHandlerWithNullException2Test() {
-		ResponseEntity<Object> response =
-				ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler, "standardHandler", null,
-						TEST_KEY, MessageSeverity.WARN, HttpStatus.OK, null);
+		ResponseEntity<Object> response = ReflectionTestUtils.invokeMethod(bipRestGlobalExceptionHandler,
+				"standardHandler", null, TEST_KEY, MessageSeverity.WARN, HttpStatus.OK, null);
 		assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
