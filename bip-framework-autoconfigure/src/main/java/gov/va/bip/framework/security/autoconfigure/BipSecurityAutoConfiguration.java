@@ -1,5 +1,6 @@
 package gov.va.bip.framework.security.autoconfigure;
 
+import org.openpolicyagent.voter.OPAVoter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -7,14 +8,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -31,6 +38,9 @@ import gov.va.bip.framework.security.jwt.JwtParser;
 import gov.va.bip.framework.security.jwt.JwtTokenService;
 import gov.va.bip.framework.security.jwt.TokenResource;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Autoconfiguration for various authentication types on the Platform (basic auth, JWT)
  */
@@ -44,7 +54,7 @@ public class BipSecurityAutoConfiguration {
 	 */
 	@Configuration
 	@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", matchIfMissing = true)
-	@Order(JwtAuthenticationProperties.AUTH_ORDER)
+	@Order(1)
 	protected static class JwtWebSecurityConfigurerAdapter
 	extends WebSecurityConfigurerAdapter {
 		@Autowired
@@ -53,16 +63,24 @@ public class BipSecurityAutoConfiguration {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests()
-			.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
+			.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated().accessDecisionManager(accessDecisionManager())
 			.and()
 			.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
 			.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and().csrf().disable();
+			
 			http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 			http.headers().cacheControl();
-
-		}
+        }
+        
+        @Bean
+        public AccessDecisionManager accessDecisionManager() {
+            List<AccessDecisionVoter<? extends Object>> decisionVoters = Arrays
+                    .asList(new OPAVoter("http://localhost:8181/v1/data/http/authz/allow"));
+            return new UnanimousBased(decisionVoters);
+        }
+        
 
 		@Bean
 		protected AuthenticationEntryPoint authenticationEntryPoint() {
@@ -79,37 +97,18 @@ public class BipSecurityAutoConfiguration {
 			return new JwtAuthenticationSuccessHandler();
 		}
 
-		@Bean
+		
 		protected JwtAuthenticationFilter jwtAuthenticationFilter() {
 			return new JwtAuthenticationFilter(jwtAuthenticationProperties, jwtAuthenticationSuccessHandler(),
-					jwtAuthenticationProvider());
+					jwtAuthenticationProvider(), authenticationEntryPoint());
 		}
 	}
-
-	/**
-	 * Adapter that only processes URLs specified in the filter
-	 */
-	@Configuration
-	@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", havingValue = "false")
-	@Order(JwtAuthenticationProperties.AUTH_ORDER)
-	protected static class JwtNoWebSecurityConfigurerAdapter
-	extends WebSecurityConfigurerAdapter {
-
-		@Autowired
-		private JwtAuthenticationProperties jwtAuthenticationProperties;
-
-		@Override
-		public void configure(WebSecurity web) {
-			web.ignoring().antMatchers(jwtAuthenticationProperties.getFilterProcessUrls());
-		}
-
-	}
-
+	
 	/**
 	 * Adapter that only excludes specified URLs
 	 */
 	@Configuration
-	@Order(JwtAuthenticationProperties.NO_AUTH_ORDER)
+	@Order(2147483641)
 	protected static class NoWebSecurityConfigurerAdapter
 	extends WebSecurityConfigurerAdapter {
 
