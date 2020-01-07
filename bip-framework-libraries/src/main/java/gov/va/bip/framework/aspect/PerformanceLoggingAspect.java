@@ -56,19 +56,18 @@ public class PerformanceLoggingAspect {
 	}
 
 	/**
-	 *
 	 * This method should only be invoked from {@code @Aspect} annotated
 	 * classes, and only from {@code @Around} advice.
-	 *
+	 * 
 	 * Developers note: this class cannot be converted to use {@code @Before}
 	 * and {@code @After} advice. It would be necessary to maintain state
 	 * between the advice calls for the startMillis value. Spring can only
 	 * maintain threadsafety if injected (state) values are proxied, and a Long
 	 * is not proxied.
 	 *
-	 * @param joinPoint
-	 * @return
-	 * @throws Throwable
+	 * @param joinPoint the join point
+	 * @return the object
+	 * @throws Throwable the throwable
 	 */
 	public static final Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 

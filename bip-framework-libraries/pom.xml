@@ -120,7 +120,17 @@
 			<groupId>com.github.lalyos</groupId>
 			<artifactId>jfiglet</artifactId>
 		</dependency>
-
+		<!-- auto-service Provider-configuration files for ServiceLoader -->
+		<dependency>
+		    <groupId>com.google.auto.service</groupId>
+		    <artifactId>auto-service</artifactId>
+		    <optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.testing.compile</groupId>
+  			<artifactId>compile-testing</artifactId>
+  			<scope>test</scope>
+		</dependency>
 		<!-- Provided Dependencies -->
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>

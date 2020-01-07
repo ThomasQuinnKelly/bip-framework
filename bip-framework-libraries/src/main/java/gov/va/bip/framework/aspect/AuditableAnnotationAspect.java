@@ -1,6 +1,7 @@
 package gov.va.bip.framework.aspect;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,10 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParseException;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpStatus;
 
 import gov.va.bip.framework.audit.AuditEventData;
@@ -89,11 +94,13 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 			auditableAnnotation = method.getAnnotation(Auditable.class);
 			LOGGER.debug(AUDIT_DEBUG_PREFIX_ANNOTATION, auditableAnnotation);
 			if (auditableAnnotation != null) {
+				String auditDate = processAuditDate(auditableAnnotation);
 				auditEventData =
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
-								StringUtils.isBlank(auditableAnnotation.auditClass()) ? className : auditableAnnotation.auditClass());
+								StringUtils.isBlank(auditableAnnotation.auditClass()) ? className : auditableAnnotation.auditClass(),
+										auditDate);
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());
-				
+
 				final RequestAuditData requestAuditData = new RequestAuditData();
 				requestAuditData.setRequest(request);
 
@@ -127,17 +134,19 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 		AuditEventData auditEventData = null;
 
 		try {
-			final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-			LOGGER.debug(AUDIT_DEBUG_PREFIX_METHOD, method);
-			final String className = method.getDeclaringClass().getName();
-			LOGGER.debug(AUDIT_DEBUG_PREFIX_CLASS, className);
-			auditableAnnotation = method.getAnnotation(Auditable.class);
+			final Method afterReturningMethod = ((MethodSignature) joinPoint.getSignature()).getMethod();
+			LOGGER.debug(AUDIT_DEBUG_PREFIX_METHOD, afterReturningMethod);
+			final String declaringClassName = afterReturningMethod.getDeclaringClass().getName();
+			LOGGER.debug(AUDIT_DEBUG_PREFIX_CLASS, declaringClassName);
+			auditableAnnotation = afterReturningMethod.getAnnotation(Auditable.class);
 			LOGGER.debug(AUDIT_DEBUG_PREFIX_ANNOTATION, auditableAnnotation);
 
 			if (auditableAnnotation != null) {
+				String auditDate = processAuditDate(auditableAnnotation);
 				auditEventData =
 						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(),
-								StringUtils.isBlank(auditableAnnotation.auditClass()) ? className : auditableAnnotation.auditClass());
+								StringUtils.isBlank(auditableAnnotation.auditClass()) ? declaringClassName : auditableAnnotation.auditClass(),
+										auditDate);
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());
 
 				baseAsyncAudit.writeResponseAuditLog(response, new ResponseAuditData(), auditEventData, null, null);
@@ -157,9 +166,9 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 	 * it has been decided to allow method exceptions to flow through the aspect
 	 * as-is.
 	 *
-	 * @param joinPoint
-	 * @param response
-	 * @throws Throwable
+	 * @param joinPoint the join point
+	 * @param throwable the throwable
+	 * @throws Throwable the throwable
 	 */
 	@AfterThrowing(pointcut = "auditableExecution()", throwing = "throwable")
 	public void auditAnnotationAfterThrowing(final JoinPoint joinPoint, final Throwable throwable) throws Throwable { // NOSONAR Have to define generic Throwable exception
@@ -176,11 +185,13 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 			LOGGER.debug(AUDIT_DEBUG_PREFIX_ANNOTATION, auditableAnnotation);
 
 			if (auditableAnnotation != null) {
+				String auditDate = processAuditDate(auditableAnnotation);
 				String auditedClass = StringUtils.isBlank(auditableAnnotation.auditClass())
 						? className
 								: auditableAnnotation.auditClass();
 				auditEventData =
-						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(), auditedClass);
+						new AuditEventData(auditableAnnotation.event(), auditableAnnotation.activity(), auditedClass,
+								auditDate);
 				LOGGER.debug(AUDIT_DEBUG_PREFIX_EVENT, auditEventData.toString());
 
 				baseAsyncAudit.writeResponseAuditLog("An exception occurred in " + auditedClass + ".", new ResponseAuditData(),
@@ -194,5 +205,31 @@ public class AuditableAnnotationAspect extends BaseHttpProviderPointcuts {
 		}
 
 		throw throwable;
+	}
+
+	/**
+	 * Process audit date.
+	 *
+	 * @param auditableAnnotation the auditable annotation
+	 * @return the string
+	 */
+	private String processAuditDate(final Auditable auditableAnnotation) {
+		String processedAuditDate = StringUtils.EMPTY;
+		if (StringUtils.isNotBlank(auditableAnnotation.auditDate())) {
+			try {
+				processedAuditDate = auditableAnnotation.auditDate();
+				final ExpressionParser expressionParser = new SpelExpressionParser();
+				final Expression expression = expressionParser.parseExpression(auditableAnnotation.auditDate());
+				Object parsedSpel = expression.getValue();
+				if (parsedSpel instanceof String) {
+					processedAuditDate = (String) parsedSpel;
+				} else if (parsedSpel instanceof ArrayList) {
+					processedAuditDate = (String) ((ArrayList<?>) parsedSpel).get(0);
+				}
+			}catch (ParseException e) {
+				LOGGER.error("ParseException for @Auditable annotation, auditDate attribute {}", e);
+			}
+		}
+		return processedAuditDate;
 	}
 }

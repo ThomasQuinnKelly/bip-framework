@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
  * <li>More flexible generic methods, such as {@link #mask(String, char, int, int, int)}, {@link #maskStart(String, char, int, int)}
  * and
  * {@link #maskEnd(String, char, int, int)}.
- * <li>Specific complex masking is provided by additional methods, such as {@link #maskCreditCardUSA(String)}.
  * </ul>
  * The framework team can add more masking methods to this class upon request.
  * <p>

@@ -69,11 +69,11 @@ public class BaseAsyncAudit {
 	/**
 	 * Write any kind of message object list to the audit logs.
 	 *
-	 * @param request - the list of request objects
 	 * @param messageAuditData - the {@link AuditableData} container to put the message in
 	 * @param auditEventData - the audit meta-data for the event
 	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
 	 * @param t - a throwable, if relevant (may be {@code null})
+	 * @param auditDataclass the audit dataclass
 	 */
 	public void writeMessageAuditLog(final MessageAuditData messageAuditData,
 			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
@@ -85,11 +85,11 @@ public class BaseAsyncAudit {
 	/**
 	 * Write any kind of request object list to the audit logs.
 	 *
-	 * @param request - the list of request objects
 	 * @param requestAuditData - the {@link AuditableData} container to put the request in
 	 * @param auditEventData - the audit meta-data for the event
 	 * @param severity - the Message Severity, if {@code null} then MessageSeverity.INFO is used
 	 * @param t - a throwable, if relevant (may be {@code null})
+	 * @param auditDataclass the audit dataclass
 	 */
 	public void writeRequestAuditLog(final RequestAuditData requestAuditData,
 			final AuditEventData auditEventData, final MessageSeverity severity, final Throwable t, final Class<?> auditDataclass) {
