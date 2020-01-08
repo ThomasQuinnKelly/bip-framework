@@ -51,8 +51,6 @@ public class BipSwaggerAutoConfiguration {
 	@Autowired
 	private SwaggerProperties swaggerProperties;
 
-	@Autowired
-	private TypeResolver typeResolver;
 
 	/**
 	 * Category api.
@@ -68,7 +66,7 @@ public class BipSwaggerAutoConfiguration {
 				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
 				.build()
 				.ignoredParameterTypes(ApiIgnore.class)
-				.additionalModels(typeResolver.resolve(ProviderResponse.class))
+				.additionalModels(new TypeResolver().resolve(ProviderResponse.class))
 				.globalResponseMessage(RequestMethod.GET, globalResponseMessages())
 				.globalResponseMessage(RequestMethod.PUT, globalResponseMessages())
 				.globalResponseMessage(RequestMethod.POST, globalResponseMessages())
