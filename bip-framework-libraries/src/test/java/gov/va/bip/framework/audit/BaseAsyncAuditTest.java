@@ -9,11 +9,15 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import gov.va.bip.framework.audit.model.MessageAuditData;
+import gov.va.bip.framework.messages.MessageSeverity;
 
 public class BaseAsyncAuditTest {
 
@@ -96,5 +100,21 @@ public class BaseAsyncAuditTest {
 		String convertedString = BaseAsyncAudit.convertBytesOfSetSizeToString(null);
 		assertEquals("", convertedString);
 
+	}
+	
+	
+	@Test
+	public void writeMessageAuditLogTest() {
+		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
+		AuditLogSerializer auditLogSerializer = new AuditLogSerializer();
+		ReflectionTestUtils.setField(auditLogSerializer, "dateFormat", "yyyy-MM-dd'T'HH:mm:ss");
+		ReflectionTestUtils.setField(baseAsyncAudit, "auditLogSerializer", auditLogSerializer);
+		baseAsyncAudit.postConstruct();
+		AuditEventData auditEventData =
+				new AuditEventData(AuditEvents.SERVICE_AUDIT, "INVOKE", this.getClass().getCanonicalName());
+		
+		final MessageAuditData messageAuditData = new 	MessageAuditData();
+		messageAuditData.setMessage(Arrays.asList("personByPid call was successful"));
+		baseAsyncAudit.writeMessageAuditLog(messageAuditData, auditEventData, MessageSeverity.INFO, null, this.getClass());
 	}
 }

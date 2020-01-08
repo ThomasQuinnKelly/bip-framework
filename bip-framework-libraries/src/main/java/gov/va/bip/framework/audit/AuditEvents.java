@@ -23,11 +23,23 @@ public enum AuditEvents {
 	API_REST_REQUEST("apiRestRequest"),
 	/** REST response event at the micro-service application's REST API */
 	API_REST_RESPONSE("apiRestResponse"),
-	/** Security interceptor or similar event */
+	/** Security intercepter or similar event */
 	SECURITY("securityAudit"),
 	/** Generic audit event from within the service business tier */
 	SERVICE_AUDIT("serviceAudit"),
-	/** An audit rquest was made, but no event type was specified */
+	/** user audit event */
+	USER_AUDIT("userAudit"),
+	/** account audit event */
+	ACCOUNT_AUDIT("accountAudit"),
+	/** document audit event */
+	DOCUMENT_AUDIT("documentAudit"),
+	/** data access audit event */
+	DATA_ACCESS_AUDIT("dataAccessAudit"),
+	/** admin audit event */
+	ADMIN_AUDIT("adminAudit"),
+	/** exception audit event */
+	EXCEPTION_AUDIT("exceptionAudit"),
+	/** An audit request was made, but no event type was specified */
 	UNKNOWN("unknown");
 
 	/** A default value that can be used for the Audit "activity" string */

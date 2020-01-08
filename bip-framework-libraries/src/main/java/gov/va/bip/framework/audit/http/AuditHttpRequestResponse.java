@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -42,6 +43,7 @@ import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.rest.provider.ProviderResponse;
 import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import gov.va.bip.framework.util.HttpHeadersUtil;
+import gov.va.bip.framework.validation.Defense;
 
 /**
  * Performs audit logging specifically for HttpServlet request/response objects.
@@ -62,6 +64,15 @@ public class AuditHttpRequestResponse {
 	public AuditHttpRequestResponse() {
 		super();
 	}
+	
+	/**
+	 * Make sure the class was initialized properly
+	 */
+	@PostConstruct
+	public void postConstruct() {
+		Defense.notNull(baseAsyncAudit);
+	}
+
 
 	/**
 	 * Provides access to audit operations related to logging the servlet Request in a fluent way.
