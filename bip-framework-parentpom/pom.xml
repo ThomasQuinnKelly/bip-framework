@@ -29,7 +29,7 @@
 		<java.version>1.8</java.version>
 
 		<!-- nexus properties -->
-		<repo.baseurl>https://nexus.dev.bip.va.gov/repository</repo.baseurl>
+		<repo.baseurl>https://nexus.dev8.bip.va.gov/repository</repo.baseurl>
 		<repo.mirror>${repo.baseurl}/maven-public</repo.mirror>
 		<repo.release>${repo.baseurl}/maven-releases</repo.release>
 		<repo.snapshot>${repo.baseurl}/maven-snapshots</repo.snapshot>
@@ -278,12 +278,24 @@
 				<artifactId>wss4j</artifactId>
 				<version>${wss4j.version}</version>
 			</dependency>
+			<dependency>
+			    <groupId>com.google.auto.service</groupId>
+			    <artifactId>auto-service</artifactId>
+			    <version>1.0-rc6</version>
+			    <optional>true</optional>
+			</dependency>
 			<!-- unit test dependencies -->
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
 				<version>${mockito-core.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.testing.compile</groupId>
+	  			<artifactId>compile-testing</artifactId>
+	  			<version>0.18</version>
+	  			<scope>test</scope>
 			</dependency>
 			<!-- Micormeter core dependecy -->
 			<dependency>

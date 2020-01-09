@@ -33,6 +33,11 @@ public final class AuditEventData {
 	private final String auditClass;
 
 	/**
+	 * The specific date being audited.
+	 */
+	private String auditDate = StringUtils.EMPTY;
+
+	/**
 	 * The user from person traits.
 	 */
 	private String user = StringUtils.EMPTY;
@@ -57,14 +62,26 @@ public final class AuditEventData {
 		if (SecurityUtils.getPersonTraits() != null) {
 			this.user = StringUtils.isBlank(SecurityUtils.getPersonTraits().getUser())
 					? UNKNOWN
-					: SecurityUtils.getPersonTraits().getUser();
+							: SecurityUtils.getPersonTraits().getUser();
 			this.tokenId = StringUtils.isBlank(SecurityUtils.getPersonTraits().getTokenId())
 					? EMPTY
-					: SecurityUtils.getPersonTraits().getTokenId();
+							: SecurityUtils.getPersonTraits().getTokenId();
 		} else {
 			this.user = UNKNOWN;
 			this.tokenId = EMPTY;
 		}
+	}
+
+	/**
+	 * Constructs a new AuditEventData object.
+	 *
+	 * @param event the event type.
+	 * @param activity the activity or method name.
+	 * @param auditClass the class name for class under audit.
+	 */
+	public AuditEventData(final AuditEvents event, final String activity, final String auditClass, final String auditDate) {
+		this(event, activity, auditClass);
+		this.auditDate = StringUtils.isBlank(auditDate) ? "" : auditDate;
 	}
 
 	/**
@@ -112,12 +129,22 @@ public final class AuditEventData {
 		return auditClass;
 	}
 
+	/**
+	 * Gets the specific date being audited.
+	 *
+	 * @return the audited specific date.
+	 */
+	public String getAuditDate() {
+		return auditDate;
+	}
+
 	@Override
 	public String toString() {
 		return "AuditEventData{" +
 				"event=" + event +
 				", activity='" + activity + '\'' +
 				", auditClass='" + auditClass + '\'' +
+				", auditDate='" + auditDate + '\'' +
 				", tokenId=" + tokenId +
 				", user=" + user +
 				'}';

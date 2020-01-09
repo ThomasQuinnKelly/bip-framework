@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -178,7 +179,7 @@ public class AuditLoggerTest {
 	public void auditInfo() throws NoSuchMethodException, SecurityException {
 		// given
 		Method method = AuditLoggerTest.class.getMethod("auditInfo", (Class<?>[]) null);
-		AuditLogger.info(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName()),
+		AuditLogger.info(new AuditEventData(AuditEvents.API_REST_REQUEST, method.getName(), method.getDeclaringClass().getName(),LocalDate.now().toString()),
 				"Audit INFO Activity Detail");
 
 		// Now verify our logging interactions

@@ -94,13 +94,14 @@ public class KeystoreUtils {
     
     /**
      * Create a KeyStore for trusted certificates based on the system truststore. The given certificate is added to the keystore as a trusted entry.
+     *
      * @param alias for the keystore entry
      * @param certificate to add to the keystore
-     * @return
-     * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws IOException
+     * @return the key store
+     * @throws KeyStoreException the key store exception
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     * @throws CertificateException the certificate exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static KeyStore createTrustStore(String alias, String certificate) throws 
     			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
@@ -110,14 +111,15 @@ public class KeystoreUtils {
     
     /**
      * Create a KeyStore for trusted certificates. The given certificate is added to the keystore as a trusted entry.
+     *
      * @param alias for the keystore entry
      * @param certificate to add to the keystore
      * @param loadSystemTrustStore should the returned KeyStore contain certificates from the system truststore?
-     * @return
-     * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws IOException
+     * @return the key store
+     * @throws KeyStoreException the key store exception
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     * @throws CertificateException the certificate exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static KeyStore createTrustStore(String alias, String certificate, boolean loadSystemTrustStore) throws 
     			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
