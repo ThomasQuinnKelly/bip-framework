@@ -202,6 +202,42 @@ public class AuditableAnnotationAspectTest {
 			fail("Exception should not be thrown");
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAuditAnnotationBeforeWithArgsAuditDateSpeLArrayListJoinPoint() {
+		when(joinPoint.getArgs()).thenReturn(new Object[] {});
+		when(joinPoint.getSignature()).thenReturn(new TestMethodSignature() {
+			@Override
+			public Method getMethod() {
+				try {
+					return AuditableAnnotationAspectTest.this.getClass().getMethod("annotatedMethodAuditDateSpeLArrayList", new Class[] { String.class });
+				} catch (NoSuchMethodException e) {
+					fail("Error mocking the join point");
+				} catch (SecurityException e) {
+					fail("Error mocking the join point");
+				}
+				return null;
+			}
+		});
+		RequestContextHolder.setRequestAttributes(attrs);
+		AuditableAnnotationAspect aspect = new AuditableAnnotationAspect();
+		AuditLogSerializer serializer = new AuditLogSerializer();
+		ReflectionTestUtils.setField(serializer, "dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		BaseAsyncAudit baseAsyncAudit = new BaseAsyncAudit();
+		ReflectionTestUtils.setField(baseAsyncAudit, "auditLogSerializer", serializer);
+		ReflectionTestUtils.setField(aspect, "baseAsyncAudit", baseAsyncAudit);
+		try {
+			aspect.auditAnnotationBefore(joinPoint);
+			verify(mockAppender, Mockito.times(5)).doAppend(captorLoggingEvent.capture());
+			final List<ch.qos.logback.classic.spi.LoggingEvent> loggingEvents = captorLoggingEvent.getAllValues();
+			assertNotNull(loggingEvents);
+			assertTrue(loggingEvents.size() > 0);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			fail("Exception should not be thrown");
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -332,8 +368,13 @@ public class AuditableAnnotationAspectTest {
 		}
 	}
 
-	@Auditable(event = AuditEvents.API_REST_REQUEST, activity = "testActivity")
+	@Auditable(event = AuditEvents.API_REST_REQUEST, activity = "testActivity", auditDate = "T(java.time.LocalDateTime).now().toString()")
 	public void annotatedMethod(final String parameter) {
+
+	}
+	
+	@Auditable(event = AuditEvents.API_REST_REQUEST, activity = "testActivity", auditDate = "{new java.text.SimpleDateFormat().format(new java.util.Date())}")
+	public void annotatedMethodAuditDateSpeLArrayList(final String parameter) {
 
 	}
 
