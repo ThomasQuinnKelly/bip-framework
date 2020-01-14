@@ -2,7 +2,10 @@ package gov.va.bip.framework.rest.exception;
 
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,9 +38,36 @@ public class BasicErrorControllerTest {
 	}
 
 	@Test
-	public void testBasicErrorController() throws Exception{
+	public void testBasicErrorControllerPost() throws Exception{
 
 		this.mockMvc.perform(post("/error")
+				.accept(MediaType.parseMediaType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
+	}
+	
+	@Test
+	public void testBasicErrorControllerPut() throws Exception{
+
+		this.mockMvc.perform(put("/error")
+				.accept(MediaType.parseMediaType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
+	}
+	
+	@Test
+	public void testBasicErrorControllerPatch() throws Exception{
+
+		this.mockMvc.perform(patch("/error")
+				.accept(MediaType.parseMediaType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
+	}
+	
+	@Test
+	public void testBasicErrorControllerDelete() throws Exception{
+
+		this.mockMvc.perform(delete("/error")
 				.accept(MediaType.parseMediaType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE));
