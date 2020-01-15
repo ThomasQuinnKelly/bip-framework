@@ -11,11 +11,12 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.security.jwt.JwtTokenService;
 
 /**
- * An implementation of {@link RequestInterceptor} that adds the JWT token
- * from the originating request, and adds it to the outgoing request. No changes are
+ * An implementation of {@link RequestInterceptor} that adds the JWT token from
+ * the originating request, and adds it to the outgoing request. No changes are
  * made to the response.
  * <p>
- * Use this class when making feign assisted (e.g. {@code @EnableFeignClients}) inter-=service REST calls that require PersonTraits.
+ * Use this class when making feign assisted (e.g. {@code @EnableFeignClients})
+ * inter-=service REST calls that require PersonTraits.
  */
 public class TokenFeignRequestInterceptor implements RequestInterceptor {
 
@@ -24,9 +25,16 @@ public class TokenFeignRequestInterceptor implements RequestInterceptor {
 	@Autowired
 	private JwtTokenService tokenService;
 
+	public TokenFeignRequestInterceptor() {
+		LOGGER.debug("TokenFeignRequestInterceptor constructor invoked");
+		if (tokenService == null) {
+			tokenService = new JwtTokenService();
+		}
+	}
+
 	/**
-	 * Add token header from the originating request to the outgoing request.
-	 * No changes made to the response.
+	 * Add token header from the originating request to the outgoing request. No
+	 * changes made to the response.
 	 *
 	 * @see feign.RequestInterceptor#apply(feign.RequestTemplate)
 	 */
