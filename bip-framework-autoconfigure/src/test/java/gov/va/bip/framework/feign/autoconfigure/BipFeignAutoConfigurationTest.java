@@ -1,29 +1,23 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.Field;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import com.netflix.hystrix.HystrixCommand;
-
-import feign.Feign;
+import feign.Logger.Level;
+import feign.Request.Options;
 import feign.Target;
-import feign.hystrix.SetterFactory;
 import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
 import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
 import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
@@ -44,7 +38,6 @@ public class BipFeignAutoConfigurationTest {
 	@Before
 	public void setup() {
 		context = new AnnotationConfigWebApplicationContext();
-		TestPropertyValues.of("feign.hystrix.enabled=true").applyTo(context);
 		TestPropertyValues.of("bip.framework.client.rest.connectionTimeout=" + CONNECTION_TIMEOUT).applyTo(context);
 		context.register(JacksonAutoConfiguration.class, SecurityAutoConfiguration.class,
 				EmbeddedWebServerFactoryCustomizerAutoConfiguration.class,
@@ -66,65 +59,37 @@ public class BipFeignAutoConfigurationTest {
 		}
 	}
 
-	@Test
-	public void testWebConfiguration() throws Exception {
-		final TokenFeignRequestInterceptor tokenFeignRequestInterceptor = this.context.getBean(TokenFeignRequestInterceptor.class);
-		assertNotNull(tokenFeignRequestInterceptor);
-	}
-
-	@Test
-	public void testWebConfiguration_BrokenProp() throws Exception {
-		TestPropertyValues.of("bip.framework.client.rest.connectionTimeout=BLAHBLAH").applyTo(context);
-		context.refresh();
-
-		try {
-			bipFeignAutoConfiguration.feignBuilder();
-			fail("bipFeignAutoConfiguration.feignBuilder() should have thrown IllegalStateException");
-		} catch (Exception e) {
-			assertTrue(BeansException.class.isAssignableFrom(e.getClass()));
-		} finally {
-			TestPropertyValues.of("bip.framework.client.rest.connectionTimeout=" + CONNECTION_TIMEOUT).applyTo(context);
-			context.refresh();
-		}
-
-	}
-
-	@Test
-	public void testGetterSettingReferenceFiegnConfig() throws Exception {
-		final BipFeignAutoConfiguration bipFeignAutoConfiguration = new BipFeignAutoConfiguration();
-		assertEquals("defaultGroup", bipFeignAutoConfiguration.getGroupKey());
-		bipFeignAutoConfiguration.setGroupKey("NewGroupKey");
-		assertEquals("NewGroupKey", bipFeignAutoConfiguration.getGroupKey());
-	}
-
 	/**
-	 * Test of feignBuilder method, of class BipFeignAutoConfiguration.
+	 * Test of feignCustomErrorDecoder method, of class BipFeignAutoConfiguration.
 	 */
 	@Test
-	public void testFeignBuilder() {
-		final Feign.Builder result = bipFeignAutoConfiguration.feignBuilder();
+	public void testFeignErrorDecoder() {
+		final FeignCustomErrorDecoder result = bipFeignAutoConfiguration.feignCustomErrorDecoder();
 		assertNotNull(result);
 
 	}
-
+	
+	/**
+	 * Test of feignLoggerLevel method, of class BipFeignAutoConfiguration.
+	 */
 	@Test
-	public void testSetterFactory() {
-		final Feign.Builder result = bipFeignAutoConfiguration.feignBuilder();
+	public void testFeignLoggerLevel() {
+		final Level result = bipFeignAutoConfiguration.feignLoggerLevel();
+		assertNotNull(result);
 
-		try {
-			final Field setterFactoryField = result.getClass().getDeclaredField("setterFactory");
-			setterFactoryField.setAccessible(true);
-			final SetterFactory factory = (SetterFactory) setterFactoryField.get(result);
-			final Target<?> target = new TestTarget(this.getClass(), "testFeignBuilder");
-			final HystrixCommand.Setter setter = factory.create(target, this.getClass().getMethod("testFeignBuilder"));
-			assertNotNull(setter);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException
-				| NoSuchMethodException e) {
-			e.printStackTrace();
-			fail("Should not throw exception here.");
-		}
 	}
+	
+	/**
+	 * Test of requestOptions method, of class BipFeignAutoConfiguration.
+	 */
+	@Test
+	public void testFeignRequestOptions() {
+		ConfigurableEnvironment environment = new MockEnvironment();
+		final Options result = bipFeignAutoConfiguration.requestOptions(environment);
+		assertNotNull(result);
 
+	}
+	
 	@SuppressWarnings("rawtypes")
 	class TestTarget extends Target.HardCodedTarget {
 

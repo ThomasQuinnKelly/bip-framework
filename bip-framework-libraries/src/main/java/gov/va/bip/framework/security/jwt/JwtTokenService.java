@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+
 /**
  * Put request token into a HashMap
  *
@@ -18,19 +21,28 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class JwtTokenService {
 
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(JwtTokenService.class);
+
 	@Autowired
 	private JwtAuthenticationProperties jwtAuthenticationProperties;
 
+	public JwtTokenService() {
+		LOGGER.debug("JwtTokenService constructor invoked");
+		if (jwtAuthenticationProperties == null) {
+			jwtAuthenticationProperties = new JwtAuthenticationProperties();
+		}
+	}
+
 	/**
-	 * Gets the JWT token from the request context Authorization header,
-	 * and returns it in a HashMap.
+	 * Gets the JWT token from the request context Authorization header, and returns
+	 * it in a HashMap.
 	 * 
 	 * @return Map the key and value of the JWT token header
 	 */
 	public Map<String, String> getTokenFromRequest() {
 		Map<String, String> token = new HashMap<>();
-		final HttpServletRequest request =
-				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest();
 		String tokenValue = request.getHeader(jwtAuthenticationProperties.getHeader());
 		if (tokenValue != null) {
 			token.put(jwtAuthenticationProperties.getHeader(), tokenValue);
