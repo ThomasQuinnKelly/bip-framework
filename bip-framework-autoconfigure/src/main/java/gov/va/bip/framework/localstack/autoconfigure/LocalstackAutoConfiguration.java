@@ -4,7 +4,6 @@ import cloud.localstack.Localstack;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,8 +28,7 @@ import java.util.regex.PatternSyntaxException;
 @ConditionalOnProperty(name = "localstack.enabled", havingValue = "true")
 public class LocalstackAutoConfiguration {
 
-	@Autowired(required = false)
-	LocalstackProperties localstackProperties;
+	LocalstackProperties localstackProperties = new LocalstackProperties();
 
 	@Value("${localstack.externalHostName:localhost}")
 	private String externalHostName;

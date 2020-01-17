@@ -1,14 +1,10 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +17,9 @@ import java.util.List;
 @ConditionalOnProperty(value = "localstack.enabled")
 public class LocalstackProperties {
 
-    @Autowired(required = false)
-    LocalstackSnsProperties snsProperties;
+    LocalstackSnsProperties snsProperties = new LocalstackSnsProperties();
 
-    @Autowired(required = false)
-    LocalstackSqsProperties sqsProperties;
+    LocalstackSqsProperties sqsProperties = new LocalstackSqsProperties();
 
     /**
      * Create enabled service definitions used on Localstack.
