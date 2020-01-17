@@ -1,42 +1,43 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@EnableConfigurationProperties({
+        LocalstackSqsProperties.class,
+        LocalstackSnsProperties.class
+})
 @ConfigurationProperties(prefix = "localstack.services")
 @ConditionalOnProperty(value = "localstack.enabled")
 public class LocalstackProperties {
 
-    // @Value annotations here are default values unless overridden by localstack.services.snsSetup
-    @Value("false")
-    boolean snssetup;
+    @Autowired(required = false)
+    LocalstackSnsProperties snsProperties;
 
-    @Value("4575")
-    int snsport;
-
-    @Value("false")
-    boolean sqssetup;
-
-    @Value("4576")
-    int sqsport;
+    @Autowired(required = false)
+    LocalstackSqsProperties sqsProperties;
 
     /**
      * Create enabled service definitions used on Localstack.
      */
     private List<Services> services = new ArrayList<Services>() {
         {
-            if (snssetup) {
-                add(new Services("sns", snsport));
+            if (snsProperties.isEnabled()) {
+                add(new Services("sns", snsProperties.getPort()));
             }
 
-            if (sqssetup) {
-                add(new Services("sqs", sqsport));
+            if (sqsProperties.isEnabled()) {
+                add(new Services("sqs", sqsProperties.getPort()));
             }
 
             // ... more services to come
