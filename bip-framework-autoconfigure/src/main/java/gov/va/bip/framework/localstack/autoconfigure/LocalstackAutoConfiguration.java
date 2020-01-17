@@ -60,7 +60,12 @@ public class LocalstackAutoConfiguration {
 
 			Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
+			configureAwsLocalStack();
 		}
+	}
+
+	public void configureAwsLocalStack() {
+		// No configuration in Framework
 	}
 
 	private LocalstackDockerConfiguration buildLocalstackDockerConfiguration() {
