@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -23,26 +24,27 @@ import java.util.regex.PatternSyntaxException;
  * Performs configuration of a Localstack instance
  *
  */
+@Configuration
 @EnableConfigurationProperties({ LocalstackProperties.class })
-@ConditionalOnProperty(value = "localstack.enabled")
+@ConditionalOnProperty(name = "localstack.enabled", havingValue = "true")
 public class LocalstackAutoConfiguration {
 
-	@Autowired
+	@Autowired(required = false)
 	LocalstackProperties localstackProperties;
 
 	@Value("${localstack.externalHostName:localhost}")
-	private static String externalHostName;
+	private String externalHostName;
 
 	@Value("${localstack.imageTag:latest}")
-	private static String imageTag;
+	private String imageTag;
 
 	@Value("${localstack.pullNewImage:true}")
-	private static boolean pullNewImage;
+	private boolean pullNewImage;
 
 	@Value("${localstack.randomizePorts:false}")
-	private static boolean randomizePorts;
+	private boolean randomizePorts;
 
-	private static Map<String, String> environmentVariables = new HashMap<>();
+	private Map<String, String> environmentVariables = new HashMap<>();
 
 	/**
 	 * Start embedded AWS servers on context load

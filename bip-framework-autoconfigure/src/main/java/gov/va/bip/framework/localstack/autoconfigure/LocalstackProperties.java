@@ -2,38 +2,41 @@ package gov.va.bip.framework.localstack.autoconfigure;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@ConfigurationProperties(prefix = "localstack.services")
 @ConditionalOnProperty(value = "localstack.enabled")
 public class LocalstackProperties {
 
-    @Value("${aws.sns.enabled:false}")
-    boolean setupSNS;
+    // @Value annotations here are default values unless overridden by localstack.services.snsSetup
+    @Value("false")
+    boolean snssetup;
 
-    @Value("${aws.sns.port:4575}")
-    int snsPort;
+    @Value("4575")
+    int snsport;
 
-    @Value("${aws.sqs.enabled:false}")
-    boolean setupSQS;
+    @Value("false")
+    boolean sqssetup;
 
-    @Value("${aws.sqs.port:4576}")
-    int sqsPort;
+    @Value("4576")
+    int sqsport;
 
     /**
      * Create enabled service definitions used on Localstack.
      */
     private List<Services> services = new ArrayList<Services>() {
         {
-            if (setupSNS) {
-                add(new Services("sns", snsPort));
+            if (snssetup) {
+                add(new Services("sns", snsport));
             }
 
-            if (setupSQS) {
-                add(new Services("sqs", sqsPort));
+            if (sqssetup) {
+                add(new Services("sqs", sqsport));
             }
 
             // ... more services to come

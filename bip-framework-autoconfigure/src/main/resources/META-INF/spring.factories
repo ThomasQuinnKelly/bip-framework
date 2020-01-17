@@ -13,5 +13,6 @@ gov.va.bip.framework.cache.autoconfigure.BipCacheAutoConfiguration,\
 gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer,\
 gov.va.bip.framework.swagger.autoconfigure.BipSwaggerAutoConfiguration,\
 gov.va.bip.framework.hystrix.autoconfigure.HystrixContextAutoConfiguration,\
-gov.va.bip.framework.validator.autoconfigure.BipValidatorAutoConfiguration
+gov.va.bip.framework.validator.autoconfigure.BipValidatorAutoConfiguration,\
+gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration
 
