@@ -77,9 +77,8 @@ Developers needing to clear the cache for local testing purposes have a tool ava
 
 ## gov.va.bip.framework.feign.autoconfigure:
 
-Feign client auto-configuration creates a number of beans to support RESTful client calls through the feign library:
+Feign client auto-configuration creates some beans to support RESTful client calls through the feign library:
 
-- Hystrix enablement for Feign clients. The `feignBuilder` bean defines Hystrix properties like Group Key, Threading strategy, etc.
 - `FeignCustomErrorDecoder` has been created to interrogate and modify the Exception being propagated.
 
 ```java

@@ -32,7 +32,8 @@ public class FeignCustomErrorDecoderTest {
 	private static final String TEST_STREAM = "{\n" + "  \"messages\": [\n" + "    {\n"
 			+ "      \"timestamp\": \"2019-03-08T20:11:37.334\",\n" + "      \"key\": \"BAD_REQUEST\",\n"
 			+ "      \"severity\": \"ERROR\",\n" + "      \"status\": \"404\",\n"
-			+ "      \"text\": \"participantID: PersonInfoRequest.participantID cannot be zero\"\n" + "    }\n" + "  ]\n" + "}";
+			+ "      \"text\": \"participantID: PersonInfoRequest.participantID cannot be zero\"\n" + "    }\n"
+			+ "  ]\n" + "}";
 
 	private static final String TEST_URL = "test_url";
 
@@ -43,12 +44,27 @@ public class FeignCustomErrorDecoderTest {
 	@Mock
 	Body body;
 
+	Body nullBody = null;
+
 	Reader reader;
 
 	@Before
 	public void setup() {
 		headers.put("test_header_key", Arrays.asList(new String[] { "test_header_value" }));
 		reader = new StringReader(TEST_STREAM);
+	}
+
+	@Test
+	public void decodeTestForNullBodyWithJSONException() {
+
+		FeignCustomErrorDecoder feignCustomErrorDecoder = new FeignCustomErrorDecoder();
+
+		Response responseForNullBody = Response.builder().status(401).body(nullBody).headers(headers).request(Request
+				.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
+				.build();
+
+		final Exception feignException = feignCustomErrorDecoder.decode("test.key", responseForNullBody);
+		assertTrue(feignException instanceof Exception);
 	}
 
 	@Test
@@ -60,8 +76,8 @@ public class FeignCustomErrorDecoderTest {
 		} catch (IOException e) {
 			fail("unable to stub asReader() method in Body object");
 		}
-		Response response = Response.builder().status(404).body(body).headers(headers)
-				.request(Request.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
+		Response response = Response.builder().status(404).body(body).headers(headers).request(Request
+				.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
 				.build();
 		try {
 			feignCustomErrorDecoder.decode("test.key", response);
@@ -79,8 +95,8 @@ public class FeignCustomErrorDecoderTest {
 		} catch (IOException e) {
 			fail("unable to stub asReader() method in Body object");
 		}
-		Response response = Response.builder().status(404).body(body).headers(headers)
-				.request(Request.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
+		Response response = Response.builder().status(404).body(body).headers(headers).request(Request
+				.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
 				.build();
 		try {
 			assertTrue(feignCustomErrorDecoder.decode("test.key", response) instanceof Exception);
@@ -100,8 +116,8 @@ public class FeignCustomErrorDecoderTest {
 		} catch (IOException e) {
 			fail("unable to stub asReader() method in Body object");
 		}
-		Response response = Response.builder().status(404).body(body).headers(headers)
-				.request(Request.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
+		Response response = Response.builder().status(404).body(body).headers(headers).request(Request
+				.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
 				.build();
 		try {
 			feignCustomErrorDecoder.decode("test.key", response);
@@ -119,8 +135,8 @@ public class FeignCustomErrorDecoderTest {
 		} catch (IOException e) {
 			fail("unable to stub asReader() method in Body object");
 		}
-		Response response = Response.builder().status(500).body(body).headers(headers)
-				.request(Request.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
+		Response response = Response.builder().status(500).body(body).headers(headers).request(Request
+				.create(Request.HttpMethod.GET, TEST_URL, headers, TEST_CONTENT.getBytes(), Charset.defaultCharset()))
 				.build();
 
 		try {
