@@ -1,5 +1,6 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,32 +18,33 @@ import java.util.List;
 @ConditionalOnProperty(value = "localstack.enabled")
 public class LocalstackProperties {
 
-    LocalstackSnsProperties snsProperties = new LocalstackSnsProperties();
+    @Autowired
+    private LocalstackSnsProperties snsProperties;
 
-    LocalstackSqsProperties sqsProperties = new LocalstackSqsProperties();
+    @Autowired
+    private LocalstackSqsProperties sqsProperties;
 
     /**
      * Create enabled service definitions used on Localstack.
      */
-    private List<Services> services = new ArrayList<Services>() {
-        {
-            if (snsProperties.isEnabled()) {
-                add(new Services("sns", snsProperties.getPort()));
-            }
-
-            if (sqsProperties.isEnabled()) {
-                add(new Services("sqs", sqsProperties.getPort()));
-            }
-
-            // ... more services to come
-        }
-    };
+    private List<Services> services = new ArrayList<>();
 
     public void setServices(List<Services> services) {
         this.services = services;
     }
 
     public List<Services> getServices() {
+
+        if (snsProperties.isEnabled()) {
+            this.services.add(new Services("sns", snsProperties.getPort()));
+        }
+
+        if (sqsProperties.isEnabled()) {
+            this.services.add(new Services("sqs", sqsProperties.getPort()));
+        }
+
+        // ... more services to come
+
         return this.services;
     }
 
@@ -62,7 +64,6 @@ public class LocalstackProperties {
          * @param port
          */
         public Services(String name, int port) {
-            super();
             this.name = name;
             this.port = port;
         }
