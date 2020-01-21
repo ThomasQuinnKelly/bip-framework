@@ -27,7 +27,7 @@ import java.util.regex.PatternSyntaxException;
 @Configuration
 @EnableConfigurationProperties({ LocalstackProperties.class })
 @ConditionalOnProperty(name = "localstack.enabled", havingValue = "true")
-public class LocalstackAutoConfiguration {
+public abstract class LocalstackAutoConfiguration {
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
@@ -64,10 +64,6 @@ public class LocalstackAutoConfiguration {
 
 			configureAwsLocalStack();
 		}
-	}
-
-	public void configureAwsLocalStack() {
-		// No configuration in Framework
 	}
 
 	private LocalstackDockerConfiguration buildLocalstackDockerConfiguration() {
@@ -107,6 +103,8 @@ public class LocalstackAutoConfiguration {
 
 		return configBuilder.build();
 	}
+
+	public abstract void configureAwsLocalStack();
 
 	/**
 	 * Stop embedded AWS servers on context destroy

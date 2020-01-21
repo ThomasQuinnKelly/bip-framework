@@ -27,24 +27,27 @@ public class LocalstackProperties {
     /**
      * Create enabled service definitions used on Localstack.
      */
-    private List<Services> services = new ArrayList<>();
+    private List<Services> services;
 
     public void setServices(List<Services> services) {
         this.services = services;
     }
 
     public List<Services> getServices() {
+        if (this.services == null) {
 
-        if (snsProperties.isEnabled()) {
-            this.services.add(new Services("sns", snsProperties.getPort()));
+            this.services = new ArrayList<>();
+
+            if (snsProperties.isEnabled()) {
+                this.services.add(new Services("sns", snsProperties.getPort()));
+            }
+
+            if (sqsProperties.isEnabled()) {
+                this.services.add(new Services("sqs", sqsProperties.getPort()));
+            }
+
+            // ... more services to come
         }
-
-        if (sqsProperties.isEnabled()) {
-            this.services.add(new Services("sqs", sqsProperties.getPort()));
-        }
-
-        // ... more services to come
-
         return this.services;
     }
 
