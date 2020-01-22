@@ -1,5 +1,7 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import gov.va.bip.framework.localstack.sns.config.LocalstackSnsProperties;
+import gov.va.bip.framework.localstack.sqs.config.LocalstackSqsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,8 +16,8 @@ import java.util.List;
         LocalstackSqsProperties.class,
         LocalstackSnsProperties.class
 })
-@ConfigurationProperties(prefix = "localstack.services")
-@ConditionalOnProperty(value = "localstack.enabled")
+@ConfigurationProperties(prefix = "bip.framework.localstack.services")
+@ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackProperties {
 
     @Autowired

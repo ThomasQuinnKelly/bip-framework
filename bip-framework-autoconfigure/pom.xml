@@ -109,12 +109,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Localstack Support -->
-		<dependency>
-			<groupId>cloud.localstack</groupId>
-			<artifactId>localstack-utils</artifactId>
-			<version>0.2.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>

@@ -17,6 +17,7 @@
 		<module>bip-framework-libraries</module>
 		<module>bip-framework-autoconfigure</module>
 		<module>bip-framework-test-lib</module>
+		<module>bip-framework-autoconfigure-aws</module>
 	</modules>
 
 	<properties>

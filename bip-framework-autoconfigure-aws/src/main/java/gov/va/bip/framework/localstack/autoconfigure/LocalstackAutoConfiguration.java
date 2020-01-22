@@ -3,6 +3,8 @@ package gov.va.bip.framework.localstack.autoconfigure;
 import cloud.localstack.Localstack;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +28,10 @@ import java.util.regex.PatternSyntaxException;
  */
 @Configuration
 @EnableConfigurationProperties({ LocalstackProperties.class })
-@ConditionalOnProperty(name = "localstack.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
 public abstract class LocalstackAutoConfiguration {
+	/** Class logger */
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(LocalstackAutoConfiguration.class);
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
