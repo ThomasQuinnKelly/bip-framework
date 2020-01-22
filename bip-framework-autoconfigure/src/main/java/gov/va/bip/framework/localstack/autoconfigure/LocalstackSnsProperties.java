@@ -9,8 +9,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Component
-@ConfigurationProperties(prefix = "localstack.services.sns")
-@ConditionalOnProperty(value = "localstack.enabled")
+@ConfigurationProperties(prefix = "bip.framework.localstack.services.sns")
+@ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackSnsProperties {
 
     // Value annotations here are default values unless overridden by values under localstack.services.sns

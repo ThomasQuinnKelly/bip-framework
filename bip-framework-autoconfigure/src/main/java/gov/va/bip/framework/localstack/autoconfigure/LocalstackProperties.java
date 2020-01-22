@@ -14,8 +14,8 @@ import java.util.List;
         LocalstackSqsProperties.class,
         LocalstackSnsProperties.class
 })
-@ConfigurationProperties(prefix = "localstack.services")
-@ConditionalOnProperty(value = "localstack.enabled")
+@ConfigurationProperties(prefix = "bip.framework.localstack.services")
+@ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackProperties {
 
     @Autowired

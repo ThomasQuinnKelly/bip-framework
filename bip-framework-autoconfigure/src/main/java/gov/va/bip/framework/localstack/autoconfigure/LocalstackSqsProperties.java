@@ -9,8 +9,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Component
-@ConfigurationProperties(prefix = "localstack.services.sqs")
-@ConditionalOnProperty(value = "localstack.enabled")
+@ConfigurationProperties(prefix = "bip.framework.localstack.services.sqs")
+@ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackSqsProperties {
 
     // Value annotations here are default values unless overridden by values under localstack.services.sqs

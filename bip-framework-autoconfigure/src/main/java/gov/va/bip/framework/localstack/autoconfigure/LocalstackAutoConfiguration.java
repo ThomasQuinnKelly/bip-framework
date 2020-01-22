@@ -26,7 +26,7 @@ import java.util.regex.PatternSyntaxException;
  */
 @Configuration
 @EnableConfigurationProperties({ LocalstackProperties.class })
-@ConditionalOnProperty(name = "localstack.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
 public abstract class LocalstackAutoConfiguration {
 
 	@Autowired
