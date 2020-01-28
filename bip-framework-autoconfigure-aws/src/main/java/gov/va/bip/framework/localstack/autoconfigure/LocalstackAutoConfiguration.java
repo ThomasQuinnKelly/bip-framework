@@ -1,16 +1,27 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
 import cloud.localstack.Localstack;
+import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
+import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
+import com.amazonaws.services.sqs.model.QueueAttributeName;
+import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.sqs.config.SqsProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -27,25 +38,32 @@ import java.util.regex.PatternSyntaxException;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ LocalstackProperties.class })
+@EnableConfigurationProperties({ LocalstackProperties.class, SqsProperties.class })
 @ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
-public abstract class LocalstackAutoConfiguration {
+@Primary
+@Order( Ordered.HIGHEST_PRECEDENCE )
+public class LocalstackAutoConfiguration {
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(LocalstackAutoConfiguration.class);
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
 
-	@Value("${localstack.externalHostName:localhost}")
+	@Autowired
+	private SqsProperties sqsProperties;
+
+	private static Integer MAX_RETRIES = 60;
+
+	@Value("${bip.framework.localstack.externalHostName:localhost}")
 	private String externalHostName;
 
-	@Value("${localstack.imageTag:latest}")
+	@Value("${bip.framework.localstack.imageTag:latest}")
 	private String imageTag;
 
-	@Value("${localstack.pullNewImage:true}")
+	@Value("${bip.framework.localstack.pullNewImage:false}")
 	private boolean pullNewImage;
 
-	@Value("${localstack.randomizePorts:false}")
+	@Value("${bip.framework.localstack.randomizePorts:false}")
 	private boolean randomizePorts;
 
 	private Map<String, String> environmentVariables = new HashMap<>();
@@ -66,7 +84,14 @@ public abstract class LocalstackAutoConfiguration {
 
 			Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
-			configureAwsLocalStack();
+			//configureAwsLocalStack();
+
+			if (sqsProperties.getEnabled()) {
+				createQueues();
+			}
+
+			//createTopics();
+			//createSubscriptions();
 		}
 	}
 
@@ -108,7 +133,7 @@ public abstract class LocalstackAutoConfiguration {
 		return configBuilder.build();
 	}
 
-	public abstract void configureAwsLocalStack();
+	//public abstract void configureAwsLocalStack();
 
 	/**
 	 * Stop embedded AWS servers on context destroy
@@ -142,6 +167,96 @@ public abstract class LocalstackAutoConfiguration {
 				}
 			} catch (PatternSyntaxException ex) {
 				// PatternSyntaxException During Splitting
+			}
+		}
+	}
+
+	//TODO: Incorporate BipRuntimeException here
+	private void createQueues() {
+		AmazonSQS client = TestUtils.getClientSQS();
+
+
+		//TODO: build in support for mutiple queues in some way.
+		sqsProperties.getAllQueueProperties();
+
+		String deadletterQueueUrl = null;
+		GetQueueAttributesResult queueAttributesResult = null;
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getDLQQueueName()
+//							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+
+		GetQueueAttributesRequest getAttributesRequest =
+				new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException(
+//							"AWS Local Stack (SQS Get DLQ Attributes) failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+
+		String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
+				+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+
+		Map<String, String> attributeMap = new HashMap<>();
+		attributeMap.put("DelaySeconds", sqsProperties.getDelay().toString());
+		attributeMap.put("MaximumMessageSize", sqsProperties.getMaxmessagesize());
+		attributeMap.put("MessageRetentionPeriod", sqsProperties.getMessageretentionperiod());
+		attributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getWaittime().toString());
+		attributeMap.put("VisibilityTimeout", sqsProperties.getVisibilitytimeout().toString());
+		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
+		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbasedduplication().toString());
+		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				client.createQueue(new CreateQueueRequest(sqsProperties.getQueueName()).withAttributes(attributeMap));
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
+//							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
 			}
 		}
 	}

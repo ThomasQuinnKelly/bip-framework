@@ -2,6 +2,8 @@ package gov.va.bip.framework.messages;
 
 import java.util.Locale;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
@@ -145,7 +147,23 @@ public enum MessageKeys implements MessageKey {
 	 * request
 	 */
 	BIP_REMOTE_MOCK_UNKNOWN("bip.framework.remote.mock.unknown.type",
-			"RemoteServiceCallMock getKeyForMockResponse(..) does not have a file naming block for request type.")
+			"RemoteServiceCallMock getKeyForMockResponse(..) does not have a file naming block for request type."),
+
+	/** SQS message generic send error message */
+	BIP_SQS_MESSAGE_TRANSFER_ERROR("bip.framework.sqs.services.transfer.error","Could not send message to SQS"),
+	/** SQS message send error message with exception message attached */
+	BIP_SQS_MESSAGE_TRANSFER_ERROR_MESSAGE("bip.framework.sqs.services.transfer.message.error","Could not send message to SQS"),
+	/** SQS message send message ID null */
+	BIP_SQS_MESSAGE_TRANSFER_FAILED_MESSAGE_ID_NULL("bip.framework.sqs.services.transfer.message.id.null","Message sent to SQS but did not result in a message ID"),
+
+	/** SQS create text message genericerror message */
+	BIP_SQS_MESSAGE_CREATE_EXCEPTION("bip.framework.sqs.services.create.error","Could not create a text message."),
+	/** SQS create text message error message */
+	BIP_SQS_MESSAGE_CREATE_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.message.error","Could not create a text message."),
+	/** SQS JMS message generic send error message */
+	BIP_SQS_MESSAGE_CREATE_JMS_FAILED("bip.framework.sqs.services.create.jms.error","JMS had an issue."),
+	/** SQS JMS message generic send error message */
+	BIP_SQS_MESSAGE_CREATE_JMS_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.jms.message.error","JMS had an issue.")
 
 	;
 

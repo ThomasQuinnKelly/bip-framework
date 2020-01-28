@@ -20,11 +20,44 @@
 			<artifactId>bip-framework-libraries</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- Spring Framework JMS -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+		</dependency>
+		<!-- Spring Framework AspectJ -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
 		<!-- Localstack Support -->
 		<dependency>
 			<groupId>cloud.localstack</groupId>
 			<artifactId>localstack-utils</artifactId>
 			<version>0.2.0</version>
+		</dependency>
+		<!-- Spring Cloud AWS -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-aws-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-aws-messaging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-aws-core</artifactId>
+		</dependency>
+		<!-- Amazon SQS Java Extended Client Lib -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
+			<version>1.0.4</version>
 		</dependency>
 	</dependencies>
 

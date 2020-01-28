@@ -93,4 +93,20 @@ public class LocalstackProperties {
             this.port = port;
         }
     }
+
+    public LocalstackSnsProperties getSnsProperties() {
+        return snsProperties;
+    }
+
+    public void setSnsProperties(LocalstackSnsProperties snsProperties) {
+        this.snsProperties = snsProperties;
+    }
+
+    public LocalstackSqsProperties getSqsProperties() {
+        return sqsProperties;
+    }
+
+    public void setSqsProperties(LocalstackSqsProperties sqsProperties) {
+        this.sqsProperties = sqsProperties;
+    }
 }
