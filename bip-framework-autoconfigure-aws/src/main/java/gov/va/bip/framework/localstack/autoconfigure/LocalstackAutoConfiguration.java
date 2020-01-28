@@ -5,9 +5,7 @@ import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.CreateTopicRequest;
-import com.amazonaws.services.sns.model.GetTopicAttributesRequest;
-import com.amazonaws.services.sns.model.GetTopicAttributesResult;
+import com.amazonaws.services.sns.model.*;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
@@ -28,6 +26,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
+import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 
 import javax.annotation.PostConstruct;
@@ -99,8 +98,13 @@ public class LocalstackAutoConfiguration {
 				createQueues();
 			}
 
+			CreateTopicResult result = null;
 			if (snsProperties.getEnabled()) {
-				createTopics();
+				result = createTopics();
+			}
+
+			if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
+				SubscribeTopicToQueue(result);
 			}
 		}
 	}
@@ -182,7 +186,7 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
-	private void createTopics() {
+	private CreateTopicResult createTopics() {
 
 		AmazonSNS client = TestUtils.getClientSNS();
 
@@ -191,8 +195,7 @@ public class LocalstackAutoConfiguration {
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				client.createTopic(new CreateTopicRequest(snsProperties.getName()));
-				break;
+				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
 			} catch (Exception e) {
 				if (i == MAX_RETRIES - 1) {
 //					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
@@ -209,34 +212,7 @@ public class LocalstackAutoConfiguration {
 			}
 		}
 
-		/*GetTopicAttributesResult topicAttributesResult = null;
-
-		GetTopicAttributesRequest getTopicAttributesRequest =
-				new GetTopicAttributesRequest(snsProperties.getTopicArn());
-
-		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
-			try {
-				topicAttributesResult = client.getTopicAttributes(getTopicAttributesRequest);
-				break;
-			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-//					throw new BipRuntimeException(
-//							"AWS Local Stack (SQS Get DLQ Attributes) failed to initialize after " + MAX_RETRIES + " tries.");
-				}
-				LOGGER.warn("Attempt to access AWS Local Stack client.getTopicAttributes(..) failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
-			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// NOSONAR do nothing
-			}
-		}
-
-		 */
-
-
+		return null;
 	}
 
 	//TODO: Incorporate BipRuntimeException here
@@ -318,6 +294,36 @@ public class LocalstackAutoConfiguration {
 //							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
 				}
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+	}
+
+	private void SubscribeTopicToQueue(CreateTopicResult result) {
+
+		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
+		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
+
+		snsProperties.getAllTopicProperties();
+		sqsProperties.getAllQueueProperties();
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				SnsServiceclient.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
+//							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + snsProperties.getTopicArn()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
