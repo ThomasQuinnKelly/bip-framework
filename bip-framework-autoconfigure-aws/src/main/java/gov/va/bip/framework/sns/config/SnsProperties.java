@@ -11,6 +11,7 @@ public class SnsProperties {
 	private BipLogger logger = BipLoggerFactory.getLogger(SnsProperties.class);
 
 	private Boolean enabled;
+	private String topic;
 	private String region;
 	private String endpoint;
 	private int retries;
@@ -18,6 +19,10 @@ public class SnsProperties {
 	
 	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
 	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+
+	public String getTopic() { return topic; }
+
+	public void setTopic(String topic) {  this.topic = topic; }
 
 	public Boolean getEnabled() {
 		return enabled;
