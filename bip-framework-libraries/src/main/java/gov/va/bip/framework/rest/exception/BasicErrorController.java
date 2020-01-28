@@ -10,8 +10,11 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -51,8 +54,51 @@ public class BasicErrorController implements ErrorController {
 	@Autowired(required = false)
 	private ErrorAttributes errorAttributes;
 	
+	
 	/**
-	 * Handle error.
+	 * Handle error for @PatchMapping.
+	 *
+	 * @param webRequest
+	 *            the web request
+	 * @param response
+	 *            the response
+	 * @return the response entity
+	 */
+	@PatchMapping(value = "/error")
+	public ResponseEntity<ProviderResponse> handleErrorPatch(WebRequest webRequest, HttpServletResponse response) {
+		return handleError(webRequest, response);
+	}
+
+	/**
+	 * Handle error for @DeleteMapping.
+	 *
+	 * @param webRequest
+	 *            the web request
+	 * @param response
+	 *            the response
+	 * @return the response entity
+	 */
+	@DeleteMapping(value = "/error")
+	public ResponseEntity<ProviderResponse> handleErrorDelete(WebRequest webRequest, HttpServletResponse response) {
+		return handleError(webRequest, response);
+	}
+
+	/**
+	 * Handle error for @PutMapping.
+	 *
+	 * @param webRequest
+	 *            the web request
+	 * @param response
+	 *            the response
+	 * @return the response entity
+	 */
+	@PutMapping(value = "/error")
+	public ResponseEntity<ProviderResponse> handleErrorPut(WebRequest webRequest, HttpServletResponse response) {
+		return handleError(webRequest, response);
+	}
+	
+	/**
+	 * Handle error for @PostMapping.
 	 *
 	 * @param webRequest
 	 *            the web request
@@ -66,7 +112,7 @@ public class BasicErrorController implements ErrorController {
 	}
 
 	/**
-	 * Handle error.
+	 * Handle error for @GetMapping.
 	 *
 	 * @param webRequest
 	 *            the web request
