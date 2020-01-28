@@ -4,6 +4,10 @@ import cloud.localstack.Localstack;
 import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.model.CreateTopicRequest;
+import com.amazonaws.services.sns.model.GetTopicAttributesRequest;
+import com.amazonaws.services.sns.model.GetTopicAttributesResult;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
@@ -12,6 +16,7 @@ import com.amazonaws.services.sqs.model.QueueAttributeName;
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sqs.config.SqsProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
+import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -38,7 +44,7 @@ import java.util.regex.PatternSyntaxException;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ LocalstackProperties.class, SqsProperties.class })
+@EnableConfigurationProperties({ LocalstackProperties.class, SqsProperties.class, SnsProperties.class })
 @ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
 @Primary
 @Order( Ordered.HIGHEST_PRECEDENCE )
@@ -51,6 +57,9 @@ public class LocalstackAutoConfiguration {
 
 	@Autowired
 	private SqsProperties sqsProperties;
+
+	@Autowired
+	private SnsProperties snsProperties;
 
 	private static Integer MAX_RETRIES = 60;
 
@@ -90,10 +99,12 @@ public class LocalstackAutoConfiguration {
 				createQueues();
 			}
 
-			//createTopics();
-			//createSubscriptions();
+			if (snsProperties.getEnabled()) {
+				createTopics();
+			}
 		}
 	}
+
 
 	private LocalstackDockerConfiguration buildLocalstackDockerConfiguration() {
 		LocalstackDockerConfiguration.LocalstackDockerConfigurationBuilder configBuilder = LocalstackDockerConfiguration.builder();
@@ -169,6 +180,63 @@ public class LocalstackAutoConfiguration {
 				// PatternSyntaxException During Splitting
 			}
 		}
+	}
+
+	private void createTopics() {
+
+		AmazonSNS client = TestUtils.getClientSNS();
+
+		snsProperties.getAllTopicProperties();
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				client.createTopic(new CreateTopicRequest(snsProperties.getName()));
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
+//							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+
+		/*GetTopicAttributesResult topicAttributesResult = null;
+
+		GetTopicAttributesRequest getTopicAttributesRequest =
+				new GetTopicAttributesRequest(snsProperties.getTopicArn());
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				topicAttributesResult = client.getTopicAttributes(getTopicAttributesRequest);
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException(
+//							"AWS Local Stack (SQS Get DLQ Attributes) failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.getTopicAttributes(..) failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+
+		 */
+
+
 	}
 
 	//TODO: Incorporate BipRuntimeException here

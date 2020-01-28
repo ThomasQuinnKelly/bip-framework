@@ -5,20 +5,36 @@ import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+
 @ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
 public class SnsProperties {
 
 	private BipLogger logger = BipLoggerFactory.getLogger(SnsProperties.class);
 
 	private Boolean enabled;
+	private String name;
+	private String type;
 	private String topic;
 	private String region;
 	private String endpoint;
 	private int retries;
 	private Integer prefetch;
+	private String topicArn;
 	
 	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
 	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+
+	// somehow scan for all implementing methods of QueueProperties
+	private ArrayList<SnsTopicProperties> allTopicProperties;
+
+	public String getName() { return name; }
+
+	public void setName(String name) { this.name = name; }
+
+	public String getType() { return type; }
+
+	public void setType(String type) { this.type = type; }
 
 	public String getTopic() { return topic; }
 
@@ -86,5 +102,21 @@ public class SnsProperties {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
+	}
+
+	public String getTopicArn() {
+		return topicArn;
+	}
+
+	public void setTopicArn(String topicArn) {
+		this.topicArn = topicArn;
+	}
+
+	public ArrayList<SnsTopicProperties> getAllTopicProperties() {
+		return allTopicProperties;
+	}
+
+	public void setAllTopicProperties(ArrayList<SnsTopicProperties> allTopicProperties) {
+		this.allTopicProperties = allTopicProperties;
 	}
 }
