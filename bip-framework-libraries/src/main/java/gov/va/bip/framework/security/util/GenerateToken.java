@@ -99,6 +99,9 @@ public class GenerateToken {
 				.claim("email", person.getEmail())
 				.claim("correlationIds", person.getCorrelationIds())
 				.claim("appToken", person.getAppToken())
+				.claim("applicationID", person.getApplicationID())
+				.claim("stationID", person.getStationID())
+				.claim("userID", person.getUserID())
 				.signWith(signatureAlgorithm, signingKey).compact();
 	}
 
@@ -115,6 +118,9 @@ public class GenerateToken {
 		personTraits.setAssuranceLevel(person.getAssuranceLevel());
 		personTraits.setEmail(person.getEmail());
 		personTraits.setAppToken(person.getAppToken());
+		personTraits.setApplicationID(person.getApplicationID());
+		personTraits.setStationID(person.getStationID());
+		personTraits.setUserID(person.getUserID());
 
 		return personTraits;
 	}
@@ -135,6 +141,9 @@ public class GenerateToken {
 				"6666345^PI^200CORP^USVBA^A", "1105051936^NI^200DOD^USDOD^A", "912444689^SS");
 		person.setCorrelationIds(strArray);
 		person.setAppToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9");
+		person.setApplicationID("ShareUI");
+		person.setStationID("310");
+		person.setUserID("vhaislXXXXX");
 		return person;
 	}
 }

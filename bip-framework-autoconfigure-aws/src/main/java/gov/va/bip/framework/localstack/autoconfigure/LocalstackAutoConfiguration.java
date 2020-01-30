@@ -68,7 +68,7 @@ public class LocalstackAutoConfiguration {
 	@Value("${bip.framework.localstack.imageTag:latest}")
 	private String imageTag;
 
-	@Value("${bip.framework.localstack.pullNewImage:false}")
+	@Value("${bip.framework.localstack.pullNewImage:true}")
 	private boolean pullNewImage;
 
 	@Value("${bip.framework.localstack.randomizePorts:false}")
