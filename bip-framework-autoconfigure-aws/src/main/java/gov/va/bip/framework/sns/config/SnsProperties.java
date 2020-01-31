@@ -16,6 +16,7 @@ public class SnsProperties {
 	private String name;
 	private String type;
 	private String topic;
+	private String message;
 	private String region;
 	private String endpoint;
 	private int retries;
@@ -28,17 +29,13 @@ public class SnsProperties {
 	// somehow scan for all implementing methods of QueueProperties
 	private ArrayList<SnsTopicProperties> allTopicProperties;
 
-	public String getName() { return name; }
+	public BipLogger getLogger() {
+		return logger;
+	}
 
-	public void setName(String name) { this.name = name; }
-
-	public String getType() { return type; }
-
-	public void setType(String type) { this.type = type; }
-
-	public String getTopic() { return topic; }
-
-	public void setTopic(String topic) {  this.topic = topic; }
+	public void setLogger(BipLogger logger) {
+		this.logger = logger;
+	}
 
 	public Boolean getEnabled() {
 		return enabled;
@@ -48,12 +45,36 @@ public class SnsProperties {
 		this.enabled = enabled;
 	}
 
-	public BipLogger getLogger() {
-		return logger;
+	public String getName() {
+		return name;
 	}
 
-	public void setLogger(BipLogger logger) {
-		this.logger = logger;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public String getRegion() {
@@ -88,6 +109,14 @@ public class SnsProperties {
 		this.prefetch = prefetch;
 	}
 
+	public String getTopicArn() {
+		return topicArn;
+	}
+
+	public void setTopicArn(String topicArn) {
+		this.topicArn = topicArn;
+	}
+
 	public String getAccessKey() {
 		return accessKey;
 	}
@@ -102,14 +131,6 @@ public class SnsProperties {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
-	}
-
-	public String getTopicArn() {
-		return topicArn;
-	}
-
-	public void setTopicArn(String topicArn) {
-		this.topicArn = topicArn;
 	}
 
 	public ArrayList<SnsTopicProperties> getAllTopicProperties() {

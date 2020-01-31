@@ -3,6 +3,7 @@ package gov.va.bip.framework.sns.services.impl;
 import com.amazonaws.services.sns.model.*;
 import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sns.services.SnsService;
+import gov.va.bip.framework.sqs.config.SqsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,15 @@ public class SnsServiceImpl implements SnsService {
 	@Autowired
 	SnsProperties snsProperties;
 
+	@Autowired
+	SqsProperties sqsProperties;
+
 	@Override
 	public CreateTopicResult createTopic(CreateTopicRequest var1){
 		var1 = new CreateTopicRequest(snsProperties.getTopic());
 
 		return createTopic(var1);
 	};
-
 
 	public DeleteTopicResult deleteTopic(DeleteTopicRequest var1){
 		//IMPORTANT: When you delete a topic, you also delete all subscriptions to the topic.
@@ -27,22 +30,25 @@ public class SnsServiceImpl implements SnsService {
 		return deleteTopic(var1);
 	}
 
-	//ListSubscriptionsResult listSubscriptions();
+	@Override
+	public SubscribeResult subscribe(String var1, String var2, String var3) {
+		CreateTopicResult result = null;
+		var1 = result.getTopicArn();
 
-	//ListTopicsResult listTopics();
+		var2 = "sqs";
 
-	//SubscribeResult subscribe(String var1, String var2, String var3);
+		var3 = sqsProperties.getEndpoint();
+
+		return subscribe(var1, var2, var3);
+
+	}
 
 	public PublishResult publish(PublishRequest var1){
 		// Publish a message to an Amazon SNS topic.
-		final String msg = "If you receive this message, publishing a message to an Amazon SNS topic works.";
 		var1 = new PublishRequest(var1.getTopicArn(), var1.getMessage());
 		return publish(var1);
 	}
 
-	//UnsubscribeResult unsubscribe(UnsubscribeRequest var1);
-
-	//ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest var1);
 }
 
 
