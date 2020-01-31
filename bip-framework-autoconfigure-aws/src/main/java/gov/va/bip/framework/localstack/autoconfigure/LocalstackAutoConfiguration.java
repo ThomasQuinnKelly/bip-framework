@@ -94,17 +94,26 @@ public class LocalstackAutoConfiguration {
 
 			//configureAwsLocalStack();
 
+			//Creates a SQS queue
 			if (sqsProperties.getEnabled()) {
 				createQueues();
 			}
 
+			//Creates a SNS topic
 			CreateTopicResult result = null;
 			if (snsProperties.getEnabled()) {
 				result = createTopics();
 			}
 
+
 			if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
+				//Subscribes the topic to the queue
 				SubscribeTopicToQueue(result);
+			}
+
+			if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
+				//Publishes a message to the SQS queue
+				PublishMessageToQueue(result);
 			}
 		}
 	}
@@ -323,7 +332,37 @@ public class LocalstackAutoConfiguration {
 //					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
 //							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
 				}
-				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + snsProperties.getTopicArn()
+				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
+	}
+
+	private void PublishMessageToQueue(CreateTopicResult result) {
+
+		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
+		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
+
+		snsProperties.getAllTopicProperties();
+		sqsProperties.getAllQueueProperties();
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				SnsServiceclient.publish(new PublishRequest(result.getTopicArn(), snsProperties.getMessage()));
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+//					throw new BipRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
+//							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
