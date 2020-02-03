@@ -37,35 +37,36 @@ public class FeignCustomErrorDecoder implements ErrorDecoder {
 			StringBuilder strBuffer = new StringBuilder();
 			try {
 
-				Reader inputReader = response.body().asReader();
-				int data = inputReader.read();
-				while (data != -1) {
-					strBuffer.append((char) data);
-					data = inputReader.read();
+				if (response.body() != null) {
+					Reader inputReader = response.body().asReader();
+					int data = inputReader.read();
+					while (data != -1) {
+						strBuffer.append((char) data);
+						data = inputReader.read();
+					}
 				}
 
 			} catch (IOException e) {
-				LOGGER.debug(
-						"Could not read response body, trying alternate methods of error decoding as implemented in decode() method of feign.codec.ErrorDecoder.Default.Default()",
-						e);
+				LOGGER.debug("Could not read response body, trying alternate methods of error decoding as implemented "
+						+ "in decode() method of feign.codec.ErrorDecoder.Default.Default()", e);
 				return defaultErrorDecoder.decode(methodKey, response);
 			}
 
 			try {
-				JSONObject messageObjects = new JSONObject(strBuffer.toString());
-				JSONArray jsonarray = messageObjects.getJSONArray("messages");
-				JSONObject messageObject = jsonarray.getJSONObject(0);
-
-				MessageKeys key = MessageKeys.BIP_FEIGN_MESSAGE_RECEIVED;
-				String[] params = new String[] { messageObject.getString("key"), messageObject.getString("text") };
-				return new BipFeignRuntimeException(key,
-						MessageSeverity.fromValue(messageObject.getString("severity")),
-						HttpStatus.resolve(Integer.valueOf(messageObject.getString("status"))),
-						params);
-
+				if (strBuffer.length() > 0) {
+					JSONObject messageObjects = new JSONObject(strBuffer.toString());
+					JSONArray jsonarray = messageObjects.getJSONArray("messages");
+					JSONObject messageObject = jsonarray.getJSONObject(0);
+					MessageKeys key = MessageKeys.BIP_FEIGN_MESSAGE_RECEIVED;
+					String[] params = new String[] { messageObject.getString("key"), messageObject.getString("text") };
+					return new BipFeignRuntimeException(key,
+							MessageSeverity.fromValue(messageObject.getString("severity")),
+							HttpStatus.resolve(Integer.valueOf(messageObject.getString("status"))), params);
+				}
 			} catch (JSONException e) {
 				LOGGER.debug(
-						"Could not interpret response body, trying alternate methods of error decoding as implemented in decode() method of feign.codec.ErrorDecoder.Default.Default()",
+						"Could not interpret response body, trying alternate methods of error decoding as implemented in decode() method of "
+								+ "feign.codec.ErrorDecoder.Default.Default()",
 						e);
 				return defaultErrorDecoder.decode(methodKey, response);
 			}

@@ -113,5 +113,8 @@ public class AuditLogger {
 		MDC.put("audit_class", StringUtils.isBlank(auditable.getAuditClass()) ? UNKNOWN : auditable.getAuditClass());
 		MDC.put("user", StringUtils.isBlank(auditable.getUser()) ? UNKNOWN : auditable.getUser());
 		MDC.put("tokenId", StringUtils.isBlank(auditable.getTokenId()) ? EMPTY : auditable.getTokenId());
+		if(StringUtils.isNotBlank(auditable.getAuditDate())) {
+			MDC.put("audit_date", auditable.getAuditDate());
+		}
 	}
 }
