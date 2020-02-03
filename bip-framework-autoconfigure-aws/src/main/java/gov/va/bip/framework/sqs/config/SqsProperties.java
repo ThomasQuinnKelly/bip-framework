@@ -7,6 +7,7 @@ import java.util.Optional;
 import gov.va.bip.framework.aws.config.ConfigConstants;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "bip.framework.aws.sqs", ignoreUnknownFields = false)
@@ -14,6 +15,7 @@ public class SqsProperties {
 
 	private BipLogger logger = BipLoggerFactory.getLogger(SqsProperties.class);
 
+	@Value("false")
 	private Boolean enabled;
 	private String region;
 
