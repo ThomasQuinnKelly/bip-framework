@@ -1,4 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration
-
+gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration,\
+gov.va.bip.framework.aws.autoconfigure.BipSqsAutoConfiguration,\
+gov.va.bip.framework.aws.autoconfigure.BipSnsAutoConfiguration

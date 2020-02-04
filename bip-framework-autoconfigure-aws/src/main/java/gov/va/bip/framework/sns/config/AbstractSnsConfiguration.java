@@ -28,7 +28,7 @@ public abstract class AbstractSnsConfiguration {
 	@Autowired(required = false)
 	private LocalstackAutoConfiguration localstackAutoConfiguration;
 
-	private AmazonSNS createAmazonSQSClient(final SnsProperties snsProperties) {
+	private AmazonSNS createAmazonSNSClient(final SnsProperties snsProperties) {
 
 		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(snsProperties);
 

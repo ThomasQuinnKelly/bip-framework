@@ -5,13 +5,14 @@ import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.*;
+import com.amazonaws.services.sns.model.CreateTopicRequest;
+import com.amazonaws.services.sns.model.CreateTopicResult;
+import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
-import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.sns.config.SnsProperties;
@@ -26,8 +27,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
-import software.amazon.awssdk.services.sns.SnsClient;
-import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -43,10 +42,11 @@ import java.util.regex.PatternSyntaxException;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ LocalstackProperties.class, SqsProperties.class, SnsProperties.class })
+//@Profile(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
+@EnableConfigurationProperties({ LocalstackProperties.class})
 @ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
 @Primary
-@Order( Ordered.HIGHEST_PRECEDENCE )
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class LocalstackAutoConfiguration {
 	/** Class logger */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(LocalstackAutoConfiguration.class);
@@ -230,7 +230,7 @@ public class LocalstackAutoConfiguration {
 
 
 		//TODO: build in support for mutiple queues in some way.
-		sqsProperties.getAllQueueProperties();
+		//sqsProperties.getAllQueueProperties();
 
 		String deadletterQueueUrl = null;
 		GetQueueAttributesResult queueAttributesResult = null;
@@ -319,8 +319,8 @@ public class LocalstackAutoConfiguration {
 		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
 		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
 
-		snsProperties.getAllTopicProperties();
-		sqsProperties.getAllQueueProperties();
+		//snsProperties.getAllTopicProperties();
+		//sqsProperties.getAllQueueProperties();
 
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {
@@ -349,8 +349,8 @@ public class LocalstackAutoConfiguration {
 		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
 		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
 
-		snsProperties.getAllTopicProperties();
-		sqsProperties.getAllQueueProperties();
+		//snsProperties.getAllTopicProperties();
+		//sqsProperties.getAllQueueProperties();
 
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {

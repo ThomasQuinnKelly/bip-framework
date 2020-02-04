@@ -1,7 +1,7 @@
 package gov.va.bip.framework.aws.autoconfigure;
 
-import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sns.config.AbstractSnsConfiguration;
+import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sns.config.StandardSnsConfiguration;
 import gov.va.bip.framework.sns.services.SnsService;
 import gov.va.bip.framework.sns.services.impl.SnsServiceImpl;

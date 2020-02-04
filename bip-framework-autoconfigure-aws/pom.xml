@@ -20,11 +20,6 @@
 			<artifactId>bip-framework-libraries</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- Spring Framework JMS -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-		</dependency>
 		<!-- Spring Framework AspectJ -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -53,17 +48,21 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-aws-core</artifactId>
 		</dependency>
+		<!-- Spring Framework JMS -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+		</dependency>
 		<!-- Amazon SQS Java Extended Client Lib -->
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
-			<version>1.0.4</version>
+			<version>1.0.8</version>
 		</dependency>
 		<!-- Amazon SNS Lib Dependencies  -->
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-sns</artifactId>
-			<version>1.11.714</version>
 		</dependency>
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>

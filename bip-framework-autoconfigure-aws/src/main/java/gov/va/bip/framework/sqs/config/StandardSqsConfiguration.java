@@ -1,16 +1,16 @@
 package gov.va.bip.framework.sqs.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import com.amazon.sqs.javamessaging.SQSConnectionFactory;
-import org.springframework.context.annotation.*;
+import javax.jms.ConnectionFactory;
 
 @Configuration
-@Import({SqsProperties.class})
 public class StandardSqsConfiguration extends AbstractSqsConfiguration {
 
 	@Bean
 	@Override
-	public SQSConnectionFactory connectionFactory(SqsProperties sqsProperties) {
+	public ConnectionFactory connectionFactory(SqsProperties sqsProperties) {
 		return createStandardSQSConnectionFactory(sqsProperties);
 	}
 

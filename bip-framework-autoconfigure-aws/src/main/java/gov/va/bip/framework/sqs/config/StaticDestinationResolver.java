@@ -1,9 +1,10 @@
 package gov.va.bip.framework.sqs.config;
 
+import org.springframework.jms.support.destination.DestinationResolver;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
-import org.springframework.jms.support.destination.DestinationResolver;
 
 public class StaticDestinationResolver implements DestinationResolver {
 
@@ -17,11 +18,7 @@ public class StaticDestinationResolver implements DestinationResolver {
 	public Destination resolveDestinationName(
 			Session session, String destinationName, boolean pubSubDomain) throws JMSException {
 
-		return resolveDestinationName(session);
-	}
-
-	public Destination resolveDestinationName(Session session) throws JMSException {
-
 		return session.createQueue(queueName);
 	}
+
 }

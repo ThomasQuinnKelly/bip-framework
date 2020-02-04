@@ -21,10 +21,10 @@ import java.util.List;
 public class LocalstackProperties {
 
     @Autowired
-    private LocalstackSnsProperties snsProperties;
+    private LocalstackSnsProperties localstackSnsProperties;
 
     @Autowired
-    private LocalstackSqsProperties sqsProperties;
+    private LocalstackSqsProperties localstackSqsProperties;
 
     /**
      * Create enabled service definitions used on Localstack.
@@ -40,12 +40,12 @@ public class LocalstackProperties {
 
             this.services = new ArrayList<>();
 
-            if (snsProperties.isEnabled()) {
-                this.services.add(new Services("sns", snsProperties.getPort()));
+            if (localstackSnsProperties.isEnabled()) {
+                this.services.add(new Services("sns", localstackSnsProperties.getPort()));
             }
 
-            if (sqsProperties.isEnabled()) {
-                this.services.add(new Services("sqs", sqsProperties.getPort()));
+            if (localstackSqsProperties.isEnabled()) {
+                this.services.add(new Services("sqs", localstackSqsProperties.getPort()));
             }
 
             // ... more services to come
@@ -94,19 +94,19 @@ public class LocalstackProperties {
         }
     }
 
-    public LocalstackSnsProperties getSnsProperties() {
-        return snsProperties;
+    public LocalstackSnsProperties getLocalstackSnsProperties() {
+        return localstackSnsProperties;
     }
 
-    public void setSnsProperties(LocalstackSnsProperties snsProperties) {
-        this.snsProperties = snsProperties;
+    public void setLocalstackSnsProperties(LocalstackSnsProperties localstackSnsProperties) {
+        this.localstackSnsProperties = localstackSnsProperties;
     }
 
-    public LocalstackSqsProperties getSqsProperties() {
-        return sqsProperties;
+    public LocalstackSqsProperties getLocalstackSqsProperties() {
+        return localstackSqsProperties;
     }
 
-    public void setSqsProperties(LocalstackSqsProperties sqsProperties) {
-        this.sqsProperties = sqsProperties;
+    public void setLocalstackSqsProperties(LocalstackSqsProperties localstackSqsProperties) {
+        this.localstackSqsProperties = localstackSqsProperties;
     }
 }

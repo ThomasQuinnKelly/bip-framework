@@ -1,14 +1,13 @@
 package gov.va.bip.framework.sqs.config;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Optional;
-
 import gov.va.bip.framework.aws.config.ConfigConstants;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.net.URI;
+import java.util.Optional;
 
 @ConfigurationProperties(prefix = "bip.framework.aws.sqs", ignoreUnknownFields = false)
 public class SqsProperties {
@@ -17,12 +16,8 @@ public class SqsProperties {
 
 	@Value("false")
 	private Boolean enabled;
+
 	private String region;
-
-	// TODO: method
-	// somehow scan for all implementing methods of QueueProperties
-	private ArrayList<SqsQueueProperties> allQueueProperties;
-
 	private String endpoint;
 	private String dlqendpoint;
 	private int retries;
@@ -290,11 +285,14 @@ public class SqsProperties {
 		this.numberofmessagestoprefetch = numberofmessagestoprefetch;
 	}
 
-	public ArrayList<SqsQueueProperties> getAllQueueProperties() {
-		return allQueueProperties;
-	}
 
-	public void setAllQueueProperties(ArrayList<SqsQueueProperties> allQueueProperties) {
-		this.allQueueProperties = allQueueProperties;
-	}
+//scan for all implementing methods of QueueProperties
+//private ArrayList<SqsQueueProperties> allQueueProperties;
+//	public ArrayList<SqsQueueProperties> getAllQueueProperties() {
+//		return allQueueProperties;
+//	}
+//
+//	public void setAllQueueProperties(ArrayList<SqsQueueProperties> allQueueProperties) {
+//		this.allQueueProperties = allQueueProperties;
+//	}
 }
