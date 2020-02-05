@@ -110,11 +110,14 @@ public class LocalstackAutoConfiguration {
 				//Subscribes the topic to the queue
 				SubscribeTopicToQueue(result);
 			}
-
+/*
 			if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
 				//Publishes a message to the SQS queue
 				PublishMessageToQueue(result);
+
 			}
+			
+ */
 		}
 	}
 
@@ -344,7 +347,7 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
-	private void PublishMessageToQueue(CreateTopicResult result) {
+	/*private void PublishMessageToQueue(CreateTopicResult result) {
 
 		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
 		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
@@ -373,4 +376,6 @@ public class LocalstackAutoConfiguration {
 			}
 		}
 	}
+
+	 */
 }

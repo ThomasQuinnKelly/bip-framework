@@ -10,6 +10,7 @@ import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
@@ -28,7 +29,8 @@ public abstract class AbstractSnsConfiguration {
 	@Autowired(required = false)
 	private LocalstackAutoConfiguration localstackAutoConfiguration;
 
-	private AmazonSNS createAmazonSNSClient(final SnsProperties snsProperties) {
+	@Bean
+	public AmazonSNS amazonSNS(final SnsProperties snsProperties) {
 
 		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(snsProperties);
 
