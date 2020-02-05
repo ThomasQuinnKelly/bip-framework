@@ -65,7 +65,7 @@ public class LocalstackAutoConfiguration {
 	@Value("${bip.framework.localstack.externalHostName:localhost}")
 	private String externalHostName;
 
-	@Value("${bip.framework.localstack.imageTag:latest}")
+	@Value("${bip.framework.localstack.imageTag:0.10.7}")
 	private String imageTag;
 
 	@Value("${bip.framework.localstack.pullNewImage:true}")
