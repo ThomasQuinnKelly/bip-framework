@@ -110,11 +110,14 @@ public class LocalstackAutoConfiguration {
 				//Subscribes the topic to the queue
 				SubscribeTopicToQueue(result);
 			}
-
+/*
 			if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
 				//Publishes a message to the SQS queue
 				PublishMessageToQueue(result);
+
 			}
+			
+ */
 		}
 	}
 
