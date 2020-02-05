@@ -344,7 +344,7 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
-	private void PublishMessageToQueue(CreateTopicResult result) {
+	/*private void PublishMessageToQueue(CreateTopicResult result) {
 
 		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
 		AmazonSQS SqsServciceclient = TestUtils.getClientSQS();
@@ -373,4 +373,6 @@ public class LocalstackAutoConfiguration {
 			}
 		}
 	}
+
+	 */
 }

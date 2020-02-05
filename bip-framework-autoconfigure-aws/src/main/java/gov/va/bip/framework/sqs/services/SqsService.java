@@ -1,12 +1,7 @@
 package gov.va.bip.framework.sqs.services;
 
-import com.amazon.sqs.javamessaging.message.SQSMessage;
 import com.amazon.sqs.javamessaging.message.SQSTextMessage;
-import gov.va.bip.framework.sqs.dto.BipMessage;
 import gov.va.bip.framework.sqs.dto.SendMessageResponse;
-
-import javax.jms.Message;
-import javax.jms.TextMessage;
 
 public interface SqsService {
 
