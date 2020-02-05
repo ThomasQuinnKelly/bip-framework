@@ -1,4 +1,4 @@
-mavenGitflowPipeline  {
+mavenLibraryPipeline  {
 
     skipTests = true
     skipFunctionalTests = true
@@ -17,6 +17,6 @@ mavenGitflowPipeline  {
     // the build pipeline will build all images specified in the map. The example below will build an image tagged as
     // `blue/bip-framework:latest` using the Docker context of `./bip-reference-person`.
     dockerBuilds = [
-        'bip-framework': 'bip-framework'
+        'blue/bip-framework': 'bip-framework'
     ]
 }
