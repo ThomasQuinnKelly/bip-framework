@@ -1,4 +1,4 @@
-mavenLibraryPipeline {
+mavenGitflowPipeline  {
 
     skipTests = true
     skipFunctionalTests = true
