@@ -9,6 +9,7 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import gov.va.bip.framework.config.BipCommonSpringProfiles;
 import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,18 +79,18 @@ public abstract class AbstractSqsConfiguration {
 	}
 
 	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
-//		boolean isEmbeddedAws = false;
+		boolean isEmbeddedAws = false;
 		EndpointConfiguration endpointConfiguration = null;
 
 		Regions region = Regions.fromName(sqsProperties.getRegion());
 
-//		for (final String profileName : environment.getActiveProfiles()) {
-//			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-//				isEmbeddedAws = true;
-//			}
-//		}
+		for (final String profileName : environment.getActiveProfiles()) {
+			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				isEmbeddedAws = true;
+			}
+		}
 
-		if (localstackEnabled) { //isEmbeddedAws
+		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
 		} else {
