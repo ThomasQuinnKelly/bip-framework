@@ -57,8 +57,6 @@ public abstract class AbstractSqsConfiguration {
 
 	protected ConnectionFactory createStandardSQSConnectionFactory(final SqsProperties sqsProperties) {
 
-		//org.springframework.cloud.sleuth.instrument.messaging.LazyConnectionFactory ls;
-
 		AmazonSQS sqsClient = createAmazonSQSClient(sqsProperties);
 
 		ProviderConfiguration providerConfiguration = new ProviderConfiguration();

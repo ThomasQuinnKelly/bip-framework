@@ -1,7 +1,8 @@
 package gov.va.bip.framework.sns.services.impl;
 
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.*;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sns.services.SnsService;
 import gov.va.bip.framework.sqs.config.SqsProperties;
@@ -51,10 +52,7 @@ public class SnsServiceImpl implements SnsService {
 	 */
 
 	public PublishResult publish(PublishRequest var1){
-		// Publish a message to an Amazon SNS topic.
 		return amazonSNS.publish(var1);
-		//var1 = new PublishRequest(var1.getTopicArn(), var1.getMessage());
-		//return publish(var1);
 	}
 
 }
