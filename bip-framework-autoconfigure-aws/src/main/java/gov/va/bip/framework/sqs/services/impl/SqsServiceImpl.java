@@ -46,14 +46,11 @@ public class SqsServiceImpl implements SqsService {
 		SendMessageResponse sendMessageResponse = new SendMessageResponse();
 		try {
 			Defense.notNull(message, "Message can't be null");
-			messageId = jmsOperations.execute(new ProducerCallback<String>() {
-				@Override
-				public String doInJms(Session session, MessageProducer producer) throws JMSException {
-					message.setJMSTimestamp(System.currentTimeMillis());
-					producer.send(message);
-					logger.info("Sent JMS message with payload='{}', id: '{}'", message, message.getJMSMessageID());
-					return message.getJMSMessageID();
-				}
+			messageId = jmsOperations.execute((session, producer) -> {
+				message.setJMSTimestamp(System.currentTimeMillis());
+				producer.send(message);
+				logger.info("Sent JMS message with payload='{}', id: '{}'", message, message.getJMSMessageID());
+				return message.getJMSMessageID();
 			});
 		} catch (Exception e) {
 			logger.error(ERROR_MESSAGE, e);
@@ -94,8 +91,23 @@ public class SqsServiceImpl implements SqsService {
 		try {
 
 			Defense.notNull(message, "Message can't be null");
-			return (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
+			SQSTextMessage result = (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
 					.createTextMessage(message);
+
+			Enumeration<String> s = result.getPropertyNames();
+
+			while (s.hasMoreElements()) {
+				String t = s.nextElement();
+				System.out.println(t);
+			}
+//
+//			String jmsXGroupId = result.getSQSMessageGroupId();
+//
+//			result.setObjectProperty("JMSXGroupID", jmsXGroupId);
+//
+//			result.getSQSMessageGroupId();
+
+			return result;
 
 		} catch (JMSException e) {
 			logger.error(ERROR_MESSAGE, e);

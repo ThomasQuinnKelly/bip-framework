@@ -51,8 +51,12 @@ public class SnsServiceImpl implements SnsService {
 
 	 */
 
+	@Override
 	public PublishResult publish(PublishRequest var1){
-		return amazonSNS.publish(var1);
+
+		return amazonSNS.publish(var1.getTopicArn(), var1.getMessage());
+		//return amazonSNS.publish(var1);
+
 	}
 
 }

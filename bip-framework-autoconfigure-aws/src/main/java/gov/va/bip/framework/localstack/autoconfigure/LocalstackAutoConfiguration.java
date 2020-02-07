@@ -27,16 +27,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -196,7 +194,7 @@ public class LocalstackAutoConfiguration {
 		// Get containers Ids
 		DockerExe newDockerExe = new DockerExe();
 		String listContainerIds =
-				newDockerExe.execute(Arrays.asList("ps", "--no-trunc", "-aq", "--filter", "ancestor=localstack/localstack"));
+				newDockerExe.execute(Arrays.asList("ps", "--no-trunc", "-aq", "--filter", "ancestor=localstack/localstack:" + imageTag));
 
 		// Clean up docker containers
 		if (StringUtils.isNotEmpty(listContainerIds)) {
@@ -323,12 +321,12 @@ public class LocalstackAutoConfiguration {
 
 	private void subscribeTopicToQueue(CreateTopicResult result) {
 
-		AmazonSNS SnsServiceclient = TestUtils.getClientSNS();
+		AmazonSNS snsServiceclient = TestUtils.getClientSNS();
 
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				SnsServiceclient.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
+				snsServiceclient.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
 				break;
 			} catch (Exception e) {
 				if (i == MAX_RETRIES - 1) {
