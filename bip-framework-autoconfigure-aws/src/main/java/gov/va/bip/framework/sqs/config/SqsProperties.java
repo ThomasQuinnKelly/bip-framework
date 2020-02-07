@@ -285,14 +285,4 @@ public class SqsProperties {
 		this.numberofmessagestoprefetch = numberofmessagestoprefetch;
 	}
 
-
-//scan for all implementing methods of QueueProperties
-//private ArrayList<SqsQueueProperties> allQueueProperties;
-//	public ArrayList<SqsQueueProperties> getAllQueueProperties() {
-//		return allQueueProperties;
-//	}
-//
-//	public void setAllQueueProperties(ArrayList<SqsQueueProperties> allQueueProperties) {
-//		this.allQueueProperties = allQueueProperties;
-//	}
 }

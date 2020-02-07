@@ -111,8 +111,6 @@ public class LocalstackAutoConfiguration {
 
 				Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
-				//configureAwsLocalStack();
-
 				//Creates a SQS queue
 				if (sqsProperties.getEnabled()) {
 					createQueues();
@@ -238,12 +236,8 @@ public class LocalstackAutoConfiguration {
 		return null;
 	}
 
-	//TODO: Incorporate BipRuntimeException here
 	private void createQueues() {
 		AmazonSQS client = TestUtils.getClientSQS();
-
-		//TODO: build in support for mutiple queues in some way.
-		//sqsProperties.getAllQueueProperties();
 
 		String deadletterQueueUrl = null;
 		GetQueueAttributesResult queueAttributesResult = null;

@@ -2,6 +2,9 @@ package gov.va.bip.framework.sns.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/*
+ * This class exists to parse out a SNS message sent to SQS
+ */
 public class SNSMessage {
     @JsonProperty("MessageId")
     String messageId;
