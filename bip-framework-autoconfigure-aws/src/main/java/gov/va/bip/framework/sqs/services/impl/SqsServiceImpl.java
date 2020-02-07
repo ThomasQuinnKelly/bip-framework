@@ -1,13 +1,12 @@
 package gov.va.bip.framework.sqs.services.impl;
 
-import com.amazon.sqs.javamessaging.message.SQSMessage;
 import com.amazon.sqs.javamessaging.message.SQSTextMessage;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.sqs.dto.SendMessageResponse;
-import gov.va.bip.framework.sqs.exception.SqsException;
+import gov.va.bip.framework.exception.SqsException;
 import gov.va.bip.framework.sqs.services.SqsService;
 import gov.va.bip.framework.validation.Defense;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,9 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.ProducerCallback;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Text;
 
 import javax.annotation.Resource;
 import javax.jms.*;
-import java.util.Enumeration;
 
 @Service
 public class SqsServiceImpl implements SqsService {
@@ -62,7 +59,7 @@ public class SqsServiceImpl implements SqsService {
 						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 			else
 				throw new SqsException(MessageKeys.BIP_SQS_MESSAGE_TRANSFER_ERROR, MessageSeverity.ERROR,
-						HttpStatus.INTERNAL_SERVER_ERROR, e);
+						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 
 		}
 

@@ -158,12 +158,18 @@ public enum MessageKeys implements MessageKey {
 
 	/** SQS create text message genericerror message */
 	BIP_SQS_MESSAGE_CREATE_EXCEPTION("bip.framework.sqs.services.create.error","Could not create a text message."),
+	/** SQS retrieve endpoint error message */
+	BIP_SQS_ENDPOINT_RETRIEVE_EXCEPTION("bip.framework.sqs.services.retrieve.endpoint.error","Could not retrieve Sqs endpoint."),
 	/** SQS create text message error message */
 	BIP_SQS_MESSAGE_CREATE_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.message.error","Could not create a text message."),
 	/** SQS JMS message generic send error message */
 	BIP_SQS_MESSAGE_CREATE_JMS_FAILED("bip.framework.sqs.services.create.jms.error","JMS had an issue."),
 	/** SQS JMS message generic send error message */
-	BIP_SQS_MESSAGE_CREATE_JMS_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.jms.message.error","JMS had an issue.")
+	BIP_SQS_MESSAGE_CREATE_JMS_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.jms.message.error","JMS had an issue."),
+	/** SNS create topic error message */
+	BIP_SNS_TOPIC_CREATE_EXCEPTION_MESSAGE("bip.framework.sns.services.create.topic.error","Could not create a SNS topic."),
+	/** SNS retrieve topic arn error message */
+	BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE("bip.framework.sns.services.retrieve.topicarn.error","Could not retrieve topic arn.")
 
 	;
 
