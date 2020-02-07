@@ -1,7 +1,5 @@
 package gov.va.bip.framework.log;
 
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 

@@ -1,6 +1,5 @@
 package gov.va.bip.framework.exception;
 
-import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
 import org.springframework.http.HttpStatus;

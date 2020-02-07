@@ -1,23 +1,24 @@
 package gov.va.bip.framework.sqs.services.impl;
 
 import com.amazon.sqs.javamessaging.message.SQSTextMessage;
+import gov.va.bip.framework.exception.SqsException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.sqs.dto.SendMessageResponse;
-import gov.va.bip.framework.exception.SqsException;
 import gov.va.bip.framework.sqs.services.SqsService;
 import gov.va.bip.framework.validation.Defense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.ProducerCallback;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.jms.*;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Session;
 import java.util.Enumeration;
 
 @Service

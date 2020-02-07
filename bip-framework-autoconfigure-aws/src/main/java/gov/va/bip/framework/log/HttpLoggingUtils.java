@@ -4,8 +4,6 @@ import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
 import gov.va.bip.framework.audit.RequestResponseLogSerializer;
 import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.transport.TransportOutputStream;
 
