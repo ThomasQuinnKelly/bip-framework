@@ -6,6 +6,7 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import gov.va.bip.framework.config.BipCommonSpringProfiles;
 import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +43,18 @@ public abstract class AbstractSnsConfiguration {
 	}
 
 	private EndpointConfiguration getEndpointConfiguration(final SnsProperties snsProperties) {
+		boolean isEmbeddedAws = false;
 		EndpointConfiguration endpointConfiguration = null;
 
 		Regions region = Regions.fromName(snsProperties.getRegion());
 
-		if (localstackEnabled) {
+		for (final String profileName : environment.getActiveProfiles()) {
+			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				isEmbeddedAws = true;
+			}
+		}
+
+		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSNS(), region.getName());
 		} else {
