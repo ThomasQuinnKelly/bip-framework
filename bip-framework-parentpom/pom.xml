@@ -843,13 +843,6 @@
 							<maxHeap>${fortify.maxHeap}</maxHeap>
 							<maxPermGen>${fortify.maxPermGen}</maxPermGen>
 						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.codehaus.plexus</groupId>
-								<artifactId>plexus-utils</artifactId>
-								<version>3.3.0</version>
-							</dependency>
-						</dependencies>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -948,13 +941,6 @@
 							<groupId>com.fortify.sca.plugins.maven</groupId>
 							<artifactId>sca-maven-plugin</artifactId>
 							<version>${sca-maven-plugin.version}</version>
-							<dependencies>
-								<dependency>
-									<groupId>org.codehaus.plexus</groupId>
-									<artifactId>plexus-utils</artifactId>
-									<version>3.3.0</version>
-								</dependency>
-							</dependencies>
 						</plugin>
 					</plugins>
 				</pluginManagement>
