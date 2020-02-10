@@ -23,7 +23,7 @@
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		
-		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
+		<sca-maven-plugin.version>19.2.1</sca-maven-plugin.version>
 		<fortify-merge-input-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-input-filepath>
 		<fortify-merge-output-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-output-filepath>
 		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
