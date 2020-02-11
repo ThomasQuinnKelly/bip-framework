@@ -6,9 +6,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.Locale;
 @Component
 public class RequestResponseLogSerializer {
 
-	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(RequestResponseLogSerializer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestResponseLogSerializer.class);
 
 	ObjectMapper mapper = new ObjectMapper();
 

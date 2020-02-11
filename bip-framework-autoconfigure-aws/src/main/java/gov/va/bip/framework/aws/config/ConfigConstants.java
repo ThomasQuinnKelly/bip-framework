@@ -1,9 +1,24 @@
 package gov.va.bip.framework.aws.config;
 
-public interface ConfigConstants {
+public class ConfigConstants {
 
-    String AWS_LOCALSTACK_ID = "test-key";
+    public enum aws_credentials {
+        AWS_LOCALSTACK_ID("test-key"),
+        AWS_LOCALSTACK_KEY("test-secret");
 
-    String AWS_LOCALSTACK_KEY = "test-secret";
+        private final String text;
+
+        /**
+         * @param text
+         */
+        aws_credentials(final String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
 }

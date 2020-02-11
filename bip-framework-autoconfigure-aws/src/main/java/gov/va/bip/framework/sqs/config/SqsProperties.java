@@ -1,8 +1,8 @@
 package gov.va.bip.framework.sqs.config;
 
 import gov.va.bip.framework.aws.config.ConfigConstants;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 @ConfigurationProperties(prefix = "bip.framework.aws.sqs", ignoreUnknownFields = false)
 public class SqsProperties {
 
-	private BipLogger logger = BipLoggerFactory.getLogger(SqsProperties.class);
+	private Logger logger = LoggerFactory.getLogger(SqsProperties.class);
 
 	@Value("false")
 	private Boolean enabled;
@@ -106,8 +106,8 @@ public class SqsProperties {
 	@Max(43200) // 12 hours
 	private Integer dlqvisibilitytimeout;
 
-	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
-	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
 
 	//For SQS Configuration
 	@Min(0)

@@ -3,14 +3,14 @@ package gov.va.bip.framework.sns.services.impl;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.*;
 import gov.va.bip.framework.exception.SnsException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sns.services.SnsService;
 import gov.va.bip.framework.sqs.config.SqsProperties;
 import gov.va.bip.framework.validation.Defense;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SnsServiceImpl implements SnsService {
 
-	private final BipLogger logger = BipLoggerFactory.getLogger(SnsServiceImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(SnsServiceImpl.class);
 	public static final String ERROR_MESSAGE = "Error Message: {}";
 
 

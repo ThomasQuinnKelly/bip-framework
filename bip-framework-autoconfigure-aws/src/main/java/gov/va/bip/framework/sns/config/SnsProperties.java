@@ -1,12 +1,10 @@
 package gov.va.bip.framework.sns.config;
 
 import gov.va.bip.framework.aws.config.ConfigConstants;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.ArrayList;
 
 /**
  * See:
@@ -16,7 +14,7 @@ import java.util.ArrayList;
 @ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
 public class SnsProperties {
 
-	private BipLogger logger = BipLoggerFactory.getLogger(SnsProperties.class);
+	private Logger logger = LoggerFactory.getLogger(SnsProperties.class);
 
 	@Value("false")
 	private Boolean enabled;
@@ -26,18 +24,16 @@ public class SnsProperties {
 	private String message;
 	private String region;
 	private String endpoint;
-	private int retries;
-	private Integer prefetch;
 	private String topicArn;
-	
-	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
-	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
 
-	public BipLogger getLogger() {
+	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
+
+	public Logger getLogger() {
 		return logger;
 	}
 
-	public void setLogger(BipLogger logger) {
+	public void setLogger (Logger logger) {
 		this.logger = logger;
 	}
 
@@ -95,22 +91,6 @@ public class SnsProperties {
 
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
-	}
-
-	public int getRetries() {
-		return retries;
-	}
-
-	public void setRetries(int retries) {
-		this.retries = retries;
-	}
-
-	public Integer getPrefetch() {
-		return prefetch;
-	}
-
-	public void setPrefetch(Integer prefetch) {
-		this.prefetch = prefetch;
 	}
 
 	public String getTopicArn() {

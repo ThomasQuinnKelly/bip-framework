@@ -4,6 +4,8 @@ import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
 import gov.va.bip.framework.audit.RequestResponseLogSerializer;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.transport.TransportOutputStream;
 
@@ -17,7 +19,7 @@ import java.io.OutputStream;
 public class HttpLoggingUtils {
 	public static final String UNABLE_TO_LOG_HTTP_MESSAGE_TEXT = "Unable to log HTTP message.";
 
-	public static final BipLogger LOGGER = BipLoggerFactory.getLogger(HttpLoggingUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpLoggingUtils.class);
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -36,18 +38,6 @@ public class HttpLoggingUtils {
 			AuditEventData auditEventData = new AuditEventData(auditEvent, auditActivity, auditClassName);
 			asyncLogging.asyncLogMessageAspectAuditData(auditEventData, NEW_LINE + title + " : " + NEW_LINE + httpMessage + NEW_LINE,
 					MessageSeverity.INFO, null);
-		} catch (Exception e) {
-			LOGGER.error(UNABLE_TO_LOG_HTTP_MESSAGE_TEXT, e);
-		}
-	}
-
-	public static void logMessage(final String title, final WebServiceMessage webServiceMessage) {
-		try {
-			ByteArrayTransportOutputStream byteArrayTransportOutputStream = new ByteArrayTransportOutputStream();
-			webServiceMessage.writeTo(byteArrayTransportOutputStream);
-
-			String httpMessage = new String(byteArrayTransportOutputStream.toByteArray(), "ISO-8859-1");
-			LOGGER.info(NEW_LINE + title + " : " + NEW_LINE + httpMessage + NEW_LINE);
 		} catch (Exception e) {
 			LOGGER.error(UNABLE_TO_LOG_HTTP_MESSAGE_TEXT, e);
 		}
