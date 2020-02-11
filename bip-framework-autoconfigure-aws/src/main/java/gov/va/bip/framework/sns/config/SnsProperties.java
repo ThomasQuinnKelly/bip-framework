@@ -21,8 +21,6 @@ public class SnsProperties {
 	private String message;
 	private String region;
 	private String endpoint;
-	private int retries;
-	private Integer prefetch;
 	private String topicArn;
 	
 	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
@@ -93,22 +91,6 @@ public class SnsProperties {
 
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
-	}
-
-	public int getRetries() {
-		return retries;
-	}
-
-	public void setRetries(int retries) {
-		this.retries = retries;
-	}
-
-	public Integer getPrefetch() {
-		return prefetch;
-	}
-
-	public void setPrefetch(Integer prefetch) {
-		this.prefetch = prefetch;
 	}
 
 	public String getTopicArn() {

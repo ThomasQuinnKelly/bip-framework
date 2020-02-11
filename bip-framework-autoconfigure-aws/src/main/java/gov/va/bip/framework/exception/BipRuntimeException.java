@@ -15,6 +15,12 @@ public class BipRuntimeException extends RuntimeException {
 
 	/**
 	 * Instantiates a new exception.
+	 */
+	public BipRuntimeException() {
+		super();
+	}
+	/**
+	 * Instantiates a new exception.
 	 * @param key
 	 * @param severity
 	 * @param status
