@@ -4,11 +4,7 @@ package gov.va.bip.framework.security.opa.voter;
 public class OPADataResponse {
 
     private boolean result;
-
-    public OPADataResponse() {
-
-    }
-
+    
     public boolean getResult() {
         return this.result;
     }
