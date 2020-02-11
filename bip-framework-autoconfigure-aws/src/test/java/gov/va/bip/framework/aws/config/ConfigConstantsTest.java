@@ -20,8 +20,8 @@ public class ConfigConstantsTest {
 
 	@Test
 	public void testFields() throws Exception {
-		Assert.assertEquals(TEST_AWS_ID, ConfigConstants.AWS_LOCALSTACK_ID);
-		Assert.assertEquals(TEST_AWS_KEY, ConfigConstants.AWS_LOCALSTACK_KEY);
+		Assert.assertEquals(TEST_AWS_ID, ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString());
+		Assert.assertEquals(TEST_AWS_KEY, ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString());
 	}
 
 }

@@ -1,5 +1,6 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import ch.qos.logback.classic.Level;
 import cloud.localstack.Localstack;
 import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
@@ -65,7 +66,7 @@ public class LocalstackAutoConfiguration {
 	@Autowired
 	Environment environment;
 
-	private static Integer MAX_RETRIES = 60;
+	private static Integer maxRetries = 60;
 
 	@Value("${bip.framework.localstack.externalHostName:localhost}")
 	private String externalHostName;
@@ -103,8 +104,6 @@ public class LocalstackAutoConfiguration {
 		if (profileCheck()) {
 
 			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
-				// AWS localstack already running, not trying to re-start
-				return;
 			} else if (Localstack.INSTANCE != null) {
 				// Clean the localstack
 				cleanAwsLocalStack();
@@ -123,7 +122,7 @@ public class LocalstackAutoConfiguration {
 				}
 
 
-				if (snsProperties.getEnabled() & sqsProperties.getEnabled()) {
+				if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
 					//Subscribes the topic to the queue
 					subscribeTopicToQueue(result);
 				}
@@ -216,12 +215,10 @@ public class LocalstackAutoConfiguration {
 		snsProperties.getAllTopicProperties();
 
 		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
+		for (int i = 0; i < maxRetries; i++) {
 			try {
 				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
 			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-				}
 				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
@@ -229,7 +226,8 @@ public class LocalstackAutoConfiguration {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// NOSONAR do nothing
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -243,13 +241,11 @@ public class LocalstackAutoConfiguration {
 		GetQueueAttributesResult queueAttributesResult = null;
 
 		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
+		for (int i = 0; i < maxRetries; i++) {
 			try {
 				deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
 				break;
 			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-				}
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
@@ -257,7 +253,8 @@ public class LocalstackAutoConfiguration {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// NOSONAR do nothing
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -265,20 +262,19 @@ public class LocalstackAutoConfiguration {
 				new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
 
 		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
+		for (int i = 0; i < maxRetries; i++) {
 			try {
 				queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
 				break;
 			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-				}
 				LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// NOSONAR do nothing
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -296,13 +292,11 @@ public class LocalstackAutoConfiguration {
 		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
 
 		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
+		for (int i = 0; i < maxRetries; i++) {
 			try {
 				client.createQueue(new CreateQueueRequest(sqsProperties.getQueueName()).withAttributes(attributeMap));
 				break;
 			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-				}
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
@@ -310,7 +304,8 @@ public class LocalstackAutoConfiguration {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// NOSONAR do nothing
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -320,13 +315,11 @@ public class LocalstackAutoConfiguration {
 		AmazonSNS snsServiceclient = TestUtils.getClientSNS();
 
 		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
+		for (int i = 0; i < maxRetries; i++) {
 			try {
 				snsServiceclient.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
 				break;
 			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
-				}
 				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
 						+ ") failed on try # " + (i + 1)
 						+ ", waiting for AWS localstack to finish initializing.");
@@ -334,7 +327,8 @@ public class LocalstackAutoConfiguration {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// NOSONAR do nothing
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
 			}
 		}
 	}

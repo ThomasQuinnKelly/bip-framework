@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
 public class SnsProperties {
@@ -22,12 +23,12 @@ public class SnsProperties {
 	private String region;
 	private String endpoint;
 	private String topicArn;
-	
-	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
-	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+
+	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
 
 	// somehow scan for all implementing methods of QueueProperties
-	private ArrayList<SnsTopicProperties> allTopicProperties;
+	private List<SnsTopicProperties> allTopicProperties;
 
 	public Logger getLogger() {
 		return logger;
@@ -117,11 +118,11 @@ public class SnsProperties {
 		this.secretKey = secretKey;
 	}
 
-	public ArrayList<SnsTopicProperties> getAllTopicProperties() {
+	public List<SnsTopicProperties> getAllTopicProperties() {
 		return allTopicProperties;
 	}
 
-	public void setAllTopicProperties(ArrayList<SnsTopicProperties> allTopicProperties) {
+	public void setAllTopicProperties(List<SnsTopicProperties> allTopicProperties) {
 		this.allTopicProperties = allTopicProperties;
 	}
 }

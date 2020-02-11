@@ -32,8 +32,8 @@ public class SqsProperties {
     private Integer numberofmessagestoprefetch;
     private Integer dlqretriescount;
 	
-	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
-	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
 
 	public Boolean getEnabled() {
 		return enabled;
@@ -193,7 +193,6 @@ public class SqsProperties {
 	 * @param secretKey the secretKey to set
 	 */
 	public void setSecretKey(String secretKey) {
-		//logger.info("secretKey: {}", secretKey);
 		this.secretKey = secretKey;
 	}
 
@@ -208,7 +207,6 @@ public class SqsProperties {
 	 * @param accessKey the accessKey to set
 	 */
 	public void setAccessKey(String accessKey) {
-		//logger.info("accessKey: {}", accessKey);
 		this.accessKey = accessKey;
 	}
 

@@ -30,12 +30,6 @@ public class BipRuntimeException extends RuntimeException {
 		super();
 	}
 
-	/**
-	 * Instantiates a new service exception.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 */
 	public BipRuntimeException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
