@@ -18,6 +18,21 @@
 		<module>bip-framework-autoconfigure</module>
 		<module>bip-framework-test-lib</module>
 	</modules>
+	
+	<repositories>
+		<repository>
+			<id>nexus3</id>
+			<name>BIP Nexus Repository</name>
+			<url>https://nexus.dev8.bip.va.gov/repository/maven-public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>nexus3</id>
+			<name>BIP Nexus Repository</name>
+			<url>https://nexus.dev8.bip.va.gov/repository/maven-public</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<properties>
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
