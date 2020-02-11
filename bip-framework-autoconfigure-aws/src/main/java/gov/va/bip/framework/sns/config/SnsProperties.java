@@ -1,8 +1,8 @@
 package gov.va.bip.framework.sns.config;
 
 import gov.va.bip.framework.aws.config.ConfigConstants;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
 public class SnsProperties {
 
-	private BipLogger logger = BipLoggerFactory.getLogger(SnsProperties.class);
+	private Logger logger = LoggerFactory.getLogger(SnsProperties.class);
 
 	@Value("false")
 	private Boolean enabled;
@@ -29,11 +29,11 @@ public class SnsProperties {
 	// somehow scan for all implementing methods of QueueProperties
 	private ArrayList<SnsTopicProperties> allTopicProperties;
 
-	public BipLogger getLogger() {
+	public Logger getLogger() {
 		return logger;
 	}
 
-	public void setLogger(BipLogger logger) {
+	public void setLogger (Logger logger) {
 		this.logger = logger;
 	}
 

@@ -2,13 +2,13 @@ package gov.va.bip.framework.sqs.services.impl;
 
 import com.amazon.sqs.javamessaging.message.SQSTextMessage;
 import gov.va.bip.framework.exception.SqsException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.sqs.dto.SendMessageResponse;
 import gov.va.bip.framework.sqs.services.SqsService;
 import gov.va.bip.framework.validation.Defense;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsOperations;
@@ -26,7 +26,7 @@ public class SqsServiceImpl implements SqsService {
 
 	private static final String ERROR_MESSAGE = "Error Message: {}";
 
-	private BipLogger logger = BipLoggerFactory.getLogger(SqsServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(SqsServiceImpl.class);
 
 	@Resource
 	JmsOperations jmsOperations;

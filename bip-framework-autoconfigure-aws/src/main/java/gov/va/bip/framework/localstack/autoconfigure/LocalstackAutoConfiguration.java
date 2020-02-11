@@ -13,11 +13,11 @@ import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sqs.config.SqsProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,7 +51,7 @@ import java.util.regex.PatternSyntaxException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class LocalstackAutoConfiguration {
 	/** Class logger */
-	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(LocalstackAutoConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LocalstackAutoConfiguration.class);
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
