@@ -213,8 +213,6 @@ public class LocalstackAutoConfiguration {
 
 		AmazonSNS client = TestUtils.getClientSNS();
 
-		snsProperties.getAllTopicProperties();
-
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
@@ -239,61 +237,79 @@ public class LocalstackAutoConfiguration {
 	private void createQueues() {
 		AmazonSQS client = TestUtils.getClientSQS();
 
-		String deadletterQueueUrl = null;
-		GetQueueAttributesResult queueAttributesResult = null;
+		Boolean dlqEnabled = sqsProperties.getDlqenabled();
 
-		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
-			try {
-				deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
-				break;
-			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
+		String dlqUrl = null;
+		GetQueueAttributesResult dlqAttributesResult = null;
+		String redrivePolicy = null;
+
+		// create Dead Letter Queue and set up redrive policy
+		if (dlqEnabled) {
+			Map<String, String> dlqAttributeMap = new HashMap<>();
+			dlqAttributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
+			dlqAttributeMap.put("DelaySeconds", sqsProperties.getDlqdelay().toString());
+			dlqAttributeMap.put("MaximumMessageSize", sqsProperties.getDlqmaxmessagesize());
+			dlqAttributeMap.put("MessageRetentionPeriod", sqsProperties.getDlqmessageretentionperiod());
+			dlqAttributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getDlqwaittime().toString());
+			dlqAttributeMap.put("VisibilityTimeout", sqsProperties.getDlqvisibilitytimeout().toString());
+			dlqAttributeMap.put("ContentBasedDeduplication", sqsProperties.getDlqcontentbasedduplication().toString());
+
+			// retry the operation until the localstack responds
+			for (int i = 0; i < MAX_RETRIES; i++) {
+				try {
+					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
+					break;
+				} catch (Exception e) {
+					if (i == MAX_RETRIES - 1) {
+					}
+					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
+							+ ") failed on try # " + (i + 1)
+							+ ", waiting for AWS localstack to finish initializing.");
 				}
-				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
-			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// NOSONAR do nothing
-			}
-		}
-
-		GetQueueAttributesRequest getAttributesRequest =
-				new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
-
-		// retry the operation until the localstack responds
-		for (int i = 0; i < MAX_RETRIES; i++) {
-			try {
-				queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
-				break;
-			} catch (Exception e) {
-				if (i == MAX_RETRIES - 1) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// NOSONAR do nothing
 				}
-				LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
 			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// NOSONAR do nothing
-			}
-		}
 
-		String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
-				+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+			GetQueueAttributesRequest getAttributesRequest =
+					new GetQueueAttributesRequest(dlqUrl).withAttributeNames(QueueAttributeName.QueueArn);
+
+			// retry the operation until the localstack responds
+			for (int i = 0; i < MAX_RETRIES; i++) {
+				try {
+					dlqAttributesResult = client.getQueueAttributes(getAttributesRequest);
+					break;
+				} catch (Exception e) {
+					if (i == MAX_RETRIES - 1) {
+					}
+					LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
+							+ ", waiting for AWS localstack to finish initializing.");
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// NOSONAR do nothing
+				}
+			}
+
+			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
+					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+		}
 
 		Map<String, String> attributeMap = new HashMap<>();
+		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
 		attributeMap.put("DelaySeconds", sqsProperties.getDelay().toString());
 		attributeMap.put("MaximumMessageSize", sqsProperties.getMaxmessagesize());
 		attributeMap.put("MessageRetentionPeriod", sqsProperties.getMessageretentionperiod());
 		attributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getWaittime().toString());
 		attributeMap.put("VisibilityTimeout", sqsProperties.getVisibilitytimeout().toString());
-		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
 		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbasedduplication().toString());
-		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+
+		if (dlqEnabled) {
+			attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+		}
 
 		// retry the operation until the localstack responds
 		for (int i = 0; i < MAX_RETRIES; i++) {

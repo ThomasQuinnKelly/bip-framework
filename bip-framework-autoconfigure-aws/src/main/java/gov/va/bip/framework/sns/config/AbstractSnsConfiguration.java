@@ -44,7 +44,6 @@ public abstract class AbstractSnsConfiguration {
 
 	private EndpointConfiguration getEndpointConfiguration(final SnsProperties snsProperties) {
 		boolean isEmbeddedAws = false;
-		boolean isLocalInt = false;
 		EndpointConfiguration endpointConfiguration = null;
 
 		Regions region = Regions.fromName(snsProperties.getRegion());
@@ -53,17 +52,11 @@ public abstract class AbstractSnsConfiguration {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				isEmbeddedAws = true;
 			}
-
-			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
-				isLocalInt = true;
-			}
 		}
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSNS(), region.getName());
-		} else if (isLocalInt) {
-			endpointConfiguration = new EndpointConfiguration(snsProperties.getEndpoint().replace("localhost", "localstack"), region.getName());
 		} else {
 			endpointConfiguration = new EndpointConfiguration(snsProperties.getEndpoint(), region.getName());
 		}

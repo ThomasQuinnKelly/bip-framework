@@ -6,9 +6,14 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.Optional;
 
+/**
+ * See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html
+ */
 @ConfigurationProperties(prefix = "bip.framework.aws.sqs", ignoreUnknownFields = false)
 public class SqsProperties {
 
@@ -17,23 +22,102 @@ public class SqsProperties {
 	@Value("false")
 	private Boolean enabled;
 
+	@Value("us-east-1")
 	private String region;
-	private String endpoint;
-	private String dlqendpoint;
-	private int retries;
-	private Integer prefetch;
+
+	//FifoQueue - Whether the queue(s) should be Fifo (setting used for both DLQ and Queue - they must match)
+	//true = Exactly-Once Processing (FIFO queue), false = At-Least-Once
+	@Value("false")
 	private Boolean queuetype;
+
+	//Queue Endpoint
+	private String endpoint;
+
+	//ContentBasedDeduplication
+	@Value("false")
 	private Boolean contentbasedduplication;
+
+	//DelaySeconds
+	@Min(0)
+	@Max(900) // 15 minutes
+	@Value("0")
 	private Integer delay;
+
+	//MaximumMessageSize - in bytes
+	@Min(1024) // 1 KiB
+	@Max(262144) // 256 KiB
+	@Value("262144") // 256 KiB
 	private String maxmessagesize;
+
+	//MessageRetentionPeriod - in seconds
+	@Min(0)
+	@Max(1209600) // 14 days
+	@Value("345600") // 4 days
 	private String messageretentionperiod;
-    private Integer waittime;
-    private Integer visibilitytimeout;
-    private Integer numberofmessagestoprefetch;
-    private Integer dlqretriescount;
-	
+
+	//ReceiveMessageWaitTimeSeconds
+	@Min(0)
+	@Max(20)
+	@Value("0")
+	private Integer waittime;
+
+	//VisibilityTimeout
+	@Min(0)
+	@Max(43200) // 12 hours
+	@Value("30")
+	private Integer visibilitytimeout;
+
+	@Value("false")
+	private Boolean dlqenabled;
+
+	//RedrivePolicy - DLQ Endpoint
+	private String dlqendpoint;
+
+	//RedrivePolicy - Max Receive Count
+	@Value("1")
+	private String maxreceivecount;
+
+	//Dead Letter Queue - ContentBasedDeduplication
+	@Value("false")
+	private Boolean dlqcontentbasedduplication;
+
+	//Dead Letter Queue - DelaySeconds
+	@Min(0)
+	@Max(900) // 15 minutes
+	private Integer dlqdelay;
+
+	//Dead Letter Queue - MaximumMessageSize - in bytes
+	@Min(1024) // 1 KiB
+	@Max(262144) // 256 KiB
+	private String dlqmaxmessagesize;
+
+	//Dead Letter Queue - MessageRetentionPeriod - in seconds
+	@Min(0)
+	@Max(1209600) // 14 days
+	private String dlqmessageretentionperiod;
+
+	//Dead Letter Queue - ReceiveMessageWaitTimeSeconds
+	@Min(0)
+	@Max(20)
+	private Integer dlqwaittime;
+
+	//Dead Letter Queue - VisibilityTimeout
+	@Min(0)
+	@Max(43200) // 12 hours
+	private Integer dlqvisibilitytimeout;
+
 	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
 	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
+
+	//For SQS Configuration
+	@Min(0)
+	private Integer numberofmessagestoprefetch;
+
+	//For Possible Message Listener Setup in Application Code
+	//Defines the maximum number of times the message can enter the DLQ
+	@Min(0)
+	@Value("0")
+	private Integer retries;
 
 	public Boolean getEnabled() {
 		return enabled;
@@ -43,127 +127,184 @@ public class SqsProperties {
 		this.enabled = enabled;
 	}
 
-	/**
-	 * @return the queuetype
-	 */
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
 	public Boolean getQueuetype() {
 		return queuetype;
 	}
 
-	/**
-	 * @param queuetype the queuetype to set
-	 */
 	public void setQueuetype(Boolean queuetype) {
 		this.queuetype = queuetype;
 	}
 
-	/**
-	 * @return the contentbasedduplication
-	 */
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
 	public Boolean getContentbasedduplication() {
 		return contentbasedduplication;
 	}
 
-	/**
-	 * @param contentbasedduplication the contentbasedduplication to set
-	 */
 	public void setContentbasedduplication(Boolean contentbasedduplication) {
 		this.contentbasedduplication = contentbasedduplication;
 	}
 
-	/**
-	 * @return the delay
-	 */
+	public String getMaxreceivecount() {
+		return maxreceivecount;
+	}
+
+	public void setMaxreceivecount(String maxreceivecount) {
+		this.maxreceivecount = maxreceivecount;
+	}
+
 	public Integer getDelay() {
 		return delay;
 	}
 
-	/**
-	 * @param delay the delay to set
-	 */
 	public void setDelay(Integer delay) {
 		this.delay = delay;
 	}
 
-	/**
-	 * @return the maxmessagesize
-	 */
 	public String getMaxmessagesize() {
 		return maxmessagesize;
 	}
 
-	/**
-	 * @param maxmessagesize the maxmessagesize to set
-	 */
 	public void setMaxmessagesize(String maxmessagesize) {
 		this.maxmessagesize = maxmessagesize;
 	}
 
-	/**
-	 * @return the messageretentionperiod
-	 */
 	public String getMessageretentionperiod() {
 		return messageretentionperiod;
 	}
 
-	/**
-	 * @param messageretentionperiod the messageretentionperiod to set
-	 */
 	public void setMessageretentionperiod(String messageretentionperiod) {
 		this.messageretentionperiod = messageretentionperiod;
 	}
 
-	/**
-	 * @return the waittime
-	 */
 	public Integer getWaittime() {
 		return waittime;
 	}
 
-	/**
-	 * @param waittime the waittime to set
-	 */
 	public void setWaittime(Integer waittime) {
 		this.waittime = waittime;
 	}
 
-	/**
-	 * @return the visibilitytimeout
-	 */
 	public Integer getVisibilitytimeout() {
 		return visibilitytimeout;
 	}
 
-	/**
-	 * @param visibilitytimeout the visibilitytimeout to set
-	 */
 	public void setVisibilitytimeout(Integer visibilitytimeout) {
 		this.visibilitytimeout = visibilitytimeout;
 	}
-	
-	public String getQueue() {
-		return endpoint;
+
+	public Boolean getDlqenabled() {
+		return dlqenabled;
 	}
 
-	public void setQueue(String queue) {
-		this.endpoint = queue;
+	public void setDlqenabled(Boolean dlqenabled) {
+		this.dlqenabled = dlqenabled;
 	}
 
-	public String getDeadletterqueue() {
+	public String getDlqendpoint() {
 		return dlqendpoint;
 	}
 
-	public void setDeadletterqueue(String deadletterqueue) {
-		this.dlqendpoint = deadletterqueue;
+	public void setDlqendpoint(String dlqendpoint) {
+		this.dlqendpoint = dlqendpoint;
 	}
 
-	public void setPrefetch(Integer prefetch) {
-		this.prefetch = prefetch;
+	public Boolean getDlqcontentbasedduplication() {
+		return dlqcontentbasedduplication;
 	}
 
+	public void setDlqcontentbasedduplication(Boolean dlqcontentbasedduplication) {
+		this.dlqcontentbasedduplication = dlqcontentbasedduplication;
+	}
+
+	public Integer getDlqdelay() {
+		if (dlqdelay == null) {
+			return getDelay();
+		}
+
+		return dlqdelay;
+	}
+
+	public void setDlqdelay(Integer dlqdelay) {
+		this.dlqdelay = dlqdelay;
+	}
+
+	public String getDlqmaxmessagesize() {
+		if (dlqmaxmessagesize == null) {
+			return getMaxmessagesize();
+		}
+		return dlqmaxmessagesize;
+	}
+
+	public void setDlqmaxmessagesize(String dlqmaxmessagesize) {
+		this.dlqmaxmessagesize = dlqmaxmessagesize;
+	}
+
+	public String getDlqmessageretentionperiod() {
+		if (dlqmessageretentionperiod == null) {
+			return getMessageretentionperiod();
+		}
+		return dlqmessageretentionperiod;
+	}
+
+	public void setDlqmessageretentionperiod(String dlqmessageretentionperiod) {
+		this.dlqmessageretentionperiod = dlqmessageretentionperiod;
+	}
+
+	public Integer getDlqwaittime() {
+		if (dlqdelay == null) {
+			return getDelay();
+		}
+		return dlqwaittime;
+	}
+
+	public void setDlqwaittime(Integer dlqwaittime) {
+		this.dlqwaittime = dlqwaittime;
+	}
+
+	public Integer getDlqvisibilitytimeout() {
+		if (dlqdelay == null) {
+			return getDelay();
+		}
+		return dlqvisibilitytimeout;
+	}
+
+	public void setDlqvisibilitytimeout(Integer dlqvisibilitytimeout) {
+		this.dlqvisibilitytimeout = dlqvisibilitytimeout;
+	}
 
 	public Optional<Integer> getPrefetch() {
-		return Optional.ofNullable(prefetch);
+		return getNumberofmessagestoprefetch();
+	}
+
+	public Optional<Integer> getNumberofmessagestoprefetch() {
+		return Optional.ofNullable(numberofmessagestoprefetch);
+	}
+
+	public void setNumberofmessagestoprefetch(Integer numberofmessagestoprefetch) {
+		this.numberofmessagestoprefetch = numberofmessagestoprefetch;
+	}
+
+	public Integer getRetries() {
+		return retries;
+	}
+
+	public void setRetries(Integer retries) {
+		this.retries = retries;
 	}
 
 	public String getQueueName() {
@@ -182,107 +323,22 @@ public class SqsProperties {
 		return path.substring(pos + 1);
 	}
 
-	/**
-	 * @return the secretKey
-	 */
-	public String getSecretKey() {
-		return secretKey;
-	}
-
-	/**
-	 * @param secretKey the secretKey to set
-	 */
-	public void setSecretKey(String secretKey) {
-		//logger.info("secretKey: {}", secretKey);
-		this.secretKey = secretKey;
-	}
-
-	/**
-	 * @return the accessKey
-	 */
 	public String getAccessKey() {
 		return accessKey;
 	}
 
-	/**
-	 * @param accessKey the accessKey to set
-	 */
 	public void setAccessKey(String accessKey) {
-		//logger.info("accessKey: {}", accessKey);
+		logger.info("accessKey: {}", accessKey);
 		this.accessKey = accessKey;
 	}
 
-	/**
-	 * @return the region
-	 */
-	public String getRegion() {
-		return region;
+	public String getSecretKey() {
+		return secretKey;
 	}
 
-	/**
-	 * @param region the region to set
-	 */
-	public void setRegion(String region) {
-		this.region = region;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public String getDlqendpoint() {
-		return dlqendpoint;
-	}
-
-	/**
-	 *
-	 * @param dlqendpoint
-	 */
-	public void setDlqendpoint(String dlqendpoint) {
-		this.dlqendpoint = dlqendpoint;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public int getRetries() {
-		return retries;
-	}
-
-	/**
-	 *
-	 * @param retries
-	 */
-	public void setRetries(int retries) {
-		this.retries = retries;
-	}
-
-	public Integer getDlqretriescount() {
-		return dlqretriescount;
-	}
-
-	public void setDlqretriescount(Integer dlqretriescount) {
-		this.dlqretriescount = dlqretriescount;
-	}
-
-	public Integer getNumberofmessagestoprefetch() {
-		return numberofmessagestoprefetch;
-	}
-
-	public void setNumberofmessagestoprefetch(Integer numberofmessagestoprefetch) {
-		this.numberofmessagestoprefetch = numberofmessagestoprefetch;
+	public void setSecretKey(String secretKey) {
+		logger.info("secretKey: {}", secretKey);
+		this.secretKey = secretKey;
 	}
 
 }

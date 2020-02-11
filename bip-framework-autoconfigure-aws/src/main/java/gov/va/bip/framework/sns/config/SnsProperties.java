@@ -8,6 +8,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 
+/**
+ * See:
+ * Topics: https://docs.aws.amazon.com/sns/latest/api/API_SetTopicAttributes.html
+ * Subscriptions: https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html
+ */
 @ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
 public class SnsProperties {
 
@@ -27,9 +32,6 @@ public class SnsProperties {
 	
 	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID;
 	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY;
-
-	// somehow scan for all implementing methods of QueueProperties
-	private ArrayList<SnsTopicProperties> allTopicProperties;
 
 	public BipLogger getLogger() {
 		return logger;
@@ -135,11 +137,4 @@ public class SnsProperties {
 		this.secretKey = secretKey;
 	}
 
-	public ArrayList<SnsTopicProperties> getAllTopicProperties() {
-		return allTopicProperties;
-	}
-
-	public void setAllTopicProperties(ArrayList<SnsTopicProperties> allTopicProperties) {
-		this.allTopicProperties = allTopicProperties;
-	}
 }
