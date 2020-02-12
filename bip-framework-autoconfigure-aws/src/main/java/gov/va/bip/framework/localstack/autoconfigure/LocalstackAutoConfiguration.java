@@ -123,9 +123,10 @@ public class LocalstackAutoConfiguration {
 
 				if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
 					//Subscribes the topic to the queue
-					subscribeTopicToQueue(result);
+					if (result == null) {
+						throw new NullPointerException("result is null");
+					} else subscribeTopicToQueue(result);
 				}
-
 			}
 		}
 	}

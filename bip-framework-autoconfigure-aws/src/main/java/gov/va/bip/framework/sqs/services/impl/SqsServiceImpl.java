@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
+import java.io.OutputStream;
 import java.util.Enumeration;
 
 @Service
@@ -78,8 +79,9 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	public SQSTextMessage createTextMessage(String message) {
 
-		try {
+		OutputStream stream = null;
 
+		try {
 			Defense.notNull(message, "Message can't be null");
 			SQSTextMessage result = (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
 					.createTextMessage(message);
@@ -111,6 +113,5 @@ public class SqsServiceImpl implements SqsService {
 						HttpStatus.INTERNAL_SERVER_ERROR, e);
 
 		}
-
 	}
 }
