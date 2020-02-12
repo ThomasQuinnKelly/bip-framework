@@ -79,8 +79,6 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	public SQSTextMessage createTextMessage(String message) {
 
-		OutputStream stream = null;
-
 		try {
 			Defense.notNull(message, "Message can't be null");
 			SQSTextMessage result = (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
@@ -90,7 +88,7 @@ public class SqsServiceImpl implements SqsService {
 
 			while (s.hasMoreElements()) {
 				String t = s.nextElement();
-				System.out.println(t);
+				logger.info(t);
 			}
 			return result;
 

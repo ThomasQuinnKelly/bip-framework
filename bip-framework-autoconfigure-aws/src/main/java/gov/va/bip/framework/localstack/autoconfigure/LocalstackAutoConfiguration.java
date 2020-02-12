@@ -258,8 +258,6 @@ public class LocalstackAutoConfiguration {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
 					break;
 				} catch (Exception e) {
-					if (i == maxRetries - 1) {
-					}
 					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
 							+ ") failed on try # " + (i + 1)
 							+ ", waiting for AWS localstack to finish initializing.");
@@ -282,8 +280,6 @@ public class LocalstackAutoConfiguration {
 					dlqAttributesResult = client.getQueueAttributes(getAttributesRequest);
 					break;
 				} catch (Exception e) {
-					if (i == maxRetries - 1) {
-					}
 					LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
 							+ ", waiting for AWS localstack to finish initializing.");
 				}

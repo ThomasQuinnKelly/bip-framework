@@ -56,7 +56,7 @@ public class SnsServiceImpl implements SnsService {
 
 		try {
 			Defense.notNull(result.getTopicArn(), "Topic-arn can't be null");
-			logger.info("Sent request to retrieve topic-arn, topic-arn: " +result.getTopicArn());
+			logger.info("Sent request to retrieve topic-arn, topic-arn: '{}'", result.getTopicArn());
 
 		} catch (Exception e) {
 			logger.error(ERROR_MESSAGE, e);
