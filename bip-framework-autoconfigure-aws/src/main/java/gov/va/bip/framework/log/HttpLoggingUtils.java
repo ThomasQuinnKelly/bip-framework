@@ -12,6 +12,7 @@ import org.springframework.ws.transport.TransportOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Utilities class with some static methods to log a given web service http message
@@ -34,7 +35,7 @@ public class HttpLoggingUtils {
 			ByteArrayTransportOutputStream byteArrayTransportOutputStream = new ByteArrayTransportOutputStream();
 			webServiceMessage.writeTo(byteArrayTransportOutputStream);
 
-			String httpMessage = new String(byteArrayTransportOutputStream.toByteArray(), "ISO-8859-1");
+			String httpMessage = new String(byteArrayTransportOutputStream.toByteArray(), StandardCharsets.UTF_8);
 			AuditEventData auditEventData = new AuditEventData(auditEvent, auditActivity, auditClassName);
 			asyncLogging.asyncLogMessageAspectAuditData(auditEventData, NEW_LINE + title + " : " + NEW_LINE + httpMessage + NEW_LINE,
 					MessageSeverity.INFO, null);

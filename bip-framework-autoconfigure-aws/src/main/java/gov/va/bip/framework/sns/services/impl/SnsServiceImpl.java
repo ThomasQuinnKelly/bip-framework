@@ -43,13 +43,11 @@ public class SnsServiceImpl implements SnsService {
 			if (e.getMessage() != null)
 				throw new SnsException(MessageKeys.BIP_SNS_TOPIC_CREATE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
 						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
-			else throw new SnsException(MessageKeys.BIP_SNS_TOPIC_CREATE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 		}
 
-		var1 = new CreateTopicRequest(snsProperties.getTopic());
+		CreateTopicRequest topic1 = new CreateTopicRequest(snsProperties.getTopic());
 
-		return amazonSNS.createTopic(var1);
+		return amazonSNS.createTopic(topic1);
 	}
 
 	@Override
@@ -65,8 +63,6 @@ public class SnsServiceImpl implements SnsService {
 			if (e.getMessage() != null)
 				throw new SnsException(MessageKeys.BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
 						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
-			else throw new SnsException(MessageKeys.BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 		}
 
 		try {
@@ -78,15 +74,13 @@ public class SnsServiceImpl implements SnsService {
 			if (e.getMessage() != null)
 				throw new SnsException(MessageKeys.BIP_SQS_ENDPOINT_RETRIEVE_EXCEPTION, MessageSeverity.ERROR,
 						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
-			else throw new SnsException(MessageKeys.BIP_SQS_ENDPOINT_RETRIEVE_EXCEPTION, MessageSeverity.ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 		}
 
-		var1 = result.getTopicArn();
-		var2 = "sqs";
-		var3 = sqsProperties.getEndpoint();
+		String topicArn = result.getTopicArn();
+		String type = "sqs";
+		String endpoint = sqsProperties.getEndpoint();
 
-	return amazonSNS.subscribe(var1, var2, var3);
+	return amazonSNS.subscribe(topicArn, type, endpoint);
 	}
 
 	@Override
@@ -101,8 +95,6 @@ public class SnsServiceImpl implements SnsService {
 			if (e.getMessage() != null)
 				throw new SnsException(MessageKeys.BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
 						HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
-			else throw new SnsException(MessageKeys.BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE, MessageSeverity.ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage());
 		}
 
 	return amazonSNS.publish(var1);
