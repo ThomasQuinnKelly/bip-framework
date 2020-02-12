@@ -249,7 +249,7 @@ public class LocalstackAutoConfiguration {
 			dlqAttributeMap.put("MessageRetentionPeriod", sqsProperties.getDlqmessageretentionperiod());
 			dlqAttributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getDlqwaittime().toString());
 			dlqAttributeMap.put("VisibilityTimeout", sqsProperties.getDlqvisibilitytimeout().toString());
-			dlqAttributeMap.put("ContentBasedDeduplication", sqsProperties.getDlqcontentbasedduplication().toString());
+			dlqAttributeMap.put("ContentBasedDeduplication", sqsProperties.getDlqcontentbaseddeduplication().toString());
 
 			// retry the operation until the localstack responds
 			for (int i = 0; i < maxRetries; i++) {
@@ -306,7 +306,7 @@ public class LocalstackAutoConfiguration {
 		attributeMap.put("MessageRetentionPeriod", sqsProperties.getMessageretentionperiod());
 		attributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getWaittime().toString());
 		attributeMap.put("VisibilityTimeout", sqsProperties.getVisibilitytimeout().toString());
-		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbasedduplication().toString());
+		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbaseddeduplication().toString());
 
 		if (dlqEnabled) {
 			attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);

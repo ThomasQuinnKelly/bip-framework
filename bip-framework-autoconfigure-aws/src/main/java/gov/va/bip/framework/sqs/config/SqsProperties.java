@@ -35,7 +35,7 @@ public class SqsProperties {
 
 	//ContentBasedDeduplication
 	@Value("false")
-	private Boolean contentbasedduplication;
+	private Boolean contentbaseddeduplication;
 
 	//DelaySeconds
 	@Min(0)
@@ -79,7 +79,7 @@ public class SqsProperties {
 
 	//Dead Letter Queue - ContentBasedDeduplication
 	@Value("false")
-	private Boolean dlqcontentbasedduplication;
+	private Boolean dlqcontentbaseddeduplication;
 
 	//Dead Letter Queue - DelaySeconds
 	@Min(0)
@@ -109,7 +109,7 @@ public class SqsProperties {
 	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
 	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
 
-	//For SQS Configuration
+	//For SQS Configuration - Messaging Provider Configuration
 	@Min(0)
 	private Integer numberofmessagestoprefetch;
 
@@ -151,12 +151,12 @@ public class SqsProperties {
 		this.endpoint = endpoint;
 	}
 
-	public Boolean getContentbasedduplication() {
-		return contentbasedduplication;
+	public Boolean getContentbaseddeduplication() {
+		return contentbaseddeduplication;
 	}
 
-	public void setContentbasedduplication(Boolean contentbasedduplication) {
-		this.contentbasedduplication = contentbasedduplication;
+	public void setContentbaseddeduplication(Boolean contentbaseddeduplication) {
+		this.contentbaseddeduplication = contentbaseddeduplication;
 	}
 
 	public String getMaxreceivecount() {
@@ -223,12 +223,12 @@ public class SqsProperties {
 		this.dlqendpoint = dlqendpoint;
 	}
 
-	public Boolean getDlqcontentbasedduplication() {
-		return dlqcontentbasedduplication;
+	public Boolean getDlqcontentbaseddeduplication() {
+		return dlqcontentbaseddeduplication;
 	}
 
-	public void setDlqcontentbasedduplication(Boolean dlqcontentbasedduplication) {
-		this.dlqcontentbasedduplication = dlqcontentbasedduplication;
+	public void setDlqcontentbaseddeduplication(Boolean dlqcontentbaseddeduplication) {
+		this.dlqcontentbaseddeduplication = dlqcontentbaseddeduplication;
 	}
 
 	public Integer getDlqdelay() {

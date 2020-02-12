@@ -122,8 +122,8 @@ public class SqsPropertiesTest {
     public void testSetContentBasedDuplication() {
         boolean contentBased = false;
         SqsProperties instance = new SqsProperties();
-        instance.setContentbasedduplication(contentBased);
-        assertEquals(contentBased, instance.getContentbasedduplication());
+        instance.setContentbaseddeduplication(contentBased);
+        assertEquals(contentBased, instance.getContentbaseddeduplication());
     }
     
     /**
