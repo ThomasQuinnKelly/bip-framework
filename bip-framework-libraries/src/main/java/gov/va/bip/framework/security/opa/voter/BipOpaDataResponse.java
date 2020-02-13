@@ -1,7 +1,7 @@
 package gov.va.bip.framework.security.opa.voter;
 
 
-public class OPADataResponse {
+public class BipOpaDataResponse {
 
     private boolean result;
     

@@ -2,11 +2,11 @@ package gov.va.bip.framework.security.opa.voter;
 
 import java.util.Map;
 
-public class OPADataRequest {
+public class BipOpaDataRequest {
 
     Map<String, Object> input;
 
-    public OPADataRequest(Map<String, Object> input) {
+    public BipOpaDataRequest(Map<String, Object> input) {
         this.input = input;
     }
 

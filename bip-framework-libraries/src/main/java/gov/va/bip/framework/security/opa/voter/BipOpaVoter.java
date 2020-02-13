@@ -20,12 +20,14 @@ import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 
 /**
- * The Class OPAVoter.
+ * The Class BipOpaVoter.
  */
-public class OPAVoter implements AccessDecisionVoter<Object> {
+public class BipOpaVoter implements AccessDecisionVoter<Object> {
 	
-	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(OPAVoter.class);
+	/** The Constant LOGGER. */
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipOpaVoter.class);
 
+	/** The OPA URL. */
 	private String opaUrl;
 
 	/**
@@ -33,7 +35,7 @@ public class OPAVoter implements AccessDecisionVoter<Object> {
 	 *
 	 * @param opaUrl the opa url
 	 */
-	public OPAVoter(String opaUrl) {
+	public BipOpaVoter(String opaUrl) {
 		this.opaUrl = opaUrl;
 	}
 
@@ -60,23 +62,36 @@ public class OPAVoter implements AccessDecisionVoter<Object> {
 	}
 
 	/**
-	 * Vote.
+	 * Indicates whether or not access is granted.
+	 * <p>
+	 * The decision must be affirmative ({@code ACCESS_GRANTED}), negative (
+	 * {@code ACCESS_DENIED}) or the {@code AccessDecisionVoter} can abstain (
+	 * {@code ACCESS_ABSTAIN}) from voting. 
+	 * <p>
+	 * Unless an {@code AccessDecisionVoter} is specifically intended to vote on an access
+	 * control decision due to a passed method invocation or configuration attribute
+	 * parameter, it must return {@code ACCESS_ABSTAIN}. This prevents the coordinating
+	 * {@code AccessDecisionManager} from counting votes from those
+	 * {@code AccessDecisionVoter}s without a legitimate interest in the access control
+	 * decision.
 	 *
-	 * @param authentication the Authentication
-	 * @param obj the FilterInvocation object
-	 * @param attrs the ConfigAttribute
-	 * @return the int Indicates whether or not access is granted.
+	 * @param authentication the caller making the invocation
+	 * @param object the secured object being invoked
+	 * @param attributes the configuration attributes associated with the secured object
+	 *
+	 * @return either {@link #ACCESS_GRANTED}, {@link #ACCESS_ABSTAIN} or
+	 * {@link #ACCESS_DENIED}
 	 */
 	@Override
-	public int vote(Authentication authentication, Object obj, Collection<ConfigAttribute> attrs) {
+	public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
 		
 		LOGGER.debug("Open Policy Agent URL {}", opaUrl);
 
-		if (!(obj instanceof FilterInvocation)) {
+		if (!(object instanceof FilterInvocation)) {
 			return ACCESS_ABSTAIN;
 		}
 
-		FilterInvocation filter = (FilterInvocation) obj;
+		FilterInvocation filter = (FilterInvocation) object;
 		Map<String, String> headers = new HashMap<>();
 
 		headers.put("jwtToken", extractHeaderToken(filter.getRequest()));
@@ -95,8 +110,8 @@ public class OPAVoter implements AccessDecisionVoter<Object> {
 		input.put("headers", headers);
 
 		RestClientTemplate client = new RestClientTemplate();
-		HttpEntity<?> request = new HttpEntity<>(new OPADataRequest(input));
-		ResponseEntity<OPADataResponse> response = client.postForEntity(this.opaUrl, request, OPADataResponse.class);
+		HttpEntity<?> request = new HttpEntity<>(new BipOpaDataRequest(input));
+		ResponseEntity<BipOpaDataResponse> response = client.postForEntity(this.opaUrl, request, BipOpaDataResponse.class);
 
 		if (response.hasBody() && !response.getBody().getResult()) {
 			return ACCESS_DENIED;
@@ -111,7 +126,7 @@ public class OPAVoter implements AccessDecisionVoter<Object> {
 	 * @param request The request.
 	 * @return The token, or null if no JWT authorization header was supplied.
 	 */
-	protected String extractHeaderToken(HttpServletRequest request) {
+	private String extractHeaderToken(HttpServletRequest request) {
 		Enumeration<String> headers = request.getHeaders("Authorization");
 		while (headers.hasMoreElements()) { // typically there is only one (most servers enforce that)
 			String value = headers.nextElement();

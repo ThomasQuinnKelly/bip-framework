@@ -18,6 +18,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -37,12 +38,12 @@ import gov.va.bip.framework.security.jwt.JwtAuthenticationProvider;
 import gov.va.bip.framework.security.jwt.JwtParser;
 import gov.va.bip.framework.security.jwt.JwtTokenService;
 import gov.va.bip.framework.security.jwt.TokenResource;
-import gov.va.bip.framework.security.opa.OPAProperties;
-import gov.va.bip.framework.security.opa.voter.OPAVoter;
+import gov.va.bip.framework.security.opa.BipOpaProperties;
+import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
 
 /**
- * Autoconfiguration for various authentication types on the Platform (basic
- * auth, JWT)
+ * AutoConfiguration for various authentication types on the Platform (basic
+ * authentication, JWT)
  */
 @Configuration
 @AutoConfigureAfter(SecurityAutoConfiguration.class)
@@ -59,7 +60,7 @@ public class BipSecurityAutoConfiguration {
 		private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 		@Autowired
-		private OPAProperties opaProperties;
+		private BipOpaProperties opaProperties;
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -67,7 +68,7 @@ public class BipSecurityAutoConfiguration {
 			ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry = http
 					.authorizeRequests();
 
-			if (opaProperties.isEnabled() && opaProperties.getUrl() != null && opaProperties.getUrl().length > 0) {
+			if (opaProperties.isEnabled() && opaProperties.getUrls() != null && opaProperties.getUrls().length > 0) {
 				urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
 						.accessDecisionManager(accessDecisionManager());
 			} else {
@@ -81,14 +82,18 @@ public class BipSecurityAutoConfiguration {
 		}
 
 		private AccessDecisionManager accessDecisionManager() {
-			final String[] opaUrls = opaProperties.getUrl();
+			final String[] opaUrls = opaProperties.getUrls();
 			List<AccessDecisionVoter<? extends Object>> decisionVoters = new ArrayList<>();
 			for (String opaUrl : opaUrls) {
 				if (StringUtils.isNotBlank(opaUrl)) {
-					decisionVoters.add(new OPAVoter(opaUrl));
+					decisionVoters.add(new BipOpaVoter(opaUrl));
 				}
 			}
-			return new AffirmativeBased(decisionVoters);
+			if (opaProperties.isAllVotersAbstainGrantAccess()) {
+				return new UnanimousBased(decisionVoters);
+			} else {
+				return new AffirmativeBased(decisionVoters);
+			}
 		}
 
 		@Bean
@@ -145,12 +150,12 @@ public class BipSecurityAutoConfiguration {
 	/**
 	 * Open Policy Agent properties used for policy engine authorization.
 	 *
-	 * @return OPAProperties the properties
+	 * @return BipOpaProperties the properties
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public OPAProperties opaProperties() {
-		return new OPAProperties();
+	public BipOpaProperties opaProperties() {
+		return new BipOpaProperties();
 	}
 
 	/**
