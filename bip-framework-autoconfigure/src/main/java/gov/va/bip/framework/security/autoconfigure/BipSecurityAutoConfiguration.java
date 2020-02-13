@@ -29,6 +29,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.rest.exception.BasicErrorController;
 import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
 import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
@@ -48,6 +50,9 @@ import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
 @Configuration
 @AutoConfigureAfter(SecurityAutoConfiguration.class)
 public class BipSecurityAutoConfiguration {
+	
+	/** The Constant LOGGER. */
+	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipSecurityAutoConfiguration.class);
 
 	/**
 	 * Adapter for JWT
@@ -69,6 +74,7 @@ public class BipSecurityAutoConfiguration {
 					.authorizeRequests();
 
 			if (opaProperties.isEnabled() && opaProperties.getUrls() != null && opaProperties.getUrls().length > 0) {
+				LOGGER.info("Open Policy Agent Enabled");
 				urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
 						.accessDecisionManager(accessDecisionManager());
 			} else {
@@ -86,6 +92,7 @@ public class BipSecurityAutoConfiguration {
 			List<AccessDecisionVoter<? extends Object>> decisionVoters = new ArrayList<>();
 			for (String opaUrl : opaUrls) {
 				if (StringUtils.isNotBlank(opaUrl)) {
+					LOGGER.info("OPA Url {}", opaUrl);
 					decisionVoters.add(new BipOpaVoter(opaUrl));
 				}
 			}
