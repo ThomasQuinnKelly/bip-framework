@@ -50,8 +50,12 @@ import java.util.regex.PatternSyntaxException;
 @Primary
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class LocalstackAutoConfiguration {
-	/** Class logger */
+	/**
+	 * Class logger
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(LocalstackAutoConfiguration.class);
+	private static final String RETRY_MESSAGE = ") failed on try # ";
+	private static final String WAIT_FOR_LOCALSTACK_MESSAGE = ", waiting for AWS localstack to finish initializing.";
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
@@ -218,8 +222,8 @@ public class LocalstackAutoConfiguration {
 				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -259,8 +263,8 @@ public class LocalstackAutoConfiguration {
 					break;
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
-							+ ") failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
+							+ RETRY_MESSAGE + (i + 1)
+							+ WAIT_FOR_LOCALSTACK_MESSAGE);
 				}
 				try {
 					Thread.sleep(1000);
@@ -281,7 +285,7 @@ public class LocalstackAutoConfiguration {
 					break;
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 				}
 				try {
 					Thread.sleep(1000);
@@ -316,8 +320,8 @@ public class LocalstackAutoConfiguration {
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+					+ RETRY_MESSAGE + (i + 1)
+					+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -339,8 +343,8 @@ public class LocalstackAutoConfiguration {
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
