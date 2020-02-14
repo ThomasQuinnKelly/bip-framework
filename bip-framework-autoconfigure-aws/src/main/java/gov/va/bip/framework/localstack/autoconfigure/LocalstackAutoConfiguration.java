@@ -107,6 +107,7 @@ public class LocalstackAutoConfiguration {
 		if (profileCheck()) {
 
 			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
+				LOGGER.info("Localstack instance is running...");
 			} else if (Localstack.INSTANCE != null) {
 				// Clean the localstack
 				cleanAwsLocalStack();
@@ -240,8 +241,6 @@ public class LocalstackAutoConfiguration {
 	//Initialize Queue Variables
 
 	String dlqUrl = null;
-	GetQueueAttributesResult dlqAttributesResult = null;
-	String redrivePolicy = null;
 
 	private void initializeQueues() {
 		AmazonSQS client = TestUtils.getClientSQS();
@@ -308,9 +307,12 @@ public class LocalstackAutoConfiguration {
 				}
 
 			}
-
+		try {
 			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
 					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+		} catch (Exception e) {
+			LOGGER.warn("dlqAttributesResult is null");
+		}
 
 		Map<String, String> attributeMap = new HashMap<>();
 		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
