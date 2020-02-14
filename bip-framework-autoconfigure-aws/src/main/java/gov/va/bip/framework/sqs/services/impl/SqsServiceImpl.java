@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
-import java.io.OutputStream;
 import java.util.Enumeration;
 
 @Service
