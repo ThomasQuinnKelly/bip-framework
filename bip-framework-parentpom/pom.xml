@@ -64,7 +64,7 @@
 
 		<!-- build pipeline plugins -->
 		<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
-		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
+		<sca-maven-plugin.version>19.2.0</sca-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.4</dockerfile-maven-plugin.version>
 
 		<!-- instrumentation plugins -->
@@ -941,6 +941,14 @@
 							<groupId>com.fortify.sca.plugins.maven</groupId>
 							<artifactId>sca-maven-plugin</artifactId>
 							<version>${sca-maven-plugin.version}</version>
+							<dependencies>
+								<!-- Fortify 19.2.0: Force the sca plugin to use an up-to-date version of plexus-utils -->
+								<dependency>
+									<groupId>org.codehaus.plexus</groupId>
+									<artifactId>plexus-utils</artifactId>
+									<version>3.3.0</version>
+								</dependency>
+							</dependencies>
 						</plugin>
 					</plugins>
 				</pluginManagement>
