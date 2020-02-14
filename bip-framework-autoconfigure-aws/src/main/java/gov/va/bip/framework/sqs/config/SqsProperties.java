@@ -3,6 +3,7 @@ package gov.va.bip.framework.sqs.config;
 import gov.va.bip.framework.aws.config.ConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -15,8 +16,10 @@ import java.util.Optional;
  * See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html
  */
 @ConfigurationProperties(prefix = "bip.framework.aws.sqs", ignoreUnknownFields = false)
-public class SqsProperties {
+public class SqsProperties extends SqsQueueProperties {
 
+	@Autowired
+	SqsQueueProperties sqsQueueProperties;
 	private Logger logger = LoggerFactory.getLogger(SqsProperties.class);
 
 	@Value("false")
@@ -25,47 +28,8 @@ public class SqsProperties {
 	@Value("us-east-1")
 	private String region;
 
-	//FifoQueue - Whether the queue(s) should be Fifo (setting used for both DLQ and Queue - they must match)
-	//true = Exactly-Once Processing (FIFO queue), false = At-Least-Once
-	@Value("false")
-	private Boolean queuetype;
-
 	//Queue Endpoint
 	private String endpoint;
-
-	//ContentBasedDeduplication
-	@Value("false")
-	private Boolean contentbasedduplication;
-
-	//DelaySeconds
-	@Min(0)
-	@Max(900) // 15 minutes
-	@Value("0")
-	private Integer delay;
-
-	//MaximumMessageSize - in bytes
-	@Min(1024) // 1 KiB
-	@Max(262144) // 256 KiB
-	@Value("262144") // 256 KiB
-	private String maxmessagesize;
-
-	//MessageRetentionPeriod - in seconds
-	@Min(0)
-	@Max(1209600) // 14 days
-	@Value("345600") // 4 days
-	private String messageretentionperiod;
-
-	//ReceiveMessageWaitTimeSeconds
-	@Min(0)
-	@Max(20)
-	@Value("0")
-	private Integer waittime;
-
-	//VisibilityTimeout
-	@Min(0)
-	@Max(43200) // 12 hours
-	@Value("30")
-	private Integer visibilitytimeout;
 
 	@Value("false")
 	private Boolean dlqenabled;
@@ -119,6 +83,22 @@ public class SqsProperties {
 	@Value("0")
 	private Integer retries;
 
+	public SqsQueueProperties getSqsQueueProperties() {
+		return sqsQueueProperties;
+	}
+
+	public void setSqsQueueProperties(SqsQueueProperties sqsQueueProperties) {
+		this.sqsQueueProperties = sqsQueueProperties;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
 	public Boolean getEnabled() {
 		return enabled;
 	}
@@ -135,14 +115,6 @@ public class SqsProperties {
 		this.region = region;
 	}
 
-	public Boolean getQueuetype() {
-		return queuetype;
-	}
-
-	public void setQueuetype(Boolean queuetype) {
-		this.queuetype = queuetype;
-	}
-
 	public String getEndpoint() {
 		return endpoint;
 	}
@@ -151,60 +123,12 @@ public class SqsProperties {
 		this.endpoint = endpoint;
 	}
 
-	public Boolean getContentbasedduplication() {
-		return contentbasedduplication;
-	}
-
-	public void setContentbasedduplication(Boolean contentbasedduplication) {
-		this.contentbasedduplication = contentbasedduplication;
-	}
-
 	public String getMaxreceivecount() {
 		return maxreceivecount;
 	}
 
 	public void setMaxreceivecount(String maxreceivecount) {
 		this.maxreceivecount = maxreceivecount;
-	}
-
-	public Integer getDelay() {
-		return delay;
-	}
-
-	public void setDelay(Integer delay) {
-		this.delay = delay;
-	}
-
-	public String getMaxmessagesize() {
-		return maxmessagesize;
-	}
-
-	public void setMaxmessagesize(String maxmessagesize) {
-		this.maxmessagesize = maxmessagesize;
-	}
-
-	public String getMessageretentionperiod() {
-		return messageretentionperiod;
-	}
-
-	public void setMessageretentionperiod(String messageretentionperiod) {
-		this.messageretentionperiod = messageretentionperiod;
-	}
-
-	public Integer getWaittime() {
-		return waittime;
-	}
-
-	public void setWaittime(Integer waittime) {
-		this.waittime = waittime;
-	}
-
-	public Integer getVisibilitytimeout() {
-		return visibilitytimeout;
-	}
-
-	public void setVisibilitytimeout(Integer visibilitytimeout) {
-		this.visibilitytimeout = visibilitytimeout;
 	}
 
 	public Boolean getDlqenabled() {
@@ -299,7 +223,7 @@ public class SqsProperties {
 		this.numberofmessagestoprefetch = numberofmessagestoprefetch;
 	}
 
-	public Integer getRetries() {
+	public int getRetries() {
 		return retries;
 	}
 
@@ -319,7 +243,6 @@ public class SqsProperties {
 		URI endpointUri = URI.create(endpoint);
 		String path = endpointUri.getPath();
 		int pos = path.lastIndexOf('/');
-		logger.info("path: {}", path);
 		return path.substring(pos + 1);
 	}
 
@@ -328,7 +251,6 @@ public class SqsProperties {
 	}
 
 	public void setAccessKey(String accessKey) {
-		logger.info("accessKey: {}", accessKey);
 		this.accessKey = accessKey;
 	}
 
@@ -337,7 +259,6 @@ public class SqsProperties {
 	}
 
 	public void setSecretKey(String secretKey) {
-		logger.info("secretKey: {}", secretKey);
 		this.secretKey = secretKey;
 	}
 

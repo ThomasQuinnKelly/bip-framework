@@ -91,18 +91,6 @@ public class SqsPropertiesTest {
         instance.setDlqendpoint("http://localhost:8080/queuename");
         assertEquals("http://localhost:8080/queuename", instance.getDlqendpoint());
     }
-
-
-    /**
-     * Test of setDlqRetriesCount method, of class SqsProperties.
-     */
-    @Test
-    public void testSetDlqRetriesCount() {
-        Integer dlqRetriesCount = 0;
-        SqsProperties instance = new SqsProperties();
-        instance.setRetries(dlqRetriesCount);
-        assertEquals(dlqRetriesCount, instance.getRetries());
-    }
     
     /**
      * Test of queueType method, of class SqsProperties.
