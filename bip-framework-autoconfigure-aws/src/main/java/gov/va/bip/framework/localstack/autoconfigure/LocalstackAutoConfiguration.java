@@ -225,11 +225,9 @@ public class LocalstackAutoConfiguration {
 
 	String dlqUrl = null;
 
-	private void initializeQueues() {
+	private void initializeDlqQueues() {
 		AmazonSQS client = TestUtils.getClientSQS();
 		Boolean dlqEnabled = sqsProperties.getDlqenabled();
-
-
 
 		// create Dead Letter Queue and set up redrive policy
 		if (dlqEnabled) {
@@ -270,26 +268,10 @@ public class LocalstackAutoConfiguration {
 		GetQueueAttributesResult dlqAttributesResult = null;
 		String redrivePolicy = null;
 
-			GetQueueAttributesRequest getAttributesRequest =
-					new GetQueueAttributesRequest(dlqUrl).withAttributeNames(QueueAttributeName.QueueArn);
+		if (dlqEnabled) {
+			dlqAttributesResult = getDlqAttributes(client);
+		}
 
-			// retry the operation until the localstack responds
-			for (int i = 0; i < maxRetries; i++) {
-				try {
-					dlqAttributesResult = client.getQueueAttributes(getAttributesRequest);
-					break;
-				} catch (Exception e) {
-					LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
-						+ WAIT_FOR_LOCALSTACK_MESSAGE);
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// Restore interrupted state...
-					Thread.currentThread().interrupt();
-				}
-
-			}
 		try {
 			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
 					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
@@ -306,7 +288,7 @@ public class LocalstackAutoConfiguration {
 		attributeMap.put("VisibilityTimeout", sqsProperties.getVisibilitytimeout().toString());
 		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbaseddeduplication().toString());
 
-		if (dlqEnabled) {
+		if (dlqEnabled && redrivePolicy != null) {
 			attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
 		}
 
@@ -327,6 +309,33 @@ public class LocalstackAutoConfiguration {
 				Thread.currentThread().interrupt();
 			}
 		}
+	}
+
+	private GetQueueAttributesResult getDlqAttributes(AmazonSQS client) {
+		GetQueueAttributesResult getQueueAttributesResult = null;
+
+		GetQueueAttributesRequest getAttributesRequest =
+				new GetQueueAttributesRequest(dlqUrl).withAttributeNames(QueueAttributeName.QueueArn);
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < maxRetries; i++) {
+			try {
+				getQueueAttributesResult = client.getQueueAttributes(getAttributesRequest);
+				break;
+			} catch (Exception e) {
+				LOGGER.warn("Attempt to access DLQ Attributes through AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
+			}
+
+		}
+
+		return getQueueAttributesResult;
 	}
 
 	private void subscribeTopicToQueue(CreateTopicResult result) {
@@ -355,7 +364,7 @@ public class LocalstackAutoConfiguration {
 	private void createLocalstackServices(){
 		//Creates a SQS queue
 		if (sqsProperties.getEnabled()) {
-			initializeQueues();
+			initializeDlqQueues();
 			createQueues();
 		}
 
