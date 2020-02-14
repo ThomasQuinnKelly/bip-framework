@@ -115,6 +115,7 @@ public class LocalstackAutoConfiguration {
 
 				//Creates a SQS queue
 				if (sqsProperties.getEnabled()) {
+					initializeQueues();
 					createQueues();
 				}
 
@@ -236,14 +237,17 @@ public class LocalstackAutoConfiguration {
 		return null;
 	}
 
-	private void createQueues() {
-		AmazonSQS client = TestUtils.getClientSQS();
+	//Initialize Queue Variables
 
+	String dlqUrl = null;
+	GetQueueAttributesResult dlqAttributesResult = null;
+	String redrivePolicy = null;
+
+	private void initializeQueues() {
+		AmazonSQS client = TestUtils.getClientSQS();
 		Boolean dlqEnabled = sqsProperties.getDlqenabled();
 
-		String dlqUrl = null;
-		GetQueueAttributesResult dlqAttributesResult = null;
-		String redrivePolicy = null;
+
 
 		// create Dead Letter Queue and set up redrive policy
 		if (dlqEnabled) {
@@ -274,6 +278,15 @@ public class LocalstackAutoConfiguration {
 				}
 
 			}
+		}
+	}
+
+	private void createQueues(){
+		AmazonSQS client = TestUtils.getClientSQS();
+		Boolean dlqEnabled = sqsProperties.getDlqenabled();
+
+		GetQueueAttributesResult dlqAttributesResult = null;
+		String redrivePolicy = null;
 
 			GetQueueAttributesRequest getAttributesRequest =
 					new GetQueueAttributesRequest(dlqUrl).withAttributeNames(QueueAttributeName.QueueArn);
@@ -298,7 +311,6 @@ public class LocalstackAutoConfiguration {
 
 			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
 					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
-		}
 
 		Map<String, String> attributeMap = new HashMap<>();
 		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());
