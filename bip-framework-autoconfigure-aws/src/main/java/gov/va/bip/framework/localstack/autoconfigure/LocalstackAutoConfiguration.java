@@ -114,25 +114,8 @@ public class LocalstackAutoConfiguration {
 
 				Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
-				//Creates a SQS queue
-				if (sqsProperties.getEnabled()) {
-					initializeQueues();
-					createQueues();
-				}
-
-				//Creates a SNS topic
-				CreateTopicResult result = null;
-				if (snsProperties.getEnabled()) {
-					result = createTopics();
-				}
-
-
-				if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
-					//Subscribes the topic to the queue
-					if (result == null) {
-						throw new NullPointerException("result is null");
-					} else subscribeTopicToQueue(result);
-				}
+				//Create SQS and SNS Services
+				createLocalstackServices();
 			}
 		}
 	}
@@ -366,6 +349,28 @@ public class LocalstackAutoConfiguration {
 				// Restore interrupted state...
 				Thread.currentThread().interrupt();
 			}
+		}
+	}
+
+	private void createLocalstackServices(){
+		//Creates a SQS queue
+		if (sqsProperties.getEnabled()) {
+			initializeQueues();
+			createQueues();
+		}
+
+		//Creates a SNS topic
+		CreateTopicResult result = null;
+		if (snsProperties.getEnabled()) {
+			result = createTopics();
+		}
+
+
+		if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
+			//Subscribes the topic to the queue
+			if (result == null) {
+				throw new NullPointerException("result is null");
+			} else subscribeTopicToQueue(result);
 		}
 	}
 }
