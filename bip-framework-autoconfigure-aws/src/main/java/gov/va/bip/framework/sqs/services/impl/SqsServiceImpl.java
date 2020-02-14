@@ -78,10 +78,9 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	public SQSTextMessage createTextMessage(String message) {
 
-		try {
+		try (Session session = connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)){
 			Defense.notNull(message, "Message can't be null");
-			SQSTextMessage result = (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
-					.createTextMessage(message);
+			SQSTextMessage result = (SQSTextMessage) session.createTextMessage(message);
 
 			Enumeration<String> s = result.getPropertyNames();
 
