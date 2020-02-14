@@ -41,6 +41,7 @@ abstract class SqsQueueProperties {
 
     //FifoQueue - Whether the queue(s) should be Fifo (setting used for both DLQ and Queue - they must match)
     //true = Exactly-Once Processing (FIFO queue), false = At-Least-Once
+    //Fifo is not supported at this time
     @Value("false")
     private Boolean queuetype;
 

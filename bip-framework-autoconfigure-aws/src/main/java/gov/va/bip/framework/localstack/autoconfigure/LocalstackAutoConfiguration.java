@@ -272,11 +272,9 @@ public class LocalstackAutoConfiguration {
 			dlqAttributesResult = getDlqAttributes(client);
 		}
 
-		try {
+		if (dlqEnabled && dlqAttributesResult != null) {
 			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
 					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
-		} catch (Exception e) {
-			LOGGER.warn("dlqAttributesResult is null");
 		}
 
 		Map<String, String> attributeMap = new HashMap<>();

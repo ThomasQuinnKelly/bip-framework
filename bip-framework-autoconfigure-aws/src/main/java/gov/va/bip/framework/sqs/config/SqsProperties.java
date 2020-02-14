@@ -28,48 +28,12 @@ public class SqsProperties extends SqsQueueProperties {
 	@Value("us-east-1")
 	private String region;
 
-	//FifoQueue - Whether the queue(s) should be Fifo (setting used for both DLQ and Queue - they must match)
-	//true = Exactly-Once Processing (FIFO queue), false = At-Least-Once
-	//Fifo is not supported at this time
-	@Value("false")
-	private Boolean queuetype;
-
 	//Queue Endpoint
 	private String endpoint;
 
 	//ContentBasedDeduplication
 	@Value("false")
 	private Boolean contentbaseddeduplication;
-
-	//DelaySeconds
-	@Min(0)
-	@Max(900) // 15 minutes
-	@Value("0")
-	private Integer delay;
-
-	//MaximumMessageSize - in bytes
-	@Min(1024) // 1 KiB
-	@Max(262144) // 256 KiB
-	@Value("262144") // 256 KiB
-	private String maxmessagesize;
-
-	//MessageRetentionPeriod - in seconds
-	@Min(0)
-	@Max(1209600) // 14 days
-	@Value("345600") // 4 days
-	private String messageretentionperiod;
-
-	//ReceiveMessageWaitTimeSeconds
-	@Min(0)
-	@Max(20)
-	@Value("0")
-	private Integer waittime;
-
-	//VisibilityTimeout
-	@Min(0)
-	@Max(43200) // 12 hours
-	@Value("30")
-	private Integer visibilitytimeout;
 
 	@Value("false")
 	private Boolean dlqenabled;
