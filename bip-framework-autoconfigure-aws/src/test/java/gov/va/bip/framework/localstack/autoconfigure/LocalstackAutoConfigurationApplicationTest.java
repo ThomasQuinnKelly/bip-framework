@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = LocalstackTestAutoConfigurationTest.class)
 public class LocalstackAutoConfigurationApplicationTest {
 
 	@Autowired
@@ -24,5 +23,10 @@ public class LocalstackAutoConfigurationApplicationTest {
 	@Test
 	public void testStopStack() throws Exception {
 		localstackAutoConfiguration.stopAwsLocalStack();
+	}
+
+	@Test
+	public void testProfileCheck() throws Exception {
+		localstackAutoConfiguration.profileCheck();
 	}
 }

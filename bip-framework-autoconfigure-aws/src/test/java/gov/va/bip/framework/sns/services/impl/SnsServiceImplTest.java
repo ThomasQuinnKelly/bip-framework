@@ -13,10 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RunWith(MockitoJUnitRunner.class)
 public class SnsServiceImplTest {
 
-	@Autowired
-	@InjectMocks
-	private SnsService snsService = new SnsServiceImpl();
-
 	@Test
 	public void testCreateTopicResult(){
 		CreateTopicRequest createTopic = (new CreateTopicRequest("Test My Topic"));

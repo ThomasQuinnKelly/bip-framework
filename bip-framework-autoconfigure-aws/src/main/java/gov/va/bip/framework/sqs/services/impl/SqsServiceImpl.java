@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
-import java.io.OutputStream;
 import java.util.Enumeration;
 
 @Service
@@ -79,10 +78,9 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	public SQSTextMessage createTextMessage(String message) {
 
-		try {
+		try (Session session = connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)){
 			Defense.notNull(message, "Message can't be null");
-			SQSTextMessage result = (SQSTextMessage) connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
-					.createTextMessage(message);
+			SQSTextMessage result = (SQSTextMessage) session.createTextMessage(message);
 
 			Enumeration<String> s = result.getPropertyNames();
 

@@ -50,8 +50,12 @@ import java.util.regex.PatternSyntaxException;
 @Primary
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class LocalstackAutoConfiguration {
-	/** Class logger */
+	/**
+	 * Class logger
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(LocalstackAutoConfiguration.class);
+	private static final String RETRY_MESSAGE = ") failed on try # ";
+	private static final String WAIT_FOR_LOCALSTACK_MESSAGE = ", waiting for AWS localstack to finish initializing.";
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
@@ -103,30 +107,15 @@ public class LocalstackAutoConfiguration {
 		if (profileCheck()) {
 
 			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
+				LOGGER.info("Localstack instance is running...");
 			} else if (Localstack.INSTANCE != null) {
 				// Clean the localstack
 				cleanAwsLocalStack();
 
 				Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
-				//Creates a SQS queue
-				if (sqsProperties.getEnabled()) {
-					createQueues();
-				}
-
-				//Creates a SNS topic
-				CreateTopicResult result = null;
-				if (snsProperties.getEnabled()) {
-					result = createTopics();
-				}
-
-
-				if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
-					//Subscribes the topic to the queue
-					if (result == null) {
-						throw new NullPointerException("result is null");
-					} else subscribeTopicToQueue(result);
-				}
+				//Create SQS and SNS Services
+				createLocalstackServices();
 			}
 		}
 	}
@@ -218,8 +207,8 @@ public class LocalstackAutoConfiguration {
 				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -232,14 +221,15 @@ public class LocalstackAutoConfiguration {
 		return null;
 	}
 
-	private void createQueues() {
-		AmazonSQS client = TestUtils.getClientSQS();
+	//Initialize Queue Variables
 
+	String dlqUrl = null;
+
+	private void initializeQueues() {
+		AmazonSQS client = TestUtils.getClientSQS();
 		Boolean dlqEnabled = sqsProperties.getDlqenabled();
 
-		String dlqUrl = null;
-		GetQueueAttributesResult dlqAttributesResult = null;
-		String redrivePolicy = null;
+
 
 		// create Dead Letter Queue and set up redrive policy
 		if (dlqEnabled) {
@@ -259,8 +249,8 @@ public class LocalstackAutoConfiguration {
 					break;
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
-							+ ") failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
+							+ RETRY_MESSAGE + (i + 1)
+							+ WAIT_FOR_LOCALSTACK_MESSAGE);
 				}
 				try {
 					Thread.sleep(1000);
@@ -270,6 +260,15 @@ public class LocalstackAutoConfiguration {
 				}
 
 			}
+		}
+	}
+
+	private void createQueues(){
+		AmazonSQS client = TestUtils.getClientSQS();
+		Boolean dlqEnabled = sqsProperties.getDlqenabled();
+
+		GetQueueAttributesResult dlqAttributesResult = null;
+		String redrivePolicy = null;
 
 			GetQueueAttributesRequest getAttributesRequest =
 					new GetQueueAttributesRequest(dlqUrl).withAttributeNames(QueueAttributeName.QueueArn);
@@ -281,7 +280,7 @@ public class LocalstackAutoConfiguration {
 					break;
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 				}
 				try {
 					Thread.sleep(1000);
@@ -291,9 +290,11 @@ public class LocalstackAutoConfiguration {
 				}
 
 			}
-
+		try {
 			redrivePolicy = "{\"maxReceiveCount\":\"" + sqsProperties.getMaxreceivecount() + "\", \"deadLetterTargetArn\":\""
 					+ dlqAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+		} catch (Exception e) {
+			LOGGER.warn("dlqAttributesResult is null");
 		}
 
 		Map<String, String> attributeMap = new HashMap<>();
@@ -316,8 +317,8 @@ public class LocalstackAutoConfiguration {
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+					+ RETRY_MESSAGE + (i + 1)
+					+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -339,8 +340,8 @@ public class LocalstackAutoConfiguration {
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
-						+ ") failed on try # " + (i + 1)
-						+ ", waiting for AWS localstack to finish initializing.");
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -348,6 +349,28 @@ public class LocalstackAutoConfiguration {
 				// Restore interrupted state...
 				Thread.currentThread().interrupt();
 			}
+		}
+	}
+
+	private void createLocalstackServices(){
+		//Creates a SQS queue
+		if (sqsProperties.getEnabled()) {
+			initializeQueues();
+			createQueues();
+		}
+
+		//Creates a SNS topic
+		CreateTopicResult result = null;
+		if (snsProperties.getEnabled()) {
+			result = createTopics();
+		}
+
+
+		if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
+			//Subscribes the topic to the queue
+			if (result == null) {
+				throw new NullPointerException("result is null");
+			} else subscribeTopicToQueue(result);
 		}
 	}
 }

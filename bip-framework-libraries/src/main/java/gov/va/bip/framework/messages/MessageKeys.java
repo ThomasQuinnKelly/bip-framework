@@ -1,10 +1,8 @@
 package gov.va.bip.framework.messages;
 
-import java.util.Locale;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
+import java.util.Locale;
 
 /**
  * A message @PropertySource for Service Bip*Exception and *Message list.

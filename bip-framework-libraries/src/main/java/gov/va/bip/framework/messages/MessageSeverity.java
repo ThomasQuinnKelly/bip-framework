@@ -1,9 +1,9 @@
 package gov.va.bip.framework.messages;
 
+import org.slf4j.event.Level;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-
-import org.slf4j.event.Level;
 
 /**
  * MessageSeverity is a type safe enum to represent the severity of a message.
