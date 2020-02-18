@@ -78,6 +78,7 @@ public abstract class AbstractSqsConfiguration {
 
 	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
 		boolean isEmbeddedAws = false;
+		boolean isLocalInt = false;
 		EndpointConfiguration endpointConfiguration = null;
 
 		Regions region = Regions.fromName(sqsProperties.getRegion());
@@ -86,11 +87,23 @@ public abstract class AbstractSqsConfiguration {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				isEmbeddedAws = true;
 			}
+
+			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
+				isLocalInt = true;
+			}
 		}
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
+		} else if (isLocalInt) {
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint(), region.getName());
+
+			if (sqsProperties.getEndpoint().contains("localhost")) {
+				//for testing local dev beginning with setting the properties directly
+				//endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint().replace("localhost", "localstack"), region.getName());
+			}
+
 		} else {
 			endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint(), region.getName());
 		}
