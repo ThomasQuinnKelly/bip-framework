@@ -12,6 +12,18 @@
 	<artifactId>bip-framework-autoconfigure-aws</artifactId>
 	<name>${project.artifactId}</name>
 	<description>AutoConfiguration for BIP Application Framework AWS - Spring Boot and Cloud Enabled</description>
+
+	<properties>
+		<sonar.coverage.exclusions>
+			gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration,
+			gov.va.bip.framework.sns.config.AbstractSnsConfiguration,
+			gov.va.bip.framework.sns.config.StandardSnsConfiguration,
+			gov.va.bip.framework.sns.services.SnsService,
+			gov.va.bip.framework.sns.services.impl.SnsServiceImpl,
+			gov.va.bip.framework.sqs.services.SqsService,
+			gov.va.bip.framework.sqs.services.impl.SqsServiceImpl;
+		</sonar.coverage.exclusions>
+	</properties>
 	
 	<dependencies>
 		<!-- Bip Framework Libraries -->

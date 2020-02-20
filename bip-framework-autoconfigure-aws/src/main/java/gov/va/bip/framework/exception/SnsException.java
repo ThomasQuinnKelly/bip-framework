@@ -14,5 +14,4 @@ public class SnsException extends BipRuntimeException {
         public SnsException(MessageKey key, MessageSeverity severity, HttpStatus status, Throwable cause, String... params) {
             super(key, severity, status, cause, params);
         }
-
-    }
+}
