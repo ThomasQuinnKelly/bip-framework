@@ -522,7 +522,7 @@ public class RESTUtil {
 	private RestTemplate getRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded) {
 		// Create a new instance of the {@link RestTemplate} using default
 		// settings.
-		RestTemplate apiTemplate = new RestTemplate();
+		RestTemplate apiTemplate = new DeferredCloseRestTemplate();
 
 		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
 		String pathToTrustStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStore", true);
