@@ -44,7 +44,7 @@ import java.util.regex.PatternSyntaxException;
  *
  */
 @Configuration
-@Profile(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
+@Profile({BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS, BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT})
 @EnableConfigurationProperties({ LocalstackProperties.class})
 @ConditionalOnProperty(name = "bip.framework.localstack.enabled", havingValue = "true")
 @Primary
