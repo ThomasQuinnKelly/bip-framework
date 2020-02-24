@@ -9,11 +9,10 @@ import org.junit.Test;
 
 public class BipOpaDataRequestTest {
 
-
 	@Test
 	public void testProviderRequest() {
 		Map<String, Object> input = new HashMap<>();
-		input.put("test","test_value");
+		input.put("test", "test_value");
 		BipOpaDataRequest bipOpaDataRequest = new BipOpaDataRequest(input);
 		assertNotNull(bipOpaDataRequest);
 		assertNotNull(bipOpaDataRequest.getInput());

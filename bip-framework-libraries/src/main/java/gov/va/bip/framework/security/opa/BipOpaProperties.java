@@ -3,16 +3,16 @@ package gov.va.bip.framework.security.opa;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Class used as open policy agent properties in projects.
- * The values assigned to members in this class are defaults,
- * and are typically overridden in yml and spring configuration.
+ * Class used as open policy agent properties in projects. The values assigned
+ * to members in this class are defaults, and are typically overridden in YAML
+ * and spring configuration.
  */
 @ConfigurationProperties(prefix = "bip.framework.security.opa")
 public class BipOpaProperties {
-	
+
 	/** The enabled. */
 	private boolean enabled = false;
-	
+
 	/** The all voters abstain grant access. */
 	private boolean allVotersAbstainGrantAccess = false;
 
@@ -36,7 +36,7 @@ public class BipOpaProperties {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 	/**
 	 * Checks if is all voters abstain grant access.
 	 *

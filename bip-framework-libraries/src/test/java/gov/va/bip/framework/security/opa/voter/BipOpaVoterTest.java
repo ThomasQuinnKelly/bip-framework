@@ -33,8 +33,8 @@ public class BipOpaVoterTest {
 	@Mock
 	private RestClientTemplate restTemplate;
 	@InjectMocks
-	BipOpaVoter voter = new BipOpaVoter("http://localhost:8080/api/v1/mytest/pid");
-	
+	BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid");
+
 	private final ConfigAttribute configAttrib = new SecurityConfig("test_security_config");
 	private final Authentication jwtUserToken = new JwtAuthenticationToken("test_token");
 	private FilterInvocation filterInvocationWithMethodRequestUri;
@@ -43,16 +43,22 @@ public class BipOpaVoterTest {
 	@Before
 	public void setup() {
 		MockHttpServletRequest requestWithMethodUri = new MockHttpServletRequest("POST", "api/v1/mytest/pid");
-		requestWithMethodUri.addHeader("x-real-ip","127.0.0.1");
+		requestWithMethodUri.addHeader("x-real-ip", "127.0.0.1");
 		requestWithMethodUri.addParameter("test_name", "test_value");
-		
+
 		MockHttpServletRequest requestWithNoMethodUri = new MockHttpServletRequest(null, null);
-		
+
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		FilterChain chain = mock(FilterChain.class);
-			
+
 		filterInvocationWithMethodRequestUri = new FilterInvocation(requestWithMethodUri, response, chain);
 		filterInvocationNoMethodRequestUri = new FilterInvocation(requestWithNoMethodUri, response, chain);
+	}
+
+	@Test
+	public void testPostConstruct() {
+		BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid");
+		voter.postConstruct();
 	}
 
 	@Test
@@ -62,7 +68,7 @@ public class BipOpaVoterTest {
 		assertThat(voter.vote(notAuthenitcated, this, SecurityConfig.createList("A")))
 				.isEqualTo(BipOpaVoter.ACCESS_ABSTAIN);
 	}
-	
+
 	@Test
 	public void notFilterInvocationAbstain() {
 
@@ -102,7 +108,7 @@ public class BipOpaVoterTest {
 		assertThat(voter.vote(jwtUserToken, filterInvocationWithMethodRequestUri, SecurityConfig.createList("A")))
 				.isEqualTo(BipOpaVoter.ACCESS_GRANTED);
 	}
-	
+
 	@Test
 	public void authenticationRequestNoRequestUriAccessGranted() {
 
@@ -117,12 +123,12 @@ public class BipOpaVoterTest {
 		assertThat(voter.vote(jwtUserToken, filterInvocationNoMethodRequestUri, SecurityConfig.createList("A")))
 				.isEqualTo(BipOpaVoter.ACCESS_GRANTED);
 	}
-	
+
 	@Test
 	public void testSupportsConfigAttribute() {
 		assertTrue(voter.supports(configAttrib));
 	}
-	
+
 	@Test
 	public void testSupportsClass() {
 		assertTrue(voter.supports(String.class));

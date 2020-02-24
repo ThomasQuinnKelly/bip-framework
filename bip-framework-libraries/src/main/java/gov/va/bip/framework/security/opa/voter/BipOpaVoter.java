@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,9 +20,15 @@ import org.springframework.security.web.FilterInvocation;
 import gov.va.bip.framework.client.rest.template.RestClientTemplate;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.validation.Defense;
 
 /**
  * The Class BipOpaVoter.
+ * 
+ * Indicates a class is responsible for voting on authorization decisions by
+ * making REST call to Open Policy Agent URL to query the policies for the given
+ * input
+ * 
  */
 public class BipOpaVoter implements AccessDecisionVoter<Object> {
 
@@ -30,17 +37,26 @@ public class BipOpaVoter implements AccessDecisionVoter<Object> {
 
 	/** The OPA URL. */
 	private String opaUrl;
-	
+
+	/** The OPA rest template. */
 	@Autowired
 	private RestClientTemplate opaRestTemplate;
 
 	/**
 	 * Instantiates a new OPA voter.
 	 *
-	 * @param opaUrl the opa url
+	 * @param opaUrl the OPA URL
 	 */
 	public BipOpaVoter(String opaUrl) {
 		this.opaUrl = opaUrl;
+	}
+
+	/**
+	 * Ensure auto wiring succeeded.
+	 */
+	@PostConstruct
+	public void postConstruct() {
+		Defense.notNull(opaUrl, "Open Policy Agent URL cannot be null.");
 	}
 
 	/**
@@ -103,8 +119,8 @@ public class BipOpaVoter implements AccessDecisionVoter<Object> {
 		Map<String, String> headers = new HashMap<>();
 		Map<String, Object> parameters = new HashMap<>();
 		String[] path = ArrayUtils.EMPTY_STRING_ARRAY;
-		
-		if(httpServletRequest.getRequestURI() != null){
+
+		if (httpServletRequest.getRequestURI() != null) {
 			path = httpServletRequest.getRequestURI().replaceAll("^/|/$", "").split("/");
 		}
 

@@ -41,7 +41,7 @@ public class BipOpaPropertiesTest {
 		bipOpaProperties.setEnabled(enabled);
 		assertTrue(bipOpaProperties.isEnabled());
 	}
-	
+
 	/**
 	 * Test of isAllVotersAbstainGrantAccess method, of class BipOpaProperties.
 	 */
@@ -61,7 +61,7 @@ public class BipOpaPropertiesTest {
 		bipOpaProperties.setAllVotersAbstainGrantAccess(enabled);
 		assertTrue(bipOpaProperties.isAllVotersAbstainGrantAccess());
 	}
-	
+
 	/**
 	 * Test of getUrls method, of class BipOpaProperties.
 	 */
@@ -75,7 +75,7 @@ public class BipOpaPropertiesTest {
 	 */
 	@Test
 	public void testSetUrls() {
-		bipOpaProperties.setUrls(new String[]{"http://localhost:8081/test"});
+		bipOpaProperties.setUrls(new String[] { "http://localhost:8181/api/v1/mytest/pid" });
 		assertNotNull(bipOpaProperties.getUrls());
 	}
 }

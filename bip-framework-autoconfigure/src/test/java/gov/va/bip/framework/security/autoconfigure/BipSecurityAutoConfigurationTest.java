@@ -24,7 +24,7 @@ import gov.va.bip.framework.security.opa.BipOpaProperties;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
 @ContextConfiguration(classes = { BipOpaProperties.class })
-public class ReferenceSecurityAutoConfigurationTests {
+public class BipSecurityAutoConfigurationTest {
 
     private AnnotationConfigWebApplicationContext context;
     

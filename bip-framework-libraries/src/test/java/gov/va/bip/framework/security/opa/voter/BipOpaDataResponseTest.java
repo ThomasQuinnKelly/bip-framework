@@ -7,7 +7,6 @@ import org.junit.Test;
 
 public class BipOpaDataResponseTest {
 
-
 	@Test
 	public void testProviderResponse() {
 		BipOpaDataResponse bipOpaDataResponse = new BipOpaDataResponse();
