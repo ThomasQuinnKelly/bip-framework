@@ -30,6 +30,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import gov.va.bip.framework.client.rest.template.RestClientTemplate;
 import gov.va.bip.framework.log.BipBanner;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
@@ -68,6 +69,9 @@ public class BipSecurityAutoConfiguration {
 
 		@Autowired
 		private BipOpaProperties opaProperties;
+		
+		@Autowired
+		private RestClientTemplate restClientTemplate;
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -102,13 +106,18 @@ public class BipSecurityAutoConfiguration {
 			http.headers().cacheControl();
 		}
 
+		/**
+		 * Access decision manager.
+		 *
+		 * @return the access decision manager
+		 */
 		private AccessDecisionManager accessDecisionManager() {
 			final String[] opaUrls = opaProperties.getUrls();
 			List<AccessDecisionVoter<? extends Object>> decisionVoters = new ArrayList<>();
 			for (String opaUrl : opaUrls) {
 				if (StringUtils.isNotBlank(opaUrl)) {
 					LOGGER.info("OPA Url {}", opaUrl);
-					decisionVoters.add(new BipOpaVoter(opaUrl));
+					decisionVoters.add(new BipOpaVoter(opaUrl, restClientTemplate));
 				}
 			}
 			if (opaProperties.isAllVotersAbstainGrantAccess()) {
@@ -118,25 +127,67 @@ public class BipSecurityAutoConfiguration {
 			}
 		}
 
+		/**
+		 * Authentication entry point.
+		 *
+		 * @return the authentication entry point
+		 */
 		@Bean
 		protected AuthenticationEntryPoint authenticationEntryPoint() {
 			return new JwtAuthenticationEntryPoint();
 		}
 
+		/**
+		 * Jwt authentication provider.
+		 *
+		 * @return the authentication provider
+		 */
 		@Bean
 		protected AuthenticationProvider jwtAuthenticationProvider() {
 			return new JwtAuthenticationProvider(new JwtParser(jwtAuthenticationProperties));
 		}
 
+		/**
+		 * Jwt authentication success handler.
+		 *
+		 * @return the authentication success handler
+		 */
 		@Bean
 		protected AuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
 			return new JwtAuthenticationSuccessHandler();
 		}
 
+		/**
+		 * Jwt authentication filter.
+		 *
+		 * @return the jwt authentication filter
+		 */
 		@Bean
 		protected JwtAuthenticationFilter jwtAuthenticationFilter() {
 			return new JwtAuthenticationFilter(jwtAuthenticationProperties, jwtAuthenticationSuccessHandler(),
 					jwtAuthenticationProvider(), authenticationEntryPoint());
+		}
+		
+		/**
+		 * Open Policy Agent properties used for policy engine authorization.
+		 *
+		 * @return BipOpaProperties the properties
+		 */
+		@Bean
+		@ConditionalOnMissingBean
+		protected BipOpaProperties opaProperties() {
+			return new BipOpaProperties();
+		}
+		
+		/**
+		 * The Rest Client Template
+		 *
+		 * @return RestClientTemplate the rest client template
+		 */
+		@Bean
+		@ConditionalOnMissingBean
+		protected RestClientTemplate restClientTemplate() {
+			return new RestClientTemplate();
 		}
 	}
 
@@ -167,17 +218,6 @@ public class BipSecurityAutoConfiguration {
 	@ConditionalOnMissingBean
 	public JwtAuthenticationProperties jwtAuthenticationProperties() {
 		return new JwtAuthenticationProperties();
-	}
-
-	/**
-	 * Open Policy Agent properties used for policy engine authorization.
-	 *
-	 * @return BipOpaProperties the properties
-	 */
-	@Bean
-	@ConditionalOnMissingBean
-	public BipOpaProperties opaProperties() {
-		return new BipOpaProperties();
 	}
 
 	/**

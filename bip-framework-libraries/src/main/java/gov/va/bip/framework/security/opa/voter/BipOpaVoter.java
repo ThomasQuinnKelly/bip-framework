@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -37,18 +36,17 @@ public class BipOpaVoter implements AccessDecisionVoter<Object> {
 
 	/** The OPA URL. */
 	private String opaUrl;
-
-	/** The OPA rest template. */
-	@Autowired
-	private RestClientTemplate opaRestTemplate;
+	
+	private RestClientTemplate restClientTemplate;
 
 	/**
 	 * Instantiates a new OPA voter.
 	 *
 	 * @param opaUrl the OPA URL
 	 */
-	public BipOpaVoter(String opaUrl) {
+	public BipOpaVoter(String opaUrl, RestClientTemplate restClientTemplate) {
 		this.opaUrl = opaUrl;
+		this.restClientTemplate = restClientTemplate;
 	}
 
 	/**
@@ -107,6 +105,7 @@ public class BipOpaVoter implements AccessDecisionVoter<Object> {
 	public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
 
 		LOGGER.debug("Open Policy Agent URL {}", opaUrl);
+		LOGGER.debug("RestClientTemplate {}", restClientTemplate);
 
 		if (authentication == null || !(object instanceof FilterInvocation)) {
 			return ACCESS_ABSTAIN;
@@ -144,7 +143,7 @@ public class BipOpaVoter implements AccessDecisionVoter<Object> {
 
 		// create the rest client template
 		HttpEntity<?> request = new HttpEntity<>(new BipOpaDataRequest(input));
-		ResponseEntity<BipOpaDataResponse> response = opaRestTemplate.postForEntity(this.opaUrl, request,
+		ResponseEntity<BipOpaDataResponse> response = restClientTemplate.postForEntity(this.opaUrl, request,
 				BipOpaDataResponse.class);
 
 		if (response.hasBody() && !response.getBody().getResult()) {

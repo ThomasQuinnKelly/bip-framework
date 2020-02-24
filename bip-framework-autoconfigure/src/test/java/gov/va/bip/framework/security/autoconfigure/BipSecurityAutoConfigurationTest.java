@@ -29,6 +29,7 @@ public class BipSecurityAutoConfigurationTest {
     private AnnotationConfigWebApplicationContext context;
     
     private static final String BIP_FRAMEWORK_OPA_ENABLED = "bip.framework.security.opa.enabled=true";
+    private static final String BIP_FRAMEWORK_OPA_ALLVOTERS_ABSTAIN_GRANT_AACCESS = "bip.framework.security.opa.allVotersAbstainGrantAccess=true";
     private static final String BIP_FRAMEWORK_OPA_URLS = "bip.framework.security.opa.urls[0]=http://localhost:8080/api/v1/mytest/pid";
     private static final String BIP_FRAMEWORK_OPA_URLS_INVALID = "bip.framework.security.opa.urls[0]=";
 
@@ -65,6 +66,18 @@ public class BipSecurityAutoConfigurationTest {
         context = new AnnotationConfigWebApplicationContext();
         TestPropertyValues.of(BIP_FRAMEWORK_OPA_ENABLED).applyTo(context);
         TestPropertyValues.of(BIP_FRAMEWORK_OPA_URLS).applyTo(context);
+        context.register(SecurityAutoConfiguration.class, EmbeddedWebServerFactoryCustomizerAutoConfiguration.class, BipSecurityAutoConfiguration.class);
+        context.refresh();
+        assertNotNull(context);
+        assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+    }
+    
+    @Test
+    public void testWebConfigurationOpaEnabledWithUrlsBoolean() throws Exception {
+        context = new AnnotationConfigWebApplicationContext();
+        TestPropertyValues.of(BIP_FRAMEWORK_OPA_ENABLED).applyTo(context);
+        TestPropertyValues.of(BIP_FRAMEWORK_OPA_URLS).applyTo(context);
+        TestPropertyValues.of(BIP_FRAMEWORK_OPA_ALLVOTERS_ABSTAIN_GRANT_AACCESS).applyTo(context);
         context.register(SecurityAutoConfiguration.class, EmbeddedWebServerFactoryCustomizerAutoConfiguration.class, BipSecurityAutoConfiguration.class);
         context.refresh();
         assertNotNull(context);

@@ -33,7 +33,7 @@ public class BipOpaVoterTest {
 	@Mock
 	private RestClientTemplate restTemplate;
 	@InjectMocks
-	BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid");
+	BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid", restTemplate);
 
 	private final ConfigAttribute configAttrib = new SecurityConfig("test_security_config");
 	private final Authentication jwtUserToken = new JwtAuthenticationToken("test_token");
@@ -57,13 +57,13 @@ public class BipOpaVoterTest {
 
 	@Test
 	public void testPostConstruct() {
-		BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid");
+		BipOpaVoter voter = new BipOpaVoter("http://localhost:8181/api/v1/mytest/pid", restTemplate);
 		voter.postConstruct();
 	}
 
 	@Test
 	public void nullAuthenticationAbstain() {
-		BipOpaVoter voter = new BipOpaVoter("");
+		BipOpaVoter voter = new BipOpaVoter("", restTemplate);
 		Authentication notAuthenitcated = null;
 		assertThat(voter.vote(notAuthenitcated, this, SecurityConfig.createList("A")))
 				.isEqualTo(BipOpaVoter.ACCESS_ABSTAIN);
