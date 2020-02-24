@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -29,6 +30,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import gov.va.bip.framework.log.BipBanner;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.rest.exception.BasicErrorController;
@@ -50,7 +52,7 @@ import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
 @Configuration
 @AutoConfigureAfter(SecurityAutoConfiguration.class)
 public class BipSecurityAutoConfiguration {
-	
+
 	/** The Constant LOGGER. */
 	private static final BipLogger LOGGER = BipLoggerFactory.getLogger(BipSecurityAutoConfiguration.class);
 
@@ -73,13 +75,26 @@ public class BipSecurityAutoConfiguration {
 			ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry = http
 					.authorizeRequests();
 
-			if (opaProperties.isEnabled() && opaProperties.getUrls() != null && opaProperties.getUrls().length > 0) {
-				LOGGER.info("Open Policy Agent Enabled");
-				urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
-						.accessDecisionManager(accessDecisionManager());
-			} else {
+			boolean isOpaEnabled = false;
+
+			if (opaProperties.isEnabled()) {
+				if (opaProperties.getUrls() != null && opaProperties.getUrls().length > 0
+						&& !opaProperties.getUrls()[0].isEmpty()) {
+					LOGGER.info(
+							"Setting AccessDecisionManager to use Open Policy Agent (OPA) with BipOpaVoter (AccessDecisionVoter)");
+					isOpaEnabled = true;
+					urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
+							.accessDecisionManager(accessDecisionManager());
+				} else {
+					LOGGER.warn(BipBanner.newBanner("Open Policy Agent Missing Configuration", Level.WARN),
+							"Property to enable OPA set to true, however Urls property is missing");
+				}
+			}
+
+			if (!isOpaEnabled) {
 				urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated();
 			}
+
 			urlRegistry.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).and()
 					.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
 
