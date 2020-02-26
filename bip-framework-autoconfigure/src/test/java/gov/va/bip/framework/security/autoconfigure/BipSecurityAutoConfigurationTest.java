@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
 import gov.va.bip.framework.security.opa.BipOpaProperties;
 
 /**
@@ -23,7 +24,7 @@ import gov.va.bip.framework.security.opa.BipOpaProperties;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
-@ContextConfiguration(classes = { BipOpaProperties.class })
+@ContextConfiguration(classes = { JwtAuthenticationProperties.class, BipOpaProperties.class })
 public class BipSecurityAutoConfigurationTest {
 
 	private AnnotationConfigWebApplicationContext context;
@@ -48,7 +49,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
 	}
 
@@ -60,7 +61,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(6, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
 	}
 
@@ -72,7 +73,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
 	}
 
@@ -85,7 +86,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 	}
 
 	@Test
@@ -98,7 +99,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
 	}
 
@@ -111,7 +112,7 @@ public class BipSecurityAutoConfigurationTest {
 				BipSecurityAutoConfiguration.class);
 		context.refresh();
 		assertNotNull(context);
-		assertEquals(4, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+		assertEquals(5, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
 	}
 }
