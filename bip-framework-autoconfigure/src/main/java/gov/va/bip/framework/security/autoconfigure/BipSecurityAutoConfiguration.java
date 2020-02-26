@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -52,6 +53,7 @@ import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
  */
 @Configuration
 @AutoConfigureAfter(SecurityAutoConfiguration.class)
+@EnableConfigurationProperties({ JwtAuthenticationProperties.class, BipOpaProperties.class })
 public class BipSecurityAutoConfiguration {
 
 	/** The Constant LOGGER. */
@@ -69,7 +71,7 @@ public class BipSecurityAutoConfiguration {
 
 		@Autowired
 		private BipOpaProperties opaProperties;
-		
+
 		@Autowired
 		private RestClientTemplate restClientTemplate;
 
@@ -86,9 +88,9 @@ public class BipSecurityAutoConfiguration {
 						&& !opaProperties.getUrls()[0].isEmpty()) {
 					LOGGER.info(
 							"Setting AccessDecisionManager to use Open Policy Agent (OPA) with BipOpaVoter (AccessDecisionVoter)");
-					isOpaEnabled = true;
 					urlRegistry.antMatchers(jwtAuthenticationProperties.getFilterProcessUrls()).authenticated()
-							.accessDecisionManager(accessDecisionManager());
+							.accessDecisionManager(setAccessDecisionManager());
+					isOpaEnabled = true;
 				} else {
 					LOGGER.warn(BipBanner.newBanner("Open Policy Agent Missing Configuration", Level.WARN),
 							"Property to enable OPA set to true, however Urls property is missing");
@@ -111,7 +113,7 @@ public class BipSecurityAutoConfiguration {
 		 *
 		 * @return the access decision manager
 		 */
-		private AccessDecisionManager accessDecisionManager() {
+		private AccessDecisionManager setAccessDecisionManager() {
 			final String[] opaUrls = opaProperties.getUrls();
 			List<AccessDecisionVoter<? extends Object>> decisionVoters = new ArrayList<>();
 			for (String opaUrl : opaUrls) {
@@ -167,7 +169,7 @@ public class BipSecurityAutoConfiguration {
 			return new JwtAuthenticationFilter(jwtAuthenticationProperties, jwtAuthenticationSuccessHandler(),
 					jwtAuthenticationProvider(), authenticationEntryPoint());
 		}
-		
+
 		/**
 		 * Open Policy Agent properties used for policy engine authorization.
 		 *
@@ -178,7 +180,7 @@ public class BipSecurityAutoConfiguration {
 		protected BipOpaProperties opaProperties() {
 			return new BipOpaProperties();
 		}
-		
+
 		/**
 		 * The Rest Client Template
 		 *
@@ -192,10 +194,27 @@ public class BipSecurityAutoConfiguration {
 	}
 
 	/**
+	 * Adapter that only processes URLs specified in the filter
+	 */
+	@Configuration
+	@ConditionalOnProperty(prefix = "bip.framework.security.jwt", name = "enabled", havingValue = "false")
+	@Order(JwtAuthenticationProperties.AUTH_ORDER)
+	protected static class JwtNoWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+		@Autowired
+		private JwtAuthenticationProperties jwtAuthenticationProperties;
+
+		@Override
+		public void configure(WebSecurity web) {
+			web.ignoring().antMatchers(jwtAuthenticationProperties.getFilterProcessUrls());
+		}
+	}
+
+	/**
 	 * Adapter that only excludes specified URLs
 	 */
 	@Configuration
-	@Order(2147483641)
+	@Order(JwtAuthenticationProperties.NO_AUTH_ORDER)
 	protected static class NoWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
 		@Autowired
