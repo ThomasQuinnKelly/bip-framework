@@ -18,12 +18,27 @@
 		<module>bip-framework-autoconfigure</module>
 		<module>bip-framework-test-lib</module>
 	</modules>
+	
+	<repositories>
+		<repository>
+			<id>nexus3</id>
+			<name>BIP Nexus Repository</name>
+			<url>https://nexus.dev8.bip.va.gov/repository/maven-public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>nexus3</id>
+			<name>BIP Nexus Repository</name>
+			<url>https://nexus.dev8.bip.va.gov/repository/maven-public</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<properties>
 		<site-maven-plugin.version>0.12</site-maven-plugin.version>
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		
-		<sca-maven-plugin.version>19.1.0</sca-maven-plugin.version>
+		<sca-maven-plugin.version>19.2.0</sca-maven-plugin.version>
 		<fortify-merge-input-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-input-filepath>
 		<fortify-merge-output-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-output-filepath>
 		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
@@ -80,6 +95,14 @@
 							<groupId>com.fortify.sca.plugins.maven</groupId>
 							<artifactId>sca-maven-plugin</artifactId>
 							<version>${sca-maven-plugin.version}</version>
+							<dependencies>
+								<!-- Fortify 19.2.0: Force the sca plugin to use an up-to-date version of plexus-utils -->
+								<dependency>
+									<groupId>org.codehaus.plexus</groupId>
+									<artifactId>plexus-utils</artifactId>
+									<version>3.3.0</version>
+								</dependency>
+							</dependencies>
 						</plugin>
 						<plugin>
 							<groupId>ant-contrib</groupId>

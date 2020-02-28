@@ -54,7 +54,7 @@ This will build all the libraries with versions as configured in `pom.xml` files
 
 This option is viable **only** if you are working on a machine that is connected to the VA network.
 
-The base URL for the nexus repository is: <https://nexus.dev.bip.va.gov/repository>
+The base URL for the nexus repository is: <https://nexus.dev8.bip.va.gov/repository>
 
 You must have the BIP Nexus URL configured in the reactor (root) `pom.xml` file as shown below.
 
