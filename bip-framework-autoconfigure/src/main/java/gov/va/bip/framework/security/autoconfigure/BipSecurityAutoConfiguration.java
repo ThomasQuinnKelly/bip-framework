@@ -75,6 +75,12 @@ public class BipSecurityAutoConfiguration {
 		@Autowired
 		private RestClientTemplate restClientTemplate;
 
+		/**
+		 * Configure.
+		 *
+		 * @param http the HttpSecurity
+		 * @throws Exception the exception
+		 */
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 
@@ -109,7 +115,20 @@ public class BipSecurityAutoConfiguration {
 		}
 
 		/**
-		 * Access decision manager.
+		 * Access decision manager. <br/>
+		 * <br/>
+		 * 
+		 * If the return type is UnanimousBased then it's simple concrete implementation
+		 * of {@link org.springframework.security.access.AccessDecisionManager} that
+		 * requires all voters to abstain or grant access. <br/>
+		 * <br/>
+		 * 
+		 * If the return type is AffirmativeBased then it's a simple concrete
+		 * implementation of
+		 * {@link org.springframework.security.access.AccessDecisionManager} that grants
+		 * access if any <code>AccessDecisionVoter</code> returns an affirmative
+		 * response.
+		 *
 		 *
 		 * @return the access decision manager
 		 */
