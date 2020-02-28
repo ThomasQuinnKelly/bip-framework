@@ -1,5 +1,6 @@
 package gov.va.bip.framework.security.jwt;
 
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -208,8 +209,8 @@ public class JwtAuthenticationFilterTest {
 		final JwtAuthenticationFilter filter =
 				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 		filter.unsuccessfulAuthentication(request, response, mockException);
-		verify(response, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
-		verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, mockException.getLocalizedMessage());
+		verify(response, atLeast(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
+		verify(response, atLeast(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, mockException.getLocalizedMessage());
 
 	}
 }
