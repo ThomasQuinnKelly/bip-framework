@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -44,10 +43,8 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
 	private static final BipLogger LOG = BipLoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-	private JwtAuthenticationProperties jwtAuthenticationProperties;
-
-	@Autowired
 	private AuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private JwtAuthenticationProperties jwtAuthenticationProperties;
 
 	private static final String TOKEN_TAMPERED = "Tampered Token";
 	private static final String TOKEN_MALFORMED = "Malformed Token";
@@ -61,9 +58,11 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	 */
 	public JwtAuthenticationFilter(JwtAuthenticationProperties jwtAuthenticationProperties,
 			AuthenticationSuccessHandler jwtAuthenticationSuccessHandler,
-			AuthenticationProvider jwtAuthenticationProvider) {
+			AuthenticationProvider jwtAuthenticationProvider,
+            AuthenticationEntryPoint jwtAuthenticationEntryPoint) {
 		super(new AuthenticationRequestMatcher(jwtAuthenticationProperties.getFilterProcessUrls()));
 		this.jwtAuthenticationProperties = jwtAuthenticationProperties;
+		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
 		setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
 		setAuthenticationManager(new ProviderManager(new ArrayList<>(Arrays.asList(jwtAuthenticationProvider))));
 	}
