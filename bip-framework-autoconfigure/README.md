@@ -162,13 +162,17 @@ protected static class JwtWebSecurityConfigurerAdapter
 }
 ```
 
-- `JwtWebSecurityConfigurerAdapter` defines beans below and their respective uses: a. AuthenticationEntryPoint - Returns an error message when a request does not authenticate.
+- `JwtWebSecurityConfigurerAdapter` defines beans below and their respective uses: 
+  
+  a. AuthenticationEntryPoint - Returns an error message when a request does not authenticate.
 
   b. AuthenticationProvider - Decrypts and parses the JWT.
 
   c. JwtAuthenticationSuccessHandler - Providea an oppportunity for any post-authentication processing.
 
   d. JwtAuthenticationFilter - Bean is central to security configuration: configures the springboot starter for the platform security using the above beans. It also audits the JWT Token.
+  
+  e. AccessDecisionManager (NOT a Bean though) - If the Open Policy Agent (OPA) flag is enabled and has URL(s) configured, then sets AccessDecisionManager as UnanimousBased or AffirmativeBased of type BipOpaVoter.
 
 - `TokenResource` is used to expose an end point for Token Generation on the Swagger page.
 

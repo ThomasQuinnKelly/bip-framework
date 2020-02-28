@@ -1,5 +1,6 @@
 package gov.va.bip.framework.security.jwt;
 
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,9 +56,11 @@ public class JwtAuthenticationFilterTest {
 
 		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
 		request.addHeader("Authorization", "Bearer " + GenerateToken.generateJwt());
+		
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 
 		final Authentication result = filter.attemptAuthentication(request, new MockHttpServletResponse());
 		Assert.assertTrue(result != null);
@@ -69,11 +72,13 @@ public class JwtAuthenticationFilterTest {
 	public void testExceptionOperation() {
 		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
 		request.addHeader("Authorization", "Bearers " + GenerateToken.generateJwt());
+		
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 		
-		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", mock(AuthenticationEntryPoint.class));
+		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", authenticationEntryPoint);
 
 		try {
 			filter.attemptAuthentication(request, new MockHttpServletResponse());
@@ -90,9 +95,11 @@ public class JwtAuthenticationFilterTest {
 		final String content = "{\n" + "  \"participantID\": 0,\n" + "  \"ssn\": \"string\"\n" + "}";
 		request.setContent(content.getBytes());
 		request.addHeader("Authorization", "Bearer " + GenerateToken.generateJwt() + "s");
+		
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 
 		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", mock(AuthenticationEntryPoint.class));
 		try {
@@ -111,10 +118,11 @@ public class JwtAuthenticationFilterTest {
 		request.setContent(content.getBytes());
 		request.addHeader("Authorization", "Bearer malformedToken");
 
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 		
-		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", mock(AuthenticationEntryPoint.class));
+		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", authenticationEntryPoint);
 		
 		try {
 			filter.attemptAuthentication(request, response);
@@ -131,7 +139,7 @@ public class JwtAuthenticationFilterTest {
 		request.addHeader("Authorization", "Bearers " + GenerateToken.generateJwt());
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, jwtAuthenticationEntryPoint);
 		
 		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
 
@@ -153,7 +161,7 @@ public class JwtAuthenticationFilterTest {
 		request.addHeader("Authorization", "Bearer malformedToken");
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, jwtAuthenticationEntryPoint);
 		
 		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
 		
@@ -171,7 +179,7 @@ public class JwtAuthenticationFilterTest {
 		request.addHeader("Authorization", "Bearer " + GenerateToken.generateJwt() + "s");
 
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, jwtAuthenticationEntryPoint);
 
 		ReflectionTestUtils.setField(filter, "jwtAuthenticationEntryPoint", jwtAuthenticationEntryPoint);
 		
@@ -184,8 +192,9 @@ public class JwtAuthenticationFilterTest {
 		final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/user");
 		final MockHttpServletResponse response = new MockHttpServletResponse();
 		FilterChain mockChain = mock(FilterChain.class);
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 		Authentication mockAuthentication = mock(Authentication.class);
 		filter.successfulAuthentication(request, response, mockChain, mockAuthentication);
 		verify(mockChain, times(1)).doFilter(request, response);
@@ -196,11 +205,12 @@ public class JwtAuthenticationFilterTest {
 		final HttpServletRequest request = mock(HttpServletRequest.class);
 		final HttpServletResponse response = mock(HttpServletResponse.class);
 		AuthenticationException mockException = mock(AuthenticationException.class);
+		AuthenticationEntryPoint authenticationEntryPoint = mock(AuthenticationEntryPoint.class);
 		final JwtAuthenticationFilter filter =
-				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider);
+				new JwtAuthenticationFilter(properties, new JwtAuthenticationSuccessHandler(), provider, authenticationEntryPoint);
 		filter.unsuccessfulAuthentication(request, response, mockException);
-		verify(response, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
-		verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, mockException.getLocalizedMessage());
+		verify(response, atLeast(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
+		verify(response, atLeast(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, mockException.getLocalizedMessage());
 
 	}
 }
