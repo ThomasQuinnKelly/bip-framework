@@ -8,7 +8,8 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * BipSwaggerAutoConfiguration that adds Spring MVC configuration to enable Swagger UI access
+ * BipSwaggerAutoConfiguration that adds Spring MVC configuration to enable
+ * Swagger UI access
  * 
  * @author akulkarni
  */
@@ -16,25 +17,26 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @ConditionalOnProperty(prefix = "bip.framework.swagger", name = "enabled", matchIfMissing = true)
 public class BipSwaggerAutoConfiguration implements WebMvcConfigurer {
-	
+
 	/**
 	 * Add handlers to serve static Swagger UI resources.
 	 * <p>
 	 * {@inheritDoc}
 	 */
 	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
-    }
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+		registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
+	}
 
 	/**
-	 * This method was introduced just for convenient Swagger UI access. Without it Swagger UI can be accessed with /index.html GET call.
+	 * This method was introduced just for convenient Swagger UI access. Without it
+	 * Swagger UI can be accessed with /index.html GET call.
 	 * <p>
 	 * {@inheritDoc}
 	 */
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/swagger-ui.html").setViewName("forward:/index.html");
-    }
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/swagger-ui.html").setViewName("forward:/index.html");
+	}
 }
