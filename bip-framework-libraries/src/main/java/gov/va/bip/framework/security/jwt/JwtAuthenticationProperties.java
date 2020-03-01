@@ -19,7 +19,7 @@ public class JwtAuthenticationProperties {
 	private String issuer = "Vets.gov";
 	private int expireInSeconds = 900;
 	private String[] filterProcessUrls = { "/api/**" };
-	private String[] excludeUrls = { "/**" };
+	private String[] excludeUrls = { "/api/v1/token", "/*" };
 	/** List of inner class {@link JwtKeyPairs} configuration objects */
 	private List<JwtKeyPairs> keyPairs = Collections.emptyList();
 
