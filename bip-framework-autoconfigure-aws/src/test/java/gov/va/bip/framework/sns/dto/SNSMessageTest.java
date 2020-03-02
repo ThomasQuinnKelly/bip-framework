@@ -1,14 +1,5 @@
 package gov.va.bip.framework.sns.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import gov.va.bip.framework.sns.config.SnsProperties;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Optional;
-
-import static junit.framework.TestCase.assertEquals;
-
 /*
  * This class exists to parse out a SNS message sent to SQS
  */

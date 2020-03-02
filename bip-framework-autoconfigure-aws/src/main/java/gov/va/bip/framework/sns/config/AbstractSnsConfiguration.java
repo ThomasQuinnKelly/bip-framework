@@ -63,15 +63,14 @@ public abstract class AbstractSnsConfiguration {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSNS(), region.getName());
 		} else if (isLocalInt) {
-			endpointConfiguration = new EndpointConfiguration(snsProperties.getEndpoint(), region.getName());
-
-			if (snsProperties.getEndpoint().contains("localhost")) {
-				//for testing local dev beginning with setting the properties directly
-				//endpointConfiguration = new EndpointConfiguration(snsProperties.getEndpoint().replace("localhost", "localstack"), region.getName());
+			if (snsProperties.getSnsBaseUrl().contains("localhost")) {
+				snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
 
+			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
+
 		} else {
-			endpointConfiguration = new EndpointConfiguration(snsProperties.getEndpoint(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
 	}

@@ -1,12 +1,7 @@
 package gov.va.bip.framework.exception;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 

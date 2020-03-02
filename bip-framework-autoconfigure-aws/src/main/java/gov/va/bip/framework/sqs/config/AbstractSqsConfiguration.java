@@ -41,7 +41,8 @@ public abstract class AbstractSqsConfiguration {
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
 	@Bean
-	public DestinationResolver destinationResolver(final SqsProperties sqsProperties) {
+	public DestinationResolver destinationResolver(SqsProperties sqsProperties) {
+
 		return new StaticDestinationResolver(sqsProperties.getQueueName());
 	}
 
@@ -81,7 +82,7 @@ public abstract class AbstractSqsConfiguration {
 		boolean isLocalInt = false;
 		EndpointConfiguration endpointConfiguration = null;
 
-		Regions region = Regions.fromName(sqsProperties.getRegion());
+		Regions region = Regions.fromName(sqsProperties.getRegion());;
 
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
@@ -94,18 +95,18 @@ public abstract class AbstractSqsConfiguration {
 		}
 
 		if (localstackEnabled && isEmbeddedAws) {
-			endpointConfiguration =
-					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
-		} else if (isLocalInt) {
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
 
-			if (sqsProperties.getEndpoint().contains("localhost")) {
-				//for testing local dev beginning with setting the properties directly
-				//endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint().replace("localhost", "localstack"), region.getName());
+		} else if (isLocalInt) {
+			if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
+				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
 
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
+
 		} else {
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
+
 		}
 		return endpointConfiguration;
 	}

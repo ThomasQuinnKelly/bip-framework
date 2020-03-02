@@ -2,13 +2,10 @@ package gov.va.bip.framework.sns.services.impl;
 
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.SubscribeRequest;
-import gov.va.bip.framework.sns.services.SnsService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SnsServiceImplTest {

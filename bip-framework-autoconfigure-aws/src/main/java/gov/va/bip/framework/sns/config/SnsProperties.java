@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.net.URI;
+
 /**
  * See:
  * Topics: https://docs.aws.amazon.com/sns/latest/api/API_SetTopicAttributes.html
@@ -115,6 +117,15 @@ public class SnsProperties {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
+	}
+
+	public String getSnsBaseUrl() {
+		return parseBaseUrl(endpoint);
+	}
+
+	private String parseBaseUrl(String endpoint) {
+		URI endpointUri = URI.create(endpoint);
+		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
 
 }

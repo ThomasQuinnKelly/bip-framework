@@ -74,8 +74,8 @@ public class SqsProperties extends SqsQueueProperties {
 	@Max(43200) // 12 hours
 	private Integer dlqvisibilitytimeout;
 
-	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
-	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
+	private String accessKey;
+	private String secretKey;
 
 	//For SQS Configuration - Messaging Provider Configuration
 	@Min(0)
@@ -244,11 +244,21 @@ public class SqsProperties extends SqsQueueProperties {
 	}
 
 	public String getQueueName() {
+
 		return parseQueueName(endpoint);
 	}
 
 	public String getDLQQueueName() {
 		return parseQueueName(dlqendpoint);
+	}
+
+	public String getSqsBaseUrl() {
+		return parseBaseUrl(endpoint);
+	}
+
+	private String parseBaseUrl(String endpoint) {
+		URI endpointUri = URI.create(endpoint);
+		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
 
 	private String parseQueueName(String endpoint) {
@@ -259,6 +269,9 @@ public class SqsProperties extends SqsQueueProperties {
 	}
 
 	public String getAccessKey() {
+		if (accessKey == null) {
+			return ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+		}
 		return accessKey;
 	}
 
@@ -267,6 +280,9 @@ public class SqsProperties extends SqsQueueProperties {
 	}
 
 	public String getSecretKey() {
+		if (secretKey == null) {
+			return ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
+		}
 		return secretKey;
 	}
 

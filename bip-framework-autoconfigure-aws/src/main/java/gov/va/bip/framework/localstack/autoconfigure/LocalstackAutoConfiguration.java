@@ -4,10 +4,15 @@ import cloud.localstack.Localstack;
 import cloud.localstack.TestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
@@ -77,7 +82,7 @@ public class LocalstackAutoConfiguration {
 	@Value("${bip.framework.localstack.imageTag:0.10.7}")
 	private String imageTag;
 
-	@Value("${bip.framework.localstack.pullNewImage:true}")
+	@Value("${bip.framework.localstack.pullNewImage:false}")
 	private boolean pullNewImage;
 
 	@Value("${bip.framework.localstack.randomizePorts:false}")
@@ -85,15 +90,18 @@ public class LocalstackAutoConfiguration {
 
 	private Map<String, String> environmentVariables = new HashMap<>();
 
-	public boolean profileCheck() {
-		boolean isEmbeddedAws = false;
+	//Initialize Queue Variables
+	String dlqUrl = null;
+
+	public boolean profileCheck(String profile) {
+		boolean profileMatches = false;
 
 		for (final String profileName : environment.getActiveProfiles()) {
-			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				isEmbeddedAws = true;
+			if (profileName.equals(profile)) {
+				profileMatches = true;
 			}
 		}
-		return isEmbeddedAws;
+		return profileMatches;
 
 	}
 
@@ -104,7 +112,7 @@ public class LocalstackAutoConfiguration {
 	 */
 	@PostConstruct
 	public void startAwsLocalStack() {
-		if (profileCheck()) {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 
 			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
 				LOGGER.info("Localstack instance is running...");
@@ -114,10 +122,11 @@ public class LocalstackAutoConfiguration {
 
 				Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
 
-				//Create SQS and SNS Services
-				createLocalstackServices();
 			}
 		}
+
+		//Create SQS and SNS Services
+		createLocalstackServices();
 	}
 
 
@@ -164,7 +173,7 @@ public class LocalstackAutoConfiguration {
 	 */
 	@PreDestroy
 	public void stopAwsLocalStack() {
-		if (profileCheck()) {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 			// Stop the localstack
 			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
 				Localstack.INSTANCE.stop();
@@ -197,10 +206,7 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
-	private CreateTopicResult createTopics() {
-
-		AmazonSNS client = TestUtils.getClientSNS();
-
+	private CreateTopicResult createTopics(AmazonSNS client) {
 		// retry the operation until the localstack responds
 		for (int i = 0; i < maxRetries; i++) {
 			try {
@@ -221,12 +227,7 @@ public class LocalstackAutoConfiguration {
 		return null;
 	}
 
-	//Initialize Queue Variables
-
-	String dlqUrl = null;
-
-	private void initializeDlqQueues() {
-		AmazonSQS client = TestUtils.getClientSQS();
+	private void initializeDlqQueues(AmazonSQS client) {
 		Boolean dlqEnabled = sqsProperties.getDlqenabled();
 
 		// create Dead Letter Queue and set up redrive policy
@@ -244,7 +245,13 @@ public class LocalstackAutoConfiguration {
 			for (int i = 0; i < maxRetries; i++) {
 				try {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
-					break;
+
+					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+						break;
+					} else {
+						dlqUrl = dlqUrl.replace("localhost", "localstack");
+						break;
+					}
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
 							+ RETRY_MESSAGE + (i + 1)
@@ -261,8 +268,7 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
-	private void createQueues(){
-		AmazonSQS client = TestUtils.getClientSQS();
+	private void createQueues(AmazonSQS client){
 		Boolean dlqEnabled = sqsProperties.getDlqenabled();
 
 		GetQueueAttributesResult dlqAttributesResult = null;
@@ -336,14 +342,11 @@ public class LocalstackAutoConfiguration {
 		return getQueueAttributesResult;
 	}
 
-	private void subscribeTopicToQueue(CreateTopicResult result) {
-
-		AmazonSNS snsServiceclient = TestUtils.getClientSNS();
-
+	private void subscribeTopicToQueue(AmazonSNS client, CreateTopicResult result) {
 		// retry the operation until the localstack responds
 		for (int i = 0; i < maxRetries; i++) {
 			try {
-				snsServiceclient.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
+				client.subscribe(result.getTopicArn(), "sqs", sqsProperties.getEndpoint());
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack SnsServiceclient.subscribe(" + result.getTopicArn()
@@ -359,25 +362,57 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
+	private AmazonSQS getLocalIntSQS() {
+		if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
+			sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
+		}
+
+		return AmazonSQSClientBuilder.standard().
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(sqsProperties.getSqsBaseUrl(), snsProperties.getRegion())).
+				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
+	}
+
+	private AmazonSNS getLocalIntSNS() {
+		if (snsProperties.getSnsBaseUrl().contains("localhost")) {
+			snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
+		}
+
+		return AmazonSNSClientBuilder.standard().
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(snsProperties.getSnsBaseUrl(), snsProperties.getRegion())).
+				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
+	}
+
 	private void createLocalstackServices(){
 		//Creates a SQS queue
 		if (sqsProperties.getEnabled()) {
-			initializeDlqQueues();
-			createQueues();
+			AmazonSQS client;
+			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				client = TestUtils.getClientSQS();
+			} else {
+				client = getLocalIntSQS();
+			}
+
+			initializeDlqQueues(client);
+			createQueues(client);
 		}
 
-		//Creates a SNS topic
-		CreateTopicResult result = null;
 		if (snsProperties.getEnabled()) {
-			result = createTopics();
-		}
+			AmazonSNS client;
+			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				client = TestUtils.getClientSNS();
+			} else {
+				client = getLocalIntSNS();
+			}
 
+			//Creates a SNS topic
+			CreateTopicResult result = createTopics(client);
 
-		if (snsProperties.getEnabled() && sqsProperties.getEnabled()) {
-			//Subscribes the topic to the queue
-			if (result == null) {
-				throw new NullPointerException("result is null");
-			} else subscribeTopicToQueue(result);
+			if (sqsProperties.getEnabled()) {
+				//Subscribes the topic to the queue
+				if (result == null) {
+					throw new NullPointerException("result is null");
+				} else subscribeTopicToQueue(client, result);
+			}
 		}
 	}
 }
