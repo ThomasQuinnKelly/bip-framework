@@ -190,3 +190,46 @@ cloud.aws.region.static: us-east-1
 # Required for localstack SQS integration
 spring.sleuth.messaging.enabled: false
 ```
+
+# Local Integration Setup 
+
+Implementing project teams would need to simply add another service to the docker-compose.yml
+
+In the bip-reference-person the relevant part of the docker-compose.yml looks like this:
+
+```
+  bip-reference-person:
+    image: bipdev/bip-reference-person
+    build:
+      context: ./bip-reference-person
+      dockerfile: Dockerfile.local
+    environment:
+      - spring.profiles.active=local-int
+      ...
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n #Remote Debugging
+    ports:
+      - "8080:8080"
+      - "8000:8000" #Remote Debugging
+    networks:
+      - bip
+    links:
+      - localstack
+    depends_on:
+      ...
+      - localstack
+
+  localstack:
+    image: localstack/localstack:0.10.7
+    container_name: localstack
+    ports:
+      - "4567-4584:4567-4584"
+      - "8888:8888"
+    environment:
+      - HOSTNAME_EXTERNAL=localstack
+      - DEBUG=1
+      - USE_SSL=0
+      - SERVICES=sns:4575,sqs:4576
+      - PORT_WEB_UI=8888
+    networks:
+      - bip
+```
