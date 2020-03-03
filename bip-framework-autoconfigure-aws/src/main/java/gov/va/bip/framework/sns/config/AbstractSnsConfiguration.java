@@ -70,9 +70,7 @@ public abstract class AbstractSnsConfiguration {
 			if (snsProperties.getSnsBaseUrl().contains("localhost")) {
 				snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-
 			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
-
 		} else {
 			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
 		}

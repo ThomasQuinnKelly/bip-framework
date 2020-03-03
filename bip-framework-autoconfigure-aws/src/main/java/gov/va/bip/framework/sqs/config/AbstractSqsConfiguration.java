@@ -111,9 +111,9 @@ public abstract class AbstractSqsConfiguration {
 			if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-
 			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
-
+		} else {
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
 	}
