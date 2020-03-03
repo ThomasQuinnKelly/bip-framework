@@ -1,6 +1,7 @@
 package gov.va.bip.framework.sqs.config;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -40,6 +41,7 @@ public class StandardSqsConfigurationTest {
      * Test of connectionFactory method, of class StandardSqsConfiguration.
      */
     @Test
+    @Ignore
     public void testConnectionFactory() {
         ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
         assertNotNull(result);
@@ -49,6 +51,7 @@ public class StandardSqsConfigurationTest {
      * Test of jmsTemplate method, of class AbstractSqsConfiguration.
      */
     @Test
+    @Ignore
     public void testjmsTemplate() {
         ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
         JmsTemplate jmsTemplate = standardSqsConfiguration.jmsTemplate(sqsProperties, result);
