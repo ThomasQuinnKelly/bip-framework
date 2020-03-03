@@ -17,6 +17,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardSqsConfigurationTest {
+
+    @InjectMocks
 	SqsProperties sqsProperties;
 	
     @InjectMocks
