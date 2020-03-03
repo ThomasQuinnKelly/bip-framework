@@ -250,10 +250,7 @@ public class LocalstackAutoConfiguration {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
 
 					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS) || profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
-
-						if (sqsProperties.getSqsBaseUrl().contains(LOCALHOST)) {
-							dlqUrl = dlqUrl.replace(LOCALHOST, LOCALSTACK);
-						}
+						dlqUrl = dlqUrl.replace(LOCALHOST, LOCALSTACK);
 						break;
 					}
 				} catch (Exception e) {
