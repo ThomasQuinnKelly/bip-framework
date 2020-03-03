@@ -20,9 +20,6 @@ import org.springframework.util.StringUtils;
 @EnableConfigurationProperties(SnsProperties.class)
 public abstract class AbstractSnsConfiguration {
 
-	@Autowired
-	Environment environment;
-
 	@Value("${bip.framework.localstack.enabled:false}")
 	boolean localstackEnabled;
 
@@ -34,7 +31,7 @@ public abstract class AbstractSnsConfiguration {
 	boolean isLocalInt = false;
 
 	@Bean
-	public AmazonSNS amazonSNS(final SnsProperties snsProperties) {
+	public AmazonSNS amazonSNS(final SnsProperties snsProperties, Environment environment) {
 
 		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(snsProperties);
 
@@ -65,8 +62,6 @@ public abstract class AbstractSnsConfiguration {
 		EndpointConfiguration endpointConfiguration = null;
 
 		Regions region = Regions.fromName(snsProperties.getRegion());
-
-
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =

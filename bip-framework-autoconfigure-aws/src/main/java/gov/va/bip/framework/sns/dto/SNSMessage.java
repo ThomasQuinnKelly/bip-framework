@@ -21,7 +21,7 @@ public class SNSMessage {
     @JsonProperty("TopicArn")
     String topicArn;
 
-    public void SNSMessage(String messageId, String type, String timestamp, String message, String topicArn) {
+    public SNSMessage(String messageId, String type, String timestamp, String message, String topicArn) {
         this.messageId = messageId;
         this.type = type;
         this.timestamp = timestamp;

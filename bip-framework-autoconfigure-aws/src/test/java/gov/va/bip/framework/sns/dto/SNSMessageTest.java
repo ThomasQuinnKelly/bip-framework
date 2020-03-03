@@ -1,5 +1,8 @@
 package gov.va.bip.framework.sns.dto;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /*
  * This class exists to parse out a SNS message sent to SQS
  */
@@ -11,11 +14,14 @@ public class SNSMessageTest {
         String topicArn="50000000:ARN";
 
 
-    public void SNSMessage(String messageId, String type, String timestamp, String message, String topicArn) {
-        this.messageId = messageId;
-        this.type = type;
-        this.timestamp = timestamp;
-        this.message = message;
-        this.topicArn = topicArn;
+    @Test
+    public void testSNSMessage() {
+        SNSMessage snsMessage = new SNSMessage(messageId, type, timestamp, message, topicArn);
+
+        Assert.assertEquals(message, snsMessage.getMessage());
+        Assert.assertEquals(messageId, snsMessage.getMessageId());
+        Assert.assertEquals(type, snsMessage.getType());
+        Assert.assertEquals(timestamp, snsMessage.getTimestamp());
+        Assert.assertEquals(topicArn, snsMessage.getTopicArn());
     }
 }

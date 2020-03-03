@@ -61,6 +61,9 @@ public class LocalstackAutoConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LocalstackAutoConfiguration.class);
 	private static final String RETRY_MESSAGE = ") failed on try # ";
 	private static final String WAIT_FOR_LOCALSTACK_MESSAGE = ", waiting for AWS localstack to finish initializing.";
+	private static final String LOCALHOST = "localhost";
+	private static final String LOCALSTACK = "localstack";
+	
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
@@ -246,10 +249,8 @@ public class LocalstackAutoConfiguration {
 				try {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
 
-					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-						break;
-					} else {
-						dlqUrl = dlqUrl.replace("localhost", "localstack");
+					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS) || profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
+						dlqUrl = dlqUrl.replace(LOCALHOST, LOCALSTACK);
 						break;
 					}
 				} catch (Exception e) {
@@ -363,8 +364,8 @@ public class LocalstackAutoConfiguration {
 	}
 
 	private AmazonSQS getLocalIntSQS() {
-		if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
-			sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
+		if (sqsProperties.getSqsBaseUrl().contains(LOCALHOST)) {
+			sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
 		}
 
 		return AmazonSQSClientBuilder.standard().
@@ -373,8 +374,8 @@ public class LocalstackAutoConfiguration {
 	}
 
 	private AmazonSNS getLocalIntSNS() {
-		if (snsProperties.getSnsBaseUrl().contains("localhost")) {
-			snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
+		if (snsProperties.getSnsBaseUrl().contains(LOCALHOST)) {
+			snsProperties.setEndpoint(snsProperties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
 		}
 
 		return AmazonSNSClientBuilder.standard().

@@ -102,7 +102,7 @@ public abstract class AbstractSqsConfiguration {
 	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
 		EndpointConfiguration endpointConfiguration = null;
 
-		Regions region = Regions.fromName(sqsProperties.getRegion());;
+		Regions region = Regions.fromName(sqsProperties.getRegion());
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
