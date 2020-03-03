@@ -38,6 +38,9 @@ public abstract class AbstractSqsConfiguration {
 	@Autowired(required = false)
 	private LocalstackAutoConfiguration localstackAutoConfiguration;
 
+	boolean isEmbeddedAws = false;
+	boolean isLocalInt = false;
+
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
 	@Bean
@@ -73,17 +76,18 @@ public abstract class AbstractSqsConfiguration {
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(sqsProperties.getAccessKey(), sqsProperties.getSecretKey());
 
-		return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
-				.withEndpointConfiguration(endpointConfiguration).build();
+		setProfiles();
+
+		if (isEmbeddedAws || isLocalInt) {
+			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
+					.withEndpointConfiguration(endpointConfiguration).build();
+		} else {
+			return AmazonSQSClientBuilder.standard()
+					.withEndpointConfiguration(endpointConfiguration).build();
+		}
 	}
 
-	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
-		boolean isEmbeddedAws = false;
-		boolean isLocalInt = false;
-		EndpointConfiguration endpointConfiguration = null;
-
-		Regions region = Regions.fromName(sqsProperties.getRegion());;
-
+	private void setProfiles() {
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				isEmbeddedAws = true;
@@ -93,6 +97,12 @@ public abstract class AbstractSqsConfiguration {
 				isLocalInt = true;
 			}
 		}
+	}
+
+	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
+		EndpointConfiguration endpointConfiguration = null;
+
+		Regions region = Regions.fromName(sqsProperties.getRegion());;
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
@@ -102,9 +112,6 @@ public abstract class AbstractSqsConfiguration {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
 
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
-
-		} else {
 			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
 
 		}

@@ -30,6 +30,9 @@ public abstract class AbstractSnsConfiguration {
 	@Autowired(required = false)
 	private LocalstackAutoConfiguration localstackAutoConfiguration;
 
+	boolean isEmbeddedAws = false;
+	boolean isLocalInt = false;
+
 	@Bean
 	public AmazonSNS amazonSNS(final SnsProperties snsProperties) {
 
@@ -37,17 +40,6 @@ public abstract class AbstractSnsConfiguration {
 
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(snsProperties.getAccessKey(), snsProperties.getSecretKey());
-
-		return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
-				.withEndpointConfiguration(endpointConfiguration).build();
-	}
-
-	private EndpointConfiguration getEndpointConfiguration(final SnsProperties snsProperties) {
-		boolean isEmbeddedAws = false;
-		boolean isLocalInt = false;
-		EndpointConfiguration endpointConfiguration = null;
-
-		Regions region = Regions.fromName(snsProperties.getRegion());
 
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
@@ -58,6 +50,23 @@ public abstract class AbstractSnsConfiguration {
 				isLocalInt = true;
 			}
 		}
+
+		if (isEmbeddedAws || isLocalInt) {
+			return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
+					.withEndpointConfiguration(endpointConfiguration).build();
+		} else {
+			return AmazonSNSClientBuilder.standard()
+				.withEndpointConfiguration(endpointConfiguration).build();
+		}
+	}
+
+	private EndpointConfiguration getEndpointConfiguration(final SnsProperties snsProperties) {
+
+		EndpointConfiguration endpointConfiguration = null;
+
+		Regions region = Regions.fromName(snsProperties.getRegion());
+
+
 
 		if (localstackEnabled && isEmbeddedAws) {
 			endpointConfiguration =
