@@ -20,7 +20,7 @@ public class StandardSqsConfigurationTest {
 	SqsProperties sqsProperties;
 	
     @InjectMocks
-    StandardSqsConfiguration standardSqsConfiguration = new StandardSqsConfiguration();
+    StandardSqsConfiguration standardSqsConfiguration;
 
     @Mock
     private Environment environment;
