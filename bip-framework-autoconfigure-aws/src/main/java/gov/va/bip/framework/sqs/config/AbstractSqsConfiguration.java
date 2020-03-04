@@ -82,12 +82,7 @@ public abstract class AbstractSqsConfiguration {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-
-
-
-
-
-			return AmazonSQSClientBuilder.standard().withEndpointConfiguration(endpointConfiguration).build();
+			return AmazonSQSClientBuilder.standard().build();
 		}
 	}
 
@@ -115,8 +110,6 @@ public abstract class AbstractSqsConfiguration {
 			if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
-		} else {
 			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;

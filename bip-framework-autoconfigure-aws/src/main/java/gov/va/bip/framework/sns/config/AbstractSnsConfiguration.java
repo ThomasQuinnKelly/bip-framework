@@ -52,8 +52,7 @@ public abstract class AbstractSnsConfiguration {
 			return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-			return AmazonSNSClientBuilder.standard()
-				.withEndpointConfiguration(endpointConfiguration).build();
+			return AmazonSNSClientBuilder.standard().build();
 		}
 	}
 
@@ -70,8 +69,6 @@ public abstract class AbstractSnsConfiguration {
 			if (snsProperties.getSnsBaseUrl().contains("localhost")) {
 				snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
-		} else {
 			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
