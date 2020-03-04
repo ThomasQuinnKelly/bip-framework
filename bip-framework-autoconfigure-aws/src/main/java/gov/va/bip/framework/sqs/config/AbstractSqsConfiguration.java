@@ -82,7 +82,7 @@ public abstract class AbstractSqsConfiguration {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-			return AmazonSQSClientBuilder.standard().withRegion(sqsProperties.getRegion()).build();
+			return AmazonSQSClientBuilder.standard().withRegion("us-gov-west-1").build();
 		}
 	}
 
