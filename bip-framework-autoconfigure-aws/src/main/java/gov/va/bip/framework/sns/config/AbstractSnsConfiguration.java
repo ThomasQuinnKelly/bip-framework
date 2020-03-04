@@ -52,7 +52,7 @@ public abstract class AbstractSnsConfiguration {
 			return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-			return AmazonSNSClientBuilder.standard().build();
+			return AmazonSNSClientBuilder.standard().withRegion(snsProperties.getRegion()).build();
 		}
 	}
 
