@@ -82,8 +82,12 @@ public abstract class AbstractSqsConfiguration {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-			return AmazonSQSClientBuilder.standard()
-					.withEndpointConfiguration(endpointConfiguration).build();
+
+
+
+
+
+			return AmazonSQSClientBuilder.standard().withEndpointConfiguration(endpointConfiguration).build();
 		}
 	}
 
