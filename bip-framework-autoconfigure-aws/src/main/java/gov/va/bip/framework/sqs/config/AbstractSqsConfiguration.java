@@ -5,14 +5,8 @@ import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazon.sqs.javamessaging.SQSSession;
 import com.amazonaws.auth.*;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceAsyncClient;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
-import com.amazonaws.services.securitytoken.model.*;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
@@ -88,8 +82,7 @@ public abstract class AbstractSqsConfiguration {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
-			return AmazonSQSClientBuilder.standard().withCredentials(getTokenCredentials())
-					.withRegion(sqsProperties.getRegion()).build();
+			return AmazonSQSClientBuilder.standard().withRegion(sqsProperties.getRegion()).build();
 		}
 	}
 
@@ -136,23 +129,4 @@ public abstract class AbstractSqsConfiguration {
 		return new AWSCredentialsProviderChain(localAwsCredentialsProvider, ec2ContainerCredentialsProvider);
 	}
 
-	public AWSStaticCredentialsProvider getTokenCredentials() {
-		EndpointConfiguration ec = new EndpointConfiguration("https://sts.us-gov-west-1.amazonaws.com", "us-gov-west-1");
-
-		AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard().withEndpointConfiguration(ec).build();
-
-		GetSessionTokenRequest sessionTokenRequest = new GetSessionTokenRequest();
-
-		GetSessionTokenResult sessionTokenResult =
-				stsClient.getSessionToken(sessionTokenRequest);
-
-		Credentials sessionCreds = sessionTokenResult.getCredentials();
-
-		BasicSessionCredentials sessionCredentials = new BasicSessionCredentials(
-				sessionCreds.getAccessKeyId(),
-				sessionCreds.getSecretAccessKey(),
-				sessionCreds.getSessionToken());
-
-		return new AWSStaticCredentialsProvider(sessionCredentials);
-	}
 }
