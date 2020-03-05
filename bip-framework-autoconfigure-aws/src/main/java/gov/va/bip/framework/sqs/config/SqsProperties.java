@@ -31,9 +31,6 @@ public class SqsProperties extends SqsQueueProperties {
 	//Queue Endpoint
 	private String endpoint;
 
-	//Queue Host
-	private String host;
-
 	//ContentBasedDeduplication
 	@Value("false")
 	private Boolean contentbaseddeduplication;
@@ -96,14 +93,6 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public void setSqsQueueProperties(SqsQueueProperties sqsQueueProperties) {
 		this.sqsQueueProperties = sqsQueueProperties;
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
 	}
 
 	public Logger getLogger() {
