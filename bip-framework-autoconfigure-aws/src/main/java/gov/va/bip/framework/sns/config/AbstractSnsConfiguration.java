@@ -3,7 +3,6 @@ package gov.va.bip.framework.sns.config;
 import cloud.localstack.Localstack;
 import com.amazonaws.auth.*;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
