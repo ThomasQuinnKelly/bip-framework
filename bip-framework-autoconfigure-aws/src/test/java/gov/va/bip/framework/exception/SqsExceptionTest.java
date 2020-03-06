@@ -20,4 +20,10 @@ public class SqsExceptionTest {
 		SqsException sqsException = new SqsException(var1, var2, var3, var4, var5 = null);
 	}
 
+	@Test
+	public void NonThrowableSqsException() throws Exception {
+
+		SqsException sqsException = new SqsException(var1, var2, var3, var5 = null);
+	}
+
 }

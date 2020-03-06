@@ -1,9 +1,10 @@
-/*
 package gov.va.bip.framework.sqs.services.impl;
 
+import com.amazon.sqs.javamessaging.message.SQSTextMessage;
 import gov.va.bip.framework.exception.SqsException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.sqs.dto.SendMessageResponse;
 import gov.va.bip.framework.sqs.services.SqsService;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
@@ -22,10 +23,9 @@ import org.springframework.jms.core.ProducerCallback;
 
 import javax.jms.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +45,7 @@ public class SqsServiceImplTest {
 	@InjectMocks
 	private SqsService sqsService = new SqsServiceImpl();
 
-	TextMessage mockTextMessage;
+	SQSTextMessage mockTextMessage;
 
 	@Before
 	public void setUp() throws Exception {
@@ -59,12 +59,12 @@ public class SqsServiceImplTest {
 		Assert.assertEquals(jmsOperations, FieldUtils.readField(sqsService, "jmsOperations", true));
 	}
 
-
 	@Test
 	public void testSendMessageWithMessageObject() throws Exception {
 		SendMessageResponse response = sqsService.sendMessage(mockTextMessage);
 		assertNotNull(response);
 		assertNotNull(response.getStatusCode());
+		assertNotNull(response.getMessageId());
 
 	}
 
@@ -79,25 +79,21 @@ public class SqsServiceImplTest {
 		sqsService.sendMessage(null);
 	}
 
-	@Test
-	public void testCreateTextMessage() throws JMSException {
-		TextMessage response = sqsService.createTextMessage("Test-Message");
-		assertNotNull(response);
-		assertEquals("Test-Message", response.getText());
-	}
-
-
-
 	@SuppressWarnings("unchecked")
 	private void prepareSqsMock() throws Exception {
 		Session mockSession = mock(Session.class);
 		TemporaryQueue mockTemporaryQueue = mock(TemporaryQueue.class);
-		mockTextMessage = mock(TextMessage.class);
+		mockTextMessage = mock(SQSTextMessage.class);
 		MessageProducer mockMessageProducer = mock(MessageProducer.class);
 
 		String content = "Test-Message";
 		String messageId = "Test-Message-ID";
 
+		/**
+		 * Boiler plate mock code to inject mock session and messageProducer into
+		 * Generic Spring ProducerCallback class which has our internal code
+		 * To test
+		 **/
 		when(jmsOperations.execute((ProducerCallback<String>) anyObject())).thenAnswer(
 				new Answer<String>() {
 
@@ -118,7 +114,6 @@ public class SqsServiceImplTest {
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
 		when(mockSession.createTextMessage(anyString())).thenReturn(mockTextMessage);
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Test(expected=SqsException.class)
@@ -147,10 +142,9 @@ public class SqsServiceImplTest {
 		Session mockSession = mock(Session.class);
 		when(connectionFactory.createConnection()).thenReturn(connection);
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
-		when(mockSession.createTextMessage(anyString())).thenThrow(Exception.class);
+		when(mockSession.createTextMessage(anyString())).thenThrow(SqsException.class);
 		sqsService.createTextMessage("Test-Message");
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Test(expected=SqsException.class)
@@ -158,7 +152,7 @@ public class SqsServiceImplTest {
 		Session mockSession = mock(Session.class);
 		when(connectionFactory.createConnection()).thenReturn(connection);
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
-		when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException());
+		//when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException());
 		sqsService.createTextMessage("Test-Message");
 	}
 
@@ -168,7 +162,7 @@ public class SqsServiceImplTest {
 		Session mockSession = mock(Session.class);
 		when(connectionFactory.createConnection()).thenReturn(connection);
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
-		when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException("Test Sqs Exception"));
+		//when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException("Test Sqs Exception"));
 		sqsService.createTextMessage("Test-Message");
 	}
 
@@ -178,12 +172,18 @@ public class SqsServiceImplTest {
 		Session mockSession = mock(Session.class);
 		when(connectionFactory.createConnection()).thenReturn(connection);
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
-		when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException("Test Sqs Exception", new Throwable()));
+		//when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException("Test Sqs Exception", new Throwable()));
 		sqsService.createTextMessage("Test-Message");
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	@Test(expected=SqsException.class)
+	public void testCreateTextMessageWithSqsExceptionWithThrowable() throws JMSException {
+		Session mockSession = mock(Session.class);
+		when(connectionFactory.createConnection()).thenReturn(connection);
+		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
+		//when(mockSession.createTextMessage(anyString())).thenThrow(new SqsException(new Throwable()));
+		sqsService.createTextMessage("Test-Message");
+	}
+
 }
-
- */
-

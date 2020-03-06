@@ -1,12 +1,36 @@
 package gov.va.bip.framework.sns.config;
 
+import gov.va.bip.framework.aws.config.ConfigConstants;
+import junit.framework.TestCase;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 
 public class SnsPropertiesTest {
+
+    //Test SNS Topic
+    @Test
+    public void testTopic() {
+        String topic = "test_my_topic";
+        SnsProperties instance = new SnsProperties();
+        instance.setTopic(topic);
+
+        assertEquals(Optional.of(instance.getTopic()), Optional.ofNullable(topic));
+    }
+
+    //Test SNS Logger
+    @Test
+    public void testLogger() {
+        Logger logger = LoggerFactory.getLogger(SnsProperties.class);
+        SnsProperties instance = new SnsProperties();
+        instance.setLogger(logger);
+
+        assertEquals(Optional.of(instance.getLogger()), Optional.ofNullable(logger));
+    }
 
     //Test SNS Property enabled
     @Test
@@ -77,4 +101,25 @@ public class SnsPropertiesTest {
 
         assertEquals(Optional.of(instance.getTopicArn()) , Optional.ofNullable(topicarn));
     }
+
+    //Test SNS AccessKey
+    @Test
+    public void testAccessKey() {
+        String accessKey = ConfigConstants.getAwsLocalstackId();
+        SnsProperties instance = new SnsProperties();
+        instance.setAccessKey(accessKey);
+
+        assertEquals(Optional.of(instance.getAccessKey()), Optional.ofNullable(accessKey));
+    }
+
+    //Test SNS SecretKey
+    @Test
+    public void testSecretKey() {
+        String secretKey = ConfigConstants.getAwsLocalstackKey();
+        SnsProperties instance = new SnsProperties();
+        instance.setSecretKey(secretKey);
+
+        assertEquals(Optional.of(instance.getSecretKey()), Optional.ofNullable(secretKey));
+    }
+
 }

@@ -29,6 +29,10 @@ public class SNSMessage {
         this.topicArn = topicArn;
     }
 
+    public SNSMessage() {
+
+    }
+
     public String getMessageId() {
         return messageId;
     }

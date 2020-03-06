@@ -20,4 +20,10 @@ public class SnsExceptionTest {
 		SnsException snsException = new SnsException(var1, var2, var3, var4, var5 = null);
 	}
 
+	@Test
+	public void NonThrowableSnsException() throws Exception {
+
+		SnsException snsException = new SnsException(var1, var2, var3, var5 = null);
+	}
+
 }

@@ -28,8 +28,8 @@ public class SnsProperties {
 	private String endpoint;
 	private String topicArn;
 
-	private String accessKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
-	private String secretKey = ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
+	private String accessKey = ConfigConstants.getAwsLocalstackId();
+	private String secretKey = ConfigConstants.getAwsLocalstackKey();
 
 	public Logger getLogger() {
 		return logger;

@@ -270,7 +270,7 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public String getAccessKey() {
 		if (accessKey == null) {
-			return ConfigConstants.aws_credentials.AWS_LOCALSTACK_ID.toString();
+			return ConfigConstants.getAwsLocalstackId();
 		}
 		return accessKey;
 	}
@@ -281,7 +281,7 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public String getSecretKey() {
 		if (secretKey == null) {
-			return ConfigConstants.aws_credentials.AWS_LOCALSTACK_KEY.toString();
+			return ConfigConstants.getAwsLocalstackKey();
 		}
 		return secretKey;
 	}
