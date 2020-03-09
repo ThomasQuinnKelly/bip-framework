@@ -1,4 +1,4 @@
-package gov.va.bip.framework.sns.config;
+package gov.va.bip.framework.s3.config;
 
 import gov.va.bip.framework.config.AwsProperties;
 import org.slf4j.Logger;
@@ -10,13 +10,13 @@ import java.net.URI;
 
 /**
  * See:
- * Topics: https://docs.aws.amazon.com/sns/latest/api/API_SetTopicAttributes.html
- * Subscriptions: https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html
+ * Topics: https://docs.aws.amazon.com/s3/latest/api/API_SetTopicAttributes.html
+ * Subscriptions: https://docs.aws.amazon.com/s3/latest/api/API_SetSubscriptionAttributes.html
  */
-@ConfigurationProperties(prefix = "bip.framework.aws.sns", ignoreUnknownFields = false)
-public class SnsProperties extends AwsProperties {
+@ConfigurationProperties(prefix = "bip.framework.aws.s3", ignoreUnknownFields = false)
+public class S3Properties extends AwsProperties {
 
-	private Logger logger = LoggerFactory.getLogger(SnsProperties.class);
+	private Logger logger = LoggerFactory.getLogger(S3Properties.class);
 
 	@Value("false")
 	private Boolean enabled;
@@ -100,7 +100,7 @@ public class SnsProperties extends AwsProperties {
 		this.topicArn = topicArn;
 	}
 
-	public String getSnsBaseUrl() {
+	public String getS3BaseUrl() {
 		return parseBaseUrl(endpoint);
 	}
 

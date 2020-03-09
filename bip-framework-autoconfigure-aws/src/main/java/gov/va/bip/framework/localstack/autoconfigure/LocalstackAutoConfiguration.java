@@ -18,6 +18,7 @@ import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
+import gov.va.bip.framework.s3.config.S3Properties;
 import gov.va.bip.framework.sns.config.SnsProperties;
 import gov.va.bip.framework.sqs.config.SqsProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -75,6 +76,9 @@ public class LocalstackAutoConfiguration {
 	private SnsProperties snsProperties;
 
 	@Autowired
+	private S3Properties s3Properties;
+
+	@Autowired
 	Environment environment;
 
 	private static Integer maxRetries = 60;
@@ -128,7 +132,7 @@ public class LocalstackAutoConfiguration {
 			}
 		}
 
-		//Create SQS and SNS Services
+		//Create Localstack Services
 		createLocalstackServices();
 	}
 
