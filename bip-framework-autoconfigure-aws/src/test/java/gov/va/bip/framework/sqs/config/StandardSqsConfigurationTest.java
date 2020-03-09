@@ -36,28 +36,7 @@ public class StandardSqsConfigurationTest {
         sqsProperties.setRegion("us-west-2");
         sqsProperties.setEndpoint("http://localhost:8080/endpoint");
 	}
-
-    /**
-     * Test of connectionFactory method, of class StandardSqsConfiguration.
-     */
-    @Test
-    @Ignore
-    public void testConnectionFactory() {
-        ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
-        assertNotNull(result);
-    }
-
-    /**
-     * Test of jmsTemplate method, of class AbstractSqsConfiguration.
-     */
-    @Test
-    @Ignore
-    public void testjmsTemplate() {
-        ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
-        JmsTemplate jmsTemplate = standardSqsConfiguration.jmsTemplate(sqsProperties, result);
-        assertNotNull(jmsTemplate);
-    }
-
+	
     /**
      * Test of jmsTemplate method, of class AbstractSqsConfiguration.
      */
