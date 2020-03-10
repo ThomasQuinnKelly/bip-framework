@@ -6,7 +6,10 @@ import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-import org.springframework.web.client.*;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -55,7 +58,7 @@ public class DeferredCloseRestTemplate extends RestTemplate {
      */
     @Override
     protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
-                              @Nullable ResponseExtractor<T> responseExtractor) throws RestClientException {
+                              @Nullable ResponseExtractor<T> responseExtractor) {
 
         Assert.notNull(url, "URI is required");
         Assert.notNull(method, "HttpMethod is required");

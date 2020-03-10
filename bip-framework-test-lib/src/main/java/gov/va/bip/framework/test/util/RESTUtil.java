@@ -105,6 +105,19 @@ public class RESTUtil {
 	}
 
 	/**
+	 * Constructor to initialize with a {@link DeferredCloseRestTemplate} instead of a {@link RestTemplate}.
+	 *
+	 * @param convertersToBeAdded
+	 * 				List of HttpMessageConverter
+	 * @param deferredCloseMediaTypes
+	 * 				List of MediaTypes to instantiate the {@link DeferredCloseRestTemplate} with. See documentation in
+	 *				{@link DeferredCloseRestTemplate} for more details.
+	 */
+	public RESTUtil(final List<HttpMessageConverter<?>> convertersToBeAdded, final List<MediaType> deferredCloseMediaTypes) {
+		this.restTemplate = getDeferredCloseRestTemplate(convertersToBeAdded, deferredCloseMediaTypes);
+	}
+
+	/**
 	 * Reads file content for a given file resource using URL object.
 	 *
 	 * @param strRequestFile
@@ -508,11 +521,11 @@ public class RESTUtil {
 	 */
 	private RestTemplate getRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded) {
 		// Create a new instance of the {@link RestTemplate} using default settings.
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate apiTemplate = new RestTemplate();
 
-		configureRestTemplate(restTemplate, convertersToBeAdded);
+		configureRestTemplate(apiTemplate, convertersToBeAdded);
 
-		return restTemplate;
+		return apiTemplate;
 	}
 
 	/**
@@ -526,11 +539,11 @@ public class RESTUtil {
 	 */
 	private DeferredCloseRestTemplate getDeferredCloseRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded, List<MediaType> deferredCloseMediaTypes) {
 		// Create a new instance of the {@link DeferredCloseRestTemplate} using default settings.
-		DeferredCloseRestTemplate restTemplate = new DeferredCloseRestTemplate(deferredCloseMediaTypes);
+		DeferredCloseRestTemplate apiTemplate = new DeferredCloseRestTemplate(deferredCloseMediaTypes);
 
-		configureRestTemplate(restTemplate, convertersToBeAdded);
+		configureRestTemplate(apiTemplate, convertersToBeAdded);
 
-		return restTemplate;
+		return apiTemplate;
 	}
 
 	/**
