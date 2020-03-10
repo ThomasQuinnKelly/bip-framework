@@ -174,7 +174,7 @@ bip.framework:
       message: "SNS Test Message"
       type: String
 ```
-Also note the required settings at the bottom.
+Also settings below are required. Each implementing application team would need to add these.
 ```
 # Required or else errors occur (Spring requirement)
 cloud.aws.stack.auto: false
