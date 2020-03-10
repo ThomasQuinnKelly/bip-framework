@@ -2,91 +2,6 @@
 
 BIP Framework Autoconfigure AWS Project provides application services for SQS and SNS through Localstack for the BIP platform.
 
-# Overview of the packages
-
-# SQS and SNS Autoconfiguration Rundown
-
-The following classes declare beans for their respective class implementation of services while importing the abstract and standard configurations as well:
-
-gov/va/bip/framework/aws/autoconfigure/BipSnsAutoConfiguration.java
-gov/va/bip/framework/aws/autoconfigure/BipSqsAutoConfiguration.java
-
-These abstractions and standard configurations handle dealing with AWS authentication and url resolutions for the topic or queue:
-
-gov/va/bip/framework/sns/config/AbstractSnsConfiguration.java
-gov/va/bip/framework/sns/config/StandardSnsConfiguration.java
-
-gov/va/bip/framework/sqs/config/AbstractSqsConfiguration.java
-gov/va/bip/framework/sqs/config/StandardSqsConfiguration.java
-
-In the case of SQS there is a class for resolving JMS destinations. JMS is used as a wrapper around SQS offerings:
-
-gov/va/bip/framework/sqs/config/StaticDestinationResolver.java
-
-These properties classes are used by Localstack to configure the topic and queue and the subscription from the topic to the queue:
-
-gov/va/bip/framework/sns/config/SnsProperties.java
-gov/va/bip/framework/sns/config/SnsTopicProperties.java
-
-gov/va/bip/framework/sqs/config/SqsProperties.java
-gov/va/bip/framework/sqs/config/SqsQueueProperties.java
-
-# SQS and SNS Service Rundown
-
-These service interface and implementation classes provide the following methods:
-
-gov/va/bip/framework/sqs/services/impl/SqsServiceImpl.java
-gov/va/bip/framework/sqs/services/SqsService.java
-
-* createTextMessage - creates a message through connection factory, in preparation for sending it to a queue. 
-* sendMessage - delivers a prepared message to the queue
-
-gov/va/bip/framework/sns/services/impl/SnsServiceImpl.java
-gov/va/bip/framework/sns/services/SnsService.java
-
-* publish - sends the message content to the topic.
-
-# Localstack Rundown
-
-## gov.va.bip.framework.localstack.autoconfigure:
-
-The LocalstackAutoConfiguration class defines the Localstack configuration strategy for the BIP. This configuration takes care of starting up, configuring, stopping, and cleaning up localstack upon shutdown of running the application.
-
-It handles the configuration of the properties of the Localstack configuration based on property values retrieved from implementing projects
-
-bip.framework.localstack
-    
-    enabled - required for activation because this is used for @ConditionalOnProperty for this bean and every class in these packages
-    
-    externalHostName - external host name for Localstack. Defaults to localhost
-    pullNewImage - determines whether to pull a new image each time or not. Defaults to true
-    imageTag - which localstack image to pull. Defaults to latest latest
-    randomizePorts - whether to randomize the service ports for enabled services. Defaults to false
-
-The LocalstackProperties class handles inclusion and enabling of the selected services
-
-## gov.va.bip.framework.localstack.sns.config:
-
-The LocalstackSnsProperties class allows for enabling and the specification of the port to use for SNS in Localstack
-
-bip.framework.localstack.services.sns
-
-    enabled - activates SNS for Localstack defaults to false
-    port - definition of the port. Defaults to 4575
-
-## gov.va.bip.framework.localstack.sqs.config:
-
-The LocalstackSqsProperties class allows for enabling and the specification of the port to use for SNS in Localstack
-
-bip.framework.localstack.services.sqs
-
-    enabled - activates SQS for Localstack defaults to false
-    port - definition of the port. Defaults to 4576
-    
-## resources/META-INF:
-
-The spring.factories file enables the LocalstackAutoConfiguration, BipSqsAutoConfiguration, and BipSnsAutoConfiguration. 
-
 # Implementation for project teams 
 
 Teams would have to include the dependecy for this module in the application project pom.xml:
@@ -112,11 +27,6 @@ Teams would have to include the dependecy for this module in the application pro
 </dependency>
 ```
 
-Apply the embedded-aws profile for local scenarios.
-
-```
-spring.profiles.include: ... embedded-aws
-```
 Turn on the use Localstack and their selection of services to implement.
 ```
 ---
