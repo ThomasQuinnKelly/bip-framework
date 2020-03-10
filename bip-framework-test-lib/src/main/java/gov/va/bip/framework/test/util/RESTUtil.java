@@ -3,21 +3,17 @@ package gov.va.bip.framework.test.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
-import gov.va.bip.framework.test.service.RESTConfigService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.config.ConnectionConfig;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +36,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -570,72 +562,6 @@ public class RESTUtil {
 					existingConverters.add(converterToBeAdded);
 				}
 			}
-		}
-	}
-
-	/**
-	 * Load key material.
-	 *
-	 * @param pathToKeyStore
-	 *            the path to key store
-	 * @param sslContextBuilder
-	 *            the ssl context builder
-	 * @return the SSL context builder
-	 * @throws NoSuchAlgorithmException
-	 *             the no such algorithm exception
-	 * @throws KeyStoreException
-	 *             the key store exception
-	 * @throws UnrecoverableKeyException
-	 *             the unrecoverable key exception
-	 * @throws CertificateException
-	 *             the certificate exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	private SSLContextBuilder loadKeyMaterial(final String pathToKeyStore, final SSLContextBuilder sslContextBuilder)
-			throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, CertificateException,
-			IOException {
-		if (StringUtils.isNotBlank(pathToKeyStore)) {
-			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStorePassword", true);
-			if (StringUtils.isBlank(password)) {
-				throw new BipTestLibRuntimeException(COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.keyStorePassword");
-			}
-			return sslContextBuilder.loadKeyMaterial(new File(Sanitizer.safePath(pathToKeyStore)),
-					password.toCharArray(), password.toCharArray());
-		}
-		return sslContextBuilder;
-	}
-
-	/**
-	 * Load trust material.
-	 *
-	 * @param pathToTrustStore
-	 *            the path to trust store
-	 * @param sslContextBuilder
-	 *            the ssl context builder
-	 * @return the SSL context builder
-	 * @throws NoSuchAlgorithmException
-	 *             the no such algorithm exception
-	 * @throws KeyStoreException
-	 *             the key store exception
-	 * @throws CertificateException
-	 *             the certificate exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	private SSLContextBuilder loadTrustMaterial(final String pathToTrustStore,
-			final SSLContextBuilder sslContextBuilder)
-			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
-		if (StringUtils.isNotBlank(pathToTrustStore)) {
-			String password = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStorePassword", true);
-			if (StringUtils.isBlank(password)) {
-				throw new BipTestLibRuntimeException(
-						COULD_NOT_FIND_PROPERTY_STRING + "javax.net.ssl.trustStorePassword");
-			}
-			return sslContextBuilder.loadTrustMaterial(new File(Sanitizer.safePath(pathToTrustStore)),
-					password.toCharArray());
-		} else {
-			return sslContextBuilder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
 		}
 	}
 
