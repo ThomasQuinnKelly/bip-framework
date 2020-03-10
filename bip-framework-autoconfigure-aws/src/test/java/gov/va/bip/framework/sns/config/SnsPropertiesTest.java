@@ -1,7 +1,5 @@
 package gov.va.bip.framework.sns.config;
 
-import gov.va.bip.framework.aws.config.ConfigConstants;
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,26 +98,6 @@ public class SnsPropertiesTest {
         instance.setTopicArn(topicarn);
 
         assertEquals(Optional.of(instance.getTopicArn()) , Optional.ofNullable(topicarn));
-    }
-
-    //Test SNS AccessKey
-    @Test
-    public void testAccessKey() {
-        String accessKey = ConfigConstants.getAwsLocalstackId();
-        SnsProperties instance = new SnsProperties();
-        instance.setAccessKey(accessKey);
-
-        assertEquals(Optional.of(instance.getAccessKey()), Optional.ofNullable(accessKey));
-    }
-
-    //Test SNS SecretKey
-    @Test
-    public void testSecretKey() {
-        String secretKey = ConfigConstants.getAwsLocalstackKey();
-        SnsProperties instance = new SnsProperties();
-        instance.setSecretKey(secretKey);
-
-        assertEquals(Optional.of(instance.getSecretKey()), Optional.ofNullable(secretKey));
     }
 
 }

@@ -165,9 +165,6 @@ bip.framework:
       #Defines the maximum number of times the message can enter the DLQ
       retries: 1
 
-      #SQS key and id needs to be changed for upper environments
-      #access_key_id: ${AWS_ACCESS_KEY}
-      #secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     sns:
       enabled: true
       region: us-east-1
@@ -176,10 +173,6 @@ bip.framework:
       name: test_my_topic
       message: "SNS Test Message"
       type: String
-
-      #SNS key and id needs to be changed for upper environments
-      #access_key_id: ${AWS_ACCESS_KEY}
-      #secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 ```
 Also note the required settings at the bottom.
 ```

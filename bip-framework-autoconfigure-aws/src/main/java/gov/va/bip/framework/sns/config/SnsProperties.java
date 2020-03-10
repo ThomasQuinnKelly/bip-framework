@@ -1,6 +1,5 @@
 package gov.va.bip.framework.sns.config;
 
-import gov.va.bip.framework.aws.config.ConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +27,11 @@ public class SnsProperties {
 	private String endpoint;
 	private String topicArn;
 
-	private String accessKey = ConfigConstants.getAwsLocalstackId();
-	private String secretKey = ConfigConstants.getAwsLocalstackKey();
+	@Value("test-key")
+	private String accessKey;
+
+	@Value("test-secret")
+	private String secretKey;
 
 	public Logger getLogger() {
 		return logger;
