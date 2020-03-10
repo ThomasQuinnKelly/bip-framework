@@ -1,31 +1,9 @@
 package gov.va.bip.framework.test.util;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.google.common.net.HttpHeaders;
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
+import gov.va.bip.framework.test.service.RESTConfigService;
+import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,11 +15,20 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.google.common.net.HttpHeaders;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
 
-import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
-import gov.va.bip.framework.test.service.RESTConfigService;
-import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.doThrow;
 
 public class RESTUtilTest {
 
@@ -150,6 +137,34 @@ public class RESTUtilTest {
 
 	@Test
 	public void testGetRestTemplate() {
+		Constructor<RESTConfigService> constructor;
+		try {
+			constructor = RESTConfigService.class.getDeclaredConstructor();
+			constructor.setAccessible(true);
+			RESTConfigService config = constructor.newInstance();
+			Properties prop = new Properties();
+			prop.setProperty("javax.net.ssl.keyStore", "");
+			ReflectionTestUtils.setField(config, "prop", prop);
+			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
+			instanceOfRESTConfigService.setAccessible(true);
+			instanceOfRESTConfigService.set(null, config);
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+			messageConverters.add(new ResourceRegionHttpMessageConverter());
+			List<MediaType> mediaTypes = new ArrayList<>();
+			mediaTypes.add(MediaType.APPLICATION_PDF);
+			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>(), new ArrayList<>()), "getDeferredCloseRestTemplate", messageConverters, mediaTypes);
+			// reset the field instance and prop fields
+			instanceOfRESTConfigService.set(null,null);
+			ReflectionTestUtils.setField(config, "prop", null);
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchFieldException | BipTestLibRuntimeException e) {
+			e.printStackTrace();
+			fail("Exception not expected!");
+		}
+	}
+
+	@Test
+	public void testGetDeferredCloseRestTemplate() {
 		Constructor<RESTConfigService> constructor;
 		try {
 			constructor = RESTConfigService.class.getDeclaredConstructor();
