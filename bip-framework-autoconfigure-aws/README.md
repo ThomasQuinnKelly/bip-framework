@@ -181,7 +181,7 @@ bip.framework:
       #access_key_id: ${AWS_ACCESS_KEY}
       #secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 ```
-Also note the required settings at the bottom.
+Also settings below are required. Each implementing application team would need to add these.
 ```
 # Required or else errors occur (Spring requirement)
 cloud.aws.stack.auto: false
