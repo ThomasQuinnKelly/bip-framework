@@ -56,9 +56,6 @@ public class RESTUtil {
 	/** Constant for payload folder name. */
 	private static final String PAYLOAD_FOLDER_NAME = "payload";
 
-	/** The Constant COULD_NOT_FIND_PROPERTY_STRING. */
-	private static final String COULD_NOT_FIND_PROPERTY_STRING = "Could not find property : ";
-
 	/** Logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 
