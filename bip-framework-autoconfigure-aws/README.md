@@ -226,3 +226,45 @@ In the bip-reference-person the relevant part of the docker-compose.yml looks li
     networks:
       - bip
 ```
+---
+ ### Dev8 Configuration
+ 
+ In order for your project to have access to the Dev8 env, you will need to submit a ticket for an IAM role with the desired amount of SQS queues and SNS topics you desire.
+ 
+ `E_BIP_PLATFORM_SUPPORT@BAH.COM`
+ 
+ Once you have your IAM role, you will need to ensure your external config is set properly in order for your properties to override the localstack configuration:
+ 
+ `bip-reference-person.yml`<< this will be: your-projects-name.yml under config/dev
+ ```
+    bip.framework:
+      aws:
+        sqs:
+          enabled: true
+          dlqEnabled: true
+          region: us-gov-west-1
+
+          #Aws Dev8 vars
+          endpoint: https://sqs.us-gov-west-1.amazonaws.com/261727212250/project-blue-dev-blue-dev-queue-1
+          dlqEndpoint: https://sqs.us-gov-west-1.amazonaws.com/261727212250/project-blue-dev-blue-dev-queue-2
+
+          #Defines the maximum number of times the message can enter the DLQ
+          retries: 1
+
+        sns:
+          enabled: true
+          region: us-gov-west-1
+
+          #Aws Dev8 vars
+          endpoint: https://sns.us-gov-west-1.amazonaws.com/261727212250/project-blue-dev-blue-dev-topic
+          topicarn: arn:aws-us-gov:iam::261727212250:/role/project/project-bip-blue-dev
+          name: project-bip-blue-dev
+```
+
+You must also update your role in the helm chart in order for the project to pickup the IAM role
+`charts/bip-reference-person/values.yaml`
+
+```aws:
+     iamRole: "project-bip-blue-dev-role"```
+     
+     
