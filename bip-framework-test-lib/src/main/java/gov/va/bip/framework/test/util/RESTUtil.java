@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -566,6 +567,10 @@ public class RESTUtil {
 		}
 
 		restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
+
+		/////////////////
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
+		/////////////////
 
 		List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
 
