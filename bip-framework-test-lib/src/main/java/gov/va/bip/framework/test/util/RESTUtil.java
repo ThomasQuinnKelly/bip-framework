@@ -10,19 +10,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.config.ConnectionConfig;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +33,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -556,34 +550,9 @@ public class RESTUtil {
 	 */
 	private void configureRestTemplate(RestTemplate restTemplate, List<HttpMessageConverter<?>> convertersToBeAdded) {
 		// Configure the handed-in RestTemplate object.
-		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
-		String pathToTrustStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStore", true);
-		SSLContextBuilder sslContextBuilder = SSLContexts.custom();
-		try {
-			if (StringUtils.isBlank(pathToKeyStore) && StringUtils.isBlank(pathToTrustStore)) {
-				TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
-				sslContextBuilder = sslContextBuilder.loadTrustMaterial(null, acceptingTrustStrategy);
-			} else {
-				sslContextBuilder = loadKeyMaterial(pathToKeyStore, sslContextBuilder);
-				sslContextBuilder = loadTrustMaterial(pathToTrustStore, sslContextBuilder);
-			}
-			SSLContext sslContext = sslContextBuilder.build();
-			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext,
-					NoopHostnameVerifier.INSTANCE);
-			HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
-					httpClient);
-			requestFactory.setBufferRequestBody(false);
-			restTemplate.setRequestFactory(requestFactory);
-		} catch (Exception e) {
-			throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
-		}
-
 		restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
 
-		/////////////////
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
-		/////////////////
 
 		List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
 
