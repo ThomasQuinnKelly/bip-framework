@@ -148,34 +148,6 @@ public class RESTUtilTest {
 			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
 			instanceOfRESTConfigService.setAccessible(true);
 			instanceOfRESTConfigService.set(null, config);
-			List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-			messageConverters.add(new ResourceRegionHttpMessageConverter());
-			List<MediaType> mediaTypes = new ArrayList<>();
-			mediaTypes.add(MediaType.APPLICATION_PDF);
-			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>(), new ArrayList<>()), "getDeferredCloseRestTemplate", messageConverters, mediaTypes);
-			// reset the field instance and prop fields
-			instanceOfRESTConfigService.set(null,null);
-			ReflectionTestUtils.setField(config, "prop", null);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchFieldException | BipTestLibRuntimeException e) {
-			e.printStackTrace();
-			fail("Exception not expected!");
-		}
-	}
-
-	@Test
-	public void testGetDeferredCloseRestTemplate() {
-		Constructor<RESTConfigService> constructor;
-		try {
-			constructor = RESTConfigService.class.getDeclaredConstructor();
-			constructor.setAccessible(true);
-			RESTConfigService config = constructor.newInstance();
-			Properties prop = new Properties();
-			prop.setProperty("javax.net.ssl.keyStore", "");
-			ReflectionTestUtils.setField(config, "prop", prop);
-			Field instanceOfRESTConfigService = RESTConfigService.class.getDeclaredField("instance");
-			instanceOfRESTConfigService.setAccessible(true);
-			instanceOfRESTConfigService.set(null, config);
 			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 			messageConverters.add(new ResourceRegionHttpMessageConverter());
 			ReflectionTestUtils.invokeMethod(new RESTUtil(new ArrayList<>()), "getRestTemplate", messageConverters);
