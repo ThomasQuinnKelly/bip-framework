@@ -1,27 +1,11 @@
 package gov.va.bip.framework.test.util;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.net.ssl.SSLContext;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
+import gov.va.bip.framework.test.service.RESTConfigService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,12 +27,7 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -58,13 +37,22 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.*;
 
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
-import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
-import gov.va.bip.framework.test.service.RESTConfigService;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * It is a wrapper for rest Template API for making HTTP calls, parse JSON and
@@ -370,7 +358,7 @@ public class RESTUtil {
 			}
 			if (StringUtils.isNotEmpty(payLoadFileName)) {
 				// Process PayLoad for the Document
-				processMultipPartPayload(payLoadFileName, body, isPayloadPartPojo, payloadPartKeyName);
+				processMultiPartPayload(payLoadFileName, body, isPayloadPartPojo, payloadPartKeyName);
 			}
 			// return the response
 			return postResponseWithMultipart(serviceURL, body, MediaType.MULTIPART_FORM_DATA);
@@ -437,15 +425,15 @@ public class RESTUtil {
 	 *            the body
 	 * @param isPayloadPartPojo
 	 *            boolean if payload request part as POJO/JSON
-	 * @param payloadRequestPartKey
+	 * @param payloadPartKeyName
 	 *            the payload request part key
 	 * @throws URISyntaxException
 	 *             the URI syntax exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void processMultipPartPayload(final String payLoadFileName, final MultiValueMap<String, Object> body,
-			final Boolean isPayloadPartPojo, final String payloadPartKeyName) throws URISyntaxException, IOException {
+	private void processMultiPartPayload(final String payLoadFileName, final MultiValueMap<String, Object> body,
+										 final Boolean isPayloadPartPojo, final String payloadPartKeyName) throws URISyntaxException, IOException {
 		final URL payloadUrl = RESTUtil.class.getClassLoader()
 				.getResource(PAYLOAD_FOLDER_NAME + File.separator + payLoadFileName);
 		LOGGER.debug("Payload Url: {}", payloadUrl);
@@ -481,8 +469,8 @@ public class RESTUtil {
 	 *
 	 * @param body
 	 *            the body
-	 * @param payloadFile
-	 *            the payload file
+	 * @param contentType
+	 *            the payload file content type
 	 * @param payloadFileString
 	 *            the payload file string
 	 * @throws IOException
@@ -511,19 +499,49 @@ public class RESTUtil {
 	}
 
 	/**
-	 * Loads the KeyStore and password in to rest Template API so all the API's
-	 * are SSL enabled.
+	 * Creates and configures a {@link RestTemplate}.
 	 *
 	 * @param convertersToBeAdded
 	 *            the converters to be added
-	 * @return the rest template
+	 * @return the configured rest template
 	 */
-
 	private RestTemplate getRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded) {
-		// Create a new instance of the {@link RestTemplate} using default
-		// settings.
-		RestTemplate apiTemplate = new DeferredCloseRestTemplate();
+		// Create a new instance of the {@link RestTemplate} using default settings.
+		RestTemplate restTemplate = new RestTemplate();
 
+		configureRestTemplate(restTemplate, convertersToBeAdded);
+
+		return restTemplate;
+	}
+
+	/**
+	 * Creates and configures a {@link DeferredCloseRestTemplate}.
+	 *
+	 * @param convertersToBeAdded
+	 *            the converters to be added
+	 * @param deferredCloseMediaTypes
+	 *            the MediaTypes with which the {@link DeferredCloseRestTemplate} should be instantiated
+	 * @return the configured rest template
+	 */
+	private DeferredCloseRestTemplate getDeferredCloseRestTemplate(List<HttpMessageConverter<?>> convertersToBeAdded, List<MediaType> deferredCloseMediaTypes) {
+		// Create a new instance of the {@link DeferredCloseRestTemplate} using default settings.
+		DeferredCloseRestTemplate restTemplate = new DeferredCloseRestTemplate(deferredCloseMediaTypes);
+
+		configureRestTemplate(restTemplate, convertersToBeAdded);
+
+		return restTemplate;
+	}
+
+	/**
+	 * Configures a {@link RestTemplate} by loading the KeyStore and password in to rest Template API so all the API's
+	 * are SSL enabled.
+	 * @param restTemplate
+	 * 			The {@link RestTemplate} to configure
+	 * @param convertersToBeAdded
+	 * 			The {@link HttpMessageConverter} to be added to the restTemplate
+	 */
+	private void configureRestTemplate(RestTemplate restTemplate, List<HttpMessageConverter<?>> convertersToBeAdded) {
+		// Configure the handed-in RestTemplate object.
 		String pathToKeyStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.keyStore", true);
 		String pathToTrustStore = RESTConfigService.getInstance().getProperty("javax.net.ssl.trustStore", true);
 		SSLContextBuilder sslContextBuilder = SSLContexts.custom();
@@ -542,15 +560,14 @@ public class RESTUtil {
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
 					httpClient);
 			requestFactory.setBufferRequestBody(false);
-			apiTemplate.setRequestFactory(requestFactory);
+			restTemplate.setRequestFactory(requestFactory);
 		} catch (Exception e) {
 			throw new BipTestLibRuntimeException("Issue with the certificate or password", e);
 		}
-		apiTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
-		apiTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-		apiTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory()));
 
-		List<HttpMessageConverter<?>> existingConverters = apiTemplate.getMessageConverters();
+		restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
+
+		List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
 
 		for (HttpMessageConverter<?> existingConverter : existingConverters) {
 			LOGGER.debug("Existing HttpMessageConverter {}", existingConverter);
@@ -567,8 +584,6 @@ public class RESTUtil {
 				}
 			}
 		}
-
-		return apiTemplate;
 	}
 
 	/**
