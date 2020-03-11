@@ -71,12 +71,12 @@ public abstract class AbstractSqsConfiguration {
 
 	private AmazonSQS createAmazonSQSClient(final SqsProperties sqsProperties) {
 
+		setProfiles();
+
 		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(sqsProperties);
 
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(sqsProperties.getAccessKey(), sqsProperties.getSecretKey());
-
-		setProfiles();
 
 		if (isEmbeddedAws || isLocalInt) {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
