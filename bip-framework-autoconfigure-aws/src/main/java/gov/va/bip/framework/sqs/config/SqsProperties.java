@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -29,6 +30,9 @@ public class SqsProperties extends SqsQueueProperties {
 
 	//Queue Endpoint
 	private String endpoint;
+
+	//Queue Endpoint List
+	private String[] endpointList;
 
 	//ContentBasedDeduplication
 	@Value("false")
@@ -129,6 +133,13 @@ public class SqsProperties extends SqsQueueProperties {
 		this.endpoint = endpoint;
 	}
 
+	public String[] getEndpointList() {
+		return endpointList;
+	}
+
+	public void setEndpointList(String[] endpointList) {
+		this.endpointList = endpointList;
+	}
 
 	public Boolean getContentbaseddeduplication() {
 		return contentbaseddeduplication;
