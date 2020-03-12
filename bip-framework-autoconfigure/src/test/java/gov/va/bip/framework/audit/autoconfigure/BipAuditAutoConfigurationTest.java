@@ -10,9 +10,6 @@ import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
 import static org.junit.Assert.*;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 
-/**
- * Created by rthota on 8/24/17.
- */
 public class BipAuditAutoConfigurationTest {
 
     private AnnotationConfigWebApplicationContext context;

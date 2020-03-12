@@ -1,11 +1,11 @@
 package gov.va.bip.framework.messages;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * ServiceMessage is a generic abstraction of a "message" or "notification" which is layer agnostic and can be used to communicate

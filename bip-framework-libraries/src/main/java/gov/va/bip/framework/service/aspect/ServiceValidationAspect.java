@@ -316,7 +316,7 @@ public class ServiceValidationAspect extends BaseServiceAspect {
 		} catch (ClassNotFoundException e) {
 			// no validator, return without error
 			LOGGER.warn("Could not find validator class " + qualifiedValidatorName
-					+ " - skipping validation for object " + ReflectionToStringBuilder.toString(object), e);
+					+ " - skipping validation for object " + ReflectionToStringBuilder.toString(object));
 		}
 
 		return validatorClass;
