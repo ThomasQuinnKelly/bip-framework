@@ -204,8 +204,8 @@ public class SqsProperties extends SqsQueueProperties {
 	}
 
 	public Integer getDlqwaittime() {
-		if (dlqdelay == null) {
-			return getDelay();
+		if (dlqwaittime == null) {
+			return getWaittime();
 		}
 		return dlqwaittime;
 	}
@@ -215,8 +215,8 @@ public class SqsProperties extends SqsQueueProperties {
 	}
 
 	public Integer getDlqvisibilitytimeout() {
-		if (dlqdelay == null) {
-			return getDelay();
+		if (dlqvisibilitytimeout == null) {
+			return getVisibilitytimeout();
 		}
 		return dlqvisibilitytimeout;
 	}
