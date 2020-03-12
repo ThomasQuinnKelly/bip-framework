@@ -24,6 +24,8 @@ public class SnsProperties extends AwsProperties {
 	private String type;
 	private String topic;
 	private String message;
+
+	@Value("us-east-1")
 	private String region;
 	private String endpoint;
 	private String topicArn;

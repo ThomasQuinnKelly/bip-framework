@@ -35,7 +35,7 @@ public class StandardSqsConfigurationTest {
         sqsProperties.setRegion("us-west-2");
         sqsProperties.setEndpoint("http://localhost:8080/endpoint");
 	}
-
+	
     /**
      * Test of connectionFactory method, of class StandardSqsConfiguration.
      */

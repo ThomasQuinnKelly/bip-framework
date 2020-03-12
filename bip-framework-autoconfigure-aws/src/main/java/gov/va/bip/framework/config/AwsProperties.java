@@ -1,8 +1,8 @@
 package gov.va.bip.framework.config;
 
-import gov.va.bip.framework.aws.config.ConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -15,8 +15,11 @@ public class AwsProperties {
 
 	private Logger logger = LoggerFactory.getLogger(AwsProperties.class);
 
-	private String accessKey = ConfigConstants.getAwsLocalstackId();
-	private String secretKey = ConfigConstants.getAwsLocalstackKey();
+	@Value("test-key")
+	private String accessKey;
+
+	@Value("test-secret")
+	private String secretKey;
 
 	public Logger getLogger() {
 		return logger;

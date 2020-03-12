@@ -1,6 +1,5 @@
 package gov.va.bip.framework.sqs.config;
 
-import gov.va.bip.framework.aws.config.ConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,10 @@ public class SqsProperties extends SqsQueueProperties {
 	@Max(43200) // 12 hours
 	private Integer dlqvisibilitytimeout;
 
+	@Value("test-key")
 	private String accessKey;
+
+	@Value("test-secret")
 	private String secretKey;
 
 	//For SQS Configuration - Messaging Provider Configuration
@@ -248,6 +250,22 @@ public class SqsProperties extends SqsQueueProperties {
 		return parseQueueName(endpoint);
 	}
 
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
 	public String getDLQQueueName() {
 		return parseQueueName(dlqendpoint);
 	}
@@ -267,27 +285,4 @@ public class SqsProperties extends SqsQueueProperties {
 		int pos = path.lastIndexOf('/');
 		return path.substring(pos + 1);
 	}
-
-	public String getAccessKey() {
-		if (accessKey == null) {
-			return ConfigConstants.getAwsLocalstackId();
-		}
-		return accessKey;
-	}
-
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public String getSecretKey() {
-		if (secretKey == null) {
-			return ConfigConstants.getAwsLocalstackKey();
-		}
-		return secretKey;
-	}
-
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
-	}
-
 }

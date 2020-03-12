@@ -33,11 +33,6 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 	@Bean
 	public AmazonSNS amazonSNS(final SnsProperties snsProperties, Environment environment) {
 
-		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(snsProperties);
-
-		AWSCredentialsProvider awsCredentialsProvider =
-				createAwsCredentialsProvider(snsProperties.getAccessKey(), snsProperties.getSecretKey());
-
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				isEmbeddedAws = true;
@@ -47,6 +42,11 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 				isLocalInt = true;
 			}
 		}
+
+		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(snsProperties);
+
+		AWSCredentialsProvider awsCredentialsProvider =
+				createAwsCredentialsProvider(snsProperties.getAccessKey(), snsProperties.getSecretKey());
 
 		if (isEmbeddedAws || isLocalInt) {
 			return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
