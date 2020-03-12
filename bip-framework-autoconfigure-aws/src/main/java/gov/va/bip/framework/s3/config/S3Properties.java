@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * See:
@@ -20,13 +21,14 @@ public class S3Properties extends AwsProperties {
 
 	@Value("false")
 	private Boolean enabled;
-	private String name;
-	private String type;
-	private String topic;
-	private String message;
+
+	@Value("us-east-1")
 	private String region;
+
+	//Queue Endpoint
 	private String endpoint;
-	private String topicArn;
+
+	private List<Bucket> buckets;
 
 	public Logger getLogger() {
 		return logger;
@@ -42,38 +44,6 @@ public class S3Properties extends AwsProperties {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getTopic() {
-		return topic;
-	}
-
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
 	}
 
 	public String getRegion() {
@@ -92,12 +62,28 @@ public class S3Properties extends AwsProperties {
 		this.endpoint = endpoint;
 	}
 
-	public String getTopicArn() {
-		return topicArn;
+	public List<Bucket> getBuckets() {
+		return buckets;
 	}
 
-	public void setTopicArn(String topicArn) {
-		this.topicArn = topicArn;
+	public void setBuckets(List<Bucket> bucketList) {
+		this.buckets = bucketList;
+	}
+
+	public static class Bucket {
+
+		private String name;
+
+		public Bucket() {
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 
 	public String getS3BaseUrl() {
@@ -108,5 +94,4 @@ public class S3Properties extends AwsProperties {
 		URI endpointUri = URI.create(endpoint);
 		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
-
 }

@@ -7,6 +7,9 @@ import cloud.localstack.docker.annotation.LocalstackDockerConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
@@ -128,7 +131,6 @@ public class LocalstackAutoConfiguration {
 				cleanAwsLocalStack();
 
 				Localstack.INSTANCE.startup(buildLocalstackDockerConfiguration());
-
 			}
 		}
 
@@ -347,6 +349,30 @@ public class LocalstackAutoConfiguration {
 		return getQueueAttributesResult;
 	}
 
+	private void initializeS3Client(AmazonS3 client) {
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < maxRetries; i++) {
+			try {
+				for(S3Properties.Bucket bucket : s3Properties.getBuckets()) {
+					CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucket.getName());
+					Bucket newBucket = client.createBucket(createBucketRequest);
+				}
+				break;
+			} catch (Exception e) {
+				LOGGER.warn("Attempt to create S3 buckets through AWS Local Stack client.createBucket(..) failed on try # " + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
+			}
+
+		}
+	}
+
 	private void subscribeTopicToQueue(AmazonSNS client, CreateTopicResult result) {
 		// retry the operation until the localstack responds
 		for (int i = 0; i < maxRetries; i++) {
@@ -390,34 +416,42 @@ public class LocalstackAutoConfiguration {
 	private void createLocalstackServices(){
 		//Creates a SQS queue
 		if (sqsProperties.getEnabled()) {
-			AmazonSQS client;
+			AmazonSQS sqsClient;
 			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSQS();
+				sqsClient = TestUtils.getClientSQS();
 			} else {
-				client = getLocalIntSQS();
+				sqsClient = getLocalIntSQS();
 			}
 
-			initializeDlqQueues(client);
-			createQueues(client);
+			initializeDlqQueues(sqsClient);
+			createQueues(sqsClient);
 		}
 
 		if (snsProperties.getEnabled()) {
-			AmazonSNS client;
+			AmazonSNS snsClient;
 			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSNS();
+				snsClient = TestUtils.getClientSNS();
 			} else {
-				client = getLocalIntSNS();
+				snsClient = getLocalIntSNS();
 			}
 
 			//Creates a SNS topic
-			CreateTopicResult result = createTopics(client);
+			CreateTopicResult result = createTopics(snsClient);
 
 			if (sqsProperties.getEnabled()) {
 				//Subscribes the topic to the queue
 				if (result == null) {
 					throw new NullPointerException("result is null");
-				} else subscribeTopicToQueue(client, result);
+				} else subscribeTopicToQueue(snsClient, result);
 			}
+		}
+
+		if (s3Properties.getEnabled()) {
+			AmazonS3 s3Client;
+
+			s3Client = TestUtils.getClientS3();
+
+			initializeS3Client(s3Client);
 		}
 	}
 }
