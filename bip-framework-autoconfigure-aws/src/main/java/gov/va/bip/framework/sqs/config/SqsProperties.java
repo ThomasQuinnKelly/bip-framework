@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
