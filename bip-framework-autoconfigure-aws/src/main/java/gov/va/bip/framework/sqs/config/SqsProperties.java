@@ -31,9 +31,6 @@ public class SqsProperties extends SqsQueueProperties {
 	//Queue Endpoint
 	private String endpoint;
 
-	//Queue Endpoint List
-	private String[] endpointList;
-
 	//ContentBasedDeduplication
 	@Value("false")
 	private Boolean contentbaseddeduplication;
@@ -131,14 +128,6 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
-	}
-
-	public String[] getEndpointList() {
-		return endpointList;
-	}
-
-	public void setEndpointList(String[] endpointList) {
-		this.endpointList = endpointList;
 	}
 
 	public Boolean getContentbaseddeduplication() {

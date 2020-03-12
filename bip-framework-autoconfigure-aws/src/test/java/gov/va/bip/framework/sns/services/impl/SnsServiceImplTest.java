@@ -43,7 +43,7 @@ public class SnsServiceImplTest {
 
 				request.setTopicArn(null);
 				snsService.publish(request);
-			}
+				}
 		});
 	}
 
@@ -59,6 +59,13 @@ public class SnsServiceImplTest {
 
 		Assert.assertNotNull(logger);
 		Assert.assertNotNull(request.getTopicArn());
+
+
+		try {
+			snsService.publish(request);
+		} catch(Exception e){
+			Assert.assertNotNull(request.getTopicArn());
+		}
 	}
 
 	@Test

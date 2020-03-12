@@ -38,6 +38,25 @@ public class StandardSqsConfigurationTest {
 	}
 	
     /**
+     * Test of connectionFactory method, of class StandardSqsConfiguration.
+     */
+    @Test
+    public void testConnectionFactory() {
+        ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
+        assertNotNull(result);
+    }
+
+    /**
+     * Test of jmsTemplate method, of class AbstractSqsConfiguration.
+     */
+    @Test
+    public void testjmsTemplate() {
+        ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
+        JmsTemplate jmsTemplate = standardSqsConfiguration.jmsTemplate(sqsProperties, result);
+        assertNotNull(jmsTemplate);
+    }
+
+    /**
      * Test of jmsTemplate method, of class AbstractSqsConfiguration.
      */
     @Test

@@ -13,9 +13,8 @@ public class SnsExceptionTest {
 	private Throwable var4;
 	private String var5 = "text";
 
-
 	@Test
-	public void instantiateBaseSnsExceptions() throws Exception {
+	public void BaseSnsException() throws Exception {
 
 		SnsException snsException = new SnsException(var1, var2, var3, var4, var5 = null);
 	}

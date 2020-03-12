@@ -100,4 +100,23 @@ public class SnsPropertiesTest {
         assertEquals(Optional.of(instance.getTopicArn()) , Optional.ofNullable(topicarn));
     }
 
+    //Test SNS Property accessKey
+    @Test
+    public void testAccessKey() {
+        String accessKey = "test_my_key";
+        SnsProperties instance = new SnsProperties();
+        instance.setAccessKey(accessKey);
+
+        assertEquals(Optional.of(instance.getAccessKey()) , Optional.ofNullable(accessKey));
+    }
+
+    //Test SNS Property secretKey
+    @Test
+    public void testSecretKey() {
+        String secretKey = "test_my_secret";
+        SnsProperties instance = new SnsProperties();
+        instance.setSecretKey(secretKey);
+
+        assertEquals(Optional.of(instance.getSecretKey()) , Optional.ofNullable(secretKey));
+    }
 }
