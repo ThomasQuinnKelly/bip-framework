@@ -80,6 +80,6 @@ public class S3PropertiesTest {
         S3Properties instance = new S3Properties();
         instance.setEndpoint(endpoint+"/blah");
 
-        assertEquals(Optional.of(instance.getS3BaseUrl()), Optional.ofNullable(endpoint));
+        assertEquals(Optional.of(instance.getBaseUrl()), Optional.ofNullable(endpoint));
     }
 }

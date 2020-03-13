@@ -1,19 +1,12 @@
 package gov.va.bip.framework.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * See:
- * Topics: https://docs.aws.amazon.com/s3/latest/api/API_SetTopicAttributes.html
- * Subscriptions: https://docs.aws.amazon.com/s3/latest/api/API_SetSubscriptionAttributes.html
- */
+import java.net.URI;
+
 @ConfigurationProperties(prefix = "bip.framework.aws", ignoreUnknownFields = true)
 public class AwsProperties {
-
-	private Logger logger = LoggerFactory.getLogger(AwsProperties.class);
 
 	@Value("test-key")
 	private String accessKey;
@@ -21,13 +14,14 @@ public class AwsProperties {
 	@Value("test-secret")
 	private String secretKey;
 
-	public Logger getLogger() {
-		return logger;
-	}
+	@Value("false")
+	private Boolean enabled;
 
-	public void setLogger (Logger logger) {
-		this.logger = logger;
-	}
+	@Value("us-east-1")
+	private String region;
+
+	//Endpoint
+	private String endpoint;
 
 	public String getAccessKey() {
 		return accessKey;
@@ -43,6 +37,39 @@ public class AwsProperties {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public String getBaseUrl() {
+		return parseBaseUrl(endpoint);
+	}
+
+	private String parseBaseUrl(String endpoint) {
+		URI endpointUri = URI.create(endpoint);
+		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
 
 }

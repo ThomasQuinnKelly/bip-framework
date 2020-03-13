@@ -13,14 +13,14 @@ import org.springframework.util.StringUtils;
 public abstract class AbstractAwsConfiguration {
 
 	@Value("${bip.framework.localstack.enabled:false}")
-	boolean localstackEnabled;
+	public boolean localstackEnabled;
 
 	@SuppressWarnings("unused")
 	@Autowired(required = false)
-	private LocalstackAutoConfiguration localstackAutoConfiguration;
+	public LocalstackAutoConfiguration localstackAutoConfiguration;
 
-	boolean isEmbeddedAws = false;
-	boolean isLocalInt = false;
+	public boolean isEmbeddedAws = false;
+	public boolean isLocalInt = false;
 
 	protected AWSCredentialsProvider createAwsCredentialsProvider(final String localAccessKey, final String localSecretKey) {
 

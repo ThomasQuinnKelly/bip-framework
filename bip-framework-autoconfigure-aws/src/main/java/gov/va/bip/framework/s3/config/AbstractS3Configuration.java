@@ -8,9 +8,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import gov.va.bip.framework.config.AbstractAwsConfiguration;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,16 +16,6 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableConfigurationProperties(S3Properties.class)
 public abstract class AbstractS3Configuration extends AbstractAwsConfiguration {
-
-	@Value("${bip.framework.localstack.enabled:false}")
-	boolean localstackEnabled;
-
-	@SuppressWarnings("unused")
-	@Autowired(required = false)
-	private LocalstackAutoConfiguration localstackAutoConfiguration;
-
-	boolean isEmbeddedAws = false;
-	boolean isLocalInt = false;
 
 	@Bean
 	public AmazonS3 amazonS3(final S3Properties s3Properties, Environment environment) {
@@ -66,10 +53,10 @@ public abstract class AbstractS3Configuration extends AbstractAwsConfiguration {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointS3(), region.getName());
 		} else if (isLocalInt) {
-			if (s3Properties.getS3BaseUrl().contains("localhost")) {
+			if (s3Properties.getBaseUrl().contains("localhost")) {
 				s3Properties.setEndpoint(s3Properties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(s3Properties.getS3BaseUrl(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(s3Properties.getBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
 	}

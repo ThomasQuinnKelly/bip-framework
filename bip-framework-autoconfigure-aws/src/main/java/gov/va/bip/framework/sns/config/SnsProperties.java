@@ -3,10 +3,7 @@ package gov.va.bip.framework.sns.config;
 import gov.va.bip.framework.config.AwsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.net.URI;
 
 /**
  * See:
@@ -18,16 +15,11 @@ public class SnsProperties extends AwsProperties {
 
 	private Logger logger = LoggerFactory.getLogger(SnsProperties.class);
 
-	@Value("false")
-	private Boolean enabled;
 	private String name;
 	private String type;
 	private String topic;
 	private String message;
 
-	@Value("us-east-1")
-	private String region;
-	private String endpoint;
 	private String topicArn;
 
 	public Logger getLogger() {
@@ -36,14 +28,6 @@ public class SnsProperties extends AwsProperties {
 
 	public void setLogger (Logger logger) {
 		this.logger = logger;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public String getName() {
@@ -78,37 +62,12 @@ public class SnsProperties extends AwsProperties {
 		this.message = message;
 	}
 
-	public String getRegion() {
-		return region;
-	}
-
-	public void setRegion(String region) {
-		this.region = region;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
 	public String getTopicArn() {
 		return topicArn;
 	}
 
 	public void setTopicArn(String topicArn) {
 		this.topicArn = topicArn;
-	}
-
-	public String getSnsBaseUrl() {
-		return parseBaseUrl(endpoint);
-	}
-
-	private String parseBaseUrl(String endpoint) {
-		URI endpointUri = URI.create(endpoint);
-		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
 
 }

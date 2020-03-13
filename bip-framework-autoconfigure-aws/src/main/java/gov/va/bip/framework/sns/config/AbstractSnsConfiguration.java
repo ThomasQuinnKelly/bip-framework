@@ -8,9 +8,6 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import gov.va.bip.framework.config.AbstractAwsConfiguration;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,16 +16,6 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableConfigurationProperties(SnsProperties.class)
 public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration {
-
-	@Value("${bip.framework.localstack.enabled:false}")
-	boolean localstackEnabled;
-
-	@SuppressWarnings("unused")
-	@Autowired(required = false)
-	private LocalstackAutoConfiguration localstackAutoConfiguration;
-
-	boolean isEmbeddedAws = false;
-	boolean isLocalInt = false;
 
 	@Bean
 	public AmazonSNS amazonSNS(final SnsProperties snsProperties, Environment environment) {
@@ -66,10 +53,10 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSNS(), region.getName());
 		} else if (isLocalInt) {
-			if (snsProperties.getSnsBaseUrl().contains("localhost")) {
+			if (snsProperties.getBaseUrl().contains("localhost")) {
 				snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(snsProperties.getSnsBaseUrl(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(snsProperties.getBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
 	}

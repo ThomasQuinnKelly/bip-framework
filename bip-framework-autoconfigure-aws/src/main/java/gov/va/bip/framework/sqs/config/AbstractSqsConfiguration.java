@@ -11,9 +11,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import gov.va.bip.framework.config.AbstractAwsConfiguration;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,16 +28,6 @@ import javax.jms.ConnectionFactory;
 public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration {
 	@Autowired
 	Environment environment;
-
-	@Value("${bip.framework.localstack.enabled:false}")
-	boolean localstackEnabled;
-
-	@SuppressWarnings("unused")
-	@Autowired(required = false)
-	private LocalstackAutoConfiguration localstackAutoConfiguration;
-
-	boolean isEmbeddedAws = false;
-	boolean isLocalInt = false;
 
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
@@ -107,10 +95,10 @@ public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration 
 			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
 
 		} else if (isLocalInt) {
-			if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
+			if (sqsProperties.getBaseUrl().contains("localhost")) {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
 	}

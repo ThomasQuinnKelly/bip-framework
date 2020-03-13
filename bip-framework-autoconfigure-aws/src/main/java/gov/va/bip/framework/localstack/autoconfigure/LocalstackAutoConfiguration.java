@@ -9,7 +9,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.servicequotas.model.IllegalArgumentException;
 import com.amazonaws.services.sns.AmazonSNS;
@@ -219,24 +218,14 @@ public class LocalstackAutoConfiguration {
 	private void createLocalstackServices(){
 		//Creates a SQS queue
 		if (sqsProperties.getEnabled()) {
-			AmazonSQS client;
-			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSQS();
-			} else {
-				client = getLocalIntSQS();
-			}
+			AmazonSQS client = getSQSClient();
 
 			initializeDlqQueues(client);
 			createQueues(client);
 		}
 
 		if (snsProperties.getEnabled()) {
-			AmazonSNS client;
-			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSNS();
-			} else {
-				client = getLocalIntSNS();
-			}
+			AmazonSNS client = getSNSClient();
 
 			//Creates a SNS topic
 			CreateTopicResult result = createTopics(client);
@@ -250,13 +239,7 @@ public class LocalstackAutoConfiguration {
 		}
 
 		if (s3Properties.getEnabled()) {
-			AmazonS3 s3Client;
-
-			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				s3Client = TestUtils.getClientS3();
-			} else {
-				s3Client = getLocalIntS3();
-			}
+			AmazonS3 s3Client = getS3Client();
 
 			initializeS3Client(s3Client);
 		}
@@ -383,12 +366,11 @@ public class LocalstackAutoConfiguration {
 			try {
 				for (S3Properties.Bucket bucket : s3Properties.getBuckets()) {
 					CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucket.getName());
-					Bucket newBucket = client.createBucket(createBucketRequest);
+					client.createBucket(createBucketRequest);
 				}
 				break;
 			} catch (IllegalArgumentException iae) {
 				LOGGER.error("Failed to instantiate S3 bucket.", iae);
-				throw iae;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to create S3 buckets through AWS Local Stack client.createBucket(..) failed on try # " + (i + 1)
 						+ WAIT_FOR_LOCALSTACK_MESSAGE);
@@ -445,33 +427,57 @@ public class LocalstackAutoConfiguration {
 		}
 	}
 
+	private AmazonSQS getSQSClient() {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+			return TestUtils.getClientSQS();
+		} else {
+			return getLocalIntSQS();
+		}
+	}
+
+	private AmazonSNS getSNSClient() {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+			return TestUtils.getClientSNS();
+		} else {
+			return getLocalIntSNS();
+		}
+	}
+
+	private AmazonS3 getS3Client() {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+			return TestUtils.getClientS3();
+		} else {
+			return getLocalIntS3();
+		}
+	}
+
 	private AmazonSQS getLocalIntSQS() {
-		if (sqsProperties.getSqsBaseUrl().contains(LOCALHOST)) {
+		if (sqsProperties.getBaseUrl().contains(LOCALHOST)) {
 			sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
 		}
 
 		return AmazonSQSClientBuilder.standard().
-				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(sqsProperties.getSqsBaseUrl(), snsProperties.getRegion())).
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(sqsProperties.getBaseUrl(), snsProperties.getRegion())).
 				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
 	}
 
 	private AmazonSNS getLocalIntSNS() {
-		if (snsProperties.getSnsBaseUrl().contains(LOCALHOST)) {
+		if (snsProperties.getBaseUrl().contains(LOCALHOST)) {
 			snsProperties.setEndpoint(snsProperties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
 		}
 
 		return AmazonSNSClientBuilder.standard().
-				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(snsProperties.getSnsBaseUrl(), snsProperties.getRegion())).
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(snsProperties.getBaseUrl(), snsProperties.getRegion())).
 				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
 	}
 
 	private AmazonS3 getLocalIntS3() {
-		if (s3Properties.getS3BaseUrl().contains(LOCALHOST)) {
+		if (s3Properties.getBaseUrl().contains(LOCALHOST)) {
 			s3Properties.setEndpoint(s3Properties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
 		}
 
 		return AmazonS3ClientBuilder.standard().
-				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(s3Properties.getS3BaseUrl(), s3Properties.getRegion())).
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(s3Properties.getBaseUrl(), s3Properties.getRegion())).
 				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(s3Properties.getAccessKey(), s3Properties.getSecretKey()))).build();
 	}
 }
