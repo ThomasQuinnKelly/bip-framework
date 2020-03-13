@@ -1,6 +1,7 @@
 package gov.va.bip.framework.s3.config;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Region;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
 import org.junit.Test;
 import org.springframework.core.env.Environment;
@@ -14,7 +15,7 @@ public class AbstractS3ConfigurationTest {
 	public void testCreateAmazonS3() {
 		final S3Properties s3Properties = new S3Properties();
 		s3Properties.setEndpoint("http://localhost:8080/endpoint");
-		s3Properties.setRegion("us-west-2");
+		s3Properties.setRegion(Region.US_West.toString());
 
 		final AbstractS3Configuration instance = new AbstractS3ConfigurationImpl();
 		final Environment env = new MockEnvironment();
@@ -27,7 +28,7 @@ public class AbstractS3ConfigurationTest {
 	public void testCreateAmazonS3_2() {
 		final S3Properties s3Properties = new S3Properties();
 		s3Properties.setEndpoint("http://localhost:8080/endpoint");
-		s3Properties.setRegion("us-west-2");
+		s3Properties.setRegion(Region.US_West.toString());
 
 		final AbstractS3Configuration instance = new AbstractS3ConfigurationImpl();
 		final Environment env = new MockEnvironment() {
@@ -47,7 +48,7 @@ public class AbstractS3ConfigurationTest {
 	public void testCreateAmazonS3_3() {
 		final S3Properties s3Properties = new S3Properties();
 		s3Properties.setEndpoint("http://localhost:8080/endpoint");
-		s3Properties.setRegion("us-west-2");
+		s3Properties.setRegion(Region.US_West.toString());
 
 		final AbstractS3Configuration instance = new AbstractS3ConfigurationImpl();
 		final Environment env = new MockEnvironment() {
@@ -67,7 +68,7 @@ public class AbstractS3ConfigurationTest {
 	public void testCreateAmazonS3_4() {
 		final S3Properties s3Properties = new S3Properties();
 		s3Properties.setEndpoint("http://localhost:8080/endpoint");
-		s3Properties.setRegion("us-west-2");
+		s3Properties.setRegion(Region.US_West.toString());
 
 		final AbstractS3Configuration instance = new AbstractS3ConfigurationImpl();
 		final Environment env = new MockEnvironment();
