@@ -45,11 +45,13 @@ public class S3PropertiesTest {
 
     //Test S3 Property type
     @Test
-    public void testBucketName() {
+    public void testBucketEndpoint() {
+        String endpoint = "url:port/bucket/";
         String name = "String";
         S3Properties.Bucket instance = new S3Properties.Bucket();
-        instance.setName(name);
+        instance.setEndpoint(endpoint + name);
 
+        assertEquals(Optional.of(instance.getEndpoint()), Optional.ofNullable(endpoint + name));
         assertEquals(Optional.of(instance.getName()), Optional.ofNullable(name));
     }
 
