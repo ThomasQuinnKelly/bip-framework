@@ -66,6 +66,26 @@ public class LocalstackPropertiesTest {
     }
 
     @Test
+    public final void testGetServices_2() {
+        LocalstackSnsProperties localstackSnsProperties = new LocalstackSnsProperties();
+        localstackSnsProperties.setEnabled(false);
+        localstackSnsProperties.setPort(1234);
+        LocalstackSqsProperties localstackSqsProperties = new LocalstackSqsProperties();
+        localstackSqsProperties.setEnabled(false);
+        localstackSqsProperties.setPort(1234);
+        LocalstackS3Properties localstackS3Properties = new LocalstackS3Properties();
+        localstackS3Properties.setEnabled(false);
+        localstackS3Properties.setPort(1234);
+
+        props.setLocalstackSnsProperties(localstackSnsProperties);
+        props.setLocalstackSqsProperties(localstackSqsProperties);
+        props.setLocalstackS3Properties(localstackS3Properties);
+
+        assertNotNull(props.getServices());
+        assertTrue(props.getServices().size() == 0);
+    }
+
+    @Test
     public final void testGetSqsServices() {
         LocalstackSqsProperties localstackSqsProperties = new LocalstackSqsProperties();
         localstackSqsProperties.setEnabled(true);
