@@ -23,6 +23,14 @@ public class LocalstackS3Properties implements LocalstackServiceProperties {
     @Value("false")
     boolean enabled;
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -31,13 +39,5 @@ public class LocalstackS3Properties implements LocalstackServiceProperties {
     @Override
     public int getPort() {
         return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 }

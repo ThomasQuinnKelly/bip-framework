@@ -14,13 +14,13 @@ import javax.validation.constraints.Min;
 @ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackSnsProperties implements LocalstackServiceProperties {
 
+    @Value("false")
+    boolean enabled;
+
     @Min(1025)
     @Max(65536)
     @Value("4575")
     int port;
-
-    @Value("false")
-    boolean enabled;
 
     @Override
     public boolean isEnabled() {

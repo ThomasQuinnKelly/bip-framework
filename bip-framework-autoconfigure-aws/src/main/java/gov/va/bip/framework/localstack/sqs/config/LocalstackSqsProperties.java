@@ -23,17 +23,17 @@ public class LocalstackSqsProperties implements LocalstackServiceProperties {
     boolean enabled;
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
     public int getPort() {
         return port;
     }
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {

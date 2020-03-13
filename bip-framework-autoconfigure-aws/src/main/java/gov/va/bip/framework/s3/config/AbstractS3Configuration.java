@@ -27,15 +27,15 @@ public abstract class AbstractS3Configuration extends AbstractAwsConfiguration {
 
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				isEmbeddedAws = true;
+				setEmbeddedAws(true);
 			}
 
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
-				isLocalInt = true;
+				setLocalInt(true);
 			}
 		}
 
-		if (isEmbeddedAws || isLocalInt) {
+		if (isEmbeddedAws() || isLocalInt()) {
 			return AmazonS3ClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
@@ -49,10 +49,10 @@ public abstract class AbstractS3Configuration extends AbstractAwsConfiguration {
 
 		Regions region = Regions.fromName(s3Properties.getRegion());
 
-		if (localstackEnabled && isEmbeddedAws) {
+		if (isLocalstackEnabled() && isEmbeddedAws()) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointS3(), region.getName());
-		} else if (isLocalInt) {
+		} else if (isLocalInt()) {
 			if (s3Properties.getBaseUrl().contains("localhost")) {
 				s3Properties.setEndpoint(s3Properties.getEndpoint().replace("localhost", "localstack"));
 			}

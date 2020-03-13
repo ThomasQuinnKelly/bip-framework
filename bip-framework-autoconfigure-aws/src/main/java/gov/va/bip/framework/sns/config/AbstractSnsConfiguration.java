@@ -22,11 +22,11 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				isEmbeddedAws = true;
+				setEmbeddedAws(true);
 			}
 
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
-				isLocalInt = true;
+				setLocalInt(true);
 			}
 		}
 
@@ -35,7 +35,7 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(snsProperties.getAccessKey(), snsProperties.getSecretKey());
 
-		if (isEmbeddedAws || isLocalInt) {
+		if (isEmbeddedAws() || isLocalInt()) {
 			return AmazonSNSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
@@ -49,10 +49,10 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 
 		Regions region = Regions.fromName(snsProperties.getRegion());
 
-		if (localstackEnabled && isEmbeddedAws) {
+		if (isLocalstackEnabled() && isEmbeddedAws()) {
 			endpointConfiguration =
 					new EndpointConfiguration(Localstack.INSTANCE.getEndpointSNS(), region.getName());
-		} else if (isLocalInt) {
+		} else if (isLocalInt()) {
 			if (snsProperties.getBaseUrl().contains("localhost")) {
 				snsProperties.setEndpoint(snsProperties.getEndpoint().replace("localhost", "localstack"));
 			}

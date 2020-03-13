@@ -66,7 +66,7 @@ public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration 
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(sqsProperties.getAccessKey(), sqsProperties.getSecretKey());
 
-		if (isEmbeddedAws || isLocalInt) {
+		if (isEmbeddedAws() || isLocalInt()) {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
@@ -77,11 +77,11 @@ public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration 
 	private void setProfiles() {
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				isEmbeddedAws = true;
+				setEmbeddedAws(true);
 			}
 
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
-				isLocalInt = true;
+				setLocalInt(true);
 			}
 		}
 	}
@@ -91,10 +91,10 @@ public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration 
 
 		Regions region = Regions.fromName(sqsProperties.getRegion());
 
-		if (localstackEnabled && isEmbeddedAws) {
+		if (isLocalstackEnabled() && isEmbeddedAws()) {
 			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
 
-		} else if (isLocalInt) {
+		} else if (isLocalInt()) {
 			if (sqsProperties.getBaseUrl().contains("localhost")) {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
