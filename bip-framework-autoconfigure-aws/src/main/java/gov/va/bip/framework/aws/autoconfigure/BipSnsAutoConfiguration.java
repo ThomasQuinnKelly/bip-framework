@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @EnableConfigurationProperties(SnsProperties.class)
-@ConditionalOnProperty(name = "bip.framework.localstack.services.sns.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "bip.framework.aws.sns.enabled", havingValue = "true")
 @Import({ AbstractSnsConfiguration.class, StandardSnsConfiguration.class })
 public class BipSnsAutoConfiguration {
 
