@@ -968,6 +968,8 @@
 									<aggregate>true</aggregate>
 									<debug>true</debug>
 									<verbose>true</verbose>
+									<!-- exclude LocalstackAutoConfiguration.java as it only handles local test scenarios -->
+									<excludes>**/LocalstackAutoConfiguration.java</excludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -981,6 +983,8 @@
 									<aggregate>true</aggregate>
 									<debug>true</debug>
 									<verbose>true</verbose>
+									<!-- exclude LocalstackAutoConfiguration.java as it only handles local test scenarios -->
+									<excludes>**/LocalstackAutoConfiguration.java</excludes>
 								</configuration>
 							</execution>
 							<execution>
