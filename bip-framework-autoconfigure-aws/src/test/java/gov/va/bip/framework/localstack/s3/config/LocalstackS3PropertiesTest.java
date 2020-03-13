@@ -8,7 +8,7 @@ import static junit.framework.TestCase.assertEquals;
 
 public class LocalstackS3PropertiesTest {
 
-    //Test SNS Property enabled
+    //Test S3 Property enabled
     @Test
     public void testBoolean() {
         boolean enabled = true;
@@ -18,7 +18,7 @@ public class LocalstackS3PropertiesTest {
         assertEquals(Optional.of(instance.isEnabled()), Optional.ofNullable(enabled));
     }
 
-    //Test SNS Property port
+    //Test S3 Property port
     @Test
     public void testPort() {
         int port = 4572;

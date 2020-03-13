@@ -14,7 +14,6 @@ import javax.validation.constraints.Min;
 @ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackSnsProperties implements LocalstackServiceProperties {
 
-    // Value annotations here are default values unless overridden by values under localstack.services.sns
     @Min(1025)
     @Max(65536)
     @Value("4575")

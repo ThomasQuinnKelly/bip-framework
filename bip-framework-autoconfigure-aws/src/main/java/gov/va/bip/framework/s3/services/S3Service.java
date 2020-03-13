@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 
 import java.io.File;
 
-public interface S3Service{
+public interface S3Service {
 
     PutObjectResult uploadFile(String bucketName, String fileName, File file);
 

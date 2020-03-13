@@ -56,8 +56,6 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void test_uploadFile_1_Exception1() {
-		//Setup
-
 		//Test
 		try {
 			instance.uploadFile(null, "b", new File("c"));
@@ -70,8 +68,6 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void test_uploadFile_1_Exception2() {
-		//Setup
-
 		//Test
 		try {
 			instance.uploadFile("a", null, new File("c"));
@@ -84,8 +80,6 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void test_uploadFile_1_Exception3() {
-		//Setup
-
 		//Test
 		try {
 			instance.uploadFile("a", "b", null);
@@ -169,8 +163,6 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void test_deleteObject_1_Exception1() {
-		//Setup
-
 		//Test
 		try {
 			instance.deleteObject(null, "b");
@@ -183,8 +175,6 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void test_deleteObject_1_Exception2() {
-		//Setup
-
 		//Test
 		try {
 			instance.deleteObject("a", null);

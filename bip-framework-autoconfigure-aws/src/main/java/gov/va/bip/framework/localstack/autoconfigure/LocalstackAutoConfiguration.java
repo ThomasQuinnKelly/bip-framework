@@ -264,7 +264,7 @@ public class LocalstackAutoConfiguration {
 				try {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
 
-					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS) && profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
+					if (profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
 						dlqUrl = dlqUrl.replace(LOCALHOST, LOCALSTACK);
 					}
 					break;

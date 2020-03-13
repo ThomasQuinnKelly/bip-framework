@@ -14,30 +14,29 @@ import javax.validation.constraints.Min;
 @ConditionalOnProperty(value = "bip.framework.localstack.enabled")
 public class LocalstackSqsProperties implements LocalstackServiceProperties {
 
-    // Value annotations here are default values unless overridden by values under localstack.services.sqs
-    @Value("false")
-    boolean enabled;
-
     @Min(1025)
     @Max(65536)
     @Value("4576")
     int port;
 
+    @Value("false")
+    boolean enabled;
+
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return enabled;
     }
 
     @Override
     public int getPort() {
-        return this.port;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        return port;
     }
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
