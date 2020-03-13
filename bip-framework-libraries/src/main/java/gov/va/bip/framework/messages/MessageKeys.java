@@ -164,7 +164,6 @@ public enum MessageKeys implements MessageKey {
 	BIP_SQS_MESSAGE_CREATE_JMS_FAILED("bip.framework.sqs.services.create.jms.error","JMS had an issue."),
 	/** SQS JMS message generic send error message */
 	BIP_SQS_MESSAGE_CREATE_JMS_EXCEPTION_MESSAGE("bip.framework.sqs.services.create.jms.message.error","JMS had an issue."),
-
 	/** SNS create topic error message */
 	BIP_SNS_TOPIC_CREATE_EXCEPTION_MESSAGE("bip.framework.sns.services.create.topic.error","Could not create a SNS topic."),
 	/** SNS retrieve topic arn error message */

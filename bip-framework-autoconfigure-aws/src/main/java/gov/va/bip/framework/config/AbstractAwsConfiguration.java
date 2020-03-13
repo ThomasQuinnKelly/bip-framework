@@ -36,5 +36,4 @@ public abstract class AbstractAwsConfiguration {
 		return new AWSCredentialsProviderChain(localAwsCredentialsProvider, ec2ContainerCredentialsProvider);
 	}
 
-
 }

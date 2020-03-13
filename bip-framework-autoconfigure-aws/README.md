@@ -13,21 +13,16 @@ Teams would have to include the dependecy for this module in the application pro
     <artifactId>bip-framework-autoconfigure-aws</artifactId>
     <version>${bip-framework.version}</version>
 </dependency>
-<!-- Neccesary for some JMS opperations if implementing SQS  -->
-<dependency>
-    <groupId>javax.jms</groupId>
-    <artifactId>javax.jms-api</artifactId>
-    <version>2.0.1</version>
-</dependency>
-<!-- Helpful for overcoming fortify issues with messaging -->
-<dependency>
-    <groupId>com.mikesamuel</groupId>
-    <artifactId>json-sanitizer</artifactId>
-    <version>1.2.0</version>
-</dependency>
 ```
 
-Turn on the use Localstack and their selection of services to implement.
+Add the embedded aws profile to the default profile. The default profile is used for local running, local-int is used for the local containerized scenario. Each upper environment should use different profiles.
+```
+---
+spring.profiles: default
+spring.profiles.include: remote_client_sims, embedded-redis, embedded-aws
+```
+
+Enable Localstack and enable each service the project is intending to implement.
 ```
 ---
 ### Localstack
@@ -77,7 +72,7 @@ bip.framework:
 
     sns:
       enabled: true
-      region: us-east-1
+      #region: us-east-1
       endpoint: http://localhost:4575/topic/test_my_topic
       topicarn: arn:aws:sns:us-east-1:000000000000:test_my_topic
       name: test_my_topic

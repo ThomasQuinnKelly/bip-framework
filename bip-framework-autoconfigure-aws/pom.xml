@@ -15,9 +15,9 @@
 
 	<properties>
 		<sonar.coverage.exclusions>
-			gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration,
-			gov.va.bip.framework.sns.config.AbstractSnsConfiguration,
-			gov.va.bip.framework.s3.config.AbstractS3Configuration;
+			**/LocalstackAutoConfiguration.java,
+			**/AbstractSnsConfiguration.java,
+			**/AbstractS3Configuration.java;
 		</sonar.coverage.exclusions>
 	</properties>
 	

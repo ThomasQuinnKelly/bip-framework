@@ -1,9 +1,5 @@
 package gov.va.bip.framework.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +11,8 @@ import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VAServiceWss4jSecurityInterceptorTest {
@@ -49,19 +46,9 @@ public class VAServiceWss4jSecurityInterceptorTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		interceptor = new TestVAServiceSecurityInterceptorTest();
-
-		when(mockSoapMessage.getDocument()).thenReturn(mockDocument);
-		when(mockDocument.getDocumentElement()).thenReturn(mockDocumentElement);
-		when(mockDocumentElement.getOwnerDocument()).thenReturn(mockDocument);
-		when(mockDocumentElement.getNamespaceURI()).thenReturn("");
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_SERVICE_HEADERS)).thenReturn(mockHeaderElement);
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.CLIENT_MACHINE)).thenReturn(mockClientMachineHeaderElement);
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.STN_ID)).thenReturn(mockStationIdHeaderElement);
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_APPLICATION_NAME)).thenReturn(mockAppNameHeaderElement);
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_UID)).thenReturn(mockExternalUIDHeaderElement);
-		when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_KEY)).thenReturn(mockExternalKeyHeaderElement);
-		//when(WSSecurityUtil.findWsseSecurityHeaderBlock(mockDocument,mockDocumentElement,true)).thenReturn(mockSecHeaderElement);
+        interceptor = new TestVAServiceSecurityInterceptorTest();
+        
+        //when(WSSecurityUtil.findWsseSecurityHeaderBlock(mockDocument,mockDocumentElement,true)).thenReturn(mockSecHeaderElement);
 	}
 
 	@After
@@ -71,11 +58,51 @@ public class VAServiceWss4jSecurityInterceptorTest {
 	@Test
 	public void testSecureMessageSoapMessageMessageContext() {
 		try {
-			interceptor.secureMessage(mockSoapMessage, mockMessageContext);
+            when(mockSoapMessage.getDocument()).thenReturn(mockDocument);
+            when(mockDocument.getDocumentElement()).thenReturn(mockDocumentElement);
+            when(mockDocumentElement.getOwnerDocument()).thenReturn(mockDocument);
+            when(mockDocumentElement.getNamespaceURI()).thenReturn("");
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_SERVICE_HEADERS)).thenReturn(mockHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.CLIENT_MACHINE)).thenReturn(mockClientMachineHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.STN_ID)).thenReturn(mockStationIdHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_APPLICATION_NAME)).thenReturn(mockAppNameHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_UID)).thenReturn(mockExternalUIDHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_KEY)).thenReturn(mockExternalKeyHeaderElement);
+            
+            
+            interceptor.secureMessage(mockSoapMessage, mockMessageContext);
 		}catch(Throwable e) {
+		    //This is a bogus assertion. We should fix the underlying NPE happening in the WSSecurityUtil.findWsseSecurityHeaderBlock call
 			assertNotNull(e);
 		}
 	}
+    
+    
+    @Test
+    public void testNoExternalHeaders() {
+        try {
+            interceptor.setIncludeExternalVAHeaders(false);
+            
+            when(mockSoapMessage.getDocument()).thenReturn(mockDocument);
+            when(mockDocument.getDocumentElement()).thenReturn(mockDocumentElement);
+            when(mockDocumentElement.getOwnerDocument()).thenReturn(mockDocument);
+            when(mockDocumentElement.getNamespaceURI()).thenReturn("");
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_SERVICE_HEADERS)).thenReturn(mockHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.CLIENT_MACHINE)).thenReturn(mockClientMachineHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.STN_ID)).thenReturn(mockStationIdHeaderElement);
+            when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.VA_APPLICATION_NAME)).thenReturn(mockAppNameHeaderElement);
+            lenient().when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_UID)).thenThrow(new IllegalStateException());
+            lenient().when(mockDocument.createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_KEY)).thenThrow(new IllegalStateException());
+    
+            interceptor.secureMessage(mockSoapMessage, mockMessageContext);
+        
+            verify(mockDocument, times(0)).createElementNS(TestVAServiceSecurityInterceptorTest.VA_NS, TestVAServiceSecurityInterceptorTest.VA_PREFIX + TestVAServiceSecurityInterceptorTest.EXTERNAL_UID);
+        }catch(Throwable e) {
+            assertFalse(e instanceof IllegalStateException);
+            assertNotNull(e);
+        }
+ 
+    }
 
 	@Test
 	public void testGetClientMachine() {

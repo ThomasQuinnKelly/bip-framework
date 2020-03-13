@@ -1,15 +1,11 @@
 package gov.va.bip.framework.client.ws;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.security.KeyStore;
-
-import javax.xml.soap.SOAPException;
-
+import gov.va.bip.framework.exception.BipPartnerRuntimeException;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
+import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
+import gov.va.bip.framework.security.jks.KeystoreUtils;
+import gov.va.bip.framework.security.jks.KeystoreUtilsTest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -32,12 +28,12 @@ import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
-import gov.va.bip.framework.exception.BipPartnerRuntimeException;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
-import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
-import gov.va.bip.framework.security.jks.KeystoreUtils;
-import gov.va.bip.framework.security.jks.KeystoreUtilsTest;
+import javax.xml.soap.SOAPException;
+import java.io.IOException;
+import java.security.KeyStore;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseWsClientConfigTest {
@@ -206,9 +202,20 @@ public class BaseWsClientConfigTest {
 	@Test
 	public void testGetVAServiceWss4jSecurityInterceptor() {
 		BaseWsClientConfig test = new BaseWsClientConfig();
-		assertTrue(test.getVAServiceWss4jSecurityInterceptor("testuser", "test123", "EVSS",
-				"STN_ID") instanceof VAServiceWss4jSecurityInterceptor);
+        VAServiceWss4jSecurityInterceptor vaServiceWss4jSecurityInterceptor = test.getVAServiceWss4jSecurityInterceptor("testuser", "test123", "EVSS",
+                "STN_ID");
+        assertTrue(vaServiceWss4jSecurityInterceptor instanceof VAServiceWss4jSecurityInterceptor);
+        assertTrue(vaServiceWss4jSecurityInterceptor.isIncludeExternalVAHeaders());
 	}
+    
+    @Test
+    public void testGetVAServiceWss4jSecurityInterceptor_dontIncludeHeaders() {
+        BaseWsClientConfig test = new BaseWsClientConfig();
+        VAServiceWss4jSecurityInterceptor vaServiceWss4jSecurityInterceptor = test.getVAServiceWss4jSecurityInterceptor("testuser", "test123", "EVSS",
+                "STN_ID", false);
+        assertTrue(vaServiceWss4jSecurityInterceptor instanceof VAServiceWss4jSecurityInterceptor);
+        assertFalse(vaServiceWss4jSecurityInterceptor.isIncludeExternalVAHeaders());
+    }
 
 	@Test(expected = BipRuntimeException.class)
 	public void testHandleExceptions() {

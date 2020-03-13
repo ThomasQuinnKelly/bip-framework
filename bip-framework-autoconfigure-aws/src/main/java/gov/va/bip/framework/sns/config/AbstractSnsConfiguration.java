@@ -74,4 +74,5 @@ public abstract class AbstractSnsConfiguration extends AbstractAwsConfiguration 
 		return endpointConfiguration;
 	}
 
+
 }
