@@ -215,7 +215,7 @@ public class SqsPropertiesTest {
         Integer waittime = 5;
         SqsProperties instance = new SqsProperties();
         instance.setDlqwaittime(waittime);
-        assertNotEquals(waittime, instance.getDlqwaittime());
+        assertEquals(waittime, instance.getDlqwaittime());
     }
 
     /**
@@ -237,7 +237,7 @@ public class SqsPropertiesTest {
         Integer visibility = 5;
         SqsProperties instance = new SqsProperties();
         instance.setDlqvisibilitytimeout(visibility);
-        assertNotEquals(visibility, instance.getDlqvisibilitytimeout());
+        assertEquals(visibility, instance.getDlqvisibilitytimeout());
     }
     /**
      * Test of logger method, of class SqsProperties.

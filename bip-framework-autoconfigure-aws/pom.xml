@@ -15,7 +15,7 @@
 
 	<properties>
 		<sonar.coverage.exclusions>
-			gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration,
+			**/LocalstackAutoConfiguration.java
 		</sonar.coverage.exclusions>
 	</properties>
 	

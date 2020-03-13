@@ -63,7 +63,6 @@ public class LocalstackAutoConfiguration {
 	private static final String WAIT_FOR_LOCALSTACK_MESSAGE = ", waiting for AWS localstack to finish initializing.";
 	private static final String LOCALHOST = "localhost";
 	private static final String LOCALSTACK = "localstack";
-	
 
 	@Autowired
 	private LocalstackProperties localstackProperties;
@@ -96,18 +95,6 @@ public class LocalstackAutoConfiguration {
 	//Initialize Queue Variables
 	String dlqUrl = null;
 
-	public boolean profileCheck(String profile) {
-		boolean profileMatches = false;
-
-		for (final String profileName : environment.getActiveProfiles()) {
-			if (profileName.equals(profile)) {
-				profileMatches = true;
-			}
-		}
-		return profileMatches;
-
-	}
-
 	/**
 	 * Start embedded AWS servers on context load
 	 *
@@ -132,6 +119,55 @@ public class LocalstackAutoConfiguration {
 		createLocalstackServices();
 	}
 
+	/**
+	 * Stop embedded AWS servers on context destroy
+	 */
+	@PreDestroy
+	public void stopAwsLocalStack() {
+		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+			// Stop the localstack
+			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
+				Localstack.INSTANCE.stop();
+			}
+
+			// Clean the localstack
+			cleanAwsLocalStack();
+		}
+	}
+
+	public boolean profileCheck(String profile) {
+		boolean profileMatches = false;
+
+		for (final String profileName : environment.getActiveProfiles()) {
+			if (profileName.equals(profile)) {
+				profileMatches = true;
+			}
+		}
+		
+		return profileMatches;
+	}
+
+	/**
+	 * Clean AWS Localstack containers
+	 */
+	private void cleanAwsLocalStack() {
+		// Get containers Ids
+		DockerExe newDockerExe = new DockerExe();
+		String listContainerIds =
+				newDockerExe.execute(Arrays.asList("ps", "--no-trunc", "-aq", "--filter", "ancestor=localstack/localstack:" + imageTag));
+
+		// Clean up docker containers
+		if (StringUtils.isNotEmpty(listContainerIds)) {
+			try {
+				String[] splitArray = listContainerIds.split("\\s+");
+				for (String containerId : splitArray) {
+					newDockerExe.execute(Arrays.asList("rm", "-f", containerId));
+				}
+			} catch (PatternSyntaxException ex) {
+				// PatternSyntaxException During Splitting
+			}
+		}
+	}
 
 	private LocalstackDockerConfiguration buildLocalstackDockerConfiguration() {
 		LocalstackDockerConfiguration.LocalstackDockerConfigurationBuilder configBuilder = LocalstackDockerConfiguration.builder();
@@ -171,63 +207,38 @@ public class LocalstackAutoConfiguration {
 		return configBuilder.build();
 	}
 
-	/**
-	 * Stop embedded AWS servers on context destroy
-	 */
-	@PreDestroy
-	public void stopAwsLocalStack() {
-		if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-			// Stop the localstack
-			if (Localstack.INSTANCE != null && Localstack.INSTANCE.getLocalStackContainer() != null) {
-				Localstack.INSTANCE.stop();
+	private void createLocalstackServices(){
+		//Creates a SQS queue
+		if (sqsProperties.getEnabled()) {
+			AmazonSQS client;
+			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				client = TestUtils.getClientSQS();
+			} else {
+				client = getLocalIntSQS();
 			}
 
-			// Clean the localstack
-			cleanAwsLocalStack();
-		}
-	}
-
-	/**
-	 * Clean AWS Localstack containers
-	 */
-	private void cleanAwsLocalStack() {
-		// Get containers Ids
-		DockerExe newDockerExe = new DockerExe();
-		String listContainerIds =
-				newDockerExe.execute(Arrays.asList("ps", "--no-trunc", "-aq", "--filter", "ancestor=localstack/localstack:" + imageTag));
-
-		// Clean up docker containers
-		if (StringUtils.isNotEmpty(listContainerIds)) {
-			try {
-				String[] splitArray = listContainerIds.split("\\s+");
-				for (String containerId : splitArray) {
-					newDockerExe.execute(Arrays.asList("rm", "-f", containerId));
-				}
-			} catch (PatternSyntaxException ex) {
-				// PatternSyntaxException During Splitting
-			}
-		}
-	}
-
-	private CreateTopicResult createTopics(AmazonSNS client) {
-		// retry the operation until the localstack responds
-		for (int i = 0; i < maxRetries; i++) {
-			try {
-				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
-			} catch (Exception e) {
-				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
-						+ RETRY_MESSAGE + (i + 1)
-						+ WAIT_FOR_LOCALSTACK_MESSAGE);
-			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// Restore interrupted state...
-				Thread.currentThread().interrupt();
-			}
+			initializeDlqQueues(client);
+			createQueues(client);
 		}
 
-		return null;
+		if (snsProperties.getEnabled()) {
+			AmazonSNS client;
+			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				client = TestUtils.getClientSNS();
+			} else {
+				client = getLocalIntSNS();
+			}
+
+			//Creates a SNS topic
+			CreateTopicResult result = createTopics(client);
+
+			if (sqsProperties.getEnabled()) {
+				//Subscribes the topic to the queue
+				if (result == null) {
+					throw new NullPointerException("result is null");
+				} else subscribeTopicToQueue(client, result);
+			}
+		}
 	}
 
 	private void initializeDlqQueues(AmazonSQS client) {
@@ -304,8 +315,8 @@ public class LocalstackAutoConfiguration {
 				break;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
-					+ RETRY_MESSAGE + (i + 1)
-					+ WAIT_FOR_LOCALSTACK_MESSAGE);
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
 			}
 			try {
 				Thread.sleep(1000);
@@ -341,6 +352,27 @@ public class LocalstackAutoConfiguration {
 		}
 
 		return getQueueAttributesResult;
+	}
+
+	private CreateTopicResult createTopics(AmazonSNS client) {
+		// retry the operation until the localstack responds
+		for (int i = 0; i < maxRetries; i++) {
+			try {
+				return client.createTopic(new CreateTopicRequest(snsProperties.getName()));
+			} catch (Exception e) {
+				LOGGER.warn("Attempt to access AWS Local Stack client.createTopic(" + snsProperties.getName()
+						+ RETRY_MESSAGE + (i + 1)
+						+ WAIT_FOR_LOCALSTACK_MESSAGE);
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
+			}
+		}
+
+		return null;
 	}
 
 	private void subscribeTopicToQueue(AmazonSNS client, CreateTopicResult result) {
@@ -383,37 +415,4 @@ public class LocalstackAutoConfiguration {
 				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
 	}
 
-	private void createLocalstackServices(){
-		//Creates a SQS queue
-		if (sqsProperties.getEnabled()) {
-			AmazonSQS client;
-			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSQS();
-			} else {
-				client = getLocalIntSQS();
-			}
-
-			initializeDlqQueues(client);
-			createQueues(client);
-		}
-
-		if (snsProperties.getEnabled()) {
-			AmazonSNS client;
-			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				client = TestUtils.getClientSNS();
-			} else {
-				client = getLocalIntSNS();
-			}
-
-			//Creates a SNS topic
-			CreateTopicResult result = createTopics(client);
-
-			if (sqsProperties.getEnabled()) {
-				//Subscribes the topic to the queue
-				if (result == null) {
-					throw new NullPointerException("result is null");
-				} else subscribeTopicToQueue(client, result);
-			}
-		}
-	}
 }
