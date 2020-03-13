@@ -834,7 +834,7 @@ public class BaseWsClientConfig {
 	 */
 	protected final VAServiceWss4jSecurityInterceptor getVAServiceWss4jSecurityInterceptor(final String username,
 			final String password, final String vaApplicationName, final String stationId) {
-        return getVAServiceWss4jSecurityInterceptor(username, vaApplicationName, password, stationId, true);
+        return getVAServiceWss4jSecurityInterceptor(username, password, vaApplicationName, stationId, true);
     }
     
     /**
