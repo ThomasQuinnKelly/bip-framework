@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -38,29 +37,18 @@ public class S3Properties extends AwsProperties {
 
 	public static class Bucket {
 
-		private String endpoint;
+		private String name;
 
 		public Bucket() {
 			// Empty constructor, these get instantiated by config parameters.
 		}
 
-		public String getEndpoint() {
-			return endpoint;
-		}
-
-		public void setEndpoint(String endpoint) {
-			this.endpoint = endpoint;
-		}
-
 		public String getName() {
-			return parseName(endpoint);
+			return name;
 		}
 
-		private String parseName(String endpoint) {
-			URI endpointUri = URI.create(endpoint);
-			String path = endpointUri.getPath();
-			int pos = path.lastIndexOf('/');
-			return path.substring(pos + 1);
+		public void setName(String name) {
+			this.name = name;
 		}
 	}
 }
