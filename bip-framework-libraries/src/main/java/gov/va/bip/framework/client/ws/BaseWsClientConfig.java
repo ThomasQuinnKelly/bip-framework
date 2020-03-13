@@ -834,16 +834,32 @@ public class BaseWsClientConfig {
 	 */
 	protected final VAServiceWss4jSecurityInterceptor getVAServiceWss4jSecurityInterceptor(final String username,
 			final String password, final String vaApplicationName, final String stationId) {
-		final VAServiceWss4jSecurityInterceptor interceptor = new VAServiceWss4jSecurityInterceptor();
-		interceptor.setSecurementActions(WSConstants.USERNAME_TOKEN_LN);
-		interceptor.setSecurementUsername(username);
-		interceptor.setSecurementPassword(password);
-		interceptor.setSecurementPasswordType(WSConstants.PW_TEXT);
-		interceptor.setVaApplicationName(vaApplicationName);
-		interceptor.setSecurementMustUnderstand(false);
-		if (!StringUtils.isEmpty(stationId)) {
-			interceptor.setStationId(stationId);
-		}
-		return interceptor;
-	}
+        return getVAServiceWss4jSecurityInterceptor(username, vaApplicationName, password, stationId, true);
+    }
+    
+    /**
+     * Gets the security interceptor.
+     *
+     * @param username the username
+     * @param pass-word
+     * @param vaApplicationName the va application name
+     * @param stationId the stationd id
+     * @param includeExternalVAHeaders whether to include the VA External Headers in the soap header
+     * @return the security interceptor
+     */
+    protected final VAServiceWss4jSecurityInterceptor getVAServiceWss4jSecurityInterceptor(String username,
+            String password, String vaApplicationName, String stationId, boolean includeExternalVAHeaders) {
+        final VAServiceWss4jSecurityInterceptor interceptor = new VAServiceWss4jSecurityInterceptor();
+        interceptor.setSecurementActions(WSConstants.USERNAME_TOKEN_LN);
+        interceptor.setSecurementUsername(username);
+        interceptor.setSecurementPassword(password);
+        interceptor.setSecurementPasswordType(WSConstants.PW_TEXT);
+        interceptor.setVaApplicationName(vaApplicationName);
+        interceptor.setSecurementMustUnderstand(false);
+        interceptor.setIncludeExternalVAHeaders(includeExternalVAHeaders);
+        if (!StringUtils.isEmpty(stationId)) {
+            interceptor.setStationId(stationId);
+        }
+        return interceptor;
+    }
 }
