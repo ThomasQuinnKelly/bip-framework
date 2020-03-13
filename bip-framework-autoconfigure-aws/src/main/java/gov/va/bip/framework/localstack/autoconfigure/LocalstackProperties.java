@@ -1,5 +1,6 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import gov.va.bip.framework.localstack.s3.config.LocalstackS3Properties;
 import gov.va.bip.framework.localstack.sns.config.LocalstackSnsProperties;
 import gov.va.bip.framework.localstack.sqs.config.LocalstackSqsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,8 @@ import java.util.List;
 @Component
 @EnableConfigurationProperties({
         LocalstackSqsProperties.class,
-        LocalstackSnsProperties.class
+        LocalstackSnsProperties.class,
+        LocalstackS3Properties.class
 })
 @ConfigurationProperties(prefix = "bip.framework.localstack.services")
 @ConditionalOnProperty(value = "bip.framework.localstack.enabled")
@@ -25,6 +27,9 @@ public class LocalstackProperties {
 
     @Autowired
     private LocalstackSqsProperties localstackSqsProperties;
+
+    @Autowired
+    private LocalstackS3Properties localstackS3Properties;
 
     /**
      * Create enabled service definitions used on Localstack.
@@ -46,6 +51,10 @@ public class LocalstackProperties {
 
             if (localstackSqsProperties.isEnabled()) {
                 this.services.add(new Services("sqs", localstackSqsProperties.getPort()));
+            }
+
+            if (localstackS3Properties.isEnabled()) {
+                this.services.add(new Services("s3", localstackS3Properties.getPort()));
             }
 
             // ... more services to come
@@ -108,5 +117,13 @@ public class LocalstackProperties {
 
     public void setLocalstackSqsProperties(LocalstackSqsProperties localstackSqsProperties) {
         this.localstackSqsProperties = localstackSqsProperties;
+    }
+
+    public LocalstackS3Properties getLocalstackS3Properties() {
+        return localstackS3Properties;
+    }
+
+    public void setLocalstackS3Properties(LocalstackS3Properties localstackS3Properties) {
+        this.localstackS3Properties = localstackS3Properties;
     }
 }

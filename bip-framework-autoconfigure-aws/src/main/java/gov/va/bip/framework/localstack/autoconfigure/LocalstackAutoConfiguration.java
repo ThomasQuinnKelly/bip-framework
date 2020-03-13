@@ -8,8 +8,10 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
+import com.amazonaws.services.servicequotas.model.IllegalArgumentException;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
@@ -255,10 +257,10 @@ public class LocalstackAutoConfiguration {
 				try {
 					dlqUrl = client.createQueue(new CreateQueueRequest(sqsProperties.getDLQQueueName()).withAttributes(dlqAttributeMap)).getQueueUrl();
 
-					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS) || profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
+					if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS) && profileCheck(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT))  {
 						dlqUrl = dlqUrl.replace(LOCALHOST, LOCALSTACK);
-						break;
 					}
+					break;
 				} catch (Exception e) {
 					LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
 							+ RETRY_MESSAGE + (i + 1)
@@ -336,6 +338,7 @@ public class LocalstackAutoConfiguration {
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to access DLQ Attributes through AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
 						+ WAIT_FOR_LOCALSTACK_MESSAGE);
+				LOGGER.warn(e.getMessage());
 			}
 			try {
 				Thread.sleep(1000);
@@ -354,14 +357,18 @@ public class LocalstackAutoConfiguration {
 		// retry the operation until the localstack responds
 		for (int i = 0; i < maxRetries; i++) {
 			try {
-				for(S3Properties.Bucket bucket : s3Properties.getBuckets()) {
+				for (S3Properties.Bucket bucket : s3Properties.getBuckets()) {
 					CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucket.getName());
 					Bucket newBucket = client.createBucket(createBucketRequest);
 				}
 				break;
+			} catch (IllegalArgumentException iae) {
+				LOGGER.error("Failed to instantiate S3 bucket.", iae);
+				throw iae;
 			} catch (Exception e) {
 				LOGGER.warn("Attempt to create S3 buckets through AWS Local Stack client.createBucket(..) failed on try # " + (i + 1)
 						+ WAIT_FOR_LOCALSTACK_MESSAGE);
+				LOGGER.warn(e.getMessage());
 			}
 			try {
 				Thread.sleep(1000);
@@ -413,6 +420,16 @@ public class LocalstackAutoConfiguration {
 				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(snsProperties.getAccessKey(), snsProperties.getSecretKey()))).build();
 	}
 
+	private AmazonS3 getLocalIntS3() {
+		if (s3Properties.getS3BaseUrl().contains(LOCALHOST)) {
+			s3Properties.setEndpoint(s3Properties.getEndpoint().replace(LOCALHOST, LOCALSTACK));
+		}
+
+		return AmazonS3ClientBuilder.standard().
+				withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(s3Properties.getS3BaseUrl(), s3Properties.getRegion())).
+				withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(s3Properties.getAccessKey(), s3Properties.getSecretKey()))).build();
+	}
+
 	private void createLocalstackServices(){
 		//Creates a SQS queue
 		if (sqsProperties.getEnabled()) {
@@ -449,7 +466,11 @@ public class LocalstackAutoConfiguration {
 		if (s3Properties.getEnabled()) {
 			AmazonS3 s3Client;
 
-			s3Client = TestUtils.getClientS3();
+			if (profileCheck(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				s3Client = TestUtils.getClientS3();
+			} else {
+				s3Client = getLocalIntS3();
+			}
 
 			initializeS3Client(s3Client);
 		}
