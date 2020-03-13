@@ -9,7 +9,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.servicequotas.model.IllegalArgumentException;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
@@ -365,8 +364,7 @@ public class LocalstackAutoConfiguration {
 		for (int i = 0; i < maxRetries; i++) {
 			try {
 				for (S3Properties.Bucket bucket : s3Properties.getBuckets()) {
-					CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucket.getName());
-					client.createBucket(createBucketRequest);
+					client.createBucket(bucket.getName());
 				}
 				break;
 			} catch (IllegalArgumentException iae) {

@@ -142,8 +142,7 @@
 									<debug>true</debug>
 									<verbose>true</verbose>
 									<!-- exclude inttest and perftest, as they don't go to prod -->
-									<!-- exclude LocalstackAutoConfiguration.java as it only affects local test environments -->
-									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*,**/LocalstackAutoConfiguration</excludes>
+									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*</excludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -158,8 +157,7 @@
 									<debug>true</debug>
 									<verbose>true</verbose>
 									<!-- exclude inttest and perftest, as they don't go to prod -->
-									<!-- exclude LocalstackAutoConfiguration.java as it only affects local test environments -->
-									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*,**/LocalstackAutoConfiguration</excludes>
+									<excludes>**/bip-*-inttest/*,**/bip-*-perftest/*</excludes>
 								</configuration>
 							</execution>
 						</executions>
