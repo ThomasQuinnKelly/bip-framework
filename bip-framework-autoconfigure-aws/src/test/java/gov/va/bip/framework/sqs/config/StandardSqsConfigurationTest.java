@@ -1,7 +1,6 @@
 package gov.va.bip.framework.sqs.config;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

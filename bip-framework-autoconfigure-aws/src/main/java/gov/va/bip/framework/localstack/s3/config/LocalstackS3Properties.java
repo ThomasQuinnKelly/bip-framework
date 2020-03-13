@@ -1,4 +1,4 @@
-package gov.va.bip.framework.localstack.sqs.config;
+package gov.va.bip.framework.localstack.s3.config;
 
 import gov.va.bip.framework.localstack.autoconfigure.LocalstackServiceProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,25 +10,25 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Component
-@ConfigurationProperties(prefix = "bip.framework.localstack.services.sqs")
+@ConfigurationProperties(prefix = "bip.framework.localstack.services.s3")
 @ConditionalOnProperty(value = "bip.framework.localstack.enabled")
-public class LocalstackSqsProperties implements LocalstackServiceProperties {
+public class LocalstackS3Properties implements LocalstackServiceProperties {
 
+    // Value annotations here are default values unless overridden by values under localstack.services.s3
     @Min(1025)
     @Max(65536)
-    @Value("4576")
+    @Value("4572")
     int port;
 
     @Value("false")
     boolean enabled;
 
-    @Override
-    public int getPort() {
-        return port;
-    }
-
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -36,7 +36,8 @@ public class LocalstackSqsProperties implements LocalstackServiceProperties {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    @Override
+    public int getPort() {
+        return port;
     }
 }

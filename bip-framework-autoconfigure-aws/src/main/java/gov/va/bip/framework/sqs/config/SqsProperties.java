@@ -21,15 +21,6 @@ public class SqsProperties extends SqsQueueProperties {
 	SqsQueueProperties sqsQueueProperties;
 	private Logger logger = LoggerFactory.getLogger(SqsProperties.class);
 
-	@Value("false")
-	private Boolean enabled;
-
-	@Value("us-east-1")
-	private String region;
-
-	//Queue Endpoint
-	private String endpoint;
-
 	//ContentBasedDeduplication
 	@Value("false")
 	private Boolean contentbaseddeduplication;
@@ -103,30 +94,6 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public void setLogger(Logger logger) {
 		this.logger = logger;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public void setRegion(String region) {
-		this.region = region;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
 	}
 
 	public Boolean getContentbaseddeduplication() {
@@ -207,6 +174,7 @@ public class SqsProperties extends SqsQueueProperties {
 		if (dlqwaittime == null) {
 			return getWaittime();
 		}
+
 		return dlqwaittime;
 	}
 
@@ -218,6 +186,7 @@ public class SqsProperties extends SqsQueueProperties {
 		if (dlqvisibilitytimeout == null) {
 			return getVisibilitytimeout();
 		}
+
 		return dlqvisibilitytimeout;
 	}
 
@@ -247,36 +216,11 @@ public class SqsProperties extends SqsQueueProperties {
 
 	public String getQueueName() {
 
-		return parseQueueName(endpoint);
-	}
-
-	public String getAccessKey() {
-		return accessKey;
-	}
-
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public String getSecretKey() {
-		return secretKey;
-	}
-
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
+		return parseQueueName(getEndpoint());
 	}
 
 	public String getDLQQueueName() {
 		return parseQueueName(dlqendpoint);
-	}
-
-	public String getSqsBaseUrl() {
-		return parseBaseUrl(endpoint);
-	}
-
-	private String parseBaseUrl(String endpoint) {
-		URI endpointUri = URI.create(endpoint);
-		return "http://"+endpointUri.getHost()+":"+endpointUri.getPort();
 	}
 
 	private String parseQueueName(String endpoint) {

@@ -1,21 +1,17 @@
 package gov.va.bip.framework.client.ws;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.net.ssl.SSLContext;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPException;
-
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptor;
+import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptorConfig;
+import gov.va.bip.framework.exception.BipPartnerRuntimeException;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
+import gov.va.bip.framework.validation.Defense;
+import io.jsonwebtoken.lang.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.http.HttpRequestInterceptor;
@@ -40,18 +36,16 @@ import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 
-import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptor;
-import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptorConfig;
-import gov.va.bip.framework.exception.BipPartnerRuntimeException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
-import gov.va.bip.framework.validation.Defense;
-import io.jsonwebtoken.lang.Collections;
+import javax.net.ssl.SSLContext;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Base WebService Client configuration, consolidates core/common web service configuration operations used across the applications.

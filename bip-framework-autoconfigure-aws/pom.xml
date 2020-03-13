@@ -15,7 +15,9 @@
 
 	<properties>
 		<sonar.coverage.exclusions>
-			**/LocalstackAutoConfiguration.java
+			**/LocalstackAutoConfiguration.java,
+			**/AbstractSnsConfiguration.java,
+			**/AbstractS3Configuration.java;
 		</sonar.coverage.exclusions>
 	</properties>
 	

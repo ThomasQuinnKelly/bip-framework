@@ -1,13 +1,11 @@
 package gov.va.bip.framework.client.ws;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.security.KeyStore;
-
-import javax.xml.soap.SOAPException;
-
+import gov.va.bip.framework.exception.BipPartnerRuntimeException;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
+import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
+import gov.va.bip.framework.security.jks.KeystoreUtils;
+import gov.va.bip.framework.security.jks.KeystoreUtilsTest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -30,12 +28,12 @@ import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
-import gov.va.bip.framework.exception.BipPartnerRuntimeException;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
-import gov.va.bip.framework.security.VAServiceWss4jSecurityInterceptor;
-import gov.va.bip.framework.security.jks.KeystoreUtils;
-import gov.va.bip.framework.security.jks.KeystoreUtilsTest;
+import javax.xml.soap.SOAPException;
+import java.io.IOException;
+import java.security.KeyStore;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseWsClientConfigTest {

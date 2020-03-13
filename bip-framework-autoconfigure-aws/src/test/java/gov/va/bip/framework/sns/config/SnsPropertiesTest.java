@@ -119,15 +119,4 @@ public class SnsPropertiesTest {
 
         assertEquals(Optional.of(instance.getSecretKey()) , Optional.ofNullable(secretKey));
     }
-
-    //Test SNS Base Url parsing
-    @Test
-    public void testSnsBaseUrl() {
-        String endpoint = "http://localhost:4575/topic/test_my_topic";
-        SnsProperties instance = new SnsProperties();
-        instance.setEndpoint(endpoint);
-
-        assertEquals("http://localhost:4575", instance.getSnsBaseUrl());
-    }
-
 }
