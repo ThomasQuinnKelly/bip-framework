@@ -46,8 +46,8 @@ public class S3PropertiesTest {
     //Test S3 Property type
     @Test
     public void testBucketEndpoint() {
-        String endpoint = "url:port/bucket/";
-        String name = "String";
+        String endpoint = "http://127.0.0.1:1234/bucket/";
+        String name = "string";
         S3Properties.Bucket instance = new S3Properties.Bucket();
         instance.setEndpoint(endpoint + name);
 
