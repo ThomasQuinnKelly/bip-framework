@@ -1,10 +1,5 @@
 package gov.va.bip.framework.security.jwt.correlation;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.constants.BipConstants;
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipLogger;
@@ -12,6 +7,10 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.security.PersonTraits;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 /**
  * Parse values found in an array of Correlation IDs onto the PersonTraits object by way of a Map of Strings.

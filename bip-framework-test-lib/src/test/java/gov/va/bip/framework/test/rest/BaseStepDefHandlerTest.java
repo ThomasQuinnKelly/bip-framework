@@ -1,16 +1,6 @@
 package gov.va.bip.framework.test.rest;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,7 +8,14 @@ import org.junit.Test;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceRegionHttpMessageConverter;
 
-import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * The Class BaseStepDefHandlerTest.

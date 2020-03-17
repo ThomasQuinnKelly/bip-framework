@@ -1,11 +1,9 @@
 package gov.va.bip.framework.log;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
-import gov.va.bip.framework.log.BipLogMarkers;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BipLogMarkersTest {
 

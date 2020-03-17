@@ -1,30 +1,8 @@
 package gov.va.bip.framework.audit.http;
 
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import gov.va.bip.framework.audit.model.HttpRequestAuditData;
+import gov.va.bip.framework.audit.model.HttpResponseAuditData;
+import gov.va.bip.framework.exception.BipRuntimeException;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -32,9 +10,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import gov.va.bip.framework.audit.model.HttpRequestAuditData;
-import gov.va.bip.framework.audit.model.HttpResponseAuditData;
-import gov.va.bip.framework.exception.BipRuntimeException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class AuditHttpRequestResponseTest {
 

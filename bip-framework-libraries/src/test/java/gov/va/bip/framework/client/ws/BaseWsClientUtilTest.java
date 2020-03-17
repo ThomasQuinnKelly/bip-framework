@@ -1,10 +1,9 @@
 package gov.va.bip.framework.client.ws;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import gov.va.bip.framework.client.ws.BaseWsClientUtil;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BaseWsClientUtilTest {
 

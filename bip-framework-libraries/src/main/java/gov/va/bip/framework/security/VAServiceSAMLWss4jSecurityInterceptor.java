@@ -1,16 +1,12 @@
 package gov.va.bip.framework.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import gov.va.bip.framework.constants.BipConstants;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -29,13 +25,15 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import gov.va.bip.framework.constants.BipConstants;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A Wss4j2 Security Interceptor to add a SAML assertion to the secure message header.

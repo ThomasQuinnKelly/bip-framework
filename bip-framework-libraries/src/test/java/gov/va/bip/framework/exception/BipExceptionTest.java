@@ -1,16 +1,15 @@
 package gov.va.bip.framework.exception;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import gov.va.bip.framework.messages.MessageKey;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import gov.va.bip.framework.exception.BipException;
-import gov.va.bip.framework.messages.MessageKey;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BipExceptionTest {

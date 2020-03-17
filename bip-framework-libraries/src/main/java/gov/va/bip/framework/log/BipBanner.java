@@ -1,8 +1,7 @@
 package gov.va.bip.framework.log;
 
-import org.slf4j.event.Level;
-
 import com.github.lalyos.jfiglet.FigletFont;
+import org.slf4j.event.Level;
 
 /**
  * Object that represents text in the form of ASCII Art.

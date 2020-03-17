@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import gov.va.bip.framework.client.rest.template.RestClientTemplate;
-
 @Configuration
 public class TestRestAutoConfiguration {
 

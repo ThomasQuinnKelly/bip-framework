@@ -1,19 +1,17 @@
 package gov.va.bip.framework.log;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.core.util.BufferRecyclers;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 
-import com.fasterxml.jackson.core.util.BufferRecyclers;
-
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Base logger class that:

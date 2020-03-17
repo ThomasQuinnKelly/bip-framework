@@ -4,8 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import gov.va.bip.framework.client.ws.BaseWsClientImpl;
-
 public class BaseWsClientImplTest {
 
 	@Before

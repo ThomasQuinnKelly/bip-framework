@@ -1,17 +1,15 @@
 package gov.va.bip.framework.log;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import java.util.LinkedList;
+import gov.va.bip.framework.AbstractBaseLogTester;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.slf4j.event.Level;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import java.util.LinkedList;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BipBaseLoggerTest extends AbstractBaseLogTester {
 

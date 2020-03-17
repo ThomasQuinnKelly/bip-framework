@@ -1,13 +1,12 @@
 package gov.va.bip.framework.client.ws.interceptor.transport;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
 import org.apache.commons.codec.binary.StringUtils;
 import org.junit.Test;
 
-import gov.va.bip.framework.client.ws.interceptor.transport.ByteArrayTransportOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ByteArrayTransportOutputStreamTest {
 

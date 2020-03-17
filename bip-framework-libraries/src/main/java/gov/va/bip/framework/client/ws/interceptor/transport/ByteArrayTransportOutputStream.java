@@ -1,10 +1,10 @@
 package gov.va.bip.framework.client.ws.interceptor.transport;
 
+import org.springframework.ws.transport.TransportOutputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.springframework.ws.transport.TransportOutputStream;
 
 /**
  * An output stream for writing spring WebServiceMessages to XML.

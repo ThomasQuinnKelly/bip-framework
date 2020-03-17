@@ -1,17 +1,14 @@
 package gov.va.bip.framework.log;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
+import com.github.lalyos.jfiglet.FigletFont;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.event.Level;
 
-import com.github.lalyos.jfiglet.FigletFont;
+import java.io.IOException;
 
-import gov.va.bip.framework.log.BipBanner;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BipBannerTest {
 

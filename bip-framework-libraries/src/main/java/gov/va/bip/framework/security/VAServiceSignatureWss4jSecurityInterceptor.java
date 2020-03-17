@@ -1,14 +1,12 @@
 package gov.va.bip.framework.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.ws.security.SOAPConstants;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSEncryptionPart;
-import org.apache.ws.security.WSSConfig;
-import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.*;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.message.WSSecHeader;
@@ -20,11 +18,8 @@ import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Wss4j2 Security Interceptor to digitally sign a soap message.

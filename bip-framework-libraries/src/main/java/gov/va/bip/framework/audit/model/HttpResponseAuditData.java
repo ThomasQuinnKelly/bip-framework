@@ -1,12 +1,11 @@
 package gov.va.bip.framework.audit.model;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * The purpose of this class is to collect the audit data for a response before serializing it to the logs.

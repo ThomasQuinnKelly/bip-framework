@@ -1,17 +1,12 @@
 package gov.va.bip.framework.security.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
+import gov.va.bip.framework.security.model.Person;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-
-import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
-import gov.va.bip.framework.security.model.Person;
-import gov.va.bip.framework.security.util.GenerateToken;
+import static org.junit.Assert.*;
 
 public class GenerateTokenTest {
 

@@ -1,14 +1,13 @@
 package gov.va.bip.framework.rest.provider;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.transfer.AbstractResponseObject;
 import gov.va.bip.framework.transfer.ProviderTransferObjectMarker;
+import org.springframework.http.HttpStatus;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A base Response object capable of representing the payload of a provider response.

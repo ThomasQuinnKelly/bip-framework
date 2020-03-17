@@ -1,13 +1,21 @@
 package gov.va.bip.framework.rest.exception;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.bip.framework.audit.AuditEventData;
+import gov.va.bip.framework.audit.AuditEvents;
+import gov.va.bip.framework.exception.*;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKey;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
+import gov.va.bip.framework.shared.sanitize.SanitizerException;
+import gov.va.bip.framework.util.HttpHeadersUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.event.Level;
@@ -32,27 +40,12 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.exception.BipException;
-import gov.va.bip.framework.exception.BipExceptionExtender;
-import gov.va.bip.framework.exception.BipPartnerException;
-import gov.va.bip.framework.exception.BipPartnerRuntimeException;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKey;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.rest.provider.ProviderResponse;
-import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
-import gov.va.bip.framework.shared.sanitize.SanitizerException;
-import gov.va.bip.framework.util.HttpHeadersUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Locale;
 
 /**
  * A global exception handler as the last line of defense before sending response to the service consumer.

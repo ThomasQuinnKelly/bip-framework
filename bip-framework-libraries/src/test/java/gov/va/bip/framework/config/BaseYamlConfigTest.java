@@ -5,19 +5,16 @@
  */
 package gov.va.bip.framework.config;
 
+import gov.va.bip.framework.config.BaseYamlConfig.BaseYamlEnvironment;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import gov.va.bip.framework.config.BaseYamlConfig;
-import gov.va.bip.framework.config.BaseYamlConfig.BaseYamlEnvironment;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *

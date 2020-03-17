@@ -1,9 +1,9 @@
 package gov.va.bip.framework.validation;
 
+import gov.va.bip.framework.messages.ServiceMessage;
+
 import java.lang.reflect.Method;
 import java.util.List;
-
-import gov.va.bip.framework.messages.ServiceMessage;
 
 /**
  * An interface for business validation classes in the service (domain) layers.

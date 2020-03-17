@@ -1,9 +1,8 @@
 package gov.va.bip.framework.client.ws.interceptor;
 
-import org.springframework.ws.client.core.WebServiceTemplate;
-
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 /**
  * Configurations of audit metadata that are available for use with the {@link AuditWsInterceptor}.

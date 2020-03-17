@@ -1,12 +1,10 @@
 package gov.va.bip.framework.security.handler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 
-import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class JwtAuthenticationSuccessHandlerTest {
 

@@ -1,14 +1,13 @@
 package gov.va.bip.framework.security.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-
 import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
 import gov.va.bip.framework.security.jwt.JwtAuthenticationProvider;
 import gov.va.bip.framework.security.jwt.JwtParser;
 import gov.va.bip.framework.security.opa.BipOpaProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 
 @Configuration
 @ComponentScan(basePackages = { "gov.va.bip.framework.security", "gov.va.bip.framework.security.jwt",

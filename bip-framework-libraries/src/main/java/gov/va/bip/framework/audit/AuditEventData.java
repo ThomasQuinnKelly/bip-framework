@@ -1,8 +1,7 @@
 package gov.va.bip.framework.audit;
 
-import org.apache.commons.lang3.StringUtils;
-
 import gov.va.bip.framework.security.SecurityUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *

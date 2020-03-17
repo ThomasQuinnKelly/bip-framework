@@ -1,14 +1,13 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.security.jwt.JwtTokenService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  * An implementation of {@link RequestInterceptor} that adds the JWT token from

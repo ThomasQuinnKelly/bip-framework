@@ -1,17 +1,14 @@
 package gov.va.bip.framework.rest.provider;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import gov.va.bip.framework.messages.MessageSeverity;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Message model object used to return messages (errors, warnings, etc) to the service consumer.

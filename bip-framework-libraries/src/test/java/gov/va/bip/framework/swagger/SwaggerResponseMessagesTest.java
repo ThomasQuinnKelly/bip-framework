@@ -3,8 +3,6 @@ package gov.va.bip.framework.swagger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import gov.va.bip.framework.swagger.SwaggerResponseMessages;
-
 public class SwaggerResponseMessagesTest {
 
 	private static final String RESPONSE_200_MESSAGE = "A Response which indicates a successful Request.  "

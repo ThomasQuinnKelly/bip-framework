@@ -1,11 +1,7 @@
 package gov.va.bip.framework.security.opa.voter;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import javax.servlet.FilterChain;
-
+import gov.va.bip.framework.client.rest.template.RestClientTemplate;
+import gov.va.bip.framework.security.jwt.JwtAuthenticationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +20,11 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
 
-import gov.va.bip.framework.client.rest.template.RestClientTemplate;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationToken;
+import javax.servlet.FilterChain;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BipOpaVoterTest {

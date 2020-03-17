@@ -1,11 +1,9 @@
 package gov.va.bip.framework.messages;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.slf4j.event.Level;
 
-import gov.va.bip.framework.messages.MessageSeverity;
+import static org.junit.Assert.assertTrue;
 
 public class MessageSeverityTest {
 

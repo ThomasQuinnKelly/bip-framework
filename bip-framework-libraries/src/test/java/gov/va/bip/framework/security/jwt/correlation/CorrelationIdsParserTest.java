@@ -1,9 +1,9 @@
 package gov.va.bip.framework.security.jwt.correlation;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.security.PersonTraits;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,12 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.security.jwt.correlation.CorrelationIdsParser;
+import static org.junit.Assert.*;
 
 public class CorrelationIdsParserTest {
 

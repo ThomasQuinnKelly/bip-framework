@@ -1,8 +1,7 @@
 package gov.va.bip.framework.client.ws.remote;
 
-import org.springframework.ws.client.core.WebServiceTemplate;
-
 import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 /**
  * Interface for executing remote service calls.

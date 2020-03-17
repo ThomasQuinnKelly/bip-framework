@@ -1,15 +1,7 @@
 package gov.va.bip.framework.aspect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.AbstractBaseLogTester;
+import gov.va.bip.framework.log.BipLogger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.JoinPoint.StaticPart;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -22,9 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.aspect.PerformanceLoggingAspect;
-import gov.va.bip.framework.log.BipLogger;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PerformanceLoggingAspectTest extends AbstractBaseLogTester {

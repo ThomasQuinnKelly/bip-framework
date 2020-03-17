@@ -1,8 +1,7 @@
 package gov.va.bip.framework.rest.provider.aspect;
 
-import org.aspectj.lang.annotation.Pointcut;
-
 import gov.va.bip.framework.audit.http.AuditHttpRequestResponse;
+import org.aspectj.lang.annotation.Pointcut;
 
 /**
  * This is the base class for REST provider aspects.

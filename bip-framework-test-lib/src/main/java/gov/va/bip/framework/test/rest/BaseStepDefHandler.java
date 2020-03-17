@@ -1,13 +1,12 @@
 package gov.va.bip.framework.test.rest;
 
+import gov.va.bip.framework.test.service.RESTConfigService;
+import gov.va.bip.framework.test.util.RESTUtil;
+import org.springframework.http.converter.HttpMessageConverter;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.http.converter.HttpMessageConverter;
-
-import gov.va.bip.framework.test.service.RESTConfigService;
-import gov.va.bip.framework.test.util.RESTUtil;
 
 /**
  * Handler object that extends BaseStepDef to handle rest based api call. Step

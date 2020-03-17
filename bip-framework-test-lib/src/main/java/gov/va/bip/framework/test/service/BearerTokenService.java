@@ -1,14 +1,13 @@
 package gov.va.bip.framework.test.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
+import gov.va.bip.framework.test.util.RESTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 
-import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
-import gov.va.bip.framework.test.util.RESTUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * It Fetches token from the token API. The token will be used as a header while

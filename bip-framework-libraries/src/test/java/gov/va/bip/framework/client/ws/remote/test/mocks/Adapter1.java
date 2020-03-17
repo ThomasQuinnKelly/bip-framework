@@ -1,8 +1,8 @@
 
 package gov.va.bip.framework.client.ws.remote.test.mocks;
 
-import java.util.Date;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.Date;
 
 public class Adapter1
     extends XmlAdapter<String, Date>

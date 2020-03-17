@@ -1,15 +1,13 @@
 package gov.va.bip.framework.exception;
 
+import gov.va.bip.framework.messages.MessageKey;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import gov.va.bip.framework.exception.BipFeignRuntimeException;
-import gov.va.bip.framework.messages.MessageKey;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BipFeignRuntimeExceptionTest {

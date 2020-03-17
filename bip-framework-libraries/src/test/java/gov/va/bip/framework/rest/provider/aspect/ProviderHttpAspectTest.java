@@ -1,12 +1,15 @@
 package gov.va.bip.framework.rest.provider.aspect;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.va.bip.framework.AbstractBaseLogTester;
+import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
+import gov.va.bip.framework.audit.AuditEventData;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.messages.ServiceMessage;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.service.DomainResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Before;
@@ -26,17 +29,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
-import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.messages.ServiceMessage;
-import gov.va.bip.framework.rest.provider.ProviderResponse;
-import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
-import gov.va.bip.framework.service.DomainResponse;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderHttpAspectTest extends AbstractBaseLogTester {

@@ -1,15 +1,13 @@
 package gov.va.bip.framework.rest.provider;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.util.Date;
 
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import gov.va.bip.framework.rest.provider.Message;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class MessageTest {
 

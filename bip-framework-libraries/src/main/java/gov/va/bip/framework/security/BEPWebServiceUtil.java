@@ -1,20 +1,19 @@
 package gov.va.bip.framework.security;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import gov.va.bip.framework.util.HashGenerator;
+import gov.va.bip.framework.validation.Defense;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
-import gov.va.bip.framework.util.HashGenerator;
-import gov.va.bip.framework.validation.Defense;
 
 /**
  * Provides a common method of handling elements of web service calls made to VA

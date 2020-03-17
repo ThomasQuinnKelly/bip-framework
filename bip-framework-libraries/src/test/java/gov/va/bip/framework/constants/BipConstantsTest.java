@@ -5,15 +5,11 @@
  */
 package gov.va.bip.framework.constants;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.Test;
-
-import gov.va.bip.framework.constants.BipConstants;
+import static org.junit.Assert.*;
 
 /**
  *

@@ -1,5 +1,12 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
+import gov.va.bip.framework.audit.AuditLogSerializer;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsImpl;
+import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsMBean;
+import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
@@ -13,14 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
 import org.springframework.jmx.support.RegistrationPolicy;
-
-import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsImpl;
-import gov.va.bip.framework.cache.autoconfigure.jmx.BipCacheOpsMBean;
-import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 
 /**
  * This configuration runs only when the application property

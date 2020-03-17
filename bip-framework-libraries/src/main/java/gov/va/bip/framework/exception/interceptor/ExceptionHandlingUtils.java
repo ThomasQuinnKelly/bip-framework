@@ -1,12 +1,5 @@
 package gov.va.bip.framework.exception.interceptor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import org.slf4j.event.Level;
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.constants.BipConstants;
 import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.exception.BipRuntimeException;
@@ -16,6 +9,12 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.slf4j.event.Level;
+import org.springframework.http.HttpStatus;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Contains utility ops for logging and handling exceptions consistently. Primarily for usage in interceptors which

@@ -1,9 +1,9 @@
 package gov.va.bip.framework.log;
 
-import java.util.Map;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+
+import java.util.Map;
 
 /**
  * This is a custom performance logging interceptor which simply wraps a method (any method) and calculates elapsed time.

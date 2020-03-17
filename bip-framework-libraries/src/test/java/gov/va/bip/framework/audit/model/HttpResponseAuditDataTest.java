@@ -1,14 +1,14 @@
 package gov.va.bip.framework.audit.model;
 
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 public class HttpResponseAuditDataTest {
 

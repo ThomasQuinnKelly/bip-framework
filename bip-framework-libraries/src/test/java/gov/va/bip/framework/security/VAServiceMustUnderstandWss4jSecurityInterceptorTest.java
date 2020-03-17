@@ -1,15 +1,8 @@
 package gov.va.bip.framework.security;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
+import gov.va.bip.framework.config.BaseYamlConfig;
+import gov.va.bip.framework.config.BipCommonSpringProfiles;
+import gov.va.bip.framework.exception.BipRuntimeException;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.junit.Assert;
@@ -28,10 +21,14 @@ import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import gov.va.bip.framework.config.BaseYamlConfig;
-import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.security.VAServiceMustUnderstandWss4jSecurityInterceptor;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(inheritListeners = false, listeners = { DependencyInjectionTestExecutionListener.class,

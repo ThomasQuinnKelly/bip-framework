@@ -1,23 +1,17 @@
 package gov.va.bip.framework.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.messages.ServiceMessage;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.messages.ServiceMessage;
+import static org.junit.Assert.*;
 
 public class AbstractStandardValidatorTest {
 

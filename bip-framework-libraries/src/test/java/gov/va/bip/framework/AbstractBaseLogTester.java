@@ -1,14 +1,13 @@
 package gov.va.bip.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.event.Level;
 
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractBaseLogTester {
 

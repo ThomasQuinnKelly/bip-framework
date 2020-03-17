@@ -1,17 +1,16 @@
 package gov.va.bip.framework.rest.autoconfigure;
 
-import java.io.IOException;
-import java.util.Map;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.security.jwt.JwtTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.security.jwt.JwtTokenService;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * An implementation of {@link ClientHttpRequestInterceptor} that adds the JWT token

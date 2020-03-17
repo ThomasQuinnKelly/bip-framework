@@ -1,10 +1,10 @@
 package gov.va.bip.framework.security.jwt;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Class used as authentication properties in projects.

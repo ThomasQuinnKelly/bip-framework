@@ -1,12 +1,12 @@
 
 package gov.va.bip.framework.client.ws.remote.test.mocks;
 
+import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
 
 /**
  * <p>

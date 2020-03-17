@@ -1,13 +1,12 @@
 package gov.va.bip.framework.audit;
 
-import static com.google.common.truth.Truth.assertAbout;
-import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
+import com.google.testing.compile.JavaFileObjects;
+import org.junit.Test;
 
 import javax.tools.JavaFileObject;
 
-import org.junit.Test;
-
-import com.google.testing.compile.JavaFileObjects;
+import static com.google.common.truth.Truth.assertAbout;
+import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 
 /**

@@ -1,11 +1,5 @@
 package gov.va.bip.framework.validation;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.exception.interceptor.ExceptionHandlingUtils;
 import gov.va.bip.framework.log.BipLogger;
@@ -13,6 +7,11 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
+import org.springframework.http.HttpStatus;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract implementation of the {@link Validator} interface.

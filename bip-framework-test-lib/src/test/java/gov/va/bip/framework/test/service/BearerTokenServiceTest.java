@@ -1,23 +1,19 @@
 package gov.va.bip.framework.test.service;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
+import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
-import gov.va.bip.framework.test.service.BearerTokenService;
-import gov.va.bip.framework.test.utils.wiremock.server.WireMockServerInstance;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class BearerTokenServiceTest {
 

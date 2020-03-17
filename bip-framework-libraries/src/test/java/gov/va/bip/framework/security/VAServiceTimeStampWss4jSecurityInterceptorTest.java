@@ -1,16 +1,15 @@
 package gov.va.bip.framework.security;
 
-import java.io.IOException;
-
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
 import org.xml.sax.SAXException;
+
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 public class VAServiceTimeStampWss4jSecurityInterceptorTest {
 	private static final String TTL_STR = "300";

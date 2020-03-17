@@ -1,10 +1,9 @@
 package gov.va.bip.framework.audit.model;
 
-import java.io.Serializable;
-
+import gov.va.bip.framework.audit.AuditableData;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import gov.va.bip.framework.audit.AuditableData;
+import java.io.Serializable;
 
 /**
  * An {@link AuditableData} transfer response object for sending any Object to the audit logger.

@@ -1,12 +1,11 @@
 package gov.va.bip.framework.service;
 
-import java.io.Serializable;
+import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-
-import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
+import java.io.Serializable;
 
 /**
  * A base Request object capable of representing the payload of a service request.

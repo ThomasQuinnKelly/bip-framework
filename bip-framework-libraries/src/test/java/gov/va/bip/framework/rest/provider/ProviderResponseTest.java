@@ -1,20 +1,15 @@
 package gov.va.bip.framework.rest.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.rest.provider.Message;
-import gov.va.bip.framework.rest.provider.ProviderResponse;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class ProviderResponseTest {
 
