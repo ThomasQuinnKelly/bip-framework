@@ -1,6 +1,5 @@
 package gov.va.bip.framework.sqs.config;
 
-import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import org.junit.Test;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.core.JmsTemplate;
