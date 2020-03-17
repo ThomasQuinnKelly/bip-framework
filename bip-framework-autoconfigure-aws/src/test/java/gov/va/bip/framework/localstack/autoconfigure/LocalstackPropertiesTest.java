@@ -1,5 +1,6 @@
 package gov.va.bip.framework.localstack.autoconfigure;
 
+import gov.va.bip.framework.localstack.s3.config.LocalstackS3Properties;
 import gov.va.bip.framework.localstack.sns.config.LocalstackSnsProperties;
 import gov.va.bip.framework.localstack.sqs.config.LocalstackSqsProperties;
 import org.junit.After;
@@ -42,6 +43,46 @@ public class LocalstackPropertiesTest {
         assertNotNull(props.getServices());
         assertTrue(NAME.equals(props.getServices().get(0).getName()));
         assertTrue(PORT == props.getServices().get(0).getPort());
+    }
+
+    @Test
+    public final void testGetServices() {
+        LocalstackSnsProperties localstackSnsProperties = new LocalstackSnsProperties();
+        localstackSnsProperties.setEnabled(true);
+        localstackSnsProperties.setPort(1234);
+        LocalstackSqsProperties localstackSqsProperties = new LocalstackSqsProperties();
+        localstackSqsProperties.setEnabled(true);
+        localstackSqsProperties.setPort(1234);
+        LocalstackS3Properties localstackS3Properties = new LocalstackS3Properties();
+        localstackS3Properties.setEnabled(true);
+        localstackS3Properties.setPort(1234);
+
+        props.setLocalstackSnsProperties(localstackSnsProperties);
+        props.setLocalstackSqsProperties(localstackSqsProperties);
+        props.setLocalstackS3Properties(localstackS3Properties);
+
+        assertNotNull(props.getServices());
+        assertTrue(props.getServices().size() == 3);
+    }
+
+    @Test
+    public final void testGetServices_2() {
+        LocalstackSnsProperties localstackSnsProperties = new LocalstackSnsProperties();
+        localstackSnsProperties.setEnabled(false);
+        localstackSnsProperties.setPort(1234);
+        LocalstackSqsProperties localstackSqsProperties = new LocalstackSqsProperties();
+        localstackSqsProperties.setEnabled(false);
+        localstackSqsProperties.setPort(1234);
+        LocalstackS3Properties localstackS3Properties = new LocalstackS3Properties();
+        localstackS3Properties.setEnabled(false);
+        localstackS3Properties.setPort(1234);
+
+        props.setLocalstackSnsProperties(localstackSnsProperties);
+        props.setLocalstackSqsProperties(localstackSqsProperties);
+        props.setLocalstackS3Properties(localstackS3Properties);
+
+        assertNotNull(props.getServices());
+        assertTrue(props.getServices().size() == 0);
     }
 
     @Test
@@ -105,13 +146,42 @@ public class LocalstackPropertiesTest {
     }
 
     @Test
-    public final void testLocalstackServices() {
+    public final void testGetS3Services() {
+        LocalstackS3Properties localstackS3Properties = new LocalstackS3Properties();
+        localstackS3Properties.setEnabled(true);
+        localstackS3Properties.setPort(8888);
 
-        LocalstackSnsProperties localstackSnsProperties = new LocalstackSnsProperties();
+        List<LocalstackProperties.Services> services = new ArrayList<LocalstackProperties.Services>() {
+            @Override
+            public LocalstackProperties.Services get(int index) {
+                return null;
+            }
+        };
+        Assert.assertNull(services.get(0));
+
+        services = new ArrayList<>();
+
+        final LocalstackProperties.Services s3service = new LocalstackProperties().new Services();
+        s3service.setName("sqs");
+        s3service.setPort(localstackS3Properties.getPort());
+        services.add(s3service);
+
+        assertNotNull(services);
+        props.setServices(services);
+        Assert.assertTrue(localstackS3Properties.isEnabled());
+        Assert.assertNotNull(s3service.getName());
+        Assert.assertNotNull(s3service.getPort());
+        Assert.assertNotNull(props.getServices().get(0).getName());
+    }
+
+    @Test
+    public final void testS3Properties() {
+
+        LocalstackS3Properties localstackS3Properties = new LocalstackS3Properties();
         LocalstackProperties instance = new LocalstackProperties();
-        instance.setLocalstackSnsProperties(localstackSnsProperties);
+        instance.setLocalstackS3Properties(localstackS3Properties);
 
-        assertEquals(Optional.of(instance.getLocalstackSnsProperties()), Optional.ofNullable(localstackSnsProperties));
+        assertEquals(Optional.of(instance.getLocalstackS3Properties()), Optional.ofNullable(localstackS3Properties));
     }
 
     @Test

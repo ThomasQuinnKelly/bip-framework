@@ -4,15 +4,14 @@ import cloud.localstack.Localstack;
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazon.sqs.javamessaging.SQSSession;
-import com.amazonaws.auth.*;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import gov.va.bip.framework.config.AbstractAwsConfiguration;
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
-import gov.va.bip.framework.localstack.autoconfigure.LocalstackAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,26 +19,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.util.StringUtils;
 
 import javax.jms.ConnectionFactory;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
 @EnableJms
-public abstract class AbstractSqsConfiguration {
+public abstract class AbstractSqsConfiguration extends AbstractAwsConfiguration {
 	@Autowired
 	Environment environment;
-
-	@Value("${bip.framework.localstack.enabled:false}")
-	boolean localstackEnabled;
-
-	@SuppressWarnings("unused")
-	@Autowired(required = false)
-	private LocalstackAutoConfiguration localstackAutoConfiguration;
-
-	boolean isEmbeddedAws = false;
-	boolean isLocalInt = false;
 
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
@@ -78,7 +66,7 @@ public abstract class AbstractSqsConfiguration {
 		AWSCredentialsProvider awsCredentialsProvider =
 				createAwsCredentialsProvider(sqsProperties.getAccessKey(), sqsProperties.getSecretKey());
 
-		if (isEmbeddedAws || isLocalInt) {
+		if (isEmbeddedAws() || isLocalInt()) {
 			return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
 					.withEndpointConfiguration(endpointConfiguration).build();
 		} else {
@@ -89,11 +77,11 @@ public abstract class AbstractSqsConfiguration {
 	private void setProfiles() {
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-				isEmbeddedAws = true;
+				setEmbeddedAws(true);
 			}
 
 			if (profileName.equals(BipCommonSpringProfiles.PROFILE_ENV_LOCAL_INT)) {
-				isLocalInt = true;
+				setLocalInt(true);
 			}
 		}
 	}
@@ -103,30 +91,16 @@ public abstract class AbstractSqsConfiguration {
 
 		Regions region = Regions.fromName(sqsProperties.getRegion());
 
-		if (localstackEnabled && isEmbeddedAws) {
+		if (isLocalstackEnabled() && isEmbeddedAws()) {
 			endpointConfiguration = new EndpointConfiguration(Localstack.INSTANCE.getEndpointSQS(), region.getName());
 
-		} else if (isLocalInt) {
-			if (sqsProperties.getSqsBaseUrl().contains("localhost")) {
+		} else if (isLocalInt()) {
+			if (sqsProperties.getBaseUrl().contains("localhost")) {
 				sqsProperties.setEndpoint(sqsProperties.getEndpoint().replace("localhost", "localstack"));
 			}
-			endpointConfiguration = new EndpointConfiguration(sqsProperties.getSqsBaseUrl(), region.getName());
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getBaseUrl(), region.getName());
 		}
 		return endpointConfiguration;
-	}
-
-	private AWSCredentialsProvider createAwsCredentialsProvider(final String localAccessKey, final String localSecretKey) {
-
-		AWSCredentialsProvider ec2ContainerCredentialsProvider = new EC2ContainerCredentialsProviderWrapper();
-
-		if (StringUtils.isEmpty(localAccessKey) || StringUtils.isEmpty(localSecretKey)) {
-			return ec2ContainerCredentialsProvider;
-		}
-
-		AWSCredentialsProvider localAwsCredentialsProvider =
-				new AWSStaticCredentialsProvider(new BasicAWSCredentials(localAccessKey, localSecretKey));
-
-		return new AWSCredentialsProviderChain(localAwsCredentialsProvider, ec2ContainerCredentialsProvider);
 	}
 
 }

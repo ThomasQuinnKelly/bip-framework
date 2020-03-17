@@ -54,6 +54,9 @@ public class VAServiceWss4jSecurityInterceptor extends Wss4jSecurityInterceptor 
 
 	/** The va application name. */
 	private String vaApplicationName;
+	
+	/** Whether to include the external VA SOAP Headers. Not required and potentially breaking for batch and internal endpoints **/
+	private boolean includeExternalVAHeaders = true;
 
 	/*
 	 * (non-Javadoc)
@@ -80,15 +83,17 @@ public class VAServiceWss4jSecurityInterceptor extends Wss4jSecurityInterceptor 
 		final Element appNameHeader = soapDoc.createElementNS(VA_NS, VA_PREFIX + VA_APPLICATION_NAME);
 		appNameHeader.setTextContent(vaApplicationName);
 		vaHeader.appendChild(appNameHeader);
-
-		final Element externalUidHeader = soapDoc.createElementNS(VA_NS, VA_PREFIX + EXTERNAL_UID);
-		final String userId = BEPWebServiceUtil.getExternalUID(EXTERNAL_UID_DEFAULT);
-		externalUidHeader.setTextContent(userId);
-		vaHeader.appendChild(externalUidHeader);
-
-		final Element externalKeyHeader = soapDoc.createElementNS(VA_NS, VA_PREFIX + EXTERNAL_KEY);
-		externalKeyHeader.setTextContent(userId); // RRR: should be changed BEPWebServiceUtil.getExternalKey(null)
-		vaHeader.appendChild(externalKeyHeader);
+		
+		if (includeExternalVAHeaders) {
+            final Element externalUidHeader = soapDoc.createElementNS(VA_NS, VA_PREFIX + EXTERNAL_UID);
+            final String userId = BEPWebServiceUtil.getExternalUID(EXTERNAL_UID_DEFAULT);
+            externalUidHeader.setTextContent(userId);
+            vaHeader.appendChild(externalUidHeader);
+            
+            final Element externalKeyHeader = soapDoc.createElementNS(VA_NS, VA_PREFIX + EXTERNAL_KEY);
+            externalKeyHeader.setTextContent(userId); // RRR: should be changed BEPWebServiceUtil.getExternalKey(null)
+            vaHeader.appendChild(externalKeyHeader);
+        }
 
 		// Add the VA application id header
 		Element secHeader;
@@ -155,5 +160,22 @@ public class VAServiceWss4jSecurityInterceptor extends Wss4jSecurityInterceptor 
 	public final void setVaApplicationName(final String vaApplicationName) {
 		this.vaApplicationName = vaApplicationName;
 	}
-
+    
+    /**
+     * Gets whether external VA headers should be included in the request.
+     *
+     * @return whether external VA headers should be included
+     */
+    public final boolean isIncludeExternalVAHeaders() {
+        return includeExternalVAHeaders;
+    }
+    
+    /**
+     * Sets whether external VA headers should be included in the request.
+     *
+     * @param includeExternalVAHeaders whether external VA headers should be included
+     */
+    public final void setIncludeExternalVAHeaders(boolean includeExternalVAHeaders) {
+        this.includeExternalVAHeaders = includeExternalVAHeaders;
+    }
 }

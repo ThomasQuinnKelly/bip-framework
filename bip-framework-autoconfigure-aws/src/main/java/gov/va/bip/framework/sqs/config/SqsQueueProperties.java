@@ -1,11 +1,12 @@
 package gov.va.bip.framework.sqs.config;
 
+import gov.va.bip.framework.config.AwsProperties;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-abstract class SqsQueueProperties {
+abstract class SqsQueueProperties extends AwsProperties {
 
     String queue;
     String deadletterqueue;

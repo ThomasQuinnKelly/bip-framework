@@ -167,7 +167,12 @@ public enum MessageKeys implements MessageKey {
 	/** SNS create topic error message */
 	BIP_SNS_TOPIC_CREATE_EXCEPTION_MESSAGE("bip.framework.sns.services.create.topic.error","Could not create a SNS topic."),
 	/** SNS retrieve topic arn error message */
-	BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE("bip.framework.sns.services.retrieve.topicarn.error","Could not retrieve topic arn.")
+	BIP_SNS_TOPICARN_RETRIEVE_EXCEPTION_MESSAGE("bip.framework.sns.services.retrieve.topicarn.error","Could not retrieve topic arn."),
+
+	/** S3 upload file error message */
+	BIP_S3_UPLOAD_FILE_EXCEPTION_MESSAGE("bip.framework.s3.services.upload.file.error","Could not upload file to an S3 bucket."),
+	/** S3 delete object error message */
+	BIP_S3_DELETE_OBJECT_EXCEPTION_MESSAGE("bip.framework.s3.services.delete.object.error","Could not delete an S3 object.")
 
 	;
 

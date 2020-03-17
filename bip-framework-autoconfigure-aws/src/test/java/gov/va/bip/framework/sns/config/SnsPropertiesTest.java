@@ -127,7 +127,7 @@ public class SnsPropertiesTest {
         SnsProperties instance = new SnsProperties();
         instance.setEndpoint(endpoint);
 
-        assertEquals("http://localhost:4575", instance.getSnsBaseUrl());
+        assertEquals("http://localhost:4575", instance.getBaseUrl());
     }
 
 }
