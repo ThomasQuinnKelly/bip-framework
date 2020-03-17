@@ -1,12 +1,11 @@
 package gov.va.bip.framework.security.jwt.correlation;
 
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
 
 public enum Issuers {
 

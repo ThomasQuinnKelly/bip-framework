@@ -1,16 +1,14 @@
 package gov.va.bip.framework.log.logback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.boot.test.rule.OutputCapture;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BipMaskingMessageProviderTest {
 

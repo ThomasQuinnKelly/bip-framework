@@ -1,22 +1,18 @@
 package gov.va.bip.framework.security.jks;
 
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyFactory;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
-
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
 
 /**
  * Utility class for creating KeyStore objects from PEM format certificates.

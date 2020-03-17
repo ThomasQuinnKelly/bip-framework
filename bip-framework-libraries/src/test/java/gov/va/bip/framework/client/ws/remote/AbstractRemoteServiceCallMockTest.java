@@ -1,14 +1,8 @@
 package gov.va.bip.framework.client.ws.remote;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-
-import java.util.HashMap;
-
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.Source;
-
+import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockRequest;
+import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockResponse;
+import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -17,10 +11,13 @@ import org.mockito.Spy;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import gov.va.bip.framework.client.ws.remote.AbstractRemoteServiceCallMock;
-import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockRequest;
-import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockResponse;
-import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.Source;
+import java.util.HashMap;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 public class AbstractRemoteServiceCallMockTest {
 

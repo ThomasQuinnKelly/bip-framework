@@ -1,9 +1,7 @@
 package gov.va.bip.framework.security.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,9 +9,9 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public abstract class AbstractPersonTraitsObject extends User {
 

@@ -1,16 +1,15 @@
 package gov.va.bip.framework.test.service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Properties;
-
+import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import gov.va.bip.framework.test.util.PropertiesUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
-import gov.va.bip.framework.test.util.PropertiesUtil;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * A singleton to hold an instance of this class AND - importantly - the test

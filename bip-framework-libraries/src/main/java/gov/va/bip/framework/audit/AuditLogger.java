@@ -1,11 +1,10 @@
 package gov.va.bip.framework.audit;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.slf4j.event.Level;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 
 /**
  * The Class AuditLogger.

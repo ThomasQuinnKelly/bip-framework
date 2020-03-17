@@ -1,21 +1,19 @@
 package gov.va.bip.framework.cache.autoconfigure.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.net.ServerSocketFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.context.annotation.Profile;
-
 import gov.va.bip.framework.config.BipCommonSpringProfiles;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.validation.Defense;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.context.annotation.Profile;
 import redis.embedded.RedisServer;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.net.ServerSocketFactory;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 /**
  * this class will start embedded redis, to be used for local envs. The profile embedded-redis needs to be added in order for this bean

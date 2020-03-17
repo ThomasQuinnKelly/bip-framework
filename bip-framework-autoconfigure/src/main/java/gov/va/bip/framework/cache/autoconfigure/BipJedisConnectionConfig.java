@@ -1,9 +1,8 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
-import java.time.Duration;
-
-import javax.annotation.PostConstruct;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.validation.Defense;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,11 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.stereotype.Component;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.validation.Defense;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
+
+import javax.annotation.PostConstruct;
+import java.time.Duration;
 
 /**
  * Imported by {@link BipCacheAutoConfiguration} so it can participate in the autoconfiguration bootstrap.

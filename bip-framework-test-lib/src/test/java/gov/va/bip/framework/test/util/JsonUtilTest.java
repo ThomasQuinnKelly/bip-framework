@@ -1,7 +1,8 @@
 package gov.va.bip.framework.test.util;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.jayway.jsonpath.PathNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,12 +10,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.jayway.jsonpath.PathNotFoundException;
-
-import gov.va.bip.framework.test.util.JsonUtil;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class JsonUtilTest {
 

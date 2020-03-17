@@ -1,13 +1,10 @@
 package gov.va.bip.framework.security;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapMessageFactory;
+import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -17,12 +14,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.SoapMessageFactory;
-import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public final class WSInterceptorTestUtil {
 	private static final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

@@ -1,9 +1,8 @@
 package gov.va.bip.framework.test.util;
 
-import org.junit.Assert;
-
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.Assert;
 
 /**
  * Utility class for working with JSON data.

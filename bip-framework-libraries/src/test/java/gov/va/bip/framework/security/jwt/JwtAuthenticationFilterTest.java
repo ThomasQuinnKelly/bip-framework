@@ -1,14 +1,10 @@
 package gov.va.bip.framework.security.jwt;
 
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import gov.va.bip.framework.security.PersonTraits;
+import gov.va.bip.framework.security.config.BipSecurityTestConfig;
+import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
+import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
+import gov.va.bip.framework.security.util.GenerateToken;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +21,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.security.config.BipSecurityTestConfig;
-import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
-import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
-import gov.va.bip.framework.security.util.GenerateToken;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)

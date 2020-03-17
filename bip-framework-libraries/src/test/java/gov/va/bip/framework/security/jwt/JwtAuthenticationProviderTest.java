@@ -1,17 +1,9 @@
 package gov.va.bip.framework.security.jwt;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
+import gov.va.bip.framework.security.PersonTraits;
+import gov.va.bip.framework.security.config.BipSecurityTestConfig;
+import gov.va.bip.framework.security.model.Person;
+import io.jsonwebtoken.MalformedJwtException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -21,16 +13,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.security.config.BipSecurityTestConfig;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProvider;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationToken;
-import gov.va.bip.framework.security.jwt.JwtParser;
-import gov.va.bip.framework.security.jwt.TokenResource;
-import gov.va.bip.framework.security.model.Person;
-import io.jsonwebtoken.MalformedJwtException;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)

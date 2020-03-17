@@ -1,9 +1,8 @@
 package gov.va.bip.framework.exception;
 
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
 
 /**
  * The root BIP class for validation or defense <b>runtime</b> exceptions.

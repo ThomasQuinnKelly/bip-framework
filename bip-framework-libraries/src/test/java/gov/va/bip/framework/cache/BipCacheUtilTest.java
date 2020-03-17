@@ -1,8 +1,7 @@
 package gov.va.bip.framework.cache;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import gov.va.bip.framework.security.PersonTraits;
+import gov.va.bip.framework.service.DomainResponse;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,9 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import gov.va.bip.framework.cache.BipCacheUtil;
-import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.service.DomainResponse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BipCacheUtilTest {
 

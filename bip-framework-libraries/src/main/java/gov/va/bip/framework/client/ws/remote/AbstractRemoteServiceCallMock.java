@@ -1,13 +1,13 @@
 package gov.va.bip.framework.client.ws.remote;
 
-import static org.springframework.ws.test.client.RequestMatchers.payload;
-import static org.springframework.ws.test.client.ResponseCreators.withPayload;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-
-import javax.xml.transform.Source;
-
+import gov.va.bip.framework.exception.BipException;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
+import gov.va.bip.framework.validation.Defense;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -18,14 +18,12 @@ import org.springframework.xml.transform.ResourceSource;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-import gov.va.bip.framework.exception.BipException;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
-import gov.va.bip.framework.validation.Defense;
+import javax.xml.transform.Source;
+import java.io.IOException;
+import java.text.MessageFormat;
+
+import static org.springframework.ws.test.client.RequestMatchers.payload;
+import static org.springframework.ws.test.client.ResponseCreators.withPayload;
 
 /**
  * <p>

@@ -1,5 +1,10 @@
 package gov.va.bip.framework.test.util;
 
+import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
+import org.apache.commons.text.StringSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -10,12 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.apache.commons.text.StringSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import gov.va.bip.framework.test.exception.BipTestLibRuntimeException;
 
 /**
  * Utilities for handling properties.

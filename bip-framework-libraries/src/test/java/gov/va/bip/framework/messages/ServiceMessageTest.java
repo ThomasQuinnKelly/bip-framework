@@ -1,17 +1,9 @@
 package gov.va.bip.framework.messages;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import gov.va.bip.framework.messages.ConstraintParam;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.messages.ServiceMessage;
+import static org.junit.Assert.*;
 
 public class ServiceMessageTest {
 

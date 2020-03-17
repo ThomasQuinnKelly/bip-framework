@@ -1,19 +1,17 @@
 package gov.va.bip.framework.service;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import gov.va.bip.framework.messages.ConstraintParam;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
 import gov.va.bip.framework.transfer.AbstractResponseObject;
 import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
+import org.springframework.http.HttpStatus;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A base Response object capable of representing the payload of a service response.

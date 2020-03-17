@@ -1,6 +1,5 @@
 package gov.va.bip.framework.rest.provider.aspect;
 
-import java.lang.reflect.Method;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -10,7 +9,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import gov.va.bip.framework.rest.provider.aspect.BaseHttpProviderPointcuts;
+
+import java.lang.reflect.Method;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseHttpProviderPointcutsTest {

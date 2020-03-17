@@ -1,13 +1,5 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
-import java.io.IOException;
-import java.io.Reader;
-
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.http.HttpStatus;
-
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import gov.va.bip.framework.exception.BipFeignRuntimeException;
@@ -15,6 +7,13 @@ import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * The Class FeignCustomErrorDecoder.

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
-@ConditionalOnProperty(name = "bip.framework.localstack.services.sqs.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "bip.framework.aws.sqs.enabled", havingValue = "true")
 @Import({ AbstractSqsConfiguration.class, StandardSqsConfiguration.class })
 public class BipSqsAutoConfiguration {
 

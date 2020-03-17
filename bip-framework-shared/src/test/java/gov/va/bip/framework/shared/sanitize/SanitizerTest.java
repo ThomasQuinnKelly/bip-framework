@@ -1,10 +1,9 @@
 package gov.va.bip.framework.shared.sanitize;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import gov.va.bip.framework.shared.sanitize.Sanitizer;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Sanitization utility Test class

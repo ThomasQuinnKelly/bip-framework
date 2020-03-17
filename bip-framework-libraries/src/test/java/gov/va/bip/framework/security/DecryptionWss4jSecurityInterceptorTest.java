@@ -1,13 +1,13 @@
 package gov.va.bip.framework.security;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class DecryptionWss4jSecurityInterceptorTest {
 

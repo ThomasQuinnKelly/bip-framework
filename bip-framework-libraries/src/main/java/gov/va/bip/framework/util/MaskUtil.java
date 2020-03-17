@@ -1,8 +1,8 @@
 package gov.va.bip.framework.util;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 /**
  * This class is intended to supplement the configurable logback masking that is built in to the BIP Framework.

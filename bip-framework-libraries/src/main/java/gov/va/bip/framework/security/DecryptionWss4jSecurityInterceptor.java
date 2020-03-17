@@ -1,16 +1,15 @@
 package gov.va.bip.framework.security;
 
+import gov.va.bip.framework.constants.BipConstants;
+import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.event.Level;
 import org.springframework.ws.soap.security.wss4j2.callback.KeyStoreCallbackHandler;
-
-import gov.va.bip.framework.constants.BipConstants;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 
 /**
  * A Wss4j2 Security Interceptor to encrypt secure message header and body.

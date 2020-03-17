@@ -2,8 +2,6 @@ package gov.va.bip.framework.service.aspect;
 
 import org.junit.Test;
 
-import gov.va.bip.framework.service.aspect.BaseServiceAspect;
-
 public class BaseServiceAspectTest {
 
     @Test

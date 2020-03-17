@@ -1,19 +1,15 @@
 package gov.va.bip.framework.transfer.jaxb.adapters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import gov.va.bip.framework.AbstractBaseLogTester;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.transfer.jaxb.adapters.DateAdapter;
+import static org.junit.Assert.*;
 
 public class DateAdapterTest extends AbstractBaseLogTester {
 

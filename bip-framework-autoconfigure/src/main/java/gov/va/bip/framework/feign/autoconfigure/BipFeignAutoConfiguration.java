@@ -1,12 +1,11 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
+import feign.Logger;
+import feign.Request;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
-
-import feign.Logger;
-import feign.Request;
 
 /**
  * Auto configuration for feign enabled REST clients (e.g.

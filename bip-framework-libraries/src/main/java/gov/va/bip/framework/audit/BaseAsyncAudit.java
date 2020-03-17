@@ -1,16 +1,5 @@
 package gov.va.bip.framework.audit;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.event.Level;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.audit.model.MessageAuditData;
 import gov.va.bip.framework.audit.model.RequestAuditData;
@@ -23,6 +12,15 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.validation.Defense;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.event.Level;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Performs simple audit logging on any type of request or response objects.

@@ -1,11 +1,6 @@
 package gov.va.bip.framework.log;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import gov.va.bip.framework.AbstractBaseLogTester;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.After;
 import org.junit.Before;
@@ -16,9 +11,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.PerformanceLogMethodInterceptor;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PerformanceLogMethodInterceptorTest extends AbstractBaseLogTester {

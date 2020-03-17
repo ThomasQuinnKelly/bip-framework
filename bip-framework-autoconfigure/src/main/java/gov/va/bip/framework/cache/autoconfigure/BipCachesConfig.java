@@ -1,14 +1,11 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
+import gov.va.bip.framework.cache.autoconfigure.BipRedisCacheProperties.RedisExpires;
+import gov.va.bip.framework.cache.interceptor.BipCacheInterceptor;
+import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.validation.Defense;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +27,13 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import gov.va.bip.framework.cache.autoconfigure.BipRedisCacheProperties.RedisExpires;
-import gov.va.bip.framework.cache.interceptor.BipCacheInterceptor;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.validation.Defense;
+import javax.annotation.PostConstruct;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Imported by {@link BipCacheAutoConfiguration} so it can participate in the autoconfiguration bootstrap.

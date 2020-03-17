@@ -1,12 +1,12 @@
 package gov.va.bip.framework.log.logback;
 
-import static java.util.regex.Pattern.compile;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
+import static java.util.regex.Pattern.compile;
 
 /**
  * A Logback rule with definition, to mask sensitive information in logs.

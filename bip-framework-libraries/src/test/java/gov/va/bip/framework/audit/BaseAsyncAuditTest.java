@@ -1,23 +1,18 @@
 package gov.va.bip.framework.audit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
+import gov.va.bip.framework.audit.model.MessageAuditData;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.audit.model.MessageAuditData;
-import gov.va.bip.framework.messages.MessageSeverity;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class BaseAsyncAuditTest {
 

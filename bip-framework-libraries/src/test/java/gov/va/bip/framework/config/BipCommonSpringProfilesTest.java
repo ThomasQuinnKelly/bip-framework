@@ -1,15 +1,11 @@
 package gov.va.bip.framework.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.junit.Test;
-
-import gov.va.bip.framework.config.BipCommonSpringProfiles;
+import static org.junit.Assert.*;
 
 public class BipCommonSpringProfilesTest {
 

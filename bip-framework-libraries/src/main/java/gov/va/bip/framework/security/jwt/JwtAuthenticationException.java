@@ -1,13 +1,12 @@
 package gov.va.bip.framework.security.jwt;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
-
-import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.exception.BipExceptionData;
+import gov.va.bip.framework.exception.BipExceptionExtender;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * Created by vgadda on 5/4/17.

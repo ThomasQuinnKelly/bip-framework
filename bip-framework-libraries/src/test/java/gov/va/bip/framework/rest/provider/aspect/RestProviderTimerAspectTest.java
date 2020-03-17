@@ -1,10 +1,7 @@
 package gov.va.bip.framework.rest.provider.aspect;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.AbstractBaseLogTester;
+import gov.va.bip.framework.log.BipLogger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -16,9 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.rest.provider.aspect.RestProviderTimerAspect;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestProviderTimerAspectTest extends AbstractBaseLogTester {

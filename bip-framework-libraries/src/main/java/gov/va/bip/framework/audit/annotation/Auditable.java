@@ -1,12 +1,12 @@
 package gov.va.bip.framework.audit.annotation;
 
+import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
+import gov.va.bip.framework.audit.AuditEvents;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
-import gov.va.bip.framework.audit.AuditEvents;
 
 /**
  * Auditable annotation that asynchronously logs audit data. Can be applied to

@@ -1,10 +1,9 @@
 package gov.va.bip.framework.exception;
 
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
 
 /**
  * The root BIP class for managing <b>checked</b> exceptions.

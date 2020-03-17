@@ -1,22 +1,17 @@
 package gov.va.bip.framework.security;
 
+import gov.va.bip.framework.security.PersonTraits.PATTERN_FORMAT;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.authority.AuthorityUtils;
-
-import gov.va.bip.framework.security.PersonTraits;
-import gov.va.bip.framework.security.PersonTraits.PATTERN_FORMAT;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PersonTraitsTest {
 

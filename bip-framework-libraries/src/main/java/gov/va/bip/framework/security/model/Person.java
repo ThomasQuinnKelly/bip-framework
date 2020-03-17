@@ -1,12 +1,11 @@
 package gov.va.bip.framework.security.model;
 
-import java.util.Collection;
-
+import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
+import io.swagger.annotations.ApiModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
-import io.swagger.annotations.ApiModel;
+import java.util.Collection;
 
 @ApiModel(description = "Model that identifies a single individual used in the security context")
 public class Person extends AbstractPersonTraitsObject implements DomainTransferObjectMarker {

@@ -1,11 +1,11 @@
 package gov.va.bip.framework.security;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Contains various reusable utility functions related to security in web app.

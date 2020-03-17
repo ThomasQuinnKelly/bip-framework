@@ -1,18 +1,12 @@
 package gov.va.bip.framework.log;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.util.BufferRecyclers;
+import com.github.lalyos.jfiglet.FigletFont;
+import gov.va.bip.framework.AbstractBaseLogTester;
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.messages.MessageKey;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,17 +23,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.fasterxml.jackson.core.util.BufferRecyclers;
-import com.github.lalyos.jfiglet.FigletFont;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogMarkers;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.messages.MessageKey;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 public class BipLoggerTest extends AbstractBaseLogTester {

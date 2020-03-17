@@ -1,8 +1,8 @@
 package gov.va.bip.framework.rest.provider;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 public class ProviderRequestTest {
 

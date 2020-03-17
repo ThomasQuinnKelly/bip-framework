@@ -1,10 +1,10 @@
 package gov.va.bip.framework.client.ws;
 
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 
 /**
  * This custom ValidationEventHandler will not fail validations, rather will log and eat the validation

@@ -1,16 +1,10 @@
 package gov.va.bip.framework.service.aspect;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
-
+import gov.va.bip.framework.exception.BipRuntimeException;
+import gov.va.bip.framework.messages.ServiceMessage;
+import gov.va.bip.framework.service.DomainResponse;
+import gov.va.bip.framework.service.aspect.validators.TestRequestValidator;
+import gov.va.bip.framework.validation.Validator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -22,12 +16,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.messages.ServiceMessage;
-import gov.va.bip.framework.service.DomainResponse;
-import gov.va.bip.framework.service.aspect.ServiceValidationAspect;
-import gov.va.bip.framework.service.aspect.validators.TestRequestValidator;
-import gov.va.bip.framework.validation.Validator;
+import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceValidationAspectTest {

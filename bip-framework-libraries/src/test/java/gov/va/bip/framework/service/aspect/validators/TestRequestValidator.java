@@ -1,16 +1,15 @@
 package gov.va.bip.framework.service.aspect.validators;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.messages.ServiceMessage;
 import gov.va.bip.framework.service.aspect.TestRequest;
 import gov.va.bip.framework.validation.AbstractStandardValidator;
+import org.springframework.http.HttpStatus;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * USED BY ServiceValidationAspectTest to test ServiceValidationAspect and Validator.

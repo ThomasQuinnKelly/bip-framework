@@ -1,15 +1,13 @@
 package gov.va.bip.framework.exception;
 
-import static org.junit.Assert.assertNotNull;
-
+import gov.va.bip.framework.messages.MessageKey;
+import gov.va.bip.framework.messages.MessageKeys;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.messages.MessageKey;
-import gov.va.bip.framework.messages.MessageKeys;
+import static org.junit.Assert.assertNotNull;
 
 public class BipRuntimeExceptionTest {
 

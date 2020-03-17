@@ -1,8 +1,7 @@
 package gov.va.bip.framework.vault.bootstrap.autoconfigure;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,8 +14,8 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.core.env.VaultPropertySource;
 
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class bootstraps the Vault PropertySource as the first source loaded. This is important so that we can use the Vault generated Consul ACL token to authenticate with Consul

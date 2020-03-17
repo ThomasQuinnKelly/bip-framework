@@ -1,11 +1,10 @@
 package gov.va.bip.framework.exception;
 
-import java.io.Serializable;
-
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
+
+import java.io.Serializable;
 
 /**
  * A Class to hold relevant information about an exception in the BIP framework.

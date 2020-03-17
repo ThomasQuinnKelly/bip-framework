@@ -1,13 +1,13 @@
 package gov.va.bip.framework.security;
 
-import java.util.Collection;
+import gov.va.bip.framework.security.model.AbstractPersonTraitsObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import gov.va.bip.framework.security.model.AbstractPersonTraitsObject;
+import java.util.Collection;
 
 /**
  * VA person identifier data. Created by vgadda on 6/6/17.

@@ -1,13 +1,11 @@
 package gov.va.bip.framework.security.jwt;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import gov.va.bip.framework.security.jwt.JwtAuthenticationToken;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class JwtAuthenticationTokenTest {
 

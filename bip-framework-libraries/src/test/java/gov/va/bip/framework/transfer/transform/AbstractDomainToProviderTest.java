@@ -1,12 +1,10 @@
 package gov.va.bip.framework.transfer.transform;
 
-import static org.junit.Assert.fail;
-
-import org.junit.Test;
-
 import gov.va.bip.framework.transfer.DomainTransferObjectMarker;
 import gov.va.bip.framework.transfer.ProviderTransferObjectMarker;
-import gov.va.bip.framework.transfer.transform.AbstractDomainToProvider;
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 public class AbstractDomainToProviderTest {
 

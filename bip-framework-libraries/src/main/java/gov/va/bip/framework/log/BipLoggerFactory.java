@@ -1,9 +1,8 @@
 package gov.va.bip.framework.log;
 
+import gov.va.bip.framework.constants.BipConstants;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
-
-import gov.va.bip.framework.constants.BipConstants;
 
 /**
  * This class wraps the SLF4J logger to add logging enhancements for the platform.

@@ -1,8 +1,7 @@
 package gov.va.bip.framework.cache.autoconfigure.jmx;
 
-import java.util.Collection;
-import java.util.Map;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
@@ -16,10 +15,10 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * A JMX MBean implementation for operations on the current spring cache context.

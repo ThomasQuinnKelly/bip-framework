@@ -1,10 +1,6 @@
 package gov.va.bip.framework.security.jwt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
-
+import gov.va.bip.framework.security.config.BipSecurityTestConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -16,8 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import gov.va.bip.framework.security.config.BipSecurityTestConfig;
-import gov.va.bip.framework.security.jwt.JwtTokenService;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = BipSecurityTestConfig.class)

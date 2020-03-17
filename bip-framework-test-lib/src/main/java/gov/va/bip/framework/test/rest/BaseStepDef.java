@@ -1,16 +1,10 @@
 package gov.va.bip.framework.test.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.Scenario;
+import gov.va.bip.framework.test.service.BearerTokenService;
+import gov.va.bip.framework.test.service.RESTConfigService;
+import gov.va.bip.framework.test.util.RESTUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -18,12 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import cucumber.api.Scenario;
-import gov.va.bip.framework.test.service.BearerTokenService;
-import gov.va.bip.framework.test.service.RESTConfigService;
-import gov.va.bip.framework.test.util.RESTUtil;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Base class for all step definition.

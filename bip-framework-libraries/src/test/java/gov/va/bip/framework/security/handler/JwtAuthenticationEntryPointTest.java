@@ -1,13 +1,11 @@
 package gov.va.bip.framework.security.handler;
 
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 
-import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
+import static org.mockito.Mockito.mock;
 
 public class JwtAuthenticationEntryPointTest {
 

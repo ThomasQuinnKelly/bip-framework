@@ -1,16 +1,12 @@
 package gov.va.bip.framework.security.jwt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationException;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.*;
 
 public class JwtAuthenticationExceptionTest {
 

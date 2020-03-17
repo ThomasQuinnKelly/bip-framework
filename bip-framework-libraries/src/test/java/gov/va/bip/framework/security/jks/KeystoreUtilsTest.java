@@ -1,6 +1,6 @@
 package gov.va.bip.framework.security.jks;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.security.Key;
 import java.security.KeyStore;
@@ -8,7 +8,8 @@ import java.security.KeyStore.Entry;
 import java.security.cert.Certificate;
 import java.util.Base64;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class KeystoreUtilsTest {
 	

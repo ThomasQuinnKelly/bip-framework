@@ -1,12 +1,11 @@
 package gov.va.bip.framework.aspect;
 
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
+import java.lang.reflect.Method;
 
 /**
  * Performance logging (elapsed execution time). This class should only be

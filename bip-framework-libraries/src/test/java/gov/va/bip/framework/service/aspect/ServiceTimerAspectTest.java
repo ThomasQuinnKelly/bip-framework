@@ -1,10 +1,6 @@
 package gov.va.bip.framework.service.aspect;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.AbstractBaseLogTester;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -15,8 +11,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import gov.va.bip.framework.AbstractBaseLogTester;
-import gov.va.bip.framework.service.aspect.ServiceTimerAspect;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceTimerAspectTest extends AbstractBaseLogTester {

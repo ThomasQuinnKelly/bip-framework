@@ -1,19 +1,5 @@
 package gov.va.bip.framework.security.util;
 
-import static gov.va.bip.framework.security.jwt.JwtAuthenticationProvider.isPersonTraitsValid;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
-
-import javax.crypto.spec.SecretKeySpec;
-
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.security.PersonTraits;
@@ -22,6 +8,14 @@ import gov.va.bip.framework.security.jwt.correlation.CorrelationIdsParser;
 import gov.va.bip.framework.security.model.Person;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.http.HttpStatus;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.*;
+
+import static gov.va.bip.framework.security.jwt.JwtAuthenticationProvider.isPersonTraitsValid;
 
 /**
  * Created by vgadda on 5/5/17.

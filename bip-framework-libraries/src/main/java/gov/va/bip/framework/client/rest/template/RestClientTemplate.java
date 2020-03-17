@@ -1,12 +1,11 @@
 package gov.va.bip.framework.client.rest.template;
 
+import gov.va.bip.framework.security.jwt.JwtTokenService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import gov.va.bip.framework.security.jwt.JwtTokenService;
 
 /**
  * This class is a base implementation of {@link RestTemplate} specifically for

@@ -1,19 +1,18 @@
 package gov.va.bip.framework.cache.interceptor;
 
-import java.util.Arrays;
-
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.interceptor.CacheInterceptor;
-
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
 import gov.va.bip.framework.audit.BaseAsyncAudit;
 import gov.va.bip.framework.audit.model.HttpResponseAuditData;
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.interceptor.CacheInterceptor;
+
+import java.util.Arrays;
 
 /**
  * Audit cache GET operations.

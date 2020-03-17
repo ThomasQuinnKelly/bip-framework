@@ -1,8 +1,6 @@
 package gov.va.bip.framework.client.rest.template;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import gov.va.bip.framework.service.DomainResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.bip.framework.client.rest.template.RestClientTemplate;
-import gov.va.bip.framework.service.DomainResponse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RestClientTemplateTest {
 

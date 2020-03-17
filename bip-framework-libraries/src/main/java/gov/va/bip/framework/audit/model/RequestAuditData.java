@@ -1,12 +1,11 @@
 package gov.va.bip.framework.audit.model;
 
+import gov.va.bip.framework.audit.AuditableData;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
-import gov.va.bip.framework.audit.AuditableData;
 
 /**
  * An {@link AuditableData} transfer object for sending any request Object list to the audit logger.

@@ -1,14 +1,13 @@
 package gov.va.bip.framework.aspect;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.List;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import gov.va.bip.framework.audit.AuditEvents;
+import gov.va.bip.framework.audit.AuditLogSerializer;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.audit.annotation.Auditable;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.After;
@@ -25,14 +24,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import ch.qos.logback.classic.spi.LoggingEvent;
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.audit.annotation.Auditable;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.rest.provider.ProviderResponse;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuditableAnnotationAspectTest {

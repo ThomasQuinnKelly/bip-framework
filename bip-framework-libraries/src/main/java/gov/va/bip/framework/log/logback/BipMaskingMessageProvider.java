@@ -1,12 +1,11 @@
 package gov.va.bip.framework.log.logback;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.fasterxml.jackson.core.JsonGenerator;
 import net.logstash.logback.composite.JsonWritingUtils;
 import net.logstash.logback.composite.loggingevent.MessageJsonProvider;
+
+import java.io.IOException;
 
 /**
  * A logstash message provider to the generator in the JSON object context.

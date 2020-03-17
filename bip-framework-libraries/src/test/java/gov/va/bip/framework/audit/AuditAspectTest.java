@@ -1,5 +1,10 @@
 package gov.va.bip.framework.audit;
 
+import gov.va.bip.framework.audit.annotation.Auditable;
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.service.DomainRequest;
+import gov.va.bip.framework.service.DomainResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +18,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.audit.annotation.Auditable;
-import gov.va.bip.framework.messages.MessageKeys;
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.service.DomainRequest;
-import gov.va.bip.framework.service.DomainResponse;
 
 /**
  * Created by vgadda on 8/17/17.

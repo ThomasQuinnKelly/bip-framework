@@ -1,10 +1,9 @@
 package gov.va.bip.framework.service;
 
-import org.springframework.http.HttpStatus;
-
 import gov.va.bip.framework.exception.BipRuntimeException;
 import gov.va.bip.framework.messages.MessageKey;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
 
 /**
  * Root hierarchy of exceptions which indicates there was an

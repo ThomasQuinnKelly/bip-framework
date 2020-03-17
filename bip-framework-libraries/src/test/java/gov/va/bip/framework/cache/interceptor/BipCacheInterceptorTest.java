@@ -1,13 +1,9 @@
 package gov.va.bip.framework.cache.interceptor;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
-
+import gov.va.bip.framework.audit.AuditLogSerializer;
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.service.DomainResponse;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +13,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.service.DomainResponse;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BipCacheInterceptorTest {

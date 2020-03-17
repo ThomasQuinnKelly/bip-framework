@@ -1,21 +1,18 @@
 package gov.va.bip.framework.security.handler;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import gov.va.bip.framework.messages.MessageSeverity;
-import gov.va.bip.framework.rest.provider.ProviderResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Implement custom {@link AuthenticationEntryPoint}, our own authentication

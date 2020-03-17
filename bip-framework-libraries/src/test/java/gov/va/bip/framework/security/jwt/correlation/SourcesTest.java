@@ -1,13 +1,9 @@
 package gov.va.bip.framework.security.jwt.correlation;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import gov.va.bip.framework.exception.BipRuntimeException;
 import org.junit.Test;
 
-import gov.va.bip.framework.exception.BipRuntimeException;
-import gov.va.bip.framework.security.jwt.correlation.Sources;
+import static org.junit.Assert.*;
 
 public class SourcesTest {
 

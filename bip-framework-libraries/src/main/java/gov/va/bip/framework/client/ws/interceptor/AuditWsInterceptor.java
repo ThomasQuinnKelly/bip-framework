@@ -1,14 +1,5 @@
 package gov.va.bip.framework.client.ws.interceptor;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.WebServiceClientException;
-import org.springframework.ws.client.support.interceptor.ClientInterceptor;
-import org.springframework.ws.context.MessageContext;
-
 import gov.va.bip.framework.audit.AuditEventData;
 import gov.va.bip.framework.audit.AuditEvents;
 import gov.va.bip.framework.audit.AuditLogSerializer;
@@ -20,6 +11,14 @@ import gov.va.bip.framework.log.BipLoggerFactory;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
 import gov.va.bip.framework.validation.Defense;
+import org.springframework.http.HttpStatus;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.WebServiceClientException;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
+import org.springframework.ws.context.MessageContext;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This interceptor performs Audit logging of the request and response XML from the {@link WebserviceTemplate}.

@@ -1,16 +1,12 @@
 package gov.va.bip.framework.client.ws.remote;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.junit.Test;
-import org.springframework.ws.client.core.WebServiceTemplate;
-
-import gov.va.bip.framework.client.ws.remote.RemoteServiceCall;
 import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockRequest;
 import gov.va.bip.framework.client.ws.remote.test.mocks.TestAbstractRemoteServiceCallMockResponse;
 import gov.va.bip.framework.transfer.PartnerTransferObjectMarker;
+import org.junit.Test;
+import org.springframework.ws.client.core.WebServiceTemplate;
+
+import static org.junit.Assert.*;
 
 public class RemoteServiceCallTest {
 

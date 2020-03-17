@@ -1,10 +1,12 @@
 package gov.va.bip.framework.rest.autoconfigure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.va.bip.framework.client.rest.template.RestClientTemplate;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.rest.exception.BipRestGlobalExceptionHandler;
+import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
+import gov.va.bip.framework.rest.provider.aspect.RestProviderTimerAspect;
+import gov.va.bip.framework.validation.Defense;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -22,13 +24,10 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import gov.va.bip.framework.client.rest.template.RestClientTemplate;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.rest.exception.BipRestGlobalExceptionHandler;
-import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
-import gov.va.bip.framework.rest.provider.aspect.RestProviderTimerAspect;
-import gov.va.bip.framework.validation.Defense;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A collection of spring beans used for REST server and/or client operations.

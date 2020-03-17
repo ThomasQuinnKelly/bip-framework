@@ -1,5 +1,9 @@
 package gov.va.bip.framework.transfer.jaxb.adapters;
 
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+
+import javax.xml.bind.DatatypeConverter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,11 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-
-import javax.xml.bind.DatatypeConverter;
-
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
 
 /**
  * The Class DateAdapter converts from Java date to/from JAXB XML

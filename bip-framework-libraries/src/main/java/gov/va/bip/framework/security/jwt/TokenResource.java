@@ -1,7 +1,13 @@
 package gov.va.bip.framework.security.jwt;
 
-import java.util.List;
-
+import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties.JwtKeyPairs;
+import gov.va.bip.framework.security.model.Person;
+import gov.va.bip.framework.security.util.GenerateToken;
+import gov.va.bip.framework.swagger.SwaggerResponseMessages;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -11,14 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties.JwtKeyPairs;
-import gov.va.bip.framework.security.model.Person;
-import gov.va.bip.framework.security.util.GenerateToken;
-import gov.va.bip.framework.swagger.SwaggerResponseMessages;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.List;
 
 @RestController
 public class TokenResource implements SwaggerResponseMessages {

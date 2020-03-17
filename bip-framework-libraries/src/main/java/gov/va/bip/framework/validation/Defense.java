@@ -1,13 +1,12 @@
 package gov.va.bip.framework.validation;
 
-import java.util.Collection;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
-
 import gov.va.bip.framework.exception.BipValidationRuntimeException;
 import gov.va.bip.framework.messages.MessageKeys;
 import gov.va.bip.framework.messages.MessageSeverity;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
+
+import java.util.Collection;
 
 /**
  * Make assertions as runtime validations of service layer method arguments.

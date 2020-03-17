@@ -1,27 +1,21 @@
 package gov.va.bip.framework.client.ws.interceptor;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-
+import gov.va.bip.framework.audit.AuditEventData;
+import gov.va.bip.framework.audit.AuditEvents;
+import gov.va.bip.framework.client.ws.interceptor.transport.ByteArrayTransportOutputStream;
+import gov.va.bip.framework.exception.BipPartnerRuntimeException;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
 
-import gov.va.bip.framework.audit.AuditEventData;
-import gov.va.bip.framework.audit.AuditEvents;
-import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptor;
-import gov.va.bip.framework.client.ws.interceptor.AuditWsInterceptorConfig;
-import gov.va.bip.framework.client.ws.interceptor.transport.ByteArrayTransportOutputStream;
-import gov.va.bip.framework.exception.BipPartnerRuntimeException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class AuditWsInterceptorTest {
 
