@@ -1,12 +1,11 @@
 package gov.va.bip.framework.autoconfigure;
 
 
+import gov.va.bip.framework.config.BaseYamlConfig;
+import gov.va.bip.framework.config.BipCommonSpringProfiles;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-
-import gov.va.bip.framework.config.BaseYamlConfig;
-import gov.va.bip.framework.config.BipCommonSpringProfiles;
 
 /**
  * Fake Spring configuration used to test the partner mock framework classes

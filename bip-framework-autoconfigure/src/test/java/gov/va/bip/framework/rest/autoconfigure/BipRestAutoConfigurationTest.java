@@ -1,9 +1,9 @@
 package gov.va.bip.framework.rest.autoconfigure;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
+import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
+import gov.va.bip.framework.security.autoconfigure.BipSecurityAutoConfiguration;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -22,10 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
-import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
-import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
-import gov.va.bip.framework.security.autoconfigure.BipSecurityAutoConfiguration;
+import static org.junit.Assert.*;
 
 /**
  * Created by rthota on 8/24/17.

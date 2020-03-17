@@ -1,19 +1,15 @@
 package gov.va.bip.framework.hystrix.autoconfigure;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.netflix.hystrix.strategy.HystrixPlugins;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.netflix.hystrix.strategy.HystrixPlugins;
+import java.util.LinkedList;
+import java.util.List;
 
-import gov.va.bip.framework.hystrix.autoconfigure.HystrixCallableWrapper;
-import gov.va.bip.framework.hystrix.autoconfigure.HystrixContextAutoConfiguration;
-import gov.va.bip.framework.hystrix.autoconfigure.RequestAttributeAwareCallableWrapper;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class HystrixContextAutoConfigurationTest {
 

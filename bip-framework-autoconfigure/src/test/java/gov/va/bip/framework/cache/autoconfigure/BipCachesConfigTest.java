@@ -1,11 +1,11 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
 
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import static org.junit.Assert.assertTrue;
 
 public class BipCachesConfigTest {
 

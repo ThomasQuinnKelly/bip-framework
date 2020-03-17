@@ -1,5 +1,6 @@
 package gov.va.bip.framework.rest.autoconfigure;
 
+import gov.va.bip.framework.security.jwt.JwtTokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,9 +13,6 @@ import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.mock.http.client.MockClientHttpResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import gov.va.bip.framework.rest.autoconfigure.TokenClientHttpRequestInterceptor;
-import gov.va.bip.framework.security.jwt.JwtTokenService;
 
 import java.io.IOException;
 import java.util.HashMap;

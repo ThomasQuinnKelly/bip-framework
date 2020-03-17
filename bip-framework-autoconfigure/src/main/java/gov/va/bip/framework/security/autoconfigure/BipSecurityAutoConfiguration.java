@@ -1,8 +1,15 @@
 package gov.va.bip.framework.security.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.va.bip.framework.client.rest.template.RestClientTemplate;
+import gov.va.bip.framework.log.BipBanner;
+import gov.va.bip.framework.log.BipLogger;
+import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.rest.exception.BasicErrorController;
+import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
+import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
+import gov.va.bip.framework.security.jwt.*;
+import gov.va.bip.framework.security.opa.BipOpaProperties;
+import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,21 +38,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import gov.va.bip.framework.client.rest.template.RestClientTemplate;
-import gov.va.bip.framework.log.BipBanner;
-import gov.va.bip.framework.log.BipLogger;
-import gov.va.bip.framework.log.BipLoggerFactory;
-import gov.va.bip.framework.rest.exception.BasicErrorController;
-import gov.va.bip.framework.security.handler.JwtAuthenticationEntryPoint;
-import gov.va.bip.framework.security.handler.JwtAuthenticationSuccessHandler;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationFilter;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProvider;
-import gov.va.bip.framework.security.jwt.JwtParser;
-import gov.va.bip.framework.security.jwt.JwtTokenService;
-import gov.va.bip.framework.security.jwt.TokenResource;
-import gov.va.bip.framework.security.opa.BipOpaProperties;
-import gov.va.bip.framework.security.opa.voter.BipOpaVoter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AutoConfiguration for various authentication types on the Platform (basic

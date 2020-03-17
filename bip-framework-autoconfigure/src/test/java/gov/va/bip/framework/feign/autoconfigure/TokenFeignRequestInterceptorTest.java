@@ -1,9 +1,7 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
 import feign.RequestTemplate;
-import gov.va.bip.framework.feign.autoconfigure.TokenFeignRequestInterceptor;
 import gov.va.bip.framework.security.jwt.JwtTokenService;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

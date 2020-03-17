@@ -1,8 +1,7 @@
 package gov.va.bip.framework.security.autoconfigure;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
+import gov.va.bip.framework.security.opa.BipOpaProperties;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.bip.framework.security.jwt.JwtAuthenticationProperties;
-import gov.va.bip.framework.security.opa.BipOpaProperties;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by vgadda on 7/31/17.

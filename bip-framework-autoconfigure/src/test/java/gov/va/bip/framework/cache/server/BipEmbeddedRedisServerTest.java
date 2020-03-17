@@ -1,9 +1,6 @@
 package gov.va.bip.framework.cache.server;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,10 +8,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import gov.va.bip.framework.cache.autoconfigure.server.BipEmbeddedRedisServer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import static org.junit.Assert.*;
 
 /**
  *
