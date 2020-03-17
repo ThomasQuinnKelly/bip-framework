@@ -20,11 +20,11 @@
  */
 package gov.va.bip.framework.hystrix.autoconfigure;
 
-import java.util.concurrent.Callable;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import java.util.concurrent.Callable;
 
 /**
  * The Class RequestAttributeAwareCallableWrapper.

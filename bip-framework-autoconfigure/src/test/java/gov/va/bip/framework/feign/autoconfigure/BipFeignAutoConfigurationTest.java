@@ -1,7 +1,12 @@
 package gov.va.bip.framework.feign.autoconfigure;
 
-import static org.junit.Assert.assertNotNull;
-
+import feign.Logger.Level;
+import feign.Request.Options;
+import feign.Target;
+import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
+import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
+import gov.va.bip.framework.security.autoconfigure.BipSecurityAutoConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +20,7 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import feign.Logger.Level;
-import feign.Request.Options;
-import feign.Target;
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
-import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
-import gov.va.bip.framework.rest.provider.aspect.ProviderHttpAspect;
-import gov.va.bip.framework.security.autoconfigure.BipSecurityAutoConfiguration;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by rthota on 8/24/17.

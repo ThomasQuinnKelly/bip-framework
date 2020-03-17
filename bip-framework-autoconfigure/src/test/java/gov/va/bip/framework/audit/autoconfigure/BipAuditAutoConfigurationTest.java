@@ -1,14 +1,12 @@
 package gov.va.bip.framework.audit.autoconfigure;
 
+import gov.va.bip.framework.audit.AuditLogSerializer;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.bip.framework.audit.AuditLogSerializer;
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
-
-import static org.junit.Assert.*;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import static org.junit.Assert.assertNotNull;
 
 public class BipAuditAutoConfigurationTest {
 

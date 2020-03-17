@@ -1,12 +1,11 @@
 package gov.va.bip.framework.service.autoconfigure;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import gov.va.bip.framework.aspect.AuditableAnnotationAspect;
 import gov.va.bip.framework.service.aspect.ServiceTimerAspect;
 import gov.va.bip.framework.service.aspect.ServiceValidationAspect;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Created by rthota on 8/24/17.

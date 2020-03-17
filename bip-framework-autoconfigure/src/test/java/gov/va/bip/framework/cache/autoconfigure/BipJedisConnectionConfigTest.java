@@ -1,10 +1,6 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.time.Duration;
-
+import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +23,10 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import java.time.Duration;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)

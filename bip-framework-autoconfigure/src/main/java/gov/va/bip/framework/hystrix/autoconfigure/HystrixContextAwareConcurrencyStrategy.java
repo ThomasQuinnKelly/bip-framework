@@ -21,8 +21,6 @@
 package gov.va.bip.framework.hystrix.autoconfigure;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
-
-
 import org.springframework.util.Assert;
 
 import java.util.Collection;

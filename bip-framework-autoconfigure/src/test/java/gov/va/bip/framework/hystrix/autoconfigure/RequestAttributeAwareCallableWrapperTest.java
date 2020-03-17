@@ -1,14 +1,7 @@
 package gov.va.bip.framework.hystrix.autoconfigure;
 
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-
-import gov.va.bip.framework.hystrix.autoconfigure.HystrixCallableWrapper;
-import gov.va.bip.framework.hystrix.autoconfigure.RequestAttributeAwareCallableWrapper;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,6 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.UUID;
+import java.util.concurrent.Callable;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;

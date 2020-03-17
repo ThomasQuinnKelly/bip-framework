@@ -1,17 +1,14 @@
 package gov.va.bip.framework.hystrix.autoconfigure;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import gov.va.bip.framework.hystrix.autoconfigure.HystrixCallableWrapper;
-import gov.va.bip.framework.hystrix.autoconfigure.HystrixContextAwareConcurrencyStrategy;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class HystrixContextAwareConcurrencyStrategyTest {
 

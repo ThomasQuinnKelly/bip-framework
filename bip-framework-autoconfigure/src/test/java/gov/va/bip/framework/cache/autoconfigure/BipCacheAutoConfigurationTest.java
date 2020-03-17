@@ -1,12 +1,7 @@
 package gov.va.bip.framework.cache.autoconfigure;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Properties;
-
+import gov.va.bip.framework.audit.BaseAsyncAudit;
+import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +25,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import gov.va.bip.framework.audit.BaseAsyncAudit;
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by vgadda on 8/11/17.

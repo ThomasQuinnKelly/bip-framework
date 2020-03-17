@@ -1,14 +1,12 @@
 package gov.va.bip.framework.service.autoconfigure;
 
-import static org.junit.Assert.assertNotNull;
-
+import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
+import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.bip.framework.audit.autoconfigure.BipAuditAutoConfiguration;
-import gov.va.bip.framework.cache.autoconfigure.TestConfigurationForAuditBeans;
-import gov.va.bip.framework.service.autoconfigure.BipServiceAutoConfiguration;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by rthota on 8/24/17.
