@@ -21,6 +21,7 @@ public class MessageTest {
 		assertTrue(message.getTimestamp().equals(testTimeStamp));
 		assertTrue(message.getStatus().equals("400"));
 		assertTrue(message.getText().equals(TEST_TEXT));
+		assertTrue(message.getHttpStatus().equals(HttpStatus.resolve(400)));
 		assertTrue(message.getHttpStatus(400).equals(HttpStatus.resolve(400)));
 	}
 

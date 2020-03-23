@@ -161,6 +161,20 @@ public class Message implements Serializable {
 	}
 
 	/**
+	 * Get the {@link HttpStatus} enumeration of this message
+	 * If the status is null, then this method returns
+	 * 201 {@link HttpStatus#CREATED}.
+	 *
+	 * @return the HttpStatus
+	 */
+	public final HttpStatus getHttpStatus() {
+		if (status == null) {
+			return HttpStatus.CREATED;
+		}
+		return HttpStatus.resolve(status);
+	}
+
+	/**
 	 * Get the {@link HttpStatus} enumeration for the status Integer.
 	 * If the status integer is null, then this method returns
 	 * 201 {@link HttpStatus#CREATED}.

@@ -2,10 +2,13 @@ package gov.va.bip.framework.transfer.transform;
 
 import gov.va.bip.framework.log.BipLogger;
 import gov.va.bip.framework.log.BipLoggerFactory;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.service.DomainResponse;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -92,6 +95,12 @@ public final class TransformerUtils {
 			LOGGER.error(dcEx.getMessage());
 			return null;
 		}
+	}
+
+	public static void transferMessages(DomainResponse from, ProviderResponse to) {
+		from.getMessages().forEach(
+				domainMessage -> to.addMessage(domainMessage.getSeverity(), domainMessage.getKey(), domainMessage.getText(), domainMessage.getHttpStatus())
+		);
 	}
 
 }
