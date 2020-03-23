@@ -37,6 +37,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +107,10 @@ public class BipSecurityAutoConfiguration {
 
 			http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 			http.headers().cacheControl();
+
+			http.headers()
+					.addHeaderWriter(new StaticHeadersWriter("X-Content-Security-Policy","script-src 'self'"));
+
 		}
 
 		/**
