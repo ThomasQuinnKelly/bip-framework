@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import java.time.Instant;
 import java.util.Date;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MessageTest {
 
@@ -29,5 +28,19 @@ public class MessageTest {
 	public void testGetStatusWhenNull() throws Exception {
 		Message message1 = new Message("ERROR", "test key", TEST_TEXT, null);
 		assertNull(message1.getStatus());
+	}
+
+	@Test
+	public void testGetHttpStatus() throws Exception {
+		Message message1 = new Message("ERROR", "test key", TEST_TEXT, 400);
+		assertEquals(400, message1.getHttpStatus().value());
+		assertEquals(202, message1.getHttpStatus(202).value());
+	}
+
+	@Test
+	public void testGetHttpStatusWhenNull() throws Exception {
+		Message message1 = new Message("ERROR", "test key", TEST_TEXT, null);
+		assertEquals(201, message1.getHttpStatus().value());
+		assertEquals(201, message1.getHttpStatus(null).value());
 	}
 }

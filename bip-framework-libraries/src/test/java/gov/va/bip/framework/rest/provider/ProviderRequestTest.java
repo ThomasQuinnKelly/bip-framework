@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class ProviderRequestTest {
 
-
 	@Test
 	public void testProviderRequest() {
 		assertNotNull(new ProviderRequest());
 	}
+
 }

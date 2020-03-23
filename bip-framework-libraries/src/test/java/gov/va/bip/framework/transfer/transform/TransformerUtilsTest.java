@@ -1,10 +1,15 @@
 package gov.va.bip.framework.transfer.transform;
 
+import gov.va.bip.framework.messages.MessageKeys;
+import gov.va.bip.framework.messages.MessageSeverity;
+import gov.va.bip.framework.rest.provider.ProviderResponse;
+import gov.va.bip.framework.service.DomainResponse;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.springframework.http.HttpStatus;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -85,13 +90,30 @@ public class TransformerUtilsTest {
 	}
 
 	@Test
-	public final void DatatypeFactoryManagertGetDatatypeFactoryTest() {
+	public final void datatypeFactoryManagertGetDatatypeFactoryTest() {
 		try {
 			TransformerUtils.DatatypeFactoryManager datatypeFactoryManager = new TransformerUtils.DatatypeFactoryManager();
 			assertNotNull(datatypeFactoryManager.getDatatypeFactory());
 		} catch (DatatypeConfigurationException e) {
 			fail("exception should not be thrown");
 		}
+	}
+
+	@Test
+	public final void testTransferMessages() {
+		DomainResponse from = new DomainResponse();
+		from.addMessage(MessageSeverity.ERROR, HttpStatus.BAD_REQUEST, MessageKeys.NO_KEY, "ServiceMessage text");
+
+		ProviderResponse to = new ProviderResponse();
+
+		TransformerUtils.transferMessages(from, to);
+
+		assertEquals(from.getMessages().get(0).getHttpStatus(), to.getMessages().get(0).getHttpStatus());
+		assertEquals(from.getMessages().get(0).getStatus(), to.getMessages().get(0).getStatus());
+		assertEquals(from.getMessages().get(0).getKey(), to.getMessages().get(0).getKey());
+		assertEquals(from.getMessages().get(0).getSeverity().name(), to.getMessages().get(0).getSeverity());
+		assertEquals(from.getMessages().get(0).getText(), to.getMessages().get(0).getText());
+
 	}
 
 }
